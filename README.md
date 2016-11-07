@@ -15,7 +15,7 @@ pip install git+https://github.com/bitmovin/bitmovin-python.git@v1.0.0
 Example
 -----
 
-The following example creates a simple transcoding job and transfers it to a GCS output location ([create_simple_encoding.py](https://github.com/bitmovin/bitmovin-python/blob/master/examples/encoding/create_simple_encoding.py)):
+The following example creates a simple encoding job with a DASH manifest and transfers it to a S3 output location ([create_simple_encoding.py](https://github.com/bitmovin/bitmovin-python/blob/master/examples/encoding/create_simple_encoding.py)):
 ```python
 import uuid
 from bitmovin import Bitmovin, Encoding, HTTPSInput, S3Output, H264CodecConfiguration, \
