@@ -6,7 +6,7 @@ Installation
 
 ### PIP ###
 
-To install the bitmovin client with pip, run the collowing command:
+To install the bitmovin client with pip, run the following command:
 
 ```bash
 pip install git+https://github.com/bitmovin/bitmovin-python.git@v1.0.0
