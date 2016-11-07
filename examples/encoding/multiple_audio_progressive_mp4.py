@@ -40,7 +40,7 @@ def main():
     video_codec_configuration = bitmovin.codecConfigurations.H264.create(video_codec_configuration).resource
 
     audio_codec_configuration = AACCodecConfiguration(name='example_audio_codec_configuration_aac',
-                                                      bitrate=96000,
+                                                      bitrate=128000,
                                                       rate=48000)
     audio_codec_configuration = bitmovin.codecConfigurations.AAC.create(audio_codec_configuration).resource
 
