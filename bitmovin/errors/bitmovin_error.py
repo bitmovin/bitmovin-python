@@ -1,0 +1,2 @@
+class BitmovinError(Exception):
+    pass

@@ -1,22 +1,3 @@
-# [![bitmovin](https://cloudfront-prod.bitmovin.com/wp-content/themes/Bitmovin-V-0.1/images/logo3.png)](http://www.bitmovin.com)
-Python3-Client which enables you to seamlessly integrate the Bitmovin API into your projects
-
-Installation
-------------
-
-### PIP ###
-
-To install the bitmovin client with pip, run the following command:
-
-```bash
-pip install git+https://github.com/bitmovin/bitmovin-python.git@v1.0.0
-```
-
-Example
------
-
-The following example creates a simple encoding job with a DASH manifest and transfers it to a S3 output location ([create_simple_encoding.py](https://github.com/bitmovin/bitmovin-python/blob/master/examples/encoding/create_simple_encoding.py)):
-```python
 import uuid
 from bitmovin import Bitmovin, Encoding, HTTPSInput, S3Output, H264CodecConfiguration, \
     AACCodecConfiguration, H264Profile, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
@@ -197,6 +178,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-```
-
-For more examples go to our [example page](https://github.com/bitmovin/bitmovin-python/tree/master/examples).
