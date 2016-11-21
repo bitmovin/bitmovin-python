@@ -4,7 +4,7 @@ import enum
 class AACChannelLayout(enum.Enum):
     NONE = 'NONE'
     CL_MONO = 'MONO'
-    CL_STEREO = 'CL_STEREO'
+    CL_STEREO = 'STEREO'
     CL_2_1 = '2.1'
     CL_SURROUND = 'SURROUND'
     CL_3_1 = '3.1'
