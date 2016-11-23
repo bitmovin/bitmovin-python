@@ -34,7 +34,7 @@ class RestService(BitmovinObject):
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
 
     def retrieve(self, id_):
-        self.parsing_utils.check_arg_valid(argument=id_)
+        self.parsing_utils.check_arg_valid_uuid(argument=id_)
         url = '{}/{}'.format(self.relative_url, id_)
         response = self.http_client.get(url)
 
@@ -49,7 +49,7 @@ class RestService(BitmovinObject):
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
 
     def delete(self, id_):
-        self.parsing_utils.check_arg_valid(argument=id_)
+        self.parsing_utils.check_arg_valid_uuid(argument=id_)
         url = '{}/{}'.format(self.relative_url, id_)
         response = self.http_client.delete(url)
 
@@ -83,7 +83,7 @@ class RestService(BitmovinObject):
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
 
     def retrieve_custom_data(self, id_):
-        self.parsing_utils.check_arg_valid(argument=id_)
+        self.parsing_utils.check_arg_valid_uuid(argument=id_)
         url = '{}/{}/customData'.format(self.relative_url, id_)
         response = self.http_client.get(url)
 

@@ -49,8 +49,8 @@ class AnalyzeService(BitmovinObject):
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
 
     def retrieve_analysis_details(self, input_id, analysis_id):
-        self.parsing_utils.check_arg_valid(argument=input_id)
-        self.parsing_utils.check_arg_valid(argument=analysis_id)
+        self.parsing_utils.check_arg_valid_uuid(argument=input_id)
+        self.parsing_utils.check_arg_valid_uuid(argument=analysis_id)
         url = '{}/{}/analysis/{}'.format(self.relative_url, input_id, analysis_id)
         response = self.http_client.get(url)
 
@@ -65,9 +65,9 @@ class AnalyzeService(BitmovinObject):
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
 
     def retrieve_analysis_stream_details(self, input_id, analysis_id, stream_id):
-        self.parsing_utils.check_arg_valid(argument=input_id)
-        self.parsing_utils.check_arg_valid(argument=analysis_id)
-        self.parsing_utils.check_arg_valid(argument=stream_id)
+        self.parsing_utils.check_arg_valid_uuid(argument=input_id)
+        self.parsing_utils.check_arg_valid_uuid(argument=analysis_id)
+        self.parsing_utils.check_arg_valid_uuid(argument=stream_id)
         url = '{}/{}/analysis/{}/{}'.format(self.relative_url, input_id, analysis_id, stream_id)
         response = self.http_client.get(url)
 
@@ -82,8 +82,8 @@ class AnalyzeService(BitmovinObject):
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
 
     def retrieve_analysis_custom_data(self, input_id, analysis_id):
-        self.parsing_utils.check_arg_valid(argument=input_id)
-        self.parsing_utils.check_arg_valid(argument=analysis_id)
+        self.parsing_utils.check_arg_valid_uuid(argument=input_id)
+        self.parsing_utils.check_arg_valid_uuid(argument=analysis_id)
         url = '{}/{}/analysis/{}/customData'.format(self.relative_url, input_id, analysis_id)
         response = self.http_client.get(url)
 
@@ -98,8 +98,8 @@ class AnalyzeService(BitmovinObject):
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
 
     def retrieve_analysis_status(self, input_id, analysis_id):
-        self.parsing_utils.check_arg_valid(argument=input_id)
-        self.parsing_utils.check_arg_valid(argument=analysis_id)
+        self.parsing_utils.check_arg_valid_uuid(argument=input_id)
+        self.parsing_utils.check_arg_valid_uuid(argument=analysis_id)
         url = '{}/{}/analysis/{}/status'.format(self.relative_url, input_id, analysis_id)
         response = self.http_client.get(url)
 

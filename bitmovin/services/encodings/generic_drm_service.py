@@ -52,8 +52,8 @@ class GenericDRMService(RestService):
         return super().retrieve_custom_data(id_=drm_id)
 
     def retrieve_status(self, encoding_id, muxing_id, drm_id):
-        self.parsing_utils.check_arg_valid(argument=encoding_id)
-        self.parsing_utils.check_arg_valid(argument=muxing_id)
+        self.parsing_utils.check_arg_valid_uuid(argument=encoding_id)
+        self.parsing_utils.check_arg_valid_uuid(argument=muxing_id)
         url = '{}/{}/status'.format(self._get_endpoint_url(encoding_id=encoding_id, muxing_id=muxing_id), drm_id)
         response = self.http_client.get(url)
 
