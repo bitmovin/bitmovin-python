@@ -33,8 +33,8 @@ class ACLEntry(AbstractIdResource, Serializable):
 
     @classmethod
     def parse_from_json_object(cls, json_object):
-        id_ = json_object['id']
         permission = json_object['permission']
+        id_ = json_object.get('id')
         scope = json_object.get('scope')
 
         acl_entry = ACLEntry(scope=scope, permission=permission, id_=id_)
