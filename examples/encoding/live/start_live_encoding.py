@@ -44,6 +44,7 @@ def main():
     s3_output = bitmovin.outputs.S3.create(s3_output).resource
 
     encoding = Encoding(name='example python live stream encoding',
+                        encoder_version='0.21.4',
                         cloud_region=CloudRegion.GOOGLE_EUROPE_WEST_1)
     encoding = bitmovin.encodings.Encoding.create(encoding).resource
 
