@@ -6,6 +6,7 @@ from bitmovin.errors import BitmovinApiError
 
 ERROR_CODE_LIVE_STREAM_NOT_READY = 2023
 LIVE_STREAM_INFORMATION_FETCH_RETRY_INTERVAL = 5
+LIVE_STREAM_INFORMATION_FETCH_MAX_RETRIES = 60
 
 API_KEY = '<YOUR_API_KEY>'
 STREAM_KEY = '<YOUR_STREAM_KEY>'
@@ -160,12 +161,10 @@ def main():
 
     bitmovin.encodings.Encoding.wait_until_running(encoding_id=resource_response.resource.id)
 
-    MAX_RETRIES = 10000
+    live_details = None
     retry = 0
 
-    live_details = None
-
-    while retry < MAX_RETRIES:
+    while retry < LIVE_STREAM_INFORMATION_FETCH_MAX_RETRIES:
         try:
             live_details = bitmovin.encodings.Encoding.retrieve_live(encoding_id=resource_response.resource.id)
             break
