@@ -17,7 +17,7 @@ class DashManifestControlService(BitmovinObject):
         self.relative_url = relative_url
 
     def start(self, manifest_id):
-        self.parsing_utils.check_arg_valid(manifest_id)
+        self.parsing_utils.check_arg_valid_uuid(manifest_id)
         url = self.relative_url + '/{}/start'.format(manifest_id)
         response = self.http_client.post_empty_body(url)
 
@@ -29,7 +29,7 @@ class DashManifestControlService(BitmovinObject):
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
 
     def stop(self, manifest_id):
-        self.parsing_utils.check_arg_valid(manifest_id)
+        self.parsing_utils.check_arg_valid_uuid(manifest_id)
         url = self.relative_url + '/{}/stop'.format(manifest_id)
         response = self.http_client.post_empty_body(url)
 
@@ -41,7 +41,7 @@ class DashManifestControlService(BitmovinObject):
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
 
     def restart(self, manifest_id):
-        self.parsing_utils.check_arg_valid(manifest_id)
+        self.parsing_utils.check_arg_valid_uuid(manifest_id)
         url = self.relative_url + '/{}/restart'.format(manifest_id)
         response = self.http_client.post_empty_body(url)
 
@@ -53,7 +53,7 @@ class DashManifestControlService(BitmovinObject):
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
 
     def status(self, manifest_id):
-        self.parsing_utils.check_arg_valid(manifest_id)
+        self.parsing_utils.check_arg_valid_uuid(manifest_id)
         url = self.relative_url + '/{}/status'.format(manifest_id)
         response = self.http_client.get(url)
 

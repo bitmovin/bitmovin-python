@@ -10,11 +10,20 @@ class ParsingUtils(BitmovinObject):
         super().__init__()
 
     @classmethod
-    def check_arg_valid(cls, argument):
+    def check_arg_valid_uuid(cls, argument):
         if not argument:
-            raise MissingArgumentError('id_ must be an UUID')
+            raise MissingArgumentError('argument must be an UUID')
         if not isinstance(argument, str):
             raise InvalidTypeError('argument must be an UUID')
+
+    @classmethod
+    def check_not_blank(cls, argument):
+        if not argument:
+            raise MissingArgumentError('argument must not be blank')
+        if not isinstance(argument, str):
+            raise InvalidTypeError('argument must be an str')
+        if argument == '':
+            raise InvalidTypeError('argument must not be blank')
 
     def parse_bitmovin_resource_from_response(self, response, class_):
         response_data = response.data  # type: ResponseSuccessData
@@ -39,7 +48,5 @@ class ParsingUtils(BitmovinObject):
         for resource in resource_list:
             parsed_resource = class_.parse_from_json_object(json_object=resource)
             resources.append(parsed_resource)
-
-        self.logger.info('resources[] size: {}'.format(resources.__sizeof__()))
 
         return resources

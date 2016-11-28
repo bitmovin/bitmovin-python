@@ -6,3 +6,4 @@ from .encoding_output import EncodingOutput
 from .encoding_status import EncodingStatus
 from .stream import Stream
 from .stream_input import StreamInput
+from .encoding_live_details import EncodingLiveDetails
