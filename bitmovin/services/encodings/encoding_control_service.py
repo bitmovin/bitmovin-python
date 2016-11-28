@@ -17,7 +17,7 @@ class EncodingControlService(BitmovinObject):
         self.relative_url = relative_url
 
     def start(self, encoding_id):
-        self.parsing_utils.check_arg_valid(encoding_id)
+        self.parsing_utils.check_arg_valid_uuid(encoding_id)
         url = self.relative_url + '/{}/start'.format(encoding_id)
         response = self.http_client.post_empty_body(url)
 
@@ -29,7 +29,7 @@ class EncodingControlService(BitmovinObject):
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
 
     def stop(self, encoding_id):
-        self.parsing_utils.check_arg_valid(encoding_id)
+        self.parsing_utils.check_arg_valid_uuid(encoding_id)
         url = self.relative_url + '/{}/stop'.format(encoding_id)
         response = self.http_client.post_empty_body(url)
 
@@ -40,10 +40,11 @@ class EncodingControlService(BitmovinObject):
             return ResourceResponse(response=response, resource=created_resource)
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
 
-    def start_live(self, encoding_id):
-        self.parsing_utils.check_arg_valid(encoding_id)
+    def start_live(self, encoding_id, stream_key):
+        self.parsing_utils.check_arg_valid_uuid(encoding_id)
+        self.parsing_utils.check_not_blank(stream_key)
         url = self.relative_url + '/{}/live/start'.format(encoding_id)
-        response = self.http_client.post_empty_body(url)
+        response = self.http_client.post(url, {'streamKey': stream_key})
 
         if response.status == Status.ERROR.value:
             raise BitmovinApiError('Response was not successful', response)
@@ -53,7 +54,7 @@ class EncodingControlService(BitmovinObject):
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
 
     def stop_live(self, encoding_id):
-        self.parsing_utils.check_arg_valid(encoding_id)
+        self.parsing_utils.check_arg_valid_uuid(encoding_id)
         url = self.relative_url + '/{}/live/stop'.format(encoding_id)
         response = self.http_client.post_empty_body(url)
 
@@ -65,7 +66,7 @@ class EncodingControlService(BitmovinObject):
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
 
     def status(self, encoding_id):
-        self.parsing_utils.check_arg_valid(encoding_id)
+        self.parsing_utils.check_arg_valid_uuid(encoding_id)
         url = self.relative_url + '/{}/status'.format(encoding_id)
         response = self.http_client.get(url)
 
@@ -91,6 +92,26 @@ class EncodingControlService(BitmovinObject):
         self.logger.info("Encoding Status: {}".format(json.dumps(obj=encoding_status, cls=BitmovinJSONEncoder)))
 
         if encoding_status.status == 'FINISHED':
+            return True
+
+        raise BitmovinApiError("Encoding with ID '{}' was not successfull! Status: {}".format(
+            encoding_id, encoding_status.status), status_response)
+
+
+    def wait_until_running(self, encoding_id, check_interval=5):
+        status_response = None
+        encoding_status = EncodingStatus(None)
+
+        while encoding_status.status != 'RUNNING' and encoding_status.status != 'ERROR':
+            status_response = self.status(encoding_id=encoding_id)
+            encoding_status = status_response.resource  # type: EncodingStatus
+            self.logger.info("Encoding status: {}".format(encoding_status.status))
+            self.logger.info("Will check again in {} seconds...".format(check_interval))
+            time.sleep(check_interval)
+
+        self.logger.info("Encoding Status: {}".format(json.dumps(obj=encoding_status, cls=BitmovinJSONEncoder)))
+
+        if encoding_status.status == 'RUNNING':
             return True
 
         raise BitmovinApiError("Encoding with ID '{}' was not successfull! Status: {}".format(
