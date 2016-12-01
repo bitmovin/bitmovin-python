@@ -1,11 +1,12 @@
 import sys
 import datetime
-from bitmovin import Bitmovin, Encoding, HTTPSInput, S3Output, H264CodecConfiguration, \
+from bitmovin import Bitmovin, Encoding, HTTPSInput, GCSOutput, H264CodecConfiguration, \
     AACCodecConfiguration, H264Profile, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
     FMP4Muxing, MuxingStream, CloudRegion, DashManifest, FMP4Representation, FMP4RepresentationType, Period, \
     VideoAdaptationSet, AudioAdaptationSet, Analysis, AnalysisAudioStream, AnalysisVideoStream, \
     AnalysisDetails
 from bitmovin.errors import BitmovinError
+
 
 API_KEY = '<YOUR_API_KEY>'
 
@@ -13,9 +14,9 @@ API_KEY = '<YOUR_API_KEY>'
 HTTPS_INPUT_HOST = '<INSERT_YOUR_HTTPS_HOST>'
 HTTPS_INPUT_PATH = '<INSERT_YOUR_HTTPS_PATH>'
 
-S3_OUTPUT_ACCESSKEY = '<INSERT_YOUR_ACCESS_KEY>'
-S3_OUTPUT_SECRETKEY = '<INSERT_YOUR_SECRET_KEY>'
-S3_OUTPUT_BUCKETNAME = '<INSERT_YOUR_BUCKET_NAME>'
+GCS_OUTPUT_ACCESSKEY = '<YOUR_GCS_OUTPUT_ACCESSKEY>'
+GCS_OUTPUT_SECRETKEY = '<YOUR_GCS_OUTPUT_SECRETKEY>'
+GCS_OUTPUT_BUCKETNAME = '<YOUR_GCS_OUTPUT_BUCKETNAME>'
 
 date_component = str(datetime.datetime.now()).replace(' ', '_').replace(':', '-').split('.')[0].replace('_', '__')
 OUTPUT_BASE_PATH = '/your/example/output/path/{}/'.format(date_component)
@@ -27,10 +28,10 @@ def main():
     https_input = HTTPSInput(host=HTTPS_INPUT_HOST)
     https_input = bitmovin.inputs.HTTPS.create(https_input).resource
 
-    s3_output = S3Output(access_key=S3_OUTPUT_ACCESSKEY,
-                         secret_key=S3_OUTPUT_SECRETKEY,
-                         bucket_name=S3_OUTPUT_BUCKETNAME)
-    s3_output = bitmovin.outputs.S3.create(s3_output).resource
+    gcs_output = GCSOutput(access_key=GCS_OUTPUT_ACCESSKEY,
+                           secret_key=GCS_OUTPUT_SECRETKEY,
+                           bucket_name=GCS_OUTPUT_BUCKETNAME)
+    gcs_output = bitmovin.outputs.GCS.create(gcs_output).resource
 
     analysis = Analysis(path=HTTPS_INPUT_PATH, cloud_region=CloudRegion.GOOGLE_EUROPE_WEST_1)
     analysis_resource = bitmovin.inputs.HTTPS.analyze(input_id=https_input.id, analysis_object=analysis).resource
@@ -146,7 +147,7 @@ def main():
 
     acl_entry = ACLEntry(permission=ACLPermission.PUBLIC_READ)
 
-    video_muxing_1080p_output = EncodingOutput(output_id=s3_output.id,
+    video_muxing_1080p_output = EncodingOutput(output_id=gcs_output.id,
                                                output_path=OUTPUT_BASE_PATH + 'video/1080p/',
                                                acl=[acl_entry])
     video_muxing_1080p = FMP4Muxing(segment_length=4,
@@ -157,7 +158,7 @@ def main():
     video_muxing_1080p = bitmovin.encodings.Muxing.FMP4.create(object_=video_muxing_1080p,
                                                                encoding_id=encoding.id).resource
 
-    video_muxing_720p_output = EncodingOutput(output_id=s3_output.id,
+    video_muxing_720p_output = EncodingOutput(output_id=gcs_output.id,
                                               output_path=OUTPUT_BASE_PATH + 'video/720p/',
                                               acl=[acl_entry])
     video_muxing_720p = FMP4Muxing(segment_length=4,
@@ -168,7 +169,7 @@ def main():
     video_muxing_720p = bitmovin.encodings.Muxing.FMP4.create(object_=video_muxing_720p,
                                                               encoding_id=encoding.id).resource
 
-    video_muxing_480p_output = EncodingOutput(output_id=s3_output.id,
+    video_muxing_480p_output = EncodingOutput(output_id=gcs_output.id,
                                               output_path=OUTPUT_BASE_PATH + 'video/480p/',
                                               acl=[acl_entry])
     video_muxing_480p = FMP4Muxing(segment_length=4,
@@ -179,7 +180,7 @@ def main():
     video_muxing_480p = bitmovin.encodings.Muxing.FMP4.create(object_=video_muxing_480p,
                                                               encoding_id=encoding.id).resource
 
-    video_muxing_360p_output = EncodingOutput(output_id=s3_output.id,
+    video_muxing_360p_output = EncodingOutput(output_id=gcs_output.id,
                                               output_path=OUTPUT_BASE_PATH + 'video/360p/',
                                               acl=[acl_entry])
     video_muxing_360p = FMP4Muxing(segment_length=4,
@@ -190,7 +191,7 @@ def main():
     video_muxing_360p = bitmovin.encodings.Muxing.FMP4.create(object_=video_muxing_360p,
                                                               encoding_id=encoding.id).resource
 
-    video_muxing_240p_output = EncodingOutput(output_id=s3_output.id,
+    video_muxing_240p_output = EncodingOutput(output_id=gcs_output.id,
                                               output_path=OUTPUT_BASE_PATH + 'video/240p/',
                                               acl=[acl_entry])
     video_muxing_240p = FMP4Muxing(segment_length=4,
@@ -235,7 +236,7 @@ def main():
 
         segment_path = 'audio/{}_{}/'.format(analysis_audio_stream.language, analysis_audio_stream.channelFormat)
 
-        audio_muxing_output = EncodingOutput(output_id=s3_output.id,
+        audio_muxing_output = EncodingOutput(output_id=gcs_output.id,
                                              output_path=OUTPUT_BASE_PATH + segment_path,
                                              acl=[acl_entry])
 
@@ -267,7 +268,7 @@ def main():
     except BitmovinError as bitmovin_error:
         print("Exception occurred while waiting for encoding to finish: {}".format(bitmovin_error))
 
-    manifest_output = EncodingOutput(output_id=s3_output.id,
+    manifest_output = EncodingOutput(output_id=gcs_output.id,
                                      output_path=OUTPUT_BASE_PATH,
                                      acl=[acl_entry])
 
