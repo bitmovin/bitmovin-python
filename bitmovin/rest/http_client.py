@@ -2,6 +2,7 @@ import json
 import requests
 from urllib.parse import urljoin
 
+from bitmovin.package_information import NAME, VERSION
 from bitmovin.bitmovin_object import BitmovinObject
 from bitmovin.errors import MissingArgumentError, BitmovinApiError
 from bitmovin.resources import Response
@@ -15,7 +16,9 @@ class BitmovinHttpClient(BitmovinObject):
     API_BASE_URL = DEFAULT_PROTOCOL + "api.bitmovin.com/v1/"
 
     HTTP_HEADERS = {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'X-Api-Client': NAME,
+        'X-Api-Client-Version': VERSION
     }
 
     API_KEY_HTTP_HEADER_NAME = 'X-Api-Key'
