@@ -2,6 +2,7 @@ from .enums import Status
 from .resource import Resource
 from .abstract_custom_data_resource import AbstractCustomDataResource
 from .abstract_id_resource import AbstractIdResource
+from .abstract_name_description_resource import AbstractNameDescriptionResource
 from .enums import *
 from .link import Link
 from .message import Message

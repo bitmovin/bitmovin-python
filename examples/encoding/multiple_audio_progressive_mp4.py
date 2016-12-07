@@ -82,7 +82,7 @@ def main():
     audio_muxing_stream_1 = MuxingStream(audio_stream_1.id)
     audio_muxing_stream_2 = MuxingStream(audio_stream_2.id)
 
-    progressive_muxing = MP4Muxing(name="example_progressive_muxing.mp4",
+    progressive_muxing = MP4Muxing(filename="example_progressive_muxing.mp4",
                                    streams=[video_muxing_stream, audio_muxing_stream_1, audio_muxing_stream_2],
                                    outputs=[encoding_output])
 

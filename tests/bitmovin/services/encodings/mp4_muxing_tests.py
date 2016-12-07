@@ -140,7 +140,7 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
         :return: bool
         """
 
-        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.filename, second.filename)
         self.assertEqual(len(first.outputs), len(second.outputs))
         return True
 
@@ -156,7 +156,7 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
         muxing_stream = MuxingStream(stream_id=create_stream_response.resource.id)
 
         muxing = MP4Muxing(streams=[muxing_stream],
-                           name='myprogressive.mp4',
+                           filename='myprogressive.mp4',
                            outputs=stream.outputs)
         return muxing
 

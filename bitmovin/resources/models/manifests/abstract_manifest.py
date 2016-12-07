@@ -5,9 +5,9 @@ from bitmovin.utils import Serializable
 
 class AbstractManifest(AbstractModel, Serializable):
 
-    def __init__(self, id_, name, outputs, description=None, custom_data=None):
+    def __init__(self, id_, manifest_name, outputs, description=None, custom_data=None):
         super().__init__(id_=id_, custom_data=custom_data)
-        self.name = name
+        self.manifestName = manifest_name
         self.description = description
         self._outputs = None
         if outputs is not None and not isinstance(outputs, list):
@@ -17,12 +17,12 @@ class AbstractManifest(AbstractModel, Serializable):
     @classmethod
     def parse_from_json_object(cls, json_object):
         id_ = json_object['id']
-        name = json_object['name']
+        manifest_name = json_object['manifestName']
         outputs = json_object['outputs']
         description = json_object.get('description')
         custom_data = json_object.get('customData')
         abstract_manifest = AbstractManifest(
-            id_=id_, name=name, outputs=outputs, description=description, custom_data=custom_data)
+            id_=id_, manifest_name=manifest_name, outputs=outputs, description=description, custom_data=custom_data)
         return abstract_manifest
 
     @property

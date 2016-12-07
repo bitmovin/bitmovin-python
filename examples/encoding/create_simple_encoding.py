@@ -124,7 +124,7 @@ def main():
     manifest_output = EncodingOutput(output_id=s3_output.id,
                                      output_path=OUTPUT_BASE_PATH,
                                      acl=[acl_entry])
-    dash_manifest = DashManifest(name='example_manifest_sintel_dash.mpd',
+    dash_manifest = DashManifest(manifest_name='example_manifest_sintel_dash.mpd',
                                  outputs=[manifest_output])
     dash_manifest = bitmovin.manifests.DASH.create(dash_manifest).resource
     period = Period()
