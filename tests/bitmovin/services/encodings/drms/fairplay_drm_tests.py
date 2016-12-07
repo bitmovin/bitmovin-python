@@ -356,9 +356,12 @@ class FairPlayDRMTests(BitmovinTestCase):
         :return: bool
         """
 
-        self.assertEqual(first.segmentLength, second.segmentLength)
-        self.assertEqual(first.segmentNaming, second.segmentNaming)
-        self.assertEqual(first.initSegmentName, second.initSegmentName)
+        if first.segmentLength is not None:
+            self.assertEqual(first.segmentLength, second.segmentLength)
+        if first.segmentNaming is not None:
+            self.assertEqual(first.segmentNaming, second.segmentNaming)
+        if first.initSegmentName is not None:
+            self.assertEqual(first.initSegmentName, second.initSegmentName)
         self.assertEqual(len(first.outputs), len(second.outputs))
         return True
 
