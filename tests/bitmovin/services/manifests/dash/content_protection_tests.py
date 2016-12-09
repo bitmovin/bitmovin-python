@@ -157,6 +157,8 @@ class ContentProtectionTests(BitmovinTestCase):
         self.assertEqual(first.manifestName, second.manifestName)
         self.assertEqual(first.description, second.description)
         self.assertEqual(len(first.outputs), len(second.outputs))
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _compare_periods(self, first: Period, second: Period):
@@ -189,6 +191,8 @@ class ContentProtectionTests(BitmovinTestCase):
         self.assertEqual(first.description, second.description)
         self.assertEqual(first.encoderVersion, second.encoderVersion)
         self.assertEqual(first.cloudRegion, second.cloudRegion)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _compare_streams(self, first: Stream, second: Stream):
@@ -197,6 +201,8 @@ class ContentProtectionTests(BitmovinTestCase):
             self.assertEqual(len(first.inputStreams), len(second.inputStreams))
         if first.outputs:
             self.assertEqual(len(first.outputs), len(second.outputs))
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _compare_muxings(self, first: FMP4Muxing, second: FMP4Muxing):
@@ -204,12 +210,16 @@ class ContentProtectionTests(BitmovinTestCase):
         self.assertEqual(len(first.outputs), len(second.outputs))
         self.assertEqual(first.segmentLength, second.segmentLength)
         self.assertEqual(first.segmentNaming, second.segmentNaming)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _compare_drms(self, first: MarlinDRM, second: MarlinDRM):
         self.assertEqual(first.kid, second.kid)
         self.assertEqual(first.key, second.key)
         self.assertEqual(len(first.outputs), len(second.outputs))
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _compare_content_protections(self, first: ContentProtection, second: ContentProtection):
@@ -220,7 +230,8 @@ class ContentProtectionTests(BitmovinTestCase):
 
     def _get_sample_manifest(self):
         encoding_output = self._get_sample_encoding_output()
-        manifest = DashManifest(manifest_name='bitmovin-python_Sample_DASH_Manifest.mpd', outputs=[encoding_output])
+        manifest = DashManifest(manifest_name='bitmovin-python_Sample_DASH_Manifest.mpd', outputs=[encoding_output],
+                                name='Sample DASH Manifest')
 
         self.assertIsNotNone(manifest)
         self.assertIsNotNone(manifest.manifestName)
@@ -283,7 +294,8 @@ class ContentProtectionTests(BitmovinTestCase):
                             segment_length=4,
                             segment_naming='seg_%number%.m4s',
                             init_segment_name='init.mp4',
-                            outputs=[output])
+                            outputs=[output],
+                            name='Sample FMP4 Muxing')
         return muxing
 
     def _get_sample_stream(self):
@@ -304,7 +316,8 @@ class ContentProtectionTests(BitmovinTestCase):
 
         stream = Stream(codec_configuration_id=h264_codec_configuration.resource.id,
                         input_streams=[stream_input],
-                        outputs=[encoding_output])
+                        outputs=[encoding_output],
+                        name='Sample stream')
 
         self.assertIsNotNone(stream.codecConfigId)
         self.assertIsNotNone(stream.inputStreams)
@@ -356,7 +369,8 @@ class ContentProtectionTests(BitmovinTestCase):
         marlin_drm_settings = self.settings.get('sampleObjects').get('drmConfigurations').get('Marlin')
         drm = MarlinDRM(key=marlin_drm_settings[0].get('key'),
                         kid=marlin_drm_settings[0].get('kid'),
-                        outputs=[sample_output])
+                        outputs=[sample_output],
+                        name='Sample Marlin DRM')
         return drm
 
     def _get_sample_content_protection(self):

@@ -3,8 +3,9 @@ from . import AbstractOutput
 
 class FTPOutput(AbstractOutput):
 
-    def __init__(self, host, username, password, port=None, passive=None, id_=None, custom_data=None):
-        super().__init__(id_=id_, custom_data=custom_data)
+    def __init__(self, name, host, username, password, port=None, passive=None, id_=None, custom_data=None,
+                 description=None):
+        super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self.host = host
         self.port = port
         self.username = username
@@ -19,6 +20,9 @@ class FTPOutput(AbstractOutput):
         password = json_object.get('password')
         port = json_object.get('port')
         passive = json_object.get('passive')
+        name = json_object.get('name')
+        description = json_object.get('description')
         ftp_output = FTPOutput(
-            host=host, port=port, username=username, password=password, passive=passive, id_=id_)
+            host=host, port=port, username=username, password=password, passive=passive, id_=id_,
+            name=name, description=description)
         return ftp_output

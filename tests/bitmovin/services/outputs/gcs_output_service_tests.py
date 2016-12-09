@@ -104,6 +104,8 @@ class GCSOutputTests(BitmovinTestCase):
         """
         self.assertEqual(first.bucketName, second.bucketName)
         self.assertEqual(first.cloudRegion, second.cloudRegion)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
 
     def _get_sample_gcs_output(self):
         gcs_output_settings = self.settings.get('sampleObjects').get('outputs').get('gcs')\
@@ -112,7 +114,8 @@ class GCSOutputTests(BitmovinTestCase):
             access_key=gcs_output_settings.get('accessKey'),
             secret_key=gcs_output_settings.get('secretKey'),
             bucket_name=gcs_output_settings.get('bucketName'),
-            cloud_region=gcs_output_settings.get('cloudRegion')
+            cloud_region=gcs_output_settings.get('cloudRegion'),
+            name='Sample GCS Output'
         )
         self.assertIsNotNone(gcs_output.accessKey)
         self.assertIsNotNone(gcs_output.secretKey)

@@ -142,6 +142,8 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
 
         self.assertEqual(first.filename, second.filename)
         self.assertEqual(len(first.outputs), len(second.outputs))
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _get_sample_muxing(self):
@@ -157,7 +159,8 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
 
         muxing = MP4Muxing(streams=[muxing_stream],
                            filename='myprogressive.mp4',
-                           outputs=stream.outputs)
+                           outputs=stream.outputs,
+                           name='Sample MP4 Muxing')
         return muxing
 
     def _get_sample_stream(self):
@@ -180,7 +183,8 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
 
         stream = Stream(codec_configuration_id=h264_codec_configuration.resource.id,
                         input_streams=[stream_input],
-                        outputs=[encoding_output])
+                        outputs=[encoding_output],
+                        name='Sample Stream')
 
         self.assertIsNotNone(stream.codecConfigId)
         self.assertIsNotNone(stream.inputStreams)

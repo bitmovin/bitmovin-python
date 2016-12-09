@@ -116,14 +116,16 @@ class HTTPSInputTests(BitmovinTestCase):
         :return: bool
         """
         self.assertEqual(first.host, second.host)
-        #self.assertEqual(first.username, second.username)  # issue 574
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
 
     def _get_sample_https_input(self):
         https_input_settings = self.settings.get('sampleObjects').get('inputs').get('https')\
             .get('cdd1cb62-592a-40b5-8288-cda378cd1aa8')
         files = https_input_settings.get('files')
         https_input = HTTPSInput(
-            host=https_input_settings.get('host')
+            host=https_input_settings.get('host'),
+            name='Sample HTTPS input'
         )
         self.assertIsNotNone(https_input.host)
         return https_input, files

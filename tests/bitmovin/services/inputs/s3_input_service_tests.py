@@ -104,6 +104,8 @@ class S3InputTests(BitmovinTestCase):
         """
         self.assertEqual(first.bucketName, second.bucketName)
         self.assertEqual(first.cloudRegion, second.cloudRegion)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
 
     def _get_sample_s3_input(self):
         s3_input_settings = self.settings.get('sampleObjects').get('inputs').get('s3')\
@@ -113,7 +115,8 @@ class S3InputTests(BitmovinTestCase):
             access_key=s3_input_settings.get('accessKey'),
             secret_key=s3_input_settings.get('secretKey'),
             bucket_name=s3_input_settings.get('bucketName'),
-            cloud_region=s3_input_settings.get('cloudRegion')
+            cloud_region=s3_input_settings.get('cloudRegion'),
+            name='Sample S3 Input'
         )
         self.assertIsNotNone(s3_input.accessKey)
         self.assertIsNotNone(s3_input.secretKey)

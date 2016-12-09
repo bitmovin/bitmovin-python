@@ -42,6 +42,8 @@ class PeriodTests(BitmovinTestCase):
         self.assertEqual(first.manifestName, second.manifestName)
         self.assertEqual(first.description, second.description)
         self.assertEqual(len(first.outputs), len(second.outputs))
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _compare_periods(self, first: Period, second: Period):
@@ -52,7 +54,8 @@ class PeriodTests(BitmovinTestCase):
     def _get_sample_manifest(self):
 
         encoding_output = self._get_sample_encoding_output()
-        manifest = DashManifest(manifest_name='bitmovin-python_Sample_DASH_Manifest.mpd', outputs=[encoding_output])
+        manifest = DashManifest(manifest_name='bitmovin-python_Sample_DASH_Manifest.mpd', outputs=[encoding_output],
+                                name='Sample DASH Manifest')
 
         self.assertIsNotNone(manifest)
         self.assertIsNotNone(manifest.manifestName)

@@ -208,6 +208,8 @@ class MarlinDRMTests(BitmovinTestCase):
         self.assertEqual(first.kid, second.kid)
         self.assertEqual(first.key, second.key)
         self.assertEqual(len(first.outputs), len(second.outputs))
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _compare_muxings(self, first: FMP4Muxing, second: FMP4Muxing):
@@ -221,13 +223,16 @@ class MarlinDRMTests(BitmovinTestCase):
         self.assertEqual(first.segmentLength, second.segmentLength)
         self.assertEqual(first.segmentNaming, second.segmentNaming)
         self.assertEqual(len(first.outputs), len(second.outputs))
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _get_sample_drm_marlin(self):
         marlin_drm_settings = self.settings.get('sampleObjects').get('drmConfigurations').get('Marlin')
 
         drm = MarlinDRM(key=marlin_drm_settings[0].get('key'),
-                        kid=marlin_drm_settings[0].get('kid'))
+                        kid=marlin_drm_settings[0].get('kid'),
+                        name='Sample Marlin DRM')
 
         return drm
 
@@ -243,7 +248,7 @@ class MarlinDRMTests(BitmovinTestCase):
         muxing_stream = MuxingStream(stream_id=create_stream_response.resource.id)
 
         muxing = FMP4Muxing(streams=[muxing_stream], segment_length=4, segment_naming='seg_%number%.ts',
-                            outputs=stream.outputs)
+                            outputs=stream.outputs, name='Sample FMP4 Muxing')
         return muxing
 
     def _get_sample_stream(self):
@@ -267,7 +272,8 @@ class MarlinDRMTests(BitmovinTestCase):
 
         stream = Stream(codec_configuration_id=h264_codec_configuration.resource.id,
                         input_streams=[stream_input],
-                        outputs=[encoding_output])
+                        outputs=[encoding_output],
+                        name='Sample Stream')
 
         self.assertIsNotNone(stream.codecConfigId)
         self.assertIsNotNone(stream.inputStreams)

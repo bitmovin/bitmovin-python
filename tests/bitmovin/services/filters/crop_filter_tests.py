@@ -106,10 +106,12 @@ class CropFilterTests(BitmovinTestCase):
         self.assertEqual(first.bottom, second.bottom)
         self.assertEqual(first.left, second.left)
         self.assertEqual(first.right, second.right)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _get_sample_crop_filter(self):
-        crop_filter = CropFilter(right=10, top=11)
+        crop_filter = CropFilter(right=10, top=11, name='Sample Crop Filter 10 11')
         self.assertIsNotNone(crop_filter.right)
         self.assertIsNotNone(crop_filter.top)
         return crop_filter

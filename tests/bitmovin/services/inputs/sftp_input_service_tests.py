@@ -113,6 +113,8 @@ class SFTPInputTests(BitmovinTestCase):
         :return: bool
         """
         self.assertEqual(first.host, second.host)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         #self.assertEqual(first.username, second.username)  # issue 574
 
     def _get_sample_sftp_input(self):
@@ -122,7 +124,8 @@ class SFTPInputTests(BitmovinTestCase):
         sftp_input = SFTPInput(
             host=sftp_input_settings.get('host'),
             username=sftp_input_settings.get('username'),
-            password=sftp_input_settings.get('password')
+            password=sftp_input_settings.get('password'),
+            name='Sample SFTP input'
         )
         self.assertIsNotNone(sftp_input.host)
         self.assertIsNotNone(sftp_input.username)

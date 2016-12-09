@@ -103,10 +103,12 @@ class RotateFilterTests(BitmovinTestCase):
         :return: bool
         """
         self.assertEqual(first.rotation, second.rotation)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _get_sample_rotate_filter(self):
-        rotate_filter = RotateFilter(rotation=90)
+        rotate_filter = RotateFilter(rotation=90, name='Sample Rotate filter 90')
         self.assertIsNotNone(rotate_filter.rotation)
         return rotate_filter
 

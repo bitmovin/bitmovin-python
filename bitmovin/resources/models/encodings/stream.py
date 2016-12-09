@@ -1,14 +1,16 @@
 from bitmovin.resources.models import AbstractModel
+from bitmovin.resources import AbstractNameDescriptionResource
 from bitmovin.errors import InvalidTypeError
 from bitmovin.utils import Serializable
 from .stream_input import StreamInput
 from .encoding_output import EncodingOutput
 
 
-class Stream(AbstractModel, Serializable):
+class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
 
-    def __init__(self, codec_configuration_id, input_streams=None, outputs=None, id_=None, custom_data=None):
-        super().__init__(id_=id_, custom_data=custom_data)
+    def __init__(self, name, codec_configuration_id, input_streams=None, outputs=None, id_=None, custom_data=None,
+                 description=None):
+        super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self._inputStreams = None
         self._outputs = None
         self.codecConfigId = codec_configuration_id
@@ -26,9 +28,12 @@ class Stream(AbstractModel, Serializable):
         codec_configuration_id = json_object['codecConfigId']
         input_streams = json_object.get('inputStreams')
         outputs = json_object.get('outputs')
+        name = json_object.get('name')
+        description = json_object.get('description')
 
         stream = Stream(id_=id_, custom_data=custom_data,
-                        codec_configuration_id=codec_configuration_id, input_streams=input_streams, outputs=outputs)
+                        codec_configuration_id=codec_configuration_id, input_streams=input_streams, outputs=outputs,
+                        name=name, description=description)
         return stream
 
     @property

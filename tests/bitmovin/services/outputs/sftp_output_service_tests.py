@@ -113,7 +113,8 @@ class SFTPOutputTests(BitmovinTestCase):
         :return: bool
         """
         self.assertEqual(first.host, second.host)
-        #self.assertEqual(first.username, second.username)  # issue 574
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
 
     def _get_sample_sftp_output(self):
         sftp_output_settings = self.settings.get('sampleObjects').get('outputs').get('sftp')\
@@ -121,7 +122,8 @@ class SFTPOutputTests(BitmovinTestCase):
         sftp_output = SFTPOutput(
             host=sftp_output_settings.get('host'),
             username=sftp_output_settings.get('username'),
-            password=sftp_output_settings.get('password')
+            password=sftp_output_settings.get('password'),
+            name='Sample SFTP Output'
         )
         self.assertIsNotNone(sftp_output.host)
         self.assertIsNotNone(sftp_output.username)

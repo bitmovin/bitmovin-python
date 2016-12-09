@@ -144,6 +144,8 @@ class EncodingFMP4MuxingTests(BitmovinTestCase):
         self.assertEqual(len(first.outputs), len(second.outputs))
         self.assertEqual(first.segmentLength, second.segmentLength)
         self.assertEqual(first.segmentNaming, second.segmentNaming)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _get_sample_muxing(self):
@@ -161,7 +163,8 @@ class EncodingFMP4MuxingTests(BitmovinTestCase):
                             segment_length=4,
                             segment_naming='seg_%number%.m4s',
                             init_segment_name='init.mp4',
-                            outputs=stream.outputs)
+                            outputs=stream.outputs,
+                            name='Sample FMP4 Muxing')
         return muxing
 
     def _get_sample_stream(self):
@@ -184,7 +187,8 @@ class EncodingFMP4MuxingTests(BitmovinTestCase):
 
         stream = Stream(codec_configuration_id=h264_codec_configuration.resource.id,
                         input_streams=[stream_input],
-                        outputs=[encoding_output])
+                        outputs=[encoding_output],
+                        name='Sample Stream')
 
         self.assertIsNotNone(stream.codecConfigId)
         self.assertIsNotNone(stream.inputStreams)

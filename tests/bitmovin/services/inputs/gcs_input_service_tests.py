@@ -104,6 +104,8 @@ class GCSInputTests(BitmovinTestCase):
         """
         self.assertEqual(first.bucketName, second.bucketName)
         self.assertEqual(first.cloudRegion, second.cloudRegion)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
 
     def _get_sample_gcs_input(self):
         gcs_input_settings = self.settings.get('sampleObjects').get('inputs').get('gcs')\
@@ -113,7 +115,8 @@ class GCSInputTests(BitmovinTestCase):
             access_key=gcs_input_settings.get('accessKey'),
             secret_key=gcs_input_settings.get('secretKey'),
             bucket_name=gcs_input_settings.get('bucketName'),
-            cloud_region=gcs_input_settings.get('cloudRegion')
+            cloud_region=gcs_input_settings.get('cloudRegion'),
+            name='Sample GCS Input'
         )
         self.assertIsNotNone(gcs_input.accessKey)
         self.assertIsNotNone(gcs_input.secretKey)

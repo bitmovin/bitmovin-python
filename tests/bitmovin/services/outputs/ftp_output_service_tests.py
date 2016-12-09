@@ -115,7 +115,8 @@ class FTPOutputTests(BitmovinTestCase):
         :return: bool
         """
         self.assertEqual(first.host, second.host)
-        #self.assertEqual(first.username, second.username)  # issue 574
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
 
     def _get_sample_ftp_output(self):
         ftp_output_settings = self.settings.get('sampleObjects').get('outputs').get('ftp')\
@@ -123,7 +124,8 @@ class FTPOutputTests(BitmovinTestCase):
         ftp_output = FTPOutput(
             host=ftp_output_settings.get('host'),
             username=ftp_output_settings.get('username'),
-            password=ftp_output_settings.get('password')
+            password=ftp_output_settings.get('password'),
+            name='Sample FTP Output'
         )
         self.assertIsNotNone(ftp_output.host)
         self.assertIsNotNone(ftp_output.username)

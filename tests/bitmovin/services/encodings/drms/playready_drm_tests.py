@@ -195,6 +195,8 @@ class PlayReadyDRMTests(BitmovinTestCase):
         self.assertEqual(first.method, second.method)
         self.assertEqual(first.laUrl, second.laUrl)
         self.assertEqual(len(first.outputs), len(second.outputs))
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _compare_muxings(self, first: FMP4Muxing, second: FMP4Muxing):
@@ -208,6 +210,8 @@ class PlayReadyDRMTests(BitmovinTestCase):
         self.assertEqual(first.segmentLength, second.segmentLength)
         self.assertEqual(first.segmentNaming, second.segmentNaming)
         self.assertEqual(len(first.outputs), len(second.outputs))
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _get_sample_drm_playready(self):
@@ -216,7 +220,8 @@ class PlayReadyDRMTests(BitmovinTestCase):
         drm = PlayReadyDRM(key_seed=playready_drm_settings[0].get('keySeed'),
                            kid=playready_drm_settings[0].get('kid'),
                            method=playready_drm_settings[0].get('method'),
-                           la_url=playready_drm_settings[0].get('laUrl'))
+                           la_url=playready_drm_settings[0].get('laUrl'),
+                           name='Sample Playready DRM')
 
         return drm
 
@@ -232,7 +237,7 @@ class PlayReadyDRMTests(BitmovinTestCase):
         muxing_stream = MuxingStream(stream_id=create_stream_response.resource.id)
 
         muxing = FMP4Muxing(streams=[muxing_stream], segment_length=4, segment_naming='seg_%number%.ts',
-                            outputs=stream.outputs)
+                            outputs=stream.outputs, name='Sample FMP4 Muxing')
         return muxing
 
     def _get_sample_stream(self):
@@ -255,7 +260,8 @@ class PlayReadyDRMTests(BitmovinTestCase):
 
         stream = Stream(codec_configuration_id=h264_codec_configuration.resource.id,
                         input_streams=[stream_input],
-                        outputs=[encoding_output])
+                        outputs=[encoding_output],
+                        name='Sample Stream')
 
         self.assertIsNotNone(stream.codecConfigId)
         self.assertIsNotNone(stream.inputStreams)

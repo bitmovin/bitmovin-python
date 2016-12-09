@@ -139,6 +139,8 @@ class EncodingStreamTests(BitmovinTestCase):
         :return: bool
         """
         self.assertEqual(first.codecConfigId, second.codecConfigId)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         if first.inputStreams:
             self.assertEqual(len(first.inputStreams), len(second.inputStreams))
         if first.outputs:
@@ -165,7 +167,8 @@ class EncodingStreamTests(BitmovinTestCase):
 
         stream = Stream(codec_configuration_id=h264_codec_configuration.resource.id,
                         input_streams=[stream_input],
-                        outputs=[encoding_output])
+                        outputs=[encoding_output],
+                        name='Sample Stream')
 
         self.assertIsNotNone(stream.codecConfigId)
         self.assertIsNotNone(stream.inputStreams)

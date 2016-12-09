@@ -107,10 +107,13 @@ class WatermarkFilterTests(BitmovinTestCase):
         self.assertEqual(first.bottom, second.bottom)
         self.assertEqual(first.left, second.left)
         self.assertEqual(first.right, second.right)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _get_sample_watermark_filter(self):
-        watermark_filter = WatermarkFilter(image='http://www.bitmovin.com/favicon.ico', right=10, top=10)
+        watermark_filter = WatermarkFilter(image='http://www.bitmovin.com/favicon.ico', right=10, top=10,
+                                           name='Sample Watermark Filter bitmovin icon')
         self.assertIsNotNone(watermark_filter.image)
         self.assertIsNotNone(watermark_filter.right)
         self.assertIsNotNone(watermark_filter.top)

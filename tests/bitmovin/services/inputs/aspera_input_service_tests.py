@@ -115,6 +115,8 @@ class AsperaInputTests(BitmovinTestCase):
         :return: bool
         """
         self.assertEqual(first.host, second.host)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
 
     def _get_sample_aspera_input(self):
         aspera_input_settings = self.settings.get('sampleObjects').get('inputs').get('aspera')\
@@ -123,7 +125,9 @@ class AsperaInputTests(BitmovinTestCase):
         aspera_input = AsperaInput(
             host=aspera_input_settings.get('host'),
             username=aspera_input_settings.get('username'),
-            password=aspera_input_settings.get('password')
+            password=aspera_input_settings.get('password'),
+            name='Sample Aspera Input',
+            description='Descriptive words'
         )
         self.assertIsNotNone(aspera_input.host)
         self.assertIsNotNone(aspera_input.username)

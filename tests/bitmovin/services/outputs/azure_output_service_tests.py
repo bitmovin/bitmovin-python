@@ -103,6 +103,8 @@ class AzureOutputTests(BitmovinTestCase):
         :return: bool
         """
         self.assertEqual(first.container, second.container)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
 
     def _get_sample_azure_output(self):
         azure_output_settings = self.settings.get('sampleObjects').get('outputs').get('azure')\
@@ -110,7 +112,8 @@ class AzureOutputTests(BitmovinTestCase):
         azure_output = AzureOutput(
             account_name=azure_output_settings.get('accountName'),
             account_key=azure_output_settings.get('accountKey'),
-            container=azure_output_settings.get('container')
+            container=azure_output_settings.get('container'),
+            name='Sample Azure Output'
         )
         self.assertIsNotNone(azure_output.accountName)
         self.assertIsNotNone(azure_output.accountKey)

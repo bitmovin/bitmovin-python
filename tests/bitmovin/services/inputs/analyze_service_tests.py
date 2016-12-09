@@ -316,14 +316,15 @@ class AnalyzeServiceTests(BitmovinTestCase):
         :return: bool
         """
         self.assertEqual(first.host, second.host)
-        #self.assertEqual(first.username, second.username)  # issue 574
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
 
     def _get_https_input_multiple_audio_tracks(self):
         http_input_settings = self.settings.get('sampleObjects').get('inputs').get('http')\
             .get('4fa9fec1-b75e-4e2c-a01b-6e0cb7e3cf3e')
         input_file = http_input_settings.get('files').get('1c08c700-abcb-41f8-9cb7-3387503c1e50')
         self.assertIsNotNone(input_file)
-        https_input = HTTPSInput(host=http_input_settings.get('host'))
+        https_input = HTTPSInput(host=http_input_settings.get('host'), name='Sample HTTPS input multiple audio tracks')
         return https_input, input_file
 
     def _get_https_input_multiple_audio_tracks_second(self):
@@ -331,7 +332,8 @@ class AnalyzeServiceTests(BitmovinTestCase):
             .get('4fa9fec1-b75e-4e2c-a01b-6e0cb7e3cf3e')
         input_file = http_input_settings.get('files').get('7fd49d67-562b-4027-8e94-59b125bb2ef7')
         self.assertIsNotNone(input_file)
-        https_input = HTTPSInput(host=http_input_settings.get('host'))
+        https_input = HTTPSInput(host=http_input_settings.get('host'),
+                                 name='Sample HTTPS input multiple audio tracks 2')
         return https_input, input_file
 
 if __name__ == '__main__':

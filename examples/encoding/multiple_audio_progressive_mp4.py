@@ -19,12 +19,13 @@ S3_OUTPUT_PATH = '<INSERT_YOUR_OUTPUT_PATH>'
 def main():
     bitmovin = Bitmovin(api_key=API_KEY)
 
-    https_input = HTTPSInput(host=HTTPS_INPUT_HOST)
+    https_input = HTTPSInput(host=HTTPS_INPUT_HOST, name='multiple_audio_progressive_mp4 HTTPS input')
     https_input = bitmovin.inputs.HTTPS.create(https_input).resource
 
     s3_output = S3Output(access_key=S3_OUTPUT_ACCESSKEY,
                          secret_key=S3_OUTPUT_SECRETKEY,
-                         bucket_name=S3_OUTPUT_BUCKETNAME)
+                         bucket_name=S3_OUTPUT_BUCKETNAME,
+                         name='Sample S3 Output')
     s3_output = bitmovin.outputs.S3.create(s3_output).resource
 
     encoding = Encoding(name="bitmovin-python example",
@@ -59,17 +60,20 @@ def main():
                                      position=2)
 
     video_stream = Stream(codec_configuration_id=video_codec_configuration.id,
-                          input_streams=[video_input_stream])
+                          input_streams=[video_input_stream],
+                          name='Sample Video Stream')
     video_stream = bitmovin.encodings.Stream.create(object_=video_stream,
                                                     encoding_id=encoding.id).resource
 
     audio_stream_1 = Stream(codec_configuration_id=audio_codec_configuration.id,
-                            input_streams=[audio_input_stream_1])
+                            input_streams=[audio_input_stream_1],
+                            name='Sample Audio Stream 1')
     audio_stream_1 = bitmovin.encodings.Stream.create(object_=audio_stream_1,
                                                       encoding_id=encoding.id).resource
 
     audio_stream_2 = Stream(codec_configuration_id=audio_codec_configuration.id,
-                            input_streams=[audio_input_stream_2])
+                            input_streams=[audio_input_stream_2],
+                            name='Sample Audio Stream 2')
     audio_stream_2 = bitmovin.encodings.Stream.create(object_=audio_stream_2,
                                                       encoding_id=encoding.id).resource
 
@@ -84,7 +88,8 @@ def main():
 
     progressive_muxing = MP4Muxing(filename="example_progressive_muxing.mp4",
                                    streams=[video_muxing_stream, audio_muxing_stream_1, audio_muxing_stream_2],
-                                   outputs=[encoding_output])
+                                   outputs=[encoding_output],
+                                   name='Sample Progressive Muxing')
 
     progressive_muxing = bitmovin.encodings.Muxing.MP4.create(object_=progressive_muxing,
                                                               encoding_id=encoding.id)

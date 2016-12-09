@@ -13,7 +13,7 @@ HTTPS_INPUT_PATH = '<INSERT_YOUR_HTTPS_PATH>'
 def main():
     bitmovin = Bitmovin(api_key=API_KEY)
 
-    https_input = HTTPSInput(host=HTTPS_INPUT_HOST)
+    https_input = HTTPSInput(host=HTTPS_INPUT_HOST, name='retrieve_audio_language_from_analysis HTTPS input')
     https_input = bitmovin.inputs.HTTPS.create(https_input).resource
 
     analysis = Analysis(path=HTTPS_INPUT_PATH, cloud_region=CloudRegion.GOOGLE_EUROPE_WEST_1)

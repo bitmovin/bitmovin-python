@@ -104,6 +104,8 @@ class S3OutputTests(BitmovinTestCase):
         """
         self.assertEqual(first.bucketName, second.bucketName)
         self.assertEqual(first.cloudRegion, second.cloudRegion)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
 
     def _get_sample_s3_output(self):
         s3_output_settings = self.settings.get('sampleObjects').get('outputs').get('s3')\
@@ -112,7 +114,8 @@ class S3OutputTests(BitmovinTestCase):
             access_key=s3_output_settings.get('accessKey'),
             secret_key=s3_output_settings.get('secretKey'),
             bucket_name=s3_output_settings.get('bucketName'),
-            cloud_region=s3_output_settings.get('cloudRegion')
+            cloud_region=s3_output_settings.get('cloudRegion'),
+            name='Sample S3 Output'
         )
         self.assertIsNotNone(s3_output.accessKey)
         self.assertIsNotNone(s3_output.secretKey)

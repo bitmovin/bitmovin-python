@@ -20,7 +20,8 @@ def get_sample_s3_output():
         access_key=s3_output_settings.get('accessKey'),
         secret_key=s3_output_settings.get('secretKey'),
         bucket_name=s3_output_settings.get('bucketName'),
-        cloud_region=s3_output_settings.get('cloudRegion')
+        cloud_region=s3_output_settings.get('cloudRegion'),
+        name='Sample S3 Output'
     )
     if s3_output.accessKey is None:
         raise BitmovinError('Could not get accessKey')
@@ -43,7 +44,8 @@ def get_sample_s3_input():
         access_key=s3_input_settings.get('accessKey'),
         secret_key=s3_input_settings.get('secretKey'),
         bucket_name=s3_input_settings.get('bucketName'),
-        cloud_region=s3_input_settings.get('cloudRegion')
+        cloud_region=s3_input_settings.get('cloudRegion'),
+        name='Sample S3 Input'
     )
     if s3_input.accessKey is None:
         raise BitmovinError('Could not get accessKey')

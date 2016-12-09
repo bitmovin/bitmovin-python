@@ -21,12 +21,13 @@ OUTPUT_BASE_PATH = '<INSERT_YOUR_BASE_DESTINATION_PATH>'
 def main():
     bitmovin = Bitmovin(api_key=API_KEY)
 
-    https_input = HTTPSInput(host=HTTPS_INPUT_HOST)
+    https_input = HTTPSInput(name='create_simple_encoding HTTPS input', host=HTTPS_INPUT_HOST)
     https_input = bitmovin.inputs.HTTPS.create(https_input).resource
 
     s3_output = S3Output(access_key=S3_OUTPUT_ACCESSKEY,
                          secret_key=S3_OUTPUT_SECRETKEY,
-                         bucket_name=S3_OUTPUT_BUCKETNAME)
+                         bucket_name=S3_OUTPUT_BUCKETNAME,
+                         name='Sample S3 Output')
     s3_output = bitmovin.outputs.S3.create(s3_output).resource
 
     encoding = Encoding(name='example encoding',
@@ -63,17 +64,17 @@ def main():
                                      selection_mode=SelectionMode.AUTO)
 
     video_stream_1080p = Stream(codec_configuration_id=video_codec_configuration_1080p.id,
-                                input_streams=[video_input_stream])
+                                input_streams=[video_input_stream], name='Sample Stream 1080p')
     video_stream_1080p = bitmovin.encodings.Stream.create(object_=video_stream_1080p,
                                                           encoding_id=encoding.id).resource
 
     video_stream_720p = Stream(codec_configuration_id=video_codec_configuration_720p.id,
-                               input_streams=[video_input_stream])
+                               input_streams=[video_input_stream], name='Sample Stream 720p')
     video_stream_720p = bitmovin.encodings.Stream.create(object_=video_stream_720p,
                                                          encoding_id=encoding.id).resource
 
     audio_stream = Stream(codec_configuration_id=audio_codec_configuration.id,
-                          input_streams=[audio_input_stream])
+                          input_streams=[audio_input_stream], name='Sample Stream AUDIO')
     audio_stream = bitmovin.encodings.Stream.create(object_=audio_stream,
                                                     encoding_id=encoding.id).resource
 
@@ -90,7 +91,8 @@ def main():
                                     segment_naming='seg_%number%.m4s',
                                     init_segment_name='init.mp4',
                                     streams=[video_muxing_stream_1080p],
-                                    outputs=[video_muxing_1080p_output])
+                                    outputs=[video_muxing_1080p_output],
+                                    name='Sample Muxing 1080p')
     video_muxing_1080p = bitmovin.encodings.Muxing.FMP4.create(object_=video_muxing_1080p,
                                                                encoding_id=encoding.id).resource
     video_muxing_720p_output = EncodingOutput(output_id=s3_output.id,
@@ -100,7 +102,8 @@ def main():
                                    segment_naming='seg_%number%.m4s',
                                    init_segment_name='init.mp4',
                                    streams=[video_muxing_stream_720p],
-                                   outputs=[video_muxing_720p_output])
+                                   outputs=[video_muxing_720p_output],
+                                   name='Sample Muxing 720p')
     video_muxing_720p = bitmovin.encodings.Muxing.FMP4.create(object_=video_muxing_720p,
                                                               encoding_id=encoding.id).resource
     audio_muxing_output = EncodingOutput(output_id=s3_output.id,
@@ -110,7 +113,8 @@ def main():
                               segment_naming='seg_%number%.m4s',
                               init_segment_name='init.mp4',
                               streams=[audio_muxing_stream],
-                              outputs=[audio_muxing_output])
+                              outputs=[audio_muxing_output],
+                              name='Sample Muxing AUDIO')
     audio_muxing = bitmovin.encodings.Muxing.FMP4.create(object_=audio_muxing,
                                                          encoding_id=encoding.id).resource
 
@@ -125,7 +129,8 @@ def main():
                                      output_path=OUTPUT_BASE_PATH,
                                      acl=[acl_entry])
     dash_manifest = DashManifest(manifest_name='example_manifest_sintel_dash.mpd',
-                                 outputs=[manifest_output])
+                                 outputs=[manifest_output],
+                                 name='Sample DASH Manifest')
     dash_manifest = bitmovin.manifests.DASH.create(dash_manifest).resource
     period = Period()
     period = bitmovin.manifests.DASH.add_period(object_=period, manifest_id=dash_manifest.id).resource

@@ -1,12 +1,10 @@
 from bitmovin.resources.models import AbstractModel
+from bitmovin.resources import AbstractNameDescriptionResource
 
-
-class AbstractCodecConfiguration(AbstractModel):
+class AbstractCodecConfiguration(AbstractNameDescriptionResource, AbstractModel):
 
     def __init__(self, id_, name, description=None, custom_data=None):
-        super().__init__(id_=id_, custom_data=custom_data)
-        self.name = name
-        self.description = description
+        super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
 
     @classmethod
     def parse_from_json_object(cls, json_object):

@@ -103,6 +103,8 @@ class AzureInputTests(BitmovinTestCase):
         :return: bool
         """
         self.assertEqual(first.container, second.container)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
 
     def _get_sample_azure_input(self):
         azure_input_settings = self.settings.get('sampleObjects').get('inputs').get('azure')\
@@ -111,7 +113,8 @@ class AzureInputTests(BitmovinTestCase):
         azure_input = AzureInput(
             account_name=azure_input_settings.get('accountName'),
             account_key=azure_input_settings.get('accountKey'),
-            container=azure_input_settings.get('container')
+            container=azure_input_settings.get('container'),
+            name='Sample Azure input'
         )
         self.assertIsNotNone(azure_input.accountName)
         self.assertIsNotNone(azure_input.accountKey)

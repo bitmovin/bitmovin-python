@@ -1,15 +1,16 @@
 from bitmovin.errors import InvalidTypeError
 from bitmovin.resources.models import AbstractModel
+from bitmovin.resources import AbstractNameDescriptionResource
 from bitmovin.resources.models.encodings.encoding_output import EncodingOutput
 from bitmovin.utils import Serializable
 from .muxing_stream import MuxingStream
 
 
-class Muxing(AbstractModel, Serializable):
+class Muxing(AbstractNameDescriptionResource, AbstractModel, Serializable):
 
-    def __init__(self, streams, outputs=None, id_=None, custom_data=None):
+    def __init__(self, name, streams, outputs=None, id_=None, custom_data=None, description=None):
 
-        super().__init__(id_=id_, custom_data=custom_data)
+        super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self._streams = []
         self._outputs = None
         if streams is None or not isinstance(streams, list):
@@ -25,7 +26,10 @@ class Muxing(AbstractModel, Serializable):
         custom_data = json_object.get('customData')
         streams = json_object.get('streams')
         outputs = json_object.get('outputs')
-        muxing = Muxing(id_=id_, custom_data=custom_data, streams=streams, outputs=outputs)
+        name = json_object.get('name')
+        description = json_object.get('description')
+        muxing = Muxing(id_=id_, custom_data=custom_data, streams=streams, outputs=outputs,
+                        name=name, description=description)
         return muxing
 
     @property
