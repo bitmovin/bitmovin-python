@@ -3,7 +3,7 @@ from . import AbstractFilter
 
 class RotateFilter(AbstractFilter):
 
-    def __init__(self, name, rotation=None, id_=None, custom_data=None, description=None):
+    def __init__(self, name=None, rotation=None, id_=None, custom_data=None, description=None):
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self.rotation = rotation
 

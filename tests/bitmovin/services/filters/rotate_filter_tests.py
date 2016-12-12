@@ -31,6 +31,15 @@ class RotateFilterTests(BitmovinTestCase):
         self.assertIsNotNone(filter_resource_response.resource.id)
         self._compare_rotate_filters(sample_filter, filter_resource_response.resource)
 
+    def test_create_rotate_filter_without_name(self):
+        sample_filter = self._get_sample_rotate_filter()
+        sample_filter.name = None
+        filter_resource_response = self.bitmovin.filters.Rotate.create(sample_filter)
+        self.assertIsNotNone(filter_resource_response)
+        self.assertIsNotNone(filter_resource_response.resource)
+        self.assertIsNotNone(filter_resource_response.resource.id)
+        self._compare_rotate_filters(sample_filter, filter_resource_response.resource)
+
     def test_retrieve_rotate_filter(self):
         sample_filter = self._get_sample_rotate_filter()
         created_filter_response = self.bitmovin.filters.Rotate.create(sample_filter)

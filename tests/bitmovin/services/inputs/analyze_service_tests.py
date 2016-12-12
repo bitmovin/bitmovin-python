@@ -159,7 +159,7 @@ class AnalyzeServiceTests(BitmovinTestCase):
         self.assertEqual('ac3', first.codec)
         self.assertEqual('aac_latm', second.codec)
 
-    def test_retrieve_analysis_details_multiple_audio_second(self):
+    def test_retrieve_analysis_details_multiple_audio_third(self):
         (sample_input, sample_file) = self._get_https_input_multiple_audio_tracks_second()
         analysis_details = self._retrieve_analysis_details_https_input(sample_input, sample_file)
         self.assertEqual(2, len(analysis_details.audioStreams))

@@ -3,8 +3,8 @@ from .drm import DRM
 
 class AESDRM(DRM):
 
-    def __init__(self, name, method, key, key_file_uri, iv=None, outputs=None, id_=None, custom_data=None,
-                 description=None):
+    def __init__(self, method, key, key_file_uri, iv=None, outputs=None, id_=None, custom_data=None,
+                 description=None, name=None):
 
         super().__init__(id_=id_, custom_data=custom_data, outputs=outputs, name=name, description=description)
         self.method = method

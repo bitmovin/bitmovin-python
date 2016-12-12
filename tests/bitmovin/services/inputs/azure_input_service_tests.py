@@ -31,6 +31,15 @@ class AzureInputTests(BitmovinTestCase):
         self.assertIsNotNone(input_resource_response.resource.id)
         self._compare_azure_inputs(sample_input, input_resource_response.resource)
 
+    def test_create_azure_input_without_name(self):
+        (sample_input, sample_files) = self._get_sample_azure_input()
+        sample_input.name = None
+        input_resource_response = self.bitmovin.inputs.Azure.create(sample_input)
+        self.assertIsNotNone(input_resource_response)
+        self.assertIsNotNone(input_resource_response.resource)
+        self.assertIsNotNone(input_resource_response.resource.id)
+        self._compare_azure_inputs(sample_input, input_resource_response.resource)
+
     def test_retrieve_azure_input(self):
         (sample_input, sample_files) = self._get_sample_azure_input()
         created_input_response = self.bitmovin.inputs.Azure.create(sample_input)

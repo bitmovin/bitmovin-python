@@ -6,7 +6,7 @@ from bitmovin.utils import Serializable
 
 class AbstractManifest(AbstractNameDescriptionResource, AbstractModel, Serializable):
 
-    def __init__(self, id_, name, manifest_name, outputs, description=None, custom_data=None):
+    def __init__(self, id_, manifest_name, outputs, name=None, description=None, custom_data=None):
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self.manifestName = manifest_name
         self._outputs = None

@@ -32,6 +32,15 @@ class DashManifestTests(BitmovinTestCase):
         self.assertIsNotNone(manifest_resource_response.resource.id)
         self._compare_manifests(sample_manifest, manifest_resource_response.resource)
 
+    def test_create_manifest_without_name(self):
+        sample_manifest = self._get_sample_manifest()
+        sample_manifest.name = None
+        manifest_resource_response = self.bitmovin.manifests.DASH.create(sample_manifest)
+        self.assertIsNotNone(manifest_resource_response)
+        self.assertIsNotNone(manifest_resource_response.resource)
+        self.assertIsNotNone(manifest_resource_response.resource.id)
+        self._compare_manifests(sample_manifest, manifest_resource_response.resource)
+
     def test_retrieve_manifest(self):
         sample_manifest = self._get_sample_manifest()
         created_manifest_response = self.bitmovin.manifests.DASH.create(sample_manifest)

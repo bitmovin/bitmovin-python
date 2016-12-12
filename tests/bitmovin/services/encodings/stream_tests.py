@@ -35,6 +35,16 @@ class EncodingStreamTests(BitmovinTestCase):
         self.assertIsNotNone(stream_resource_response.resource.id)
         self._compare_streams(sample_stream, stream_resource_response.resource)
 
+    def test_create_stream_without_name(self):
+        sample_stream = self._get_sample_stream()
+        sample_stream.name = None
+        stream_resource_response = self.bitmovin.encodings.Stream.create(object_=sample_stream,
+                                                                         encoding_id=self.sampleEncoding.id)
+        self.assertIsNotNone(stream_resource_response)
+        self.assertIsNotNone(stream_resource_response.resource)
+        self.assertIsNotNone(stream_resource_response.resource.id)
+        self._compare_streams(sample_stream, stream_resource_response.resource)
+
     def test_retrieve_stream(self):
         sample_stream = self._get_sample_stream()
         created_stream_response = self.bitmovin.encodings.Stream.create(object_=sample_stream,

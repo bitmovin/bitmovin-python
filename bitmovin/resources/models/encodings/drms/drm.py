@@ -7,7 +7,7 @@ from bitmovin.utils import Serializable
 
 class DRM(AbstractNameDescriptionResource, AbstractModel, Serializable):
 
-    def __init__(self, name, outputs=None, id_=None, custom_data=None, description=None):
+    def __init__(self, name=None, outputs=None, id_=None, custom_data=None, description=None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self._outputs = None

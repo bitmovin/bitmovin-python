@@ -3,7 +3,7 @@ from ..abstract_manifest import AbstractManifest
 
 class DashManifest(AbstractManifest):
 
-    def __init__(self, name, manifest_name, outputs, description=None, id_=None, custom_data=None):
+    def __init__(self, manifest_name, outputs, name=None, description=None, id_=None, custom_data=None):
         super().__init__(id_=id_, custom_data=custom_data, manifest_name=manifest_name, outputs=outputs,
                          name=name, description=description)
 

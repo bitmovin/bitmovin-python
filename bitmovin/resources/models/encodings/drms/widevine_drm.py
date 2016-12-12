@@ -3,7 +3,7 @@ from .drm import DRM
 
 class WidevineDRM(DRM):
 
-    def __init__(self, name, key, kid, pssh, outputs=None, id_=None, custom_data=None, description=None):
+    def __init__(self, key, kid, pssh, outputs=None, id_=None, custom_data=None, name=None, description=None):
 
         super().__init__(id_=id_, custom_data=custom_data, outputs=outputs, name=name, description=description)
         self.key = key

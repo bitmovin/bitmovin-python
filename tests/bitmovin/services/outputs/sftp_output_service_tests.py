@@ -31,6 +31,15 @@ class SFTPOutputTests(BitmovinTestCase):
         self.assertIsNotNone(output_resource_response.resource.id)
         self._compare_sftp_outputs(sample_output, output_resource_response.resource)
 
+    def test_create_sftp_output_without_name(self):
+        sample_output = self._get_sample_sftp_output()
+        sample_output.name = None
+        output_resource_response = self.bitmovin.outputs.SFTP.create(sample_output)
+        self.assertIsNotNone(output_resource_response)
+        self.assertIsNotNone(output_resource_response.resource)
+        self.assertIsNotNone(output_resource_response.resource.id)
+        self._compare_sftp_outputs(sample_output, output_resource_response.resource)
+
     def test_create_sftp_output_custom(self):
         sample_output = self._get_sample_sftp_output()
         sample_output.port = 9921

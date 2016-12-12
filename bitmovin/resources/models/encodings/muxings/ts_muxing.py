@@ -3,8 +3,8 @@ from .muxing import Muxing
 
 class TSMuxing(Muxing):
 
-    def __init__(self, name, streams, segment_length, segment_naming=None, outputs=None, id_=None, custom_data=None,
-                 description=None):
+    def __init__(self, streams, segment_length, segment_naming=None, outputs=None, id_=None, custom_data=None,
+                 name=None, description=None):
         super().__init__(id_=id_, custom_data=custom_data, streams=streams, outputs=outputs,
                          name=name, description=description)
         self.segmentLength = segment_length

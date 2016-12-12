@@ -31,6 +31,15 @@ class FTPOutputTests(BitmovinTestCase):
         self.assertIsNotNone(output_resource_response.resource.id)
         self._compare_ftp_outputs(sample_output, output_resource_response.resource)
 
+    def test_create_ftp_output_without_name(self):
+        sample_output = self._get_sample_ftp_output()
+        sample_output.name = None
+        output_resource_response = self.bitmovin.outputs.FTP.create(sample_output)
+        self.assertIsNotNone(output_resource_response)
+        self.assertIsNotNone(output_resource_response.resource)
+        self.assertIsNotNone(output_resource_response.resource.id)
+        self._compare_ftp_outputs(sample_output, output_resource_response.resource)
+
     def test_create_ftp_output_custom(self):
         sample_output = self._get_sample_ftp_output()
         sample_output.port = 9921

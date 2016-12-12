@@ -35,6 +35,16 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
         self.assertIsNotNone(muxing_resource_response.resource.id)
         self._compare_muxings(sample_muxing, muxing_resource_response.resource)
 
+    def test_create_muxing_without_name(self):
+        sample_muxing = self._get_sample_muxing()
+        sample_muxing.name = None
+        muxing_resource_response = self.bitmovin.encodings.Muxing.MP4.create(object_=sample_muxing,
+                                                                             encoding_id=self.sampleEncoding.id)
+        self.assertIsNotNone(muxing_resource_response)
+        self.assertIsNotNone(muxing_resource_response.resource)
+        self.assertIsNotNone(muxing_resource_response.resource.id)
+        self._compare_muxings(sample_muxing, muxing_resource_response.resource)
+
     def test_retrieve_muxing(self):
         sample_muxing = self._get_sample_muxing()
         created_muxing_response = self.bitmovin.encodings.Muxing.MP4.create(object_=sample_muxing,

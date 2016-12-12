@@ -31,6 +31,15 @@ class AzureOutputTests(BitmovinTestCase):
         self.assertIsNotNone(output_resource_response.resource.id)
         self._compare_azure_outputs(sample_output, output_resource_response.resource)
 
+    def test_create_azure_output_without_name(self):
+        sample_output = self._get_sample_azure_output()
+        sample_output.name = None
+        output_resource_response = self.bitmovin.outputs.Azure.create(sample_output)
+        self.assertIsNotNone(output_resource_response)
+        self.assertIsNotNone(output_resource_response.resource)
+        self.assertIsNotNone(output_resource_response.resource.id)
+        self._compare_azure_outputs(sample_output, output_resource_response.resource)
+
     def test_retrieve_azure_output(self):
         sample_output = self._get_sample_azure_output()
         created_output_response = self.bitmovin.outputs.Azure.create(sample_output)

@@ -41,6 +41,22 @@ class WidevineDRMTests(BitmovinTestCase):
         drm_resource = created_drm_response.resource  # type: WidevineDRM
         self._compare_drms(sample_drm, drm_resource)
 
+    def test_create_drm_without_name(self):
+        fmp4_muxing = self._create_muxing()  # type: FMP4Muxing
+        self.assertIsNotNone(fmp4_muxing.id)
+        sample_drm = self._get_sample_drm_widevine()
+        sample_drm.name = None
+        sample_drm.outputs = fmp4_muxing.outputs
+
+        created_drm_response = self.bitmovin.encodings.Muxing.FMP4.DRM.Widevine.create(
+            object_=sample_drm, encoding_id=self.sampleEncoding.id, muxing_id=fmp4_muxing.id)
+
+        self.assertIsNotNone(created_drm_response)
+        self.assertIsNotNone(created_drm_response.resource)
+        self.assertIsNotNone(created_drm_response.resource.id)
+        drm_resource = created_drm_response.resource  # type: WidevineDRM
+        self._compare_drms(sample_drm, drm_resource)
+
     def test_retrieve_drm(self):
         fmp4_muxing = self._create_muxing()
         self.assertIsNotNone(fmp4_muxing.id)

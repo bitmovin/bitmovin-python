@@ -6,8 +6,8 @@ from . import AbstractOutput
 
 class S3Output(AbstractOutput, Serializable):
 
-    def __init__(self, name, access_key, secret_key, bucket_name, cloud_region=None, id_=None, custom_data=None,
-                 description=None):
+    def __init__(self, access_key, secret_key, bucket_name, cloud_region=None, id_=None, custom_data=None,
+                 name=None, description=None):
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self.accessKey = access_key
         self.secretKey = secret_key

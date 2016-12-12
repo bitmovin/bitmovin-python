@@ -3,8 +3,8 @@ from .drm import DRM
 
 class PlayReadyDRM(DRM):
 
-    def __init__(self, name, key_seed, kid, method, la_url=None, outputs=None, id_=None, custom_data=None,
-                 description=None):
+    def __init__(self, key_seed, kid, method, la_url=None, outputs=None, id_=None, custom_data=None,
+                 name=None, description=None):
         super().__init__(id_=id_, custom_data=custom_data, outputs=outputs, name=name, description=description)
         self.method = method
         self.keySeed = key_seed

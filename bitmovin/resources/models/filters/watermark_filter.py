@@ -3,8 +3,8 @@ from . import AbstractFilter
 
 class WatermarkFilter(AbstractFilter):
 
-    def __init__(self, name, image, left=None, right=None, top=None, bottom=None, id_=None, custom_data=None,
-                 description=None):
+    def __init__(self, image, left=None, right=None, top=None, bottom=None, id_=None, custom_data=None,
+                 name=None, description=None):
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self.image = image
         self.left = left

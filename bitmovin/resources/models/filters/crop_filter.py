@@ -3,7 +3,7 @@ from . import AbstractFilter
 
 class CropFilter(AbstractFilter):
 
-    def __init__(self, name, left=None, right=None, top=None, bottom=None, id_=None, custom_data=None,
+    def __init__(self, name=None, left=None, right=None, top=None, bottom=None, id_=None, custom_data=None,
                  description=None):
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self.left = left

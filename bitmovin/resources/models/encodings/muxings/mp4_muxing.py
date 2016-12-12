@@ -3,7 +3,7 @@ from .muxing import Muxing
 
 class MP4Muxing(Muxing):
 
-    def __init__(self, name, streams, filename=None, outputs=None, id_=None, custom_data=None, description=None):
+    def __init__(self, streams, filename=None, outputs=None, id_=None, custom_data=None, name=None, description=None):
         super().__init__(id_=id_, custom_data=custom_data, streams=streams, outputs=outputs,
                          name=name, description=description)
         self.filename = filename

@@ -31,6 +31,15 @@ class GCSInputTests(BitmovinTestCase):
         self.assertIsNotNone(input_resource_response.resource.id)
         self._compare_gcs_inputs(sample_input, input_resource_response.resource)
 
+    def test_create_gcs_input_without_name(self):
+        (sample_input, sample_files) = self._get_sample_gcs_input()
+        sample_input.name = None
+        input_resource_response = self.bitmovin.inputs.GCS.create(sample_input)
+        self.assertIsNotNone(input_resource_response)
+        self.assertIsNotNone(input_resource_response.resource)
+        self.assertIsNotNone(input_resource_response.resource.id)
+        self._compare_gcs_inputs(sample_input, input_resource_response.resource)
+
     def test_retrieve_gcs_input(self):
         (sample_input, sample_files) = self._get_sample_gcs_input()
         created_input_response = self.bitmovin.inputs.GCS.create(sample_input)

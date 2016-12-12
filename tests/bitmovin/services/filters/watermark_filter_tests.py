@@ -31,6 +31,15 @@ class WatermarkFilterTests(BitmovinTestCase):
         self.assertIsNotNone(filter_resource_response.resource.id)
         self._compare_watermark_filters(sample_filter, filter_resource_response.resource)
 
+    def test_create_watermark_filter_without_name(self):
+        sample_filter = self._get_sample_watermark_filter()
+        sample_filter.name = None
+        filter_resource_response = self.bitmovin.filters.Watermark.create(sample_filter)
+        self.assertIsNotNone(filter_resource_response)
+        self.assertIsNotNone(filter_resource_response.resource)
+        self.assertIsNotNone(filter_resource_response.resource.id)
+        self._compare_watermark_filters(sample_filter, filter_resource_response.resource)
+
     def test_retrieve_watermark_filter(self):
         sample_filter = self._get_sample_watermark_filter()
         created_filter_response = self.bitmovin.filters.Watermark.create(sample_filter)
