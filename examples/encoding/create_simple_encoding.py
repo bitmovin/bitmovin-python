@@ -1,4 +1,4 @@
-import uuid
+import datetime
 from bitmovin import Bitmovin, Encoding, HTTPSInput, S3Output, H264CodecConfiguration, \
     AACCodecConfiguration, H264Profile, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
     FMP4Muxing, MuxingStream, CloudRegion, DashManifest, FMP4Representation, FMP4RepresentationType, Period, \
@@ -15,7 +15,16 @@ HTTPS_INPUT_PATH = '<INSERT_YOUR_HTTPS_PATH>'
 S3_OUTPUT_ACCESSKEY = '<INSERT_YOUR_ACCESS_KEY>'
 S3_OUTPUT_SECRETKEY = '<INSERT_YOUR_SECRET_KEY>'
 S3_OUTPUT_BUCKETNAME = '<INSERT_YOUR_BUCKET_NAME>'
-OUTPUT_BASE_PATH = '<INSERT_YOUR_BASE_DESTINATION_PATH>'
+
+date_component = str(datetime.datetime.now()).replace(' ', '_').replace(':', '-').split('.')[0].replace('_', '__')
+OUTPUT_BASE_PATH = '/your/output/base/path/{}/'.format(date_component)
+
+
+try:
+    from credentials import *
+    print('Successfully loaded settings')
+except ImportError:
+    print('Unable to locate settings file')
 
 
 def main():
