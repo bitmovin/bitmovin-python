@@ -2,7 +2,7 @@ import time, sys, uuid
 from bitmovin import Bitmovin, Encoding, S3Output, H264CodecConfiguration, \
     AACCodecConfiguration, H264Profile, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
     FMP4Muxing, MuxingStream, CloudRegion, DashManifest, VideoAdaptationSet, AudioAdaptationSet, Period, \
-    FMP4Representation, FMP4RepresentationType
+    FMP4Representation, FMP4RepresentationType, LiveStreamConfiguration, LiveDashManifest
 from bitmovin.errors import BitmovinApiError
 
 ERROR_CODE_LIVE_STREAM_NOT_READY = 2023
@@ -227,8 +227,17 @@ def main():
 
     ###################################################################################################################
 
+    live_dash_manifest = LiveDashManifest(manifest_id=dash_manifest.id)
+
+    live_stream_configuration = LiveStreamConfiguration(
+        stream_key=STREAM_KEY,
+        live_dash_manifests=[live_dash_manifest]
+    )
+
     resource_response = bitmovin.encodings.Encoding.start_live(
-        encoding_id=encoding.id, stream_key=STREAM_KEY, manifest_id=dash_manifest.id)
+        encoding_id=encoding.id,
+        live_stream_configuration=live_stream_configuration
+    )
 
     bitmovin.encodings.Encoding.wait_until_running(encoding_id=resource_response.resource.id)
 

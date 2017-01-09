@@ -1,7 +1,7 @@
 import time, sys, uuid
 from bitmovin import Bitmovin, Encoding, S3Output, H264CodecConfiguration, \
     AACCodecConfiguration, H264Profile, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
-    FMP4Muxing, MuxingStream, CloudRegion
+    FMP4Muxing, MuxingStream, CloudRegion, LiveStreamConfiguration
 from bitmovin.errors import BitmovinApiError
 
 ERROR_CODE_LIVE_STREAM_NOT_READY = 2023
@@ -163,7 +163,9 @@ def main():
     audio_muxing = bitmovin.encodings.Muxing.FMP4.create(object_=audio_muxing,
                                                          encoding_id=encoding.id).resource
 
-    resource_response = bitmovin.encodings.Encoding.start_live(encoding_id=encoding.id, stream_key=STREAM_KEY)
+    live_stream_configuration = LiveStreamConfiguration(stream_key=STREAM_KEY)
+    resource_response = bitmovin.encodings.Encoding.start_live(encoding_id=encoding.id,
+                                                               live_stream_configuration=live_stream_configuration)
 
     bitmovin.encodings.Encoding.wait_until_running(encoding_id=resource_response.resource.id)
 
