@@ -40,11 +40,23 @@ class EncodingControlService(BitmovinObject):
             return ResourceResponse(response=response, resource=created_resource)
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
 
-    def start_live(self, encoding_id, stream_key):
+    def start_live(self, encoding_id, stream_key, manifest_id=None, time_shift=None, live_edge_offset=None):
         self.parsing_utils.check_arg_valid_uuid(encoding_id)
         self.parsing_utils.check_not_blank(stream_key)
         url = self.relative_url + '/{}/live/start'.format(encoding_id)
-        response = self.http_client.post(url, {'streamKey': stream_key})
+
+        live_stream_configuration = {
+            'streamKey': stream_key
+        }
+
+        if manifest_id is not None:
+            live_stream_configuration['manifestId'] = manifest_id
+        if time_shift is not None:
+            live_stream_configuration['timeshift'] = time_shift
+        if live_edge_offset is not None:
+            live_stream_configuration['liveEdgeOffset'] = live_edge_offset
+
+        response = self.http_client.post(url, live_stream_configuration)
 
         if response.status == Status.ERROR.value:
             raise BitmovinApiError('Response was not successful', response)
