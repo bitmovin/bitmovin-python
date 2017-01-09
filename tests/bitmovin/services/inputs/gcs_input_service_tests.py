@@ -1,4 +1,5 @@
 import unittest
+import json
 from bitmovin import Bitmovin, Response, GCSInput
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
@@ -25,6 +26,15 @@ class GCSInputTests(BitmovinTestCase):
 
     def test_create_gcs_input(self):
         (sample_input, sample_files) = self._get_sample_gcs_input()
+        input_resource_response = self.bitmovin.inputs.GCS.create(sample_input)
+        self.assertIsNotNone(input_resource_response)
+        self.assertIsNotNone(input_resource_response.resource)
+        self.assertIsNotNone(input_resource_response.resource.id)
+        self._compare_gcs_inputs(sample_input, input_resource_response.resource)
+
+    def test_create_gcs_input_without_name(self):
+        (sample_input, sample_files) = self._get_sample_gcs_input()
+        sample_input.name = None
         input_resource_response = self.bitmovin.inputs.GCS.create(sample_input)
         self.assertIsNotNone(input_resource_response)
         self.assertIsNotNone(input_resource_response.resource)
@@ -93,7 +103,7 @@ class GCSInputTests(BitmovinTestCase):
 
         custom_data_response = self.bitmovin.inputs.GCS.retrieve_custom_data(created_input_response.resource.id)
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_input.customData, custom_data.customData)
+        self.assertEqual(sample_input.customData, json.loads(custom_data.customData))
 
     def _compare_gcs_inputs(self, first: GCSInput, second: GCSInput):
         """
@@ -104,6 +114,8 @@ class GCSInputTests(BitmovinTestCase):
         """
         self.assertEqual(first.bucketName, second.bucketName)
         self.assertEqual(first.cloudRegion, second.cloudRegion)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
 
     def _get_sample_gcs_input(self):
         gcs_input_settings = self.settings.get('sampleObjects').get('inputs').get('gcs')\
@@ -113,7 +125,8 @@ class GCSInputTests(BitmovinTestCase):
             access_key=gcs_input_settings.get('accessKey'),
             secret_key=gcs_input_settings.get('secretKey'),
             bucket_name=gcs_input_settings.get('bucketName'),
-            cloud_region=gcs_input_settings.get('cloudRegion')
+            cloud_region=gcs_input_settings.get('cloudRegion'),
+            name='Sample GCS Input'
         )
         self.assertIsNotNone(gcs_input.accessKey)
         self.assertIsNotNone(gcs_input.secretKey)

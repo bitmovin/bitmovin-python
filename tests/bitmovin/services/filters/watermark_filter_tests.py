@@ -1,4 +1,5 @@
 import unittest
+import json
 from bitmovin import Bitmovin, Response, WatermarkFilter
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
@@ -25,6 +26,15 @@ class WatermarkFilterTests(BitmovinTestCase):
 
     def test_create_watermark_filter(self):
         sample_filter = self._get_sample_watermark_filter()
+        filter_resource_response = self.bitmovin.filters.Watermark.create(sample_filter)
+        self.assertIsNotNone(filter_resource_response)
+        self.assertIsNotNone(filter_resource_response.resource)
+        self.assertIsNotNone(filter_resource_response.resource.id)
+        self._compare_watermark_filters(sample_filter, filter_resource_response.resource)
+
+    def test_create_watermark_filter_without_name(self):
+        sample_filter = self._get_sample_watermark_filter()
+        sample_filter.name = None
         filter_resource_response = self.bitmovin.filters.Watermark.create(sample_filter)
         self.assertIsNotNone(filter_resource_response)
         self.assertIsNotNone(filter_resource_response.resource)
@@ -93,7 +103,7 @@ class WatermarkFilterTests(BitmovinTestCase):
 
         custom_data_response = self.bitmovin.filters.Watermark.retrieve_custom_data(created_filter_response.resource.id)
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_filter.customData, custom_data.customData)
+        self.assertEqual(sample_filter.customData, json.loads(custom_data.customData))
 
     def _compare_watermark_filters(self, first: WatermarkFilter, second: WatermarkFilter):
         """
@@ -107,10 +117,13 @@ class WatermarkFilterTests(BitmovinTestCase):
         self.assertEqual(first.bottom, second.bottom)
         self.assertEqual(first.left, second.left)
         self.assertEqual(first.right, second.right)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _get_sample_watermark_filter(self):
-        watermark_filter = WatermarkFilter(image='http://www.bitmovin.com/favicon.ico', right=10, top=10)
+        watermark_filter = WatermarkFilter(image='http://www.bitmovin.com/favicon.ico', right=10, top=10,
+                                           name='Sample Watermark Filter bitmovin icon')
         self.assertIsNotNone(watermark_filter.image)
         self.assertIsNotNone(watermark_filter.right)
         self.assertIsNotNone(watermark_filter.top)

@@ -1,4 +1,5 @@
 import unittest
+import json
 from bitmovin import Bitmovin, Response, S3Output
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
@@ -25,6 +26,15 @@ class S3OutputTests(BitmovinTestCase):
 
     def test_create_s3_output(self):
         sample_output = self._get_sample_s3_output()
+        output_resource_response = self.bitmovin.outputs.S3.create(sample_output)
+        self.assertIsNotNone(output_resource_response)
+        self.assertIsNotNone(output_resource_response.resource)
+        self.assertIsNotNone(output_resource_response.resource.id)
+        self._compare_s3_outputs(sample_output, output_resource_response.resource)
+
+    def test_create_s3_output_without_name(self):
+        sample_output = self._get_sample_s3_output()
+        sample_output.name = None
         output_resource_response = self.bitmovin.outputs.S3.create(sample_output)
         self.assertIsNotNone(output_resource_response)
         self.assertIsNotNone(output_resource_response.resource)
@@ -93,7 +103,7 @@ class S3OutputTests(BitmovinTestCase):
 
         custom_data_response = self.bitmovin.outputs.S3.retrieve_custom_data(created_output_response.resource.id)
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_output.customData, custom_data.customData)
+        self.assertEqual(sample_output.customData, json.loads(custom_data.customData))
 
     def _compare_s3_outputs(self, first: S3Output, second: S3Output):
         """
@@ -104,6 +114,8 @@ class S3OutputTests(BitmovinTestCase):
         """
         self.assertEqual(first.bucketName, second.bucketName)
         self.assertEqual(first.cloudRegion, second.cloudRegion)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
 
     def _get_sample_s3_output(self):
         s3_output_settings = self.settings.get('sampleObjects').get('outputs').get('s3')\
@@ -112,7 +124,8 @@ class S3OutputTests(BitmovinTestCase):
             access_key=s3_output_settings.get('accessKey'),
             secret_key=s3_output_settings.get('secretKey'),
             bucket_name=s3_output_settings.get('bucketName'),
-            cloud_region=s3_output_settings.get('cloudRegion')
+            cloud_region=s3_output_settings.get('cloudRegion'),
+            name='Sample S3 Output'
         )
         self.assertIsNotNone(s3_output.accessKey)
         self.assertIsNotNone(s3_output.secretKey)

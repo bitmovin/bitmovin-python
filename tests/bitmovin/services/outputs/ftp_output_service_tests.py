@@ -1,4 +1,5 @@
 import unittest
+import json
 from bitmovin import Bitmovin, Response, FTPOutput
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
@@ -25,6 +26,15 @@ class FTPOutputTests(BitmovinTestCase):
 
     def test_create_ftp_output(self):
         sample_output = self._get_sample_ftp_output()
+        output_resource_response = self.bitmovin.outputs.FTP.create(sample_output)
+        self.assertIsNotNone(output_resource_response)
+        self.assertIsNotNone(output_resource_response.resource)
+        self.assertIsNotNone(output_resource_response.resource.id)
+        self._compare_ftp_outputs(sample_output, output_resource_response.resource)
+
+    def test_create_ftp_output_without_name(self):
+        sample_output = self._get_sample_ftp_output()
+        sample_output.name = None
         output_resource_response = self.bitmovin.outputs.FTP.create(sample_output)
         self.assertIsNotNone(output_resource_response)
         self.assertIsNotNone(output_resource_response.resource)
@@ -105,7 +115,7 @@ class FTPOutputTests(BitmovinTestCase):
 
         custom_data_response = self.bitmovin.outputs.FTP.retrieve_custom_data(created_output_response.resource.id)
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_output.customData, custom_data.customData)
+        self.assertEqual(sample_output.customData, json.loads(custom_data.customData))
 
     def _compare_ftp_outputs(self, first: FTPOutput, second: FTPOutput):
         """
@@ -115,7 +125,8 @@ class FTPOutputTests(BitmovinTestCase):
         :return: bool
         """
         self.assertEqual(first.host, second.host)
-        #self.assertEqual(first.username, second.username)  # issue 574
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
 
     def _get_sample_ftp_output(self):
         ftp_output_settings = self.settings.get('sampleObjects').get('outputs').get('ftp')\
@@ -123,7 +134,8 @@ class FTPOutputTests(BitmovinTestCase):
         ftp_output = FTPOutput(
             host=ftp_output_settings.get('host'),
             username=ftp_output_settings.get('username'),
-            password=ftp_output_settings.get('password')
+            password=ftp_output_settings.get('password'),
+            name='Sample FTP Output'
         )
         self.assertIsNotNone(ftp_output.host)
         self.assertIsNotNone(ftp_output.username)

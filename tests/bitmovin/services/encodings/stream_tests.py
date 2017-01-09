@@ -1,5 +1,6 @@
 import unittest
 import uuid
+import json
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, EncodingStatus, \
     ACLPermission, SelectionMode
 from bitmovin.errors import BitmovinApiError
@@ -28,6 +29,16 @@ class EncodingStreamTests(BitmovinTestCase):
 
     def test_create_stream(self):
         sample_stream = self._get_sample_stream()
+        stream_resource_response = self.bitmovin.encodings.Stream.create(object_=sample_stream,
+                                                                         encoding_id=self.sampleEncoding.id)
+        self.assertIsNotNone(stream_resource_response)
+        self.assertIsNotNone(stream_resource_response.resource)
+        self.assertIsNotNone(stream_resource_response.resource.id)
+        self._compare_streams(sample_stream, stream_resource_response.resource)
+
+    def test_create_stream_without_name(self):
+        sample_stream = self._get_sample_stream()
+        sample_stream.name = None
         stream_resource_response = self.bitmovin.encodings.Stream.create(object_=sample_stream,
                                                                          encoding_id=self.sampleEncoding.id)
         self.assertIsNotNone(stream_resource_response)
@@ -110,7 +121,7 @@ class EncodingStreamTests(BitmovinTestCase):
             encoding_id=self.sampleEncoding.id)
 
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_stream.customData, custom_data.customData)
+        self.assertEqual(sample_stream.customData, json.loads(custom_data.customData))
 
     def test_retrieve_stream_status(self):
         sample_stream = self._get_sample_stream()
@@ -139,6 +150,8 @@ class EncodingStreamTests(BitmovinTestCase):
         :return: bool
         """
         self.assertEqual(first.codecConfigId, second.codecConfigId)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         if first.inputStreams:
             self.assertEqual(len(first.inputStreams), len(second.inputStreams))
         if first.outputs:
@@ -165,7 +178,8 @@ class EncodingStreamTests(BitmovinTestCase):
 
         stream = Stream(codec_configuration_id=h264_codec_configuration.resource.id,
                         input_streams=[stream_input],
-                        outputs=[encoding_output])
+                        outputs=[encoding_output],
+                        name='Sample Stream')
 
         self.assertIsNotNone(stream.codecConfigId)
         self.assertIsNotNone(stream.inputStreams)

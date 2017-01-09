@@ -1,5 +1,6 @@
 import unittest
 import uuid
+import json
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, \
     FMP4Muxing, MuxingStream, PrimeTimeDRM, DRMStatus, SelectionMode, ACLPermission
 from bitmovin.errors import BitmovinApiError
@@ -30,6 +31,22 @@ class PrimeTimeDRMTests(BitmovinTestCase):
         fmp4_muxing = self._create_muxing()  # type: FMP4Muxing
         self.assertIsNotNone(fmp4_muxing.id)
         sample_drm = self._get_sample_drm_primetime()
+        sample_drm.outputs = fmp4_muxing.outputs
+
+        created_drm_response = self.bitmovin.encodings.Muxing.FMP4.DRM.PrimeTime.create(
+            object_=sample_drm, encoding_id=self.sampleEncoding.id, muxing_id=fmp4_muxing.id)
+
+        self.assertIsNotNone(created_drm_response)
+        self.assertIsNotNone(created_drm_response.resource)
+        self.assertIsNotNone(created_drm_response.resource.id)
+        drm_resource = created_drm_response.resource  # type: PrimeTimeDRM
+        self._compare_drms(sample_drm, drm_resource)
+
+    def test_create_drm_without_name(self):
+        fmp4_muxing = self._create_muxing()  # type: FMP4Muxing
+        self.assertIsNotNone(fmp4_muxing.id)
+        sample_drm = self._get_sample_drm_primetime()
+        sample_drm.name = None
         sample_drm.outputs = fmp4_muxing.outputs
 
         created_drm_response = self.bitmovin.encodings.Muxing.FMP4.DRM.PrimeTime.create(
@@ -142,7 +159,7 @@ class PrimeTimeDRMTests(BitmovinTestCase):
         )
 
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_drm.customData, custom_data.customData)
+        self.assertEqual(sample_drm.customData, json.loads(custom_data.customData))
 
     def test_retrieve_drm_status(self):
         fmp4_muxing = self._create_muxing()
@@ -194,6 +211,8 @@ class PrimeTimeDRMTests(BitmovinTestCase):
         self.assertEqual(first.key, second.key)
         self.assertEqual(first.pssh, second.pssh)
         self.assertEqual(len(first.outputs), len(second.outputs))
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(second.description, second.description)
         return True
 
     def _compare_muxings(self, first: FMP4Muxing, second: FMP4Muxing):
@@ -207,6 +226,8 @@ class PrimeTimeDRMTests(BitmovinTestCase):
         self.assertEqual(first.segmentLength, second.segmentLength)
         self.assertEqual(first.segmentNaming, second.segmentNaming)
         self.assertEqual(len(first.outputs), len(second.outputs))
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _get_sample_drm_primetime(self):
@@ -214,7 +235,8 @@ class PrimeTimeDRMTests(BitmovinTestCase):
 
         drm = PrimeTimeDRM(key=primetime_drm_settings[0].get('key'),
                            kid=primetime_drm_settings[0].get('kid'),
-                           pssh=primetime_drm_settings[0].get('pssh'))
+                           pssh=primetime_drm_settings[0].get('pssh'),
+                           name='Sample PrimeTime DRM')
 
         return drm
 
@@ -230,7 +252,7 @@ class PrimeTimeDRMTests(BitmovinTestCase):
         muxing_stream = MuxingStream(stream_id=create_stream_response.resource.id)
 
         muxing = FMP4Muxing(streams=[muxing_stream], segment_length=4, segment_naming='seg_%number%.ts',
-                            outputs=stream.outputs)
+                            outputs=stream.outputs, name='Sample FMP4 Muxing')
         return muxing
 
     def _get_sample_stream(self):
@@ -254,7 +276,8 @@ class PrimeTimeDRMTests(BitmovinTestCase):
 
         stream = Stream(codec_configuration_id=h264_codec_configuration.resource.id,
                         input_streams=[stream_input],
-                        outputs=[encoding_output])
+                        outputs=[encoding_output],
+                        name='Sample Stream')
 
         self.assertIsNotNone(stream.codecConfigId)
         self.assertIsNotNone(stream.inputStreams)

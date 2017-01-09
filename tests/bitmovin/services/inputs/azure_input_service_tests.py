@@ -1,4 +1,5 @@
 import unittest
+import json
 from bitmovin import Bitmovin, Response, AzureInput
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
@@ -25,6 +26,15 @@ class AzureInputTests(BitmovinTestCase):
 
     def test_create_azure_input(self):
         (sample_input, sample_files) = self._get_sample_azure_input()
+        input_resource_response = self.bitmovin.inputs.Azure.create(sample_input)
+        self.assertIsNotNone(input_resource_response)
+        self.assertIsNotNone(input_resource_response.resource)
+        self.assertIsNotNone(input_resource_response.resource.id)
+        self._compare_azure_inputs(sample_input, input_resource_response.resource)
+
+    def test_create_azure_input_without_name(self):
+        (sample_input, sample_files) = self._get_sample_azure_input()
+        sample_input.name = None
         input_resource_response = self.bitmovin.inputs.Azure.create(sample_input)
         self.assertIsNotNone(input_resource_response)
         self.assertIsNotNone(input_resource_response.resource)
@@ -93,7 +103,7 @@ class AzureInputTests(BitmovinTestCase):
 
         custom_data_response = self.bitmovin.inputs.Azure.retrieve_custom_data(created_input_response.resource.id)
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_input.customData, custom_data.customData)
+        self.assertEqual(sample_input.customData, json.loads(custom_data.customData))
 
     def _compare_azure_inputs(self, first: AzureInput, second: AzureInput):
         """
@@ -103,6 +113,8 @@ class AzureInputTests(BitmovinTestCase):
         :return: bool
         """
         self.assertEqual(first.container, second.container)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
 
     def _get_sample_azure_input(self):
         azure_input_settings = self.settings.get('sampleObjects').get('inputs').get('azure')\
@@ -111,7 +123,8 @@ class AzureInputTests(BitmovinTestCase):
         azure_input = AzureInput(
             account_name=azure_input_settings.get('accountName'),
             account_key=azure_input_settings.get('accountKey'),
-            container=azure_input_settings.get('container')
+            container=azure_input_settings.get('container'),
+            name='Sample Azure input'
         )
         self.assertIsNotNone(azure_input.accountName)
         self.assertIsNotNone(azure_input.accountKey)

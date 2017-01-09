@@ -1,14 +1,15 @@
 from bitmovin.errors import InvalidTypeError
 from bitmovin.resources.models import AbstractModel
+from bitmovin.resources import AbstractNameDescriptionResource
 from bitmovin.resources.models.encodings.encoding_output import EncodingOutput
 from bitmovin.utils import Serializable
 
 
-class DRM(AbstractModel, Serializable):
+class DRM(AbstractNameDescriptionResource, AbstractModel, Serializable):
 
-    def __init__(self, outputs=None, id_=None, custom_data=None):
+    def __init__(self, name=None, outputs=None, id_=None, custom_data=None, description=None):
 
-        super().__init__(id_=id_, custom_data=custom_data)
+        super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self._outputs = None
         if outputs is not None and not isinstance(outputs, list):
             raise InvalidTypeError('outputs must be a list')
@@ -19,7 +20,9 @@ class DRM(AbstractModel, Serializable):
         id_ = json_object['id']
         custom_data = json_object.get('customData')
         outputs = json_object.get('outputs')
-        drm = DRM(id_=id_, custom_data=custom_data, outputs=outputs)
+        name = json_object.get('name')
+        description = json_object.get('description')
+        drm = DRM(id_=id_, custom_data=custom_data, outputs=outputs, name=name, description=description)
         return drm
 
     @property

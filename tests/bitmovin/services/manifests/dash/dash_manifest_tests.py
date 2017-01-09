@@ -32,6 +32,15 @@ class DashManifestTests(BitmovinTestCase):
         self.assertIsNotNone(manifest_resource_response.resource.id)
         self._compare_manifests(sample_manifest, manifest_resource_response.resource)
 
+    def test_create_manifest_without_name(self):
+        sample_manifest = self._get_sample_manifest()
+        sample_manifest.name = None
+        manifest_resource_response = self.bitmovin.manifests.DASH.create(sample_manifest)
+        self.assertIsNotNone(manifest_resource_response)
+        self.assertIsNotNone(manifest_resource_response.resource)
+        self.assertIsNotNone(manifest_resource_response.resource.id)
+        self._compare_manifests(sample_manifest, manifest_resource_response.resource)
+
     def test_retrieve_manifest(self):
         sample_manifest = self._get_sample_manifest()
         created_manifest_response = self.bitmovin.manifests.DASH.create(sample_manifest)
@@ -90,18 +99,21 @@ class DashManifestTests(BitmovinTestCase):
         :param second: Manifest
         :return: bool
         """
-        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.manifestName, second.manifestName)
         self.assertEqual(first.description, second.description)
         self.assertEqual(len(first.outputs), len(second.outputs))
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _get_sample_manifest(self):
 
         encoding_output = self._get_sample_encoding_output()
-        manifest = DashManifest(name='bitmovin-python Sample DASH Manifest', outputs=[encoding_output])
+        manifest = DashManifest(manifest_name='bitmovin-python_Sample_DASH_Manifest.mpd', outputs=[encoding_output],
+                                name='Sample DASH Manifest')
 
         self.assertIsNotNone(manifest)
-        self.assertIsNotNone(manifest.name)
+        self.assertIsNotNone(manifest.manifestName)
         self.assertIsNotNone(manifest.outputs)
         return manifest
 

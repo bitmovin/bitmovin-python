@@ -1,4 +1,5 @@
 import unittest
+import json
 from bitmovin import Bitmovin, Response, SFTPInput
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
@@ -25,6 +26,15 @@ class SFTPInputTests(BitmovinTestCase):
 
     def test_create_sftp_input(self):
         (sample_input, sample_files) = self._get_sample_sftp_input()
+        input_resource_response = self.bitmovin.inputs.SFTP.create(sample_input)
+        self.assertIsNotNone(input_resource_response)
+        self.assertIsNotNone(input_resource_response.resource)
+        self.assertIsNotNone(input_resource_response.resource.id)
+        self._compare_sftp_inputs(sample_input, input_resource_response.resource)
+
+    def test_create_sftp_input_without_name(self):
+        (sample_input, sample_files) = self._get_sample_sftp_input()
+        sample_input.name = None
         input_resource_response = self.bitmovin.inputs.SFTP.create(sample_input)
         self.assertIsNotNone(input_resource_response)
         self.assertIsNotNone(input_resource_response.resource)
@@ -103,7 +113,7 @@ class SFTPInputTests(BitmovinTestCase):
 
         custom_data_response = self.bitmovin.inputs.SFTP.retrieve_custom_data(created_input_response.resource.id)
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_input.customData, custom_data.customData)
+        self.assertEqual(sample_input.customData, json.loads(custom_data.customData))
 
     def _compare_sftp_inputs(self, first: SFTPInput, second: SFTPInput):
         """
@@ -113,6 +123,8 @@ class SFTPInputTests(BitmovinTestCase):
         :return: bool
         """
         self.assertEqual(first.host, second.host)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         #self.assertEqual(first.username, second.username)  # issue 574
 
     def _get_sample_sftp_input(self):
@@ -122,7 +134,8 @@ class SFTPInputTests(BitmovinTestCase):
         sftp_input = SFTPInput(
             host=sftp_input_settings.get('host'),
             username=sftp_input_settings.get('username'),
-            password=sftp_input_settings.get('password')
+            password=sftp_input_settings.get('password'),
+            name='Sample SFTP input'
         )
         self.assertIsNotNone(sftp_input.host)
         self.assertIsNotNone(sftp_input.username)

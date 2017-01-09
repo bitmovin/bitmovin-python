@@ -1,5 +1,6 @@
 import unittest
 import uuid
+import json
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, \
     FMP4Muxing, TSMuxing, MuxingStream, FairPlayDRM, DRMStatus, SelectionMode, ACLPermission
 from bitmovin.errors import BitmovinApiError
@@ -30,6 +31,22 @@ class FairPlayDRMTests(BitmovinTestCase):
         fmp4_muxing = self._create_muxing_fmp4()  # type: FMP4Muxing
         self.assertIsNotNone(fmp4_muxing.id)
         sample_drm = self._get_sample_drm_fairplay()
+        sample_drm.outputs = fmp4_muxing.outputs
+
+        created_drm_response = self.bitmovin.encodings.Muxing.FMP4.DRM.FairPlay.create(
+            object_=sample_drm, encoding_id=self.sampleEncoding.id, muxing_id=fmp4_muxing.id)
+
+        self.assertIsNotNone(created_drm_response)
+        self.assertIsNotNone(created_drm_response.resource)
+        self.assertIsNotNone(created_drm_response.resource.id)
+        drm_resource = created_drm_response.resource  # type: FairPlayDRM
+        self._compare_drms(sample_drm, drm_resource)
+
+    def test_create_drm_fmp4_without_name(self):
+        fmp4_muxing = self._create_muxing_fmp4()  # type: FMP4Muxing
+        self.assertIsNotNone(fmp4_muxing.id)
+        sample_drm = self._get_sample_drm_fairplay()
+        sample_drm.name = None
         sample_drm.outputs = fmp4_muxing.outputs
 
         created_drm_response = self.bitmovin.encodings.Muxing.FMP4.DRM.FairPlay.create(
@@ -142,7 +159,7 @@ class FairPlayDRMTests(BitmovinTestCase):
         )
 
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_drm.customData, custom_data.customData)
+        self.assertEqual(sample_drm.customData, json.loads(custom_data.customData))
 
     def test_retrieve_drm_status_fmp4(self):
         fmp4_muxing = self._create_muxing_fmp4()
@@ -285,7 +302,7 @@ class FairPlayDRMTests(BitmovinTestCase):
         )
 
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_drm.customData, custom_data.customData)
+        self.assertEqual(sample_drm.customData, json.loads(custom_data.customData))
 
     def test_retrieve_drm_status_ts(self):
         ts_muxing = self._create_muxing_ts()
@@ -346,6 +363,8 @@ class FairPlayDRMTests(BitmovinTestCase):
         self.assertEqual(first.key, second.key)
         self.assertEqual(first.uri, second.uri)
         self.assertEqual(len(first.outputs), len(second.outputs))
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _compare_fmp4_muxings(self, first: FMP4Muxing, second: FMP4Muxing):
@@ -356,10 +375,15 @@ class FairPlayDRMTests(BitmovinTestCase):
         :return: bool
         """
 
-        self.assertEqual(first.segmentLength, second.segmentLength)
-        self.assertEqual(first.segmentNaming, second.segmentNaming)
-        self.assertEqual(first.initSegmentName, second.initSegmentName)
+        if first.segmentLength is not None:
+            self.assertEqual(first.segmentLength, second.segmentLength)
+        if first.segmentNaming is not None:
+            self.assertEqual(first.segmentNaming, second.segmentNaming)
+        if first.initSegmentName is not None:
+            self.assertEqual(first.initSegmentName, second.initSegmentName)
         self.assertEqual(len(first.outputs), len(second.outputs))
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _compare_ts_muxings(self, first: TSMuxing, second: TSMuxing):
@@ -373,6 +397,8 @@ class FairPlayDRMTests(BitmovinTestCase):
         self.assertEqual(first.segmentLength, second.segmentLength)
         self.assertEqual(first.segmentNaming, second.segmentNaming)
         self.assertEqual(len(first.outputs), len(second.outputs))
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _get_sample_drm_fairplay(self):
@@ -380,7 +406,8 @@ class FairPlayDRMTests(BitmovinTestCase):
 
         drm = FairPlayDRM(key=fairplay_drm_settings[0].get('key'),
                           iv=fairplay_drm_settings[0].get('iv'),
-                          uri=fairplay_drm_settings[0].get('uri'))
+                          uri=fairplay_drm_settings[0].get('uri'),
+                          name='Sample Fairplay DRM')
 
         return drm
 
@@ -396,7 +423,7 @@ class FairPlayDRMTests(BitmovinTestCase):
         muxing_stream = MuxingStream(stream_id=create_stream_response.resource.id)
 
         muxing = FMP4Muxing(streams=[muxing_stream], segment_length=4, segment_naming='seg_%number%.ts',
-                            outputs=stream.outputs)
+                            outputs=stream.outputs, name='Sample FMP4 Muxing')
         return muxing
 
     def _get_sample_ts_muxing(self):
@@ -411,7 +438,7 @@ class FairPlayDRMTests(BitmovinTestCase):
         muxing_stream = MuxingStream(stream_id=create_stream_response.resource.id)
 
         muxing = TSMuxing(streams=[muxing_stream], segment_length=4, segment_naming='seg_%number%.ts',
-                          outputs=stream.outputs)
+                          outputs=stream.outputs, name='Sample TSMuxing')
         return muxing
 
     def _get_sample_stream(self):
@@ -435,7 +462,8 @@ class FairPlayDRMTests(BitmovinTestCase):
 
         stream = Stream(codec_configuration_id=h264_codec_configuration.resource.id,
                         input_streams=[stream_input],
-                        outputs=[encoding_output])
+                        outputs=[encoding_output],
+                        name='Sample Stream')
 
         self.assertIsNotNone(stream.codecConfigId)
         self.assertIsNotNone(stream.inputStreams)

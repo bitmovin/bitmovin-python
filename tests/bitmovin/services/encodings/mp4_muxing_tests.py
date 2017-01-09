@@ -1,5 +1,6 @@
 import unittest
 import uuid
+import json
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, EncodingStatus, \
     MP4Muxing, MuxingStream, ACLPermission, SelectionMode
 from bitmovin.errors import BitmovinApiError
@@ -28,6 +29,16 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
 
     def test_create_muxing(self):
         sample_muxing = self._get_sample_muxing()
+        muxing_resource_response = self.bitmovin.encodings.Muxing.MP4.create(object_=sample_muxing,
+                                                                             encoding_id=self.sampleEncoding.id)
+        self.assertIsNotNone(muxing_resource_response)
+        self.assertIsNotNone(muxing_resource_response.resource)
+        self.assertIsNotNone(muxing_resource_response.resource.id)
+        self._compare_muxings(sample_muxing, muxing_resource_response.resource)
+
+    def test_create_muxing_without_name(self):
+        sample_muxing = self._get_sample_muxing()
+        sample_muxing.name = None
         muxing_resource_response = self.bitmovin.encodings.Muxing.MP4.create(object_=sample_muxing,
                                                                              encoding_id=self.sampleEncoding.id)
         self.assertIsNotNone(muxing_resource_response)
@@ -111,7 +122,7 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
             encoding_id=self.sampleEncoding.id)
 
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_muxing.customData, custom_data.customData)
+        self.assertEqual(sample_muxing.customData, json.loads(custom_data.customData))
 
     def test_retrieve_stream_status(self):
         sample_muxing = self._get_sample_muxing()
@@ -140,8 +151,10 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
         :return: bool
         """
 
-        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.filename, second.filename)
         self.assertEqual(len(first.outputs), len(second.outputs))
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _get_sample_muxing(self):
@@ -156,8 +169,9 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
         muxing_stream = MuxingStream(stream_id=create_stream_response.resource.id)
 
         muxing = MP4Muxing(streams=[muxing_stream],
-                           name='myprogressive.mp4',
-                           outputs=stream.outputs)
+                           filename='myprogressive.mp4',
+                           outputs=stream.outputs,
+                           name='Sample MP4 Muxing')
         return muxing
 
     def _get_sample_stream(self):
@@ -180,7 +194,8 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
 
         stream = Stream(codec_configuration_id=h264_codec_configuration.resource.id,
                         input_streams=[stream_input],
-                        outputs=[encoding_output])
+                        outputs=[encoding_output],
+                        name='Sample Stream')
 
         self.assertIsNotNone(stream.codecConfigId)
         self.assertIsNotNone(stream.inputStreams)

@@ -94,9 +94,11 @@ class RepresentationTests(BitmovinTestCase):
         self._compare_drm_fmp4_representations(sample_representation, representation_resource_response.resource)
 
     def _compare_manifests(self, first: DashManifest, second: DashManifest):
-        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.manifestName, second.manifestName)
         self.assertEqual(first.description, second.description)
         self.assertEqual(len(first.outputs), len(second.outputs))
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _compare_periods(self, first: Period, second: Period):
@@ -136,20 +138,25 @@ class RepresentationTests(BitmovinTestCase):
         self.assertEqual(len(first.outputs), len(second.outputs))
         self.assertEqual(first.segmentLength, second.segmentLength)
         self.assertEqual(first.segmentNaming, second.segmentNaming)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(second.description, second.description)
         return True
 
     def _compare_drms(self, first: MarlinDRM, second: MarlinDRM):
         self.assertEqual(first.kid, second.kid)
         self.assertEqual(first.key, second.key)
         self.assertEqual(len(first.outputs), len(second.outputs))
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _get_sample_manifest(self):
         encoding_output = self._get_sample_encoding_output()
-        manifest = DashManifest(name='bitmovin-python Sample DASH Manifest', outputs=[encoding_output])
+        manifest = DashManifest(manifest_name='bitmovin-python_Sample_DASH_Manifest.mpd', outputs=[encoding_output],
+                                name='Sample DASH Manifest')
 
         self.assertIsNotNone(manifest)
-        self.assertIsNotNone(manifest.name)
+        self.assertIsNotNone(manifest.manifestName)
         self.assertIsNotNone(manifest.outputs)
         return manifest
 
@@ -217,7 +224,8 @@ class RepresentationTests(BitmovinTestCase):
                             segment_length=4,
                             segment_naming='seg_%number%.m4s',
                             init_segment_name='init.mp4',
-                            outputs=stream.outputs)
+                            outputs=stream.outputs,
+                            name='Sample FMP4 Muxing')
         return muxing
 
     def _get_sample_stream(self):
@@ -238,7 +246,8 @@ class RepresentationTests(BitmovinTestCase):
 
         stream = Stream(codec_configuration_id=h264_codec_configuration.resource.id,
                         input_streams=[stream_input],
-                        outputs=[encoding_output])
+                        outputs=[encoding_output],
+                        name='Sample Stream')
 
         self.assertIsNotNone(stream.codecConfigId)
         self.assertIsNotNone(stream.inputStreams)
@@ -280,7 +289,8 @@ class RepresentationTests(BitmovinTestCase):
         marlin_drm_settings = self.settings.get('sampleObjects').get('drmConfigurations').get('Marlin')
         drm = MarlinDRM(key=marlin_drm_settings[0].get('key'),
                         kid=marlin_drm_settings[0].get('kid'),
-                        outputs=[sample_output])
+                        outputs=[sample_output],
+                        name='Sample Marlin DRM')
         return drm
 
 

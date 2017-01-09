@@ -1,4 +1,5 @@
 import unittest
+import json
 from bitmovin import Bitmovin, Response, AzureOutput
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
@@ -25,6 +26,15 @@ class AzureOutputTests(BitmovinTestCase):
 
     def test_create_azure_output(self):
         sample_output = self._get_sample_azure_output()
+        output_resource_response = self.bitmovin.outputs.Azure.create(sample_output)
+        self.assertIsNotNone(output_resource_response)
+        self.assertIsNotNone(output_resource_response.resource)
+        self.assertIsNotNone(output_resource_response.resource.id)
+        self._compare_azure_outputs(sample_output, output_resource_response.resource)
+
+    def test_create_azure_output_without_name(self):
+        sample_output = self._get_sample_azure_output()
+        sample_output.name = None
         output_resource_response = self.bitmovin.outputs.Azure.create(sample_output)
         self.assertIsNotNone(output_resource_response)
         self.assertIsNotNone(output_resource_response.resource)
@@ -93,7 +103,7 @@ class AzureOutputTests(BitmovinTestCase):
 
         custom_data_response = self.bitmovin.outputs.Azure.retrieve_custom_data(created_output_response.resource.id)
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_output.customData, custom_data.customData)
+        self.assertEqual(sample_output.customData, json.loads(custom_data.customData))
 
     def _compare_azure_outputs(self, first: AzureOutput, second: AzureOutput):
         """
@@ -103,6 +113,8 @@ class AzureOutputTests(BitmovinTestCase):
         :return: bool
         """
         self.assertEqual(first.container, second.container)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
 
     def _get_sample_azure_output(self):
         azure_output_settings = self.settings.get('sampleObjects').get('outputs').get('azure')\
@@ -110,7 +122,8 @@ class AzureOutputTests(BitmovinTestCase):
         azure_output = AzureOutput(
             account_name=azure_output_settings.get('accountName'),
             account_key=azure_output_settings.get('accountKey'),
-            container=azure_output_settings.get('container')
+            container=azure_output_settings.get('container'),
+            name='Sample Azure Output'
         )
         self.assertIsNotNone(azure_output.accountName)
         self.assertIsNotNone(azure_output.accountKey)

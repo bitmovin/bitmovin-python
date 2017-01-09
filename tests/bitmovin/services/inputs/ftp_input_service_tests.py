@@ -1,4 +1,5 @@
 import unittest
+import json
 from bitmovin import Bitmovin, Response, FTPInput
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
@@ -25,6 +26,15 @@ class FTPInputTests(BitmovinTestCase):
 
     def test_create_ftp_input(self):
         (sample_input, sample_files) = self._get_sample_ftp_input()
+        input_resource_response = self.bitmovin.inputs.FTP.create(sample_input)
+        self.assertIsNotNone(input_resource_response)
+        self.assertIsNotNone(input_resource_response.resource)
+        self.assertIsNotNone(input_resource_response.resource.id)
+        self._compare_ftp_inputs(sample_input, input_resource_response.resource)
+
+    def test_create_ftp_input_without_name(self):
+        (sample_input, sample_files) = self._get_sample_ftp_input()
+        sample_input.name = None
         input_resource_response = self.bitmovin.inputs.FTP.create(sample_input)
         self.assertIsNotNone(input_resource_response)
         self.assertIsNotNone(input_resource_response.resource)
@@ -105,7 +115,7 @@ class FTPInputTests(BitmovinTestCase):
 
         custom_data_response = self.bitmovin.inputs.FTP.retrieve_custom_data(created_input_response.resource.id)
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_input.customData, custom_data.customData)
+        self.assertEqual(sample_input.customData, json.loads(custom_data.customData))
 
     def _compare_ftp_inputs(self, first: FTPInput, second: FTPInput):
         """
@@ -115,7 +125,8 @@ class FTPInputTests(BitmovinTestCase):
         :return: bool
         """
         self.assertEqual(first.host, second.host)
-        #self.assertEqual(first.username, second.username)  # issue 574
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
 
     def _get_sample_ftp_input(self):
         ftp_input_settings = self.settings.get('sampleObjects').get('inputs').get('ftp')\
@@ -124,7 +135,8 @@ class FTPInputTests(BitmovinTestCase):
         ftp_input = FTPInput(
             host=ftp_input_settings.get('host'),
             username=ftp_input_settings.get('username'),
-            password=ftp_input_settings.get('password')
+            password=ftp_input_settings.get('password'),
+            name='Sample FTP input'
         )
         self.assertIsNotNone(ftp_input.host)
         self.assertIsNotNone(ftp_input.username)

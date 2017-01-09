@@ -4,6 +4,15 @@ from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
 
 
+class MyAwesomeClass:
+    def __init__(self, name, description, value_a, value_b, value_c):
+        self.name = name
+        self.description = description
+        self.value_a = value_a
+        self.value_b = value_b
+        self.value_c = value_c
+
+
 class H264CodecConfigurationTests(BitmovinTestCase):
 
     @classmethod
@@ -91,8 +100,12 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         self.assertGreater(codec_configurations.resource.__sizeof__(), 1)
 
     def test_retrieve_h264_codec_configuration_custom_data(self):
+
+        my_custom_data = dict()
+        my_custom_data['data'] = '<pre>my custom data</pre>'
+
         sample_codec_configuration = self._get_sample_h264_codec_configuration()
-        sample_codec_configuration.customData = '<pre>my custom data</pre>'
+        sample_codec_configuration.customData = my_custom_data
         created_codec_configuration_response = self.bitmovin.codecConfigurations.H264.create(sample_codec_configuration)
         self.assertIsNotNone(created_codec_configuration_response)
         self.assertIsNotNone(created_codec_configuration_response.resource)
@@ -103,7 +116,41 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         custom_data_response = self.bitmovin.codecConfigurations.H264.retrieve_custom_data(
             created_codec_configuration_response.resource.id)
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_codec_configuration.customData, custom_data.customData)
+        self.assertEqual(sample_codec_configuration.customData['data'], custom_data.customData['data'])
+
+
+    def test_retrieve_h264_codec_configuration_custom_data_object(self):
+        myobject_1 = MyAwesomeClass('mystring', 12, 34, True, None)
+        myobject_2 = MyAwesomeClass('mystring', 1234, 1234.0, myobject_1, "@@@漢漢%$%$")
+
+        sample_codec_configuration = self._get_sample_h264_codec_configuration()
+        sample_codec_configuration.customData = myobject_2
+        created_codec_configuration_response = self.bitmovin.codecConfigurations.H264.create(sample_codec_configuration)
+        self.assertIsNotNone(created_codec_configuration_response)
+        self.assertIsNotNone(created_codec_configuration_response.resource)
+        self.assertIsNotNone(created_codec_configuration_response.resource.id)
+        self._compare_h264_codec_configurations(sample_codec_configuration,
+                                                created_codec_configuration_response.resource)
+
+        custom_data_response = self.bitmovin.codecConfigurations.H264.retrieve_custom_data(
+            created_codec_configuration_response.resource.id)
+        custom_data = custom_data_response.resource
+
+        self.assertIsNotNone(custom_data.customData)
+        self.assertEqual(sample_codec_configuration.customData.name, custom_data.customData['name'])
+        self.assertEqual(sample_codec_configuration.customData.description, custom_data.customData['description'])
+        self.assertEqual(sample_codec_configuration.customData.value_a, custom_data.customData['value_a'])
+        self.assertEqual(sample_codec_configuration.customData.value_c, custom_data.customData['value_c'])
+        self.assertEqual(sample_codec_configuration.customData.value_b.name, custom_data.customData['value_b']['name'])
+        self.assertEqual(sample_codec_configuration.customData.value_b.description,
+                         custom_data.customData['value_b']['description'])
+        self.assertEqual(sample_codec_configuration.customData.value_b.value_a,
+                         custom_data.customData['value_b']['value_a'])
+        self.assertEqual(sample_codec_configuration.customData.value_b.value_b,
+                         custom_data.customData['value_b']['value_b'])
+        self.assertEqual(sample_codec_configuration.customData.value_b.value_c,
+                         custom_data.customData['value_b']['value_c'])
+
 
     def _compare_h264_codec_configurations(self, first: H264CodecConfiguration, second: H264CodecConfiguration):
         """

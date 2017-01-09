@@ -6,8 +6,9 @@ from . import AbstractInput
 
 class GCSInput(AbstractInput, Serializable):
 
-    def __init__(self, access_key, secret_key, bucket_name, cloud_region=None, id_=None, custom_data=None):
-        super().__init__(id_=id_, custom_data=custom_data)
+    def __init__(self, access_key, secret_key, bucket_name, cloud_region=None, id_=None, custom_data=None,
+                 name=None, description=None):
+        super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self.accessKey = access_key
         self.secretKey = secret_key
         self.bucketName = bucket_name
@@ -40,8 +41,11 @@ class GCSInput(AbstractInput, Serializable):
         cloud_region = json_object.get('cloudRegion')
         access_key = json_object.get('accessKey')
         secret_key = json_object.get('secretKey')
+        name = json_object.get('name')
+        description = json_object.get('description')
         gcs_input = GCSInput(
-            access_key=access_key, secret_key=secret_key, bucket_name=bucket_name, cloud_region=cloud_region, id_=id_)
+            access_key=access_key, secret_key=secret_key, bucket_name=bucket_name, cloud_region=cloud_region, id_=id_,
+            name=name, description=description)
         return gcs_input
 
     def serialize(self):

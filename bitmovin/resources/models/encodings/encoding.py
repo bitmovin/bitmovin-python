@@ -2,14 +2,13 @@ from bitmovin.errors import InvalidTypeError
 from bitmovin.resources.enums import CloudRegion, EncoderVersion
 from bitmovin.utils import Serializable
 from bitmovin.resources.models import AbstractModel
+from bitmovin.resources import AbstractNameDescriptionResource
 
 
-class Encoding(AbstractModel, Serializable):
+class Encoding(AbstractNameDescriptionResource, AbstractModel, Serializable):
 
     def __init__(self, name, description=None, encoder_version=None, cloud_region=None, id_=None, custom_data=None):
-        super().__init__(id_=id_, custom_data=custom_data)
-        self.name = name
-        self.description = description
+        super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self._encoderVersion = None
         self.encoderVersion = encoder_version
         self._cloudRegion = None

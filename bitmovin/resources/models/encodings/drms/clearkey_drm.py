@@ -3,9 +3,9 @@ from .drm import DRM
 
 class ClearKeyDRM(DRM):
 
-    def __init__(self, key, kid, outputs=None, id_=None, custom_data=None):
+    def __init__(self, key, kid, outputs=None, id_=None, custom_data=None, name=None, description=None):
 
-        super().__init__(id_=id_, custom_data=custom_data, outputs=outputs)
+        super().__init__(id_=id_, custom_data=custom_data, outputs=outputs, name=name, description=description)
         self.key = key
         self.kid = kid
 
@@ -15,9 +15,12 @@ class ClearKeyDRM(DRM):
         id_ = drm.id
         custom_data = drm.customData
         outputs = drm.outputs
+        name = drm.name
+        description = drm.description
         key = json_object['key']
         kid = json_object['kid']
 
-        clearkey_drm = ClearKeyDRM(key=key, kid=kid, outputs=outputs, id_=id_, custom_data=custom_data)
+        clearkey_drm = ClearKeyDRM(key=key, kid=kid, outputs=outputs, id_=id_, custom_data=custom_data,
+                                   name=name, description=description)
 
         return clearkey_drm

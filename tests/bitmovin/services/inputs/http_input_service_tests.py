@@ -1,4 +1,5 @@
 import unittest
+import json
 from bitmovin import Bitmovin, Response, HTTPInput
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
@@ -25,6 +26,15 @@ class HTTPInputTests(BitmovinTestCase):
 
     def test_create_http_input(self):
         (sample_input, sample_files) = self._get_sample_http_input()
+        input_resource_response = self.bitmovin.inputs.HTTP.create(sample_input)
+        self.assertIsNotNone(input_resource_response)
+        self.assertIsNotNone(input_resource_response.resource)
+        self.assertIsNotNone(input_resource_response.resource.id)
+        self._compare_http_inputs(sample_input, input_resource_response.resource)
+
+    def test_create_http_input_without_name(self):
+        (sample_input, sample_files) = self._get_sample_http_input()
+        sample_input.name = None
         input_resource_response = self.bitmovin.inputs.HTTP.create(sample_input)
         self.assertIsNotNone(input_resource_response)
         self.assertIsNotNone(input_resource_response.resource)
@@ -106,7 +116,7 @@ class HTTPInputTests(BitmovinTestCase):
 
         custom_data_response = self.bitmovin.inputs.HTTP.retrieve_custom_data(created_input_response.resource.id)
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_input.customData, custom_data.customData)
+        self.assertEqual(sample_input.customData, json.loads(custom_data.customData))
 
     def _compare_http_inputs(self, first: HTTPInput, second: HTTPInput):
         """
@@ -116,14 +126,16 @@ class HTTPInputTests(BitmovinTestCase):
         :return: bool
         """
         self.assertEqual(first.host, second.host)
-        #self.assertEqual(first.username, second.username)  # issue 574
+        self.assertEqual(first.description, second.description)
+        self.assertEqual(first.name, second.name)
 
     def _get_sample_http_input(self):
         http_input_settings = self.settings.get('sampleObjects').get('inputs').get('http')\
             .get('4fa9fec1-b75e-4e2c-a01b-6e0cb7e3cf3e')
         files = http_input_settings.get('files')
         http_input = HTTPInput(
-            host=http_input_settings.get('host')
+            host=http_input_settings.get('host'),
+            name='Sample HTTP input'
         )
         self.assertIsNotNone(http_input.host)
         return http_input, files
