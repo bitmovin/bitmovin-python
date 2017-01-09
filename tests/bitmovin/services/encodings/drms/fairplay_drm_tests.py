@@ -1,5 +1,6 @@
 import unittest
 import uuid
+import json
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, \
     FMP4Muxing, TSMuxing, MuxingStream, FairPlayDRM, DRMStatus, SelectionMode, ACLPermission
 from bitmovin.errors import BitmovinApiError
@@ -158,7 +159,7 @@ class FairPlayDRMTests(BitmovinTestCase):
         )
 
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_drm.customData, custom_data.customData)
+        self.assertEqual(sample_drm.customData, json.loads(custom_data.customData))
 
     def test_retrieve_drm_status_fmp4(self):
         fmp4_muxing = self._create_muxing_fmp4()
@@ -301,7 +302,7 @@ class FairPlayDRMTests(BitmovinTestCase):
         )
 
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_drm.customData, custom_data.customData)
+        self.assertEqual(sample_drm.customData, json.loads(custom_data.customData))
 
     def test_retrieve_drm_status_ts(self):
         ts_muxing = self._create_muxing_ts()

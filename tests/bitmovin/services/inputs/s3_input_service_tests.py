@@ -1,4 +1,5 @@
 import unittest
+import json
 from bitmovin import Bitmovin, Response, S3Input
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
@@ -102,7 +103,7 @@ class S3InputTests(BitmovinTestCase):
 
         custom_data_response = self.bitmovin.inputs.S3.retrieve_custom_data(created_input_response.resource.id)
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_input.customData, custom_data.customData)
+        self.assertEqual(sample_input.customData, json.loads(custom_data.customData))
 
     def _compare_s3_inputs(self, first: S3Input, second: S3Input):
         """

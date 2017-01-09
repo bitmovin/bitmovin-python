@@ -1,4 +1,5 @@
 import unittest
+import json
 from bitmovin import Bitmovin, Response, RotateFilter
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
@@ -102,7 +103,7 @@ class RotateFilterTests(BitmovinTestCase):
 
         custom_data_response = self.bitmovin.filters.Rotate.retrieve_custom_data(created_filter_response.resource.id)
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_filter.customData, custom_data.customData)
+        self.assertEqual(sample_filter.customData, json.loads(custom_data.customData))
 
     def _compare_rotate_filters(self, first: RotateFilter, second: RotateFilter):
         """

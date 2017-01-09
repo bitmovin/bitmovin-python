@@ -1,5 +1,6 @@
 import unittest
 import uuid
+import json
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, ACLPermission, Encoding, \
     EncodingStatus, FMP4Muxing, MuxingStream, SelectionMode
 from bitmovin.errors import BitmovinApiError
@@ -121,7 +122,7 @@ class EncodingFMP4MuxingTests(BitmovinTestCase):
             encoding_id=self.sampleEncoding.id)
 
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_muxing.customData, custom_data.customData)
+        self.assertEqual(sample_muxing.customData, json.loads(custom_data.customData))
 
     def test_retrieve_stream_status(self):
         sample_muxing = self._get_sample_muxing()

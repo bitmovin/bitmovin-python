@@ -1,5 +1,6 @@
 import unittest
 import uuid
+import json
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, \
     FMP4Muxing, MuxingStream, MarlinDRM, DRMStatus, SelectionMode, ACLPermission
 from bitmovin.errors import BitmovinApiError
@@ -173,7 +174,7 @@ class MarlinDRMTests(BitmovinTestCase):
         )
 
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_drm.customData, custom_data.customData)
+        self.assertEqual(sample_drm.customData, json.loads(custom_data.customData))
 
     def test_retrieve_drm_status(self):
         fmp4_muxing = self._create_muxing()

@@ -7,7 +7,7 @@ from bitmovin.errors import BitmovinError
 from bitmovin.utils import BitmovinJSONEncoder
 from tests.bitmovin import BitmovinTestCase
 
-
+@unittest.skip
 class AnalyzeServiceTests(BitmovinTestCase):
 
     @classmethod

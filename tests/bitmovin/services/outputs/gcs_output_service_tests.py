@@ -1,4 +1,5 @@
 import unittest
+import json
 from bitmovin import Bitmovin, Response, GCSOutput
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
@@ -102,7 +103,7 @@ class GCSOutputTests(BitmovinTestCase):
 
         custom_data_response = self.bitmovin.outputs.GCS.retrieve_custom_data(created_output_response.resource.id)
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_output.customData, custom_data.customData)
+        self.assertEqual(sample_output.customData, json.loads(custom_data.customData))
 
     def _compare_gcs_outputs(self, first: GCSOutput, second: GCSOutput):
         """

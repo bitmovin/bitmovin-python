@@ -1,4 +1,5 @@
 import unittest
+import json
 from bitmovin import Bitmovin, Response, FTPOutput
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
@@ -114,7 +115,7 @@ class FTPOutputTests(BitmovinTestCase):
 
         custom_data_response = self.bitmovin.outputs.FTP.retrieve_custom_data(created_output_response.resource.id)
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_output.customData, custom_data.customData)
+        self.assertEqual(sample_output.customData, json.loads(custom_data.customData))
 
     def _compare_ftp_outputs(self, first: FTPOutput, second: FTPOutput):
         """

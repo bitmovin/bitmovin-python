@@ -1,4 +1,5 @@
 import unittest
+import json
 import uuid
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, \
     FMP4Muxing, MuxingStream, WidevineDRM, DRMStatus, SelectionMode, ACLPermission
@@ -158,7 +159,7 @@ class WidevineDRMTests(BitmovinTestCase):
         )
 
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_drm.customData, custom_data.customData)
+        self.assertEqual(sample_drm.customData, json.loads(custom_data.customData))
 
     def test_retrieve_drm_status(self):
         fmp4_muxing = self._create_muxing()

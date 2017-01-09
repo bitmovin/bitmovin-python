@@ -1,4 +1,5 @@
 import unittest
+import json
 from bitmovin import Bitmovin, Response, AACCodecConfiguration
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
@@ -99,7 +100,8 @@ class AACCodecConfigurationTests(BitmovinTestCase):
         custom_data_response = self.bitmovin.codecConfigurations.AAC.retrieve_custom_data(
             created_codec_configuration_response.resource.id)
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_codec_configuration.customData, custom_data.customData)
+
+        self.assertEqual(sample_codec_configuration.customData, json.loads(custom_data.customData))
 
     def _compare_aac_codec_configurations(self, first: AACCodecConfiguration, second: AACCodecConfiguration):
         """

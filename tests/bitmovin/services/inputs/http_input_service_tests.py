@@ -1,4 +1,5 @@
 import unittest
+import json
 from bitmovin import Bitmovin, Response, HTTPInput
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
@@ -115,7 +116,7 @@ class HTTPInputTests(BitmovinTestCase):
 
         custom_data_response = self.bitmovin.inputs.HTTP.retrieve_custom_data(created_input_response.resource.id)
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_input.customData, custom_data.customData)
+        self.assertEqual(sample_input.customData, json.loads(custom_data.customData))
 
     def _compare_http_inputs(self, first: HTTPInput, second: HTTPInput):
         """

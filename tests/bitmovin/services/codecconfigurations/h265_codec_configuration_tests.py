@@ -1,4 +1,5 @@
 import unittest
+import json
 from bitmovin import Bitmovin, Response, H265CodecConfiguration, H265Profile, H265Level, BAdapt, MaxCTUSize, \
     TUIntraDepth, TUInterDepth, MotionSearch
 from bitmovin.errors import BitmovinApiError
@@ -104,7 +105,7 @@ class H265CodecConfigurationTests(BitmovinTestCase):
         custom_data_response = self.bitmovin.codecConfigurations.H265.retrieve_custom_data(
             created_codec_configuration_response.resource.id)
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_codec_configuration.customData, custom_data.customData)
+        self.assertEqual(sample_codec_configuration.customData, json.loads(custom_data.customData))
 
     def _compare_h265_codec_configurations(self, first: H265CodecConfiguration, second: H265CodecConfiguration):
         """

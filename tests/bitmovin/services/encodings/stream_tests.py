@@ -1,5 +1,6 @@
 import unittest
 import uuid
+import json
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, EncodingStatus, \
     ACLPermission, SelectionMode
 from bitmovin.errors import BitmovinApiError
@@ -120,7 +121,7 @@ class EncodingStreamTests(BitmovinTestCase):
             encoding_id=self.sampleEncoding.id)
 
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_stream.customData, custom_data.customData)
+        self.assertEqual(sample_stream.customData, json.loads(custom_data.customData))
 
     def test_retrieve_stream_status(self):
         sample_stream = self._get_sample_stream()
