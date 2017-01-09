@@ -3,7 +3,7 @@ import json
 from bitmovin.bitmovin_object import BitmovinObject
 from bitmovin.errors import BitmovinApiError, InvalidStatusError
 from bitmovin.rest import BitmovinHttpClient
-from bitmovin.resources import ResourceResponse, Status, EncodingStatus
+from bitmovin.resources import ResourceResponse, Status, EncodingStatus, LiveStreamConfiguration
 from bitmovin.services.parsing_utils import ParsingUtils
 from bitmovin.utils import BitmovinJSONEncoder
 
@@ -40,11 +40,14 @@ class EncodingControlService(BitmovinObject):
             return ResourceResponse(response=response, resource=created_resource)
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
 
-    def start_live(self, encoding_id, stream_key):
+    def start_live(self, encoding_id, live_stream_configuration: LiveStreamConfiguration):
         self.parsing_utils.check_arg_valid_uuid(encoding_id)
-        self.parsing_utils.check_not_blank(stream_key)
+        self.parsing_utils.check_not_none(live_stream_configuration)
+        self.parsing_utils.check_not_blank(live_stream_configuration.streamKey)
+
         url = self.relative_url + '/{}/live/start'.format(encoding_id)
-        response = self.http_client.post(url, {'streamKey': stream_key})
+
+        response = self.http_client.post(url, live_stream_configuration)
 
         if response.status == Status.ERROR.value:
             raise BitmovinApiError('Response was not successful', response)
