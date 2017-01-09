@@ -10,6 +10,7 @@ LIVE_STREAM_INFORMATION_FETCH_MAX_RETRIES = 60
 
 API_KEY = '<YOUR_API_KEY>'
 STREAM_KEY = '<YOUR_STREAM_KEY>'
+ENCODER_VERSION = 'STABLE'
 
 S3_OUTPUT_ACCESS_KEY = '<YOUR_S3_ACCESS_KEY>'
 S3_OUTPUT_SECRET_KEY = '<YOUR_S3_SECRET_KEY>'
@@ -46,7 +47,7 @@ def main():
     s3_output = bitmovin.outputs.S3.create(s3_output).resource
 
     encoding = Encoding(name='example python live stream encoding',
-                        encoder_version='0.21.4',
+                        encoder_version=ENCODER_VERSION,
                         cloud_region=CloudRegion.GOOGLE_EUROPE_WEST_1)
     encoding = bitmovin.encodings.Encoding.create(encoding).resource
 
@@ -116,7 +117,7 @@ def main():
     acl_entry = ACLEntry(permission=ACLPermission.PUBLIC_READ)
 
     video_muxing_1080p_output = EncodingOutput(output_id=s3_output.id,
-                                               output_path=OUTPUT_BASE_PATH + 'video/1080p/',
+                                               output_path=OUTPUT_BASE_PATH + 'video/1080p',
                                                acl=[acl_entry])
     video_muxing_1080p = FMP4Muxing(segment_length=4,
                                     segment_naming='seg_%number%.m4s',
@@ -127,7 +128,7 @@ def main():
     video_muxing_1080p = bitmovin.encodings.Muxing.FMP4.create(object_=video_muxing_1080p,
                                                                encoding_id=encoding.id).resource
     video_muxing_720p_output = EncodingOutput(output_id=s3_output.id,
-                                              output_path=OUTPUT_BASE_PATH + 'video/720p/',
+                                              output_path=OUTPUT_BASE_PATH + 'video/720p',
                                               acl=[acl_entry])
     video_muxing_720p = FMP4Muxing(segment_length=4,
                                    segment_naming='seg_%number%.m4s',
@@ -139,7 +140,7 @@ def main():
                                                               encoding_id=encoding.id).resource
 
     video_muxing_360p_output = EncodingOutput(output_id=s3_output.id,
-                                              output_path=OUTPUT_BASE_PATH + 'video/360p/',
+                                              output_path=OUTPUT_BASE_PATH + 'video/360p',
                                               acl=[acl_entry])
     video_muxing_360p = FMP4Muxing(segment_length=4,
                                    segment_naming='seg_%number%.m4s',
@@ -151,7 +152,7 @@ def main():
                                                               encoding_id=encoding.id).resource
 
     audio_muxing_output = EncodingOutput(output_id=s3_output.id,
-                                              output_path=OUTPUT_BASE_PATH + 'audio/',
+                                              output_path=OUTPUT_BASE_PATH + 'audio/128k',
                                               acl=[acl_entry])
     audio_muxing = FMP4Muxing(segment_length=4,
                               segment_naming='seg_%number%.m4s',
