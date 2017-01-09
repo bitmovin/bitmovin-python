@@ -10,13 +10,6 @@ HTTPS_INPUT_HOST = '<INSERT_YOUR_HTTPS_HOST>'
 HTTPS_INPUT_PATH = '<INSERT_YOUR_HTTPS_PATH>'
 
 
-try:
-    from credentials import *
-    print('Successfully loaded settings')
-except ImportError:
-    print('Unable to locate settings file')
-
-
 def main():
     bitmovin = Bitmovin(api_key=API_KEY)
 

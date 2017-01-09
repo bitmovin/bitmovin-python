@@ -22,13 +22,6 @@ date_component = str(datetime.datetime.now()).replace(' ', '_').replace(':', '-'
 OUTPUT_BASE_PATH = '/your/example/output/path/{}/'.format(date_component)
 
 
-try:
-    from credentials import *
-    print('Successfully loaded settings')
-except ImportError:
-    print('Unable to locate settings file')
-
-
 def main():
     bitmovin = Bitmovin(api_key=API_KEY)
 
