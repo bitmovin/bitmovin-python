@@ -1,4 +1,5 @@
 import unittest
+import json
 from bitmovin import Bitmovin, Response, CropFilter
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
@@ -25,6 +26,15 @@ class CropFilterTests(BitmovinTestCase):
 
     def test_create_crop_filter(self):
         sample_filter = self._get_sample_crop_filter()
+        filter_resource_response = self.bitmovin.filters.Crop.create(sample_filter)
+        self.assertIsNotNone(filter_resource_response)
+        self.assertIsNotNone(filter_resource_response.resource)
+        self.assertIsNotNone(filter_resource_response.resource.id)
+        self._compare_crop_filters(sample_filter, filter_resource_response.resource)
+
+    def test_create_crop_filter_without_name(self):
+        sample_filter = self._get_sample_crop_filter()
+        sample_filter.name = None
         filter_resource_response = self.bitmovin.filters.Crop.create(sample_filter)
         self.assertIsNotNone(filter_resource_response)
         self.assertIsNotNone(filter_resource_response.resource)
@@ -93,7 +103,7 @@ class CropFilterTests(BitmovinTestCase):
 
         custom_data_response = self.bitmovin.filters.Crop.retrieve_custom_data(created_filter_response.resource.id)
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_filter.customData, custom_data.customData)
+        self.assertEqual(sample_filter.customData, json.loads(custom_data.customData))
 
     def _compare_crop_filters(self, first: CropFilter, second: CropFilter):
         """
@@ -106,10 +116,12 @@ class CropFilterTests(BitmovinTestCase):
         self.assertEqual(first.bottom, second.bottom)
         self.assertEqual(first.left, second.left)
         self.assertEqual(first.right, second.right)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _get_sample_crop_filter(self):
-        crop_filter = CropFilter(right=10, top=11)
+        crop_filter = CropFilter(right=10, top=11, name='Sample Crop Filter 10 11')
         self.assertIsNotNone(crop_filter.right)
         self.assertIsNotNone(crop_filter.top)
         return crop_filter

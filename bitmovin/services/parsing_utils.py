@@ -25,6 +25,13 @@ class ParsingUtils(BitmovinObject):
         if argument == '':
             raise InvalidTypeError('argument must not be blank')
 
+    @classmethod
+    def check_not_none(cls, argument):
+        if not argument:
+            raise MissingArgumentError('argument must not be blank')
+        if argument is None:
+            raise MissingArgumentError('argument must not be blank')
+
     def parse_bitmovin_resource_from_response(self, response, class_):
         response_data = response.data  # type: ResponseSuccessData
         result = response_data.result

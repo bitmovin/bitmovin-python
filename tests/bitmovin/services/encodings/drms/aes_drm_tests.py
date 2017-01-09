@@ -1,5 +1,6 @@
 import unittest
 import uuid
+import json
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, \
     TSMuxing, MuxingStream, AESDRM, DRMStatus, SelectionMode, ACLPermission
 from bitmovin.errors import BitmovinApiError
@@ -30,6 +31,22 @@ class AESDRMTests(BitmovinTestCase):
         ts_muxing = self._create_muxing()  # type: TSMuxing
         self.assertIsNotNone(ts_muxing.id)
         sample_drm = self._get_sample_drm_aes_128()
+        sample_drm.outputs = ts_muxing.outputs
+        created_drm_response = self.bitmovin.encodings.Muxing.TS.DRM.AES.create(object_=sample_drm,
+                                                                                encoding_id=self.sampleEncoding.id,
+                                                                                muxing_id=ts_muxing.id)
+        self.assertIsNotNone(created_drm_response)
+        self.assertIsNotNone(created_drm_response.resource)
+        self.assertIsNotNone(created_drm_response.resource.id)
+        drm_resource = created_drm_response.resource  # type: AESDRM
+        self._compare_drms(sample_drm, drm_resource)
+
+
+    def test_create_drm_aes_128_without_name(self):
+        ts_muxing = self._create_muxing()  # type: TSMuxing
+        self.assertIsNotNone(ts_muxing.id)
+        sample_drm = self._get_sample_drm_aes_128()
+        sample_drm.name = None
         sample_drm.outputs = ts_muxing.outputs
         created_drm_response = self.bitmovin.encodings.Muxing.TS.DRM.AES.create(object_=sample_drm,
                                                                                 encoding_id=self.sampleEncoding.id,
@@ -174,7 +191,7 @@ class AESDRMTests(BitmovinTestCase):
         )
 
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_drm.customData, custom_data.customData)
+        self.assertEqual(sample_drm.customData, json.loads(custom_data.customData))
 
     def test_retrieve_drm_status(self):
         ts_muxing = self._create_muxing()
@@ -226,6 +243,8 @@ class AESDRMTests(BitmovinTestCase):
         self.assertEqual(first.keyFileUri, second.keyFileUri)
         self.assertEqual(first.method, second.method)
         self.assertEqual(len(first.outputs), len(second.outputs))
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _compare_muxings(self, first: TSMuxing, second: TSMuxing):
@@ -239,6 +258,8 @@ class AESDRMTests(BitmovinTestCase):
         self.assertEqual(first.segmentLength, second.segmentLength)
         self.assertEqual(first.segmentNaming, second.segmentNaming)
         self.assertEqual(len(first.outputs), len(second.outputs))
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
         return True
 
     def _get_sample_drm_aes_128(self):
@@ -247,7 +268,8 @@ class AESDRMTests(BitmovinTestCase):
         drm = AESDRM(key=aes_drm_settings[0].get('key'),
                      method=aes_drm_settings[0].get('method'),
                      iv=aes_drm_settings[0].get('iv'),
-                     key_file_uri="path/to/keyfile.key")
+                     key_file_uri="path/to/keyfile.key",
+                     name='Sample AES DRM')
 
         return drm
 
@@ -257,7 +279,8 @@ class AESDRMTests(BitmovinTestCase):
         drm = AESDRM(key=aes_drm_settings[0].get('key'),
                      method=aes_drm_settings[0].get('method'),
                      iv=aes_drm_settings[0].get('iv'),
-                     key_file_uri="path/to/keyfile.key")
+                     key_file_uri="path/to/keyfile.key",
+                     name='Sample AES DRM')
 
         return drm
 
@@ -273,7 +296,7 @@ class AESDRMTests(BitmovinTestCase):
         muxing_stream = MuxingStream(stream_id=create_stream_response.resource.id)
 
         muxing = TSMuxing(streams=[muxing_stream], segment_length=4, segment_naming='seg_%number%.ts',
-                          outputs=stream.outputs)
+                          outputs=stream.outputs, name='Sample TSMuxing')
         return muxing
 
     def _get_sample_stream(self):
@@ -296,7 +319,8 @@ class AESDRMTests(BitmovinTestCase):
 
         stream = Stream(codec_configuration_id=h264_codec_configuration.resource.id,
                         input_streams=[stream_input],
-                        outputs=[encoding_output])
+                        outputs=[encoding_output],
+                        name='Sample Stream')
 
         self.assertIsNotNone(stream.codecConfigId)
         self.assertIsNotNone(stream.inputStreams)

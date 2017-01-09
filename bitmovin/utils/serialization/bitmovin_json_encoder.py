@@ -14,6 +14,9 @@ class BitmovinJSONEncoder(JSONEncoder):
             copied = copy.deepcopy(o.__dict__)
             copied = self._remove_none_values(copied)
             return copied
+        else:
+            copied = copy.deepcopy(o.__dict__)
+            return copied
 
     @classmethod
     def _remove_none_values(cls, o):

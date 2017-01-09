@@ -1,7 +1,8 @@
 import time, sys, uuid
 from bitmovin import Bitmovin, Encoding, S3Output, H264CodecConfiguration, \
     AACCodecConfiguration, H264Profile, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
-    FMP4Muxing, MuxingStream, CloudRegion, LiveStreamConfiguration
+    FMP4Muxing, MuxingStream, CloudRegion, DashManifest, VideoAdaptationSet, AudioAdaptationSet, Period, \
+    FMP4Representation, FMP4RepresentationType, LiveStreamConfiguration, LiveDashManifest
 from bitmovin.errors import BitmovinApiError
 
 ERROR_CODE_LIVE_STREAM_NOT_READY = 2023
@@ -163,9 +164,80 @@ def main():
     audio_muxing = bitmovin.encodings.Muxing.FMP4.create(object_=audio_muxing,
                                                          encoding_id=encoding.id).resource
 
-    live_stream_configuration = LiveStreamConfiguration(stream_key=STREAM_KEY)
-    resource_response = bitmovin.encodings.Encoding.start_live(encoding_id=encoding.id,
-                                                               live_stream_configuration=live_stream_configuration)
+    #### Manifest #####################################################################################################
+
+    manifest_output = EncodingOutput(output_id=s3_output.id,
+                                     output_path=OUTPUT_BASE_PATH,
+                                     acl=[acl_entry])
+    dash_manifest = DashManifest(manifest_name='example_live_manifest.mpd',
+                                 outputs=[manifest_output],
+                                 name='Sample DASH Manifest Live',
+                                 description='Bitmovin Python Test Live DASH Manifest')
+    dash_manifest = bitmovin.manifests.DASH.create(dash_manifest).resource
+    period = Period()
+    period = bitmovin.manifests.DASH.add_period(object_=period, manifest_id=dash_manifest.id).resource
+    video_adaptation_set = VideoAdaptationSet()
+    video_adaptation_set = bitmovin.manifests.DASH.add_video_adaptation_set(object_=video_adaptation_set,
+                                                                            manifest_id=dash_manifest.id,
+                                                                            period_id=period.id).resource
+    audio_adaptation_set = AudioAdaptationSet(lang='en')
+    audio_adaptation_set = bitmovin.manifests.DASH.add_audio_adaptation_set(object_=audio_adaptation_set,
+                                                                            manifest_id=dash_manifest.id,
+                                                                            period_id=period.id).resource
+
+    fmp4_representation_1080p = FMP4Representation(FMP4RepresentationType.TEMPLATE,
+                                                   encoding_id=encoding.id,
+                                                   muxing_id=video_muxing_1080p.id,
+                                                   segment_path='video/1080p/')
+    fmp4_representation_1080p = bitmovin.manifests.DASH.add_fmp4_representation(object_=fmp4_representation_1080p,
+                                                                                manifest_id=dash_manifest.id,
+                                                                                period_id=period.id,
+                                                                                adaptationset_id=video_adaptation_set.id
+                                                                                ).resource
+
+    fmp4_representation_720p = FMP4Representation(FMP4RepresentationType.TEMPLATE,
+                                                  encoding_id=encoding.id,
+                                                  muxing_id=video_muxing_720p.id,
+                                                  segment_path='video/720p/')
+    fmp4_representation_720p = bitmovin.manifests.DASH.add_fmp4_representation(object_=fmp4_representation_720p,
+                                                                               manifest_id=dash_manifest.id,
+                                                                               period_id=period.id,
+                                                                               adaptationset_id=video_adaptation_set.id
+                                                                               ).resource
+
+    fmp4_representation_360p = FMP4Representation(FMP4RepresentationType.TEMPLATE,
+                                                  encoding_id=encoding.id,
+                                                  muxing_id=video_muxing_360p.id,
+                                                  segment_path='video/360p/')
+    fmp4_representation_360p = bitmovin.manifests.DASH.add_fmp4_representation(object_=fmp4_representation_360p,
+                                                                               manifest_id=dash_manifest.id,
+                                                                               period_id=period.id,
+                                                                               adaptationset_id=video_adaptation_set.id
+                                                                               ).resource
+
+    fmp4_representation_audio = FMP4Representation(FMP4RepresentationType.TEMPLATE,
+                                                   encoding_id=encoding.id,
+                                                   muxing_id=audio_muxing.id,
+                                                   segment_path='audio/128k/')
+    fmp4_representation_audio = bitmovin.manifests.DASH.add_fmp4_representation(object_=fmp4_representation_audio,
+                                                                                manifest_id=dash_manifest.id,
+                                                                                period_id=period.id,
+                                                                                adaptationset_id=audio_adaptation_set.id
+                                                                                ).resource
+
+    ###################################################################################################################
+
+    live_dash_manifest = LiveDashManifest(manifest_id=dash_manifest.id)
+
+    live_stream_configuration = LiveStreamConfiguration(
+        stream_key=STREAM_KEY,
+        live_dash_manifests=[live_dash_manifest]
+    )
+
+    resource_response = bitmovin.encodings.Encoding.start_live(
+        encoding_id=encoding.id,
+        live_stream_configuration=live_stream_configuration
+    )
 
     bitmovin.encodings.Encoding.wait_until_running(encoding_id=resource_response.resource.id)
 

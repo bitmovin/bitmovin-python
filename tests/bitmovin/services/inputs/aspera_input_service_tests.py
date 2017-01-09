@@ -1,4 +1,5 @@
 import unittest
+import json
 from bitmovin import Bitmovin, Response, AsperaInput
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
@@ -25,6 +26,15 @@ class AsperaInputTests(BitmovinTestCase):
 
     def test_create_aspera_input(self):
         (sample_input, sample_file) = self._get_sample_aspera_input()
+        input_resource_response = self.bitmovin.inputs.Aspera.create(sample_input)
+        self.assertIsNotNone(input_resource_response)
+        self.assertIsNotNone(input_resource_response.resource)
+        self.assertIsNotNone(input_resource_response.resource.id)
+        self._compare_aspera_inputs(sample_input, input_resource_response.resource)
+
+    def test_create_aspera_input_without_name(self):
+        (sample_input, sample_file) = self._get_sample_aspera_input()
+        sample_input.name = None
         input_resource_response = self.bitmovin.inputs.Aspera.create(sample_input)
         self.assertIsNotNone(input_resource_response)
         self.assertIsNotNone(input_resource_response.resource)
@@ -105,7 +115,7 @@ class AsperaInputTests(BitmovinTestCase):
 
         custom_data_response = self.bitmovin.inputs.Aspera.retrieve_custom_data(created_input_response.resource.id)
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_input.customData, custom_data.customData)
+        self.assertEqual(sample_input.customData, json.loads(custom_data.customData))
 
     def _compare_aspera_inputs(self, first: AsperaInput, second: AsperaInput):
         """
@@ -115,6 +125,8 @@ class AsperaInputTests(BitmovinTestCase):
         :return: bool
         """
         self.assertEqual(first.host, second.host)
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
 
     def _get_sample_aspera_input(self):
         aspera_input_settings = self.settings.get('sampleObjects').get('inputs').get('aspera')\
@@ -123,7 +135,9 @@ class AsperaInputTests(BitmovinTestCase):
         aspera_input = AsperaInput(
             host=aspera_input_settings.get('host'),
             username=aspera_input_settings.get('username'),
-            password=aspera_input_settings.get('password')
+            password=aspera_input_settings.get('password'),
+            name='Sample Aspera Input',
+            description='Descriptive words'
         )
         self.assertIsNotNone(aspera_input.host)
         self.assertIsNotNone(aspera_input.username)

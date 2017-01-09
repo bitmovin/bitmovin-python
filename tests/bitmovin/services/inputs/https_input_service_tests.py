@@ -1,4 +1,5 @@
 import unittest
+import json
 from bitmovin import Bitmovin, Response, HTTPSInput
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
@@ -25,6 +26,15 @@ class HTTPSInputTests(BitmovinTestCase):
 
     def test_create_https_input(self):
         (sample_input, sample_files) = self._get_sample_https_input()
+        input_resource_response = self.bitmovin.inputs.HTTPS.create(sample_input)
+        self.assertIsNotNone(input_resource_response)
+        self.assertIsNotNone(input_resource_response.resource)
+        self.assertIsNotNone(input_resource_response.resource.id)
+        self._compare_https_inputs(sample_input, input_resource_response.resource)
+
+    def test_create_https_input(self):
+        (sample_input, sample_files) = self._get_sample_https_input()
+        sample_input.name = None
         input_resource_response = self.bitmovin.inputs.HTTPS.create(sample_input)
         self.assertIsNotNone(input_resource_response)
         self.assertIsNotNone(input_resource_response.resource)
@@ -106,7 +116,7 @@ class HTTPSInputTests(BitmovinTestCase):
 
         custom_data_response = self.bitmovin.inputs.HTTPS.retrieve_custom_data(created_input_response.resource.id)
         custom_data = custom_data_response.resource
-        self.assertEqual(sample_input.customData, custom_data.customData)
+        self.assertEqual(sample_input.customData, json.loads(custom_data.customData))
 
     def _compare_https_inputs(self, first: HTTPSInput, second: HTTPSInput):
         """
@@ -116,14 +126,16 @@ class HTTPSInputTests(BitmovinTestCase):
         :return: bool
         """
         self.assertEqual(first.host, second.host)
-        #self.assertEqual(first.username, second.username)  # issue 574
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
 
     def _get_sample_https_input(self):
         https_input_settings = self.settings.get('sampleObjects').get('inputs').get('https')\
             .get('cdd1cb62-592a-40b5-8288-cda378cd1aa8')
         files = https_input_settings.get('files')
         https_input = HTTPSInput(
-            host=https_input_settings.get('host')
+            host=https_input_settings.get('host'),
+            name='Sample HTTPS input'
         )
         self.assertIsNotNone(https_input.host)
         return https_input, files

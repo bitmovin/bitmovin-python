@@ -3,10 +3,11 @@ from .muxing import Muxing
 
 class FMP4Muxing(Muxing):
 
-    def __init__(self, streams, segment_length, segment_naming=None, init_segment_name=None, outputs=None, id_=None,
-                 custom_data=None):
+    def __init__(self, streams, segment_length, segment_naming=None, init_segment_name=None, outputs=None,
+                 id_=None, custom_data=None, name=None, description=None):
 
-        super().__init__(id_=id_, custom_data=custom_data, streams=streams, outputs=outputs)
+        super().__init__(id_=id_, custom_data=custom_data, streams=streams, outputs=outputs,
+                         name=name, description=description)
         self.segmentLength = segment_length
         self.segmentNaming = segment_naming
         self.initSegmentName = init_segment_name
@@ -18,11 +19,14 @@ class FMP4Muxing(Muxing):
         custom_data = muxing.customData
         streams = muxing.streams
         outputs = muxing.outputs
+        name = muxing.name
+        description = muxing.description
         segment_length = json_object['segmentLength']
         segment_naming = json_object.get('segmentNaming')
         init_segment_name = json_object.get('initSegmentName')
 
         fmp4_muxing = FMP4Muxing(streams=streams, segment_length=segment_length, segment_naming=segment_naming,
-                                 init_segment_name=init_segment_name, outputs=outputs, id_=id_, custom_data=custom_data)
+                                 init_segment_name=init_segment_name, outputs=outputs, id_=id_, custom_data=custom_data,
+                                 name=name, description=description)
 
         return fmp4_muxing

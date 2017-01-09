@@ -140,5 +140,5 @@ ENV/
 /tests/settings.json
 TODO
 
+/examples/**/credentials.py
 /cover
-
