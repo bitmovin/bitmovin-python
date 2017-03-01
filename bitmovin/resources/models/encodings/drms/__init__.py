@@ -7,3 +7,6 @@ from .playready_drm import PlayReadyDRM
 from .primetime_drm import PrimeTimeDRM
 from .widevine_drm import WidevineDRM
 from .drm_status import DRMStatus
+from .cenc_drm import CENCDRM
+from .cenc_playready_entry import CENCPlayReadyEntry
+from .cenc_widevine_entry import CENCWidevineEntry
