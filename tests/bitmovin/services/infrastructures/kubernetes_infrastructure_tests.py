@@ -1,11 +1,11 @@
 import unittest
 import json
-from bitmovin import Bitmovin, Response, RotateFilter, KubernetesInfrastructure
+from bitmovin import Bitmovin, Response, KubernetesInfrastructure
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
 
 
-class RotateFilterTests(BitmovinTestCase):
+class KubernetesInfrastructureTests(BitmovinTestCase):
 
     @classmethod
     def setUpClass(cls):
