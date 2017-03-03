@@ -20,7 +20,7 @@ setup(name=__name__,
       author_email=__email__,
       license=__license__,
       packages=find_packages(exclude=['tests.*', 'tests']),
-      requires=['requests==2.11.1', 'typing==3.5.2.2', 'tabulate==0.7.7'],
+      requires=['requests', 'typing', 'tabulate'],
       include_package_data=True,
       url='https://www.github.com/bitmovin/bitmovin-python/',
       zip_safe=False)
