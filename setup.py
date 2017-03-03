@@ -1,9 +1,8 @@
 import sys
 from setuptools import setup, find_packages
-from bitmovin.package_information import NAME, VERSION
 
-__name__ = NAME
-__version__ = VERSION
+__name__ = 'bitmovin-python'
+__version__ = '1.2.0'
 __description__ = 'Python wrapper for the bitmovin API'
 __author__ = 'Dominic Miglar <dominic.miglar@bitmovin.com>'
 __email__ = 'dominic.miglar@bitmovin.com'
