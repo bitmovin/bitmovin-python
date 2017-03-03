@@ -4,13 +4,13 @@ from .drm import DRM
 
 class CENCDRM(DRM):
 
-    def __init__(self, key, kid, widevine=None, playready=None, outputs=None, id_=None, custom_data=None, name=None, description=None):
+    def __init__(self, key, kid, widevine=None, playReady=None, outputs=None, id_=None, custom_data=None, name=None, description=None):
 
         super().__init__(id_=id_, custom_data=custom_data, outputs=outputs, name=name, description=description)
         self.key = key
         self.kid = kid
         self.widevine = widevine
-        self.playready = playready
+        self.playReady = playReady
 
     @classmethod
     def parse_from_json_object(cls, json_object):
@@ -23,9 +23,9 @@ class CENCDRM(DRM):
         key = json_object['key']
         kid = json_object['kid']
         widevine = json_object.get('widevine')
-        playready = json_object.get('playready')
+        playReady = json_object.get('playReady')
 
-        cenc_drm = CENCDRM(key=key, kid=kid, widevine=widevine, playready=playready, outputs=outputs, id_=id_, custom_data=custom_data,
+        cenc_drm = CENCDRM(key=key, kid=kid, widevine=widevine, playReady=playReady, outputs=outputs, id_=id_, custom_data=custom_data,
                                    name=name, description=description)
 
         return cenc_drm
