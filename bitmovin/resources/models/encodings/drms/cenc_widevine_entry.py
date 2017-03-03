@@ -12,7 +12,7 @@ class CENCWidevineEntry(Serializable):
 
     @classmethod
     def parse_from_json_object(cls, json_object):
-        pssh = json_object['pssh']
+        pssh = json_object.get('pssh')
         cenc_widevine_entry = CENCWidevineEntry(pssh)
         return cenc_widevine_entry
     

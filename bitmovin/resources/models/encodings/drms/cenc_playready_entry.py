@@ -13,8 +13,8 @@ class CENCPlayReadyEntry(Serializable):
 
     @classmethod
     def parse_from_json_object(cls, json_object):
-        pssh = json_object['pssh']
-        la_url = json_object('laUrl')
+        pssh = json_object.get('pssh')
+        la_url = json_object.get('laUrl')
         cenc_playready_entry = CENCPlayReadyEntry(la_url, pssh)
         return cenc_playready_entry
     
