@@ -13,3 +13,4 @@ class CENCDRM(GenericDRMService):
                          muxing_type_url=muxing_type_url,
                          drm_type_url='cenc',
                          resource_class=CENCDRMResource)
+                         

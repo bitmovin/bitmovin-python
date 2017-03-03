@@ -23,4 +23,3 @@ class CENCPlayReadyEntry(Serializable):
         serialized['pssh'] = self.pssh
         serialized['laUrl'] = self.laUrl
         return serialized
-        

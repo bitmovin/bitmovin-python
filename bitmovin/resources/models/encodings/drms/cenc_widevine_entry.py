@@ -20,4 +20,3 @@ class CENCWidevineEntry(Serializable):
         serialized = super().serialize()
         serialized['pssh'] = self.pssh
         return serialized
-        
