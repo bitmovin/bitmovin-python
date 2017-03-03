@@ -1,69 +1,45 @@
-# [![bitmovin](https://cloudfront-prod.bitmovin.com/wp-content/themes/Bitmovin-V-0.1/images/logo3.png)](http://www.bitmovin.com)
-Python3-Client which enables you to seamlessly integrate the [Bitmovin API](https://bitmovin.com/video-infrastructure-service-bitmovin-api/) into your projects.
-Using this API client requires an active account. [Sign up for a Bitmovin API key](https://bitmovin.com/bitmovins-video-api/).
-
-The full [Bitmovin API reference](https://bitmovin.com/encoding-documentation/bitmovin-api/) can be found on our website.
-
-Installation
-------------
-
-### PIP ###
-
-To install the bitmovin client with pip, run the following command:
-
-```bash
-pip install git+https://github.com/bitmovin/bitmovin-python.git@v1.3.0
-```
-
-Depending on the platform which you are using your default python version may be python2.7.
-As this is a python3 client (Python 3.3+) you will need to install python3 and the corresponding pip tool 
-to ensure that you can install and use this software. 
-
-If you have a Ubuntu or Debian system, you can install the mentioned packages using the following commands:
-```bash
-sudo apt-get install python3 python3-pip
-```
-
-Depending on your distribution it could be that the pip tool uses the python2 interpreter so you maybe have one `pip3` executable instead.
-
-Example
------
-
-The following example creates a simple encoding job with a DASH manifest and transfers it to a S3 output location ([create_simple_encoding.py](https://github.com/bitmovin/bitmovin-python/blob/master/examples/encoding/create_simple_encoding.py)):
-```python
-import uuid
+import datetime
 from bitmovin import Bitmovin, Encoding, HTTPSInput, S3Output, H264CodecConfiguration, \
     AACCodecConfiguration, H264Profile, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
     FMP4Muxing, MuxingStream, CloudRegion, DashManifest, FMP4Representation, FMP4RepresentationType, Period, \
-    VideoAdaptationSet, AudioAdaptationSet
+    VideoAdaptationSet, AudioAdaptationSet, EncoderVersion
 from bitmovin.errors import BitmovinError
 
 
 API_KEY = '<INSERT_YOUR_API_KEY>'
 
 # https://<INSERT_YOUR_HTTP_HOST>/<INSERT_YOUR_HTTP_PATH>
-HTTPS_INPUT_HOST = '<INSERT_YOUR_HTTPS_HOST>'
-HTTPS_INPUT_PATH = '<INSERT_YOUR_HTTPS_PATH>'
+HTTPS_INPUT_HOST = '<INSERT_YOUR_HTTP_HOST>'
+HTTPS_INPUT_PATH = '<INSERT_YOUR_HTTP_PATH>'
 
-S3_OUTPUT_ACCESSKEY = '<INSERT_YOUR_ACCESS_KEY>'
-S3_OUTPUT_SECRETKEY = '<INSERT_YOUR_SECRET_KEY>'
-S3_OUTPUT_BUCKETNAME = '<INSERT_YOUR_BUCKET_NAME>'
-OUTPUT_BASE_PATH = '<INSERT_YOUR_BASE_DESTINATION_PATH>'
+S3_OUTPUT_ACCESSKEY = '<YOUR_S3_ACCESS_KEY>'
+S3_OUTPUT_SECRETKEY = '<YOUR_S3_SECRET_KEY>'
+S3_OUTPUT_BUCKETNAME = '<YOUR_S3_BUCKET_NAME>'
+
+INFRASTRUCTURE_ID = '<YOUR_INFRASTRUCTURE_ID>'
+CLOUD_REGION = CloudRegion.KUBERNETES
+ENCODER_VERSION=EncoderVersion.BETA
+
+date_component = str(datetime.datetime.now()).replace(' ', '_').replace(':', '-').split('.')[0].replace('_', '__')
+OUTPUT_BASE_PATH = '/your/output/base/path/{}/'.format(date_component)
 
 
 def main():
     bitmovin = Bitmovin(api_key=API_KEY)
 
-    https_input = HTTPSInput(host=HTTPS_INPUT_HOST)
+    https_input = HTTPSInput(name='create_simple_encoding HTTPS input', host=HTTPS_INPUT_HOST)
     https_input = bitmovin.inputs.HTTPS.create(https_input).resource
 
     s3_output = S3Output(access_key=S3_OUTPUT_ACCESSKEY,
                          secret_key=S3_OUTPUT_SECRETKEY,
-                         bucket_name=S3_OUTPUT_BUCKETNAME)
+                         bucket_name=S3_OUTPUT_BUCKETNAME,
+                         name='Sample S3 Output')
     s3_output = bitmovin.outputs.S3.create(s3_output).resource
 
     encoding = Encoding(name='example encoding',
-                        cloud_region=CloudRegion.GOOGLE_EUROPE_WEST_1)
+                        cloud_region=CLOUD_REGION,
+                        infrastructure_id=INFRASTRUCTURE_ID,
+                        encoder_version=ENCODER_VERSION)
 
     encoding = bitmovin.encodings.Encoding.create(encoding).resource
 
@@ -96,17 +72,17 @@ def main():
                                      selection_mode=SelectionMode.AUTO)
 
     video_stream_1080p = Stream(codec_configuration_id=video_codec_configuration_1080p.id,
-                                input_streams=[video_input_stream])
+                                input_streams=[video_input_stream], name='Sample Stream 1080p')
     video_stream_1080p = bitmovin.encodings.Stream.create(object_=video_stream_1080p,
                                                           encoding_id=encoding.id).resource
 
     video_stream_720p = Stream(codec_configuration_id=video_codec_configuration_720p.id,
-                               input_streams=[video_input_stream])
+                               input_streams=[video_input_stream], name='Sample Stream 720p')
     video_stream_720p = bitmovin.encodings.Stream.create(object_=video_stream_720p,
                                                          encoding_id=encoding.id).resource
 
     audio_stream = Stream(codec_configuration_id=audio_codec_configuration.id,
-                          input_streams=[audio_input_stream])
+                          input_streams=[audio_input_stream], name='Sample Stream AUDIO')
     audio_stream = bitmovin.encodings.Stream.create(object_=audio_stream,
                                                     encoding_id=encoding.id).resource
 
@@ -123,7 +99,8 @@ def main():
                                     segment_naming='seg_%number%.m4s',
                                     init_segment_name='init.mp4',
                                     streams=[video_muxing_stream_1080p],
-                                    outputs=[video_muxing_1080p_output])
+                                    outputs=[video_muxing_1080p_output],
+                                    name='Sample Muxing 1080p')
     video_muxing_1080p = bitmovin.encodings.Muxing.FMP4.create(object_=video_muxing_1080p,
                                                                encoding_id=encoding.id).resource
     video_muxing_720p_output = EncodingOutput(output_id=s3_output.id,
@@ -133,7 +110,8 @@ def main():
                                    segment_naming='seg_%number%.m4s',
                                    init_segment_name='init.mp4',
                                    streams=[video_muxing_stream_720p],
-                                   outputs=[video_muxing_720p_output])
+                                   outputs=[video_muxing_720p_output],
+                                   name='Sample Muxing 720p')
     video_muxing_720p = bitmovin.encodings.Muxing.FMP4.create(object_=video_muxing_720p,
                                                               encoding_id=encoding.id).resource
     audio_muxing_output = EncodingOutput(output_id=s3_output.id,
@@ -143,7 +121,8 @@ def main():
                               segment_naming='seg_%number%.m4s',
                               init_segment_name='init.mp4',
                               streams=[audio_muxing_stream],
-                              outputs=[audio_muxing_output])
+                              outputs=[audio_muxing_output],
+                              name='Sample Muxing AUDIO')
     audio_muxing = bitmovin.encodings.Muxing.FMP4.create(object_=audio_muxing,
                                                          encoding_id=encoding.id).resource
 
@@ -157,8 +136,9 @@ def main():
     manifest_output = EncodingOutput(output_id=s3_output.id,
                                      output_path=OUTPUT_BASE_PATH,
                                      acl=[acl_entry])
-    dash_manifest = DashManifest(name='example_manifest_sintel_dash.mpd',
-                                 outputs=[manifest_output])
+    dash_manifest = DashManifest(manifest_name='example_manifest_sintel_dash.mpd',
+                                 outputs=[manifest_output],
+                                 name='Sample DASH Manifest')
     dash_manifest = bitmovin.manifests.DASH.create(dash_manifest).resource
     period = Period()
     period = bitmovin.manifests.DASH.add_period(object_=period, manifest_id=dash_manifest.id).resource
@@ -211,6 +191,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-```
-
-For more examples go to our [example page](https://github.com/bitmovin/bitmovin-python/tree/master/examples).

@@ -1,7 +1,7 @@
 from .bitmovin_object import BitmovinObject
 from .rest import BitmovinHttpClient
 from .services import InputService, OutputService, FilterService, CodecConfigurationService, EncodingService, \
-    ManifestService
+    ManifestService, InfrastructureService
 
 
 class Bitmovin(BitmovinObject):
@@ -16,3 +16,4 @@ class Bitmovin(BitmovinObject):
         self.codecConfigurations = CodecConfigurationService(http_client=self._http_client)
         self.encodings = EncodingService(http_client=self._http_client)
         self.manifests = ManifestService(http_client=self._http_client)
+        self.infrastructures = InfrastructureService(http_client=self._http_client)
