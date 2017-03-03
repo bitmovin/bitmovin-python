@@ -1,6 +1,4 @@
 from .drm import DRM
-# from .cenc_playready_entry import CENCPlayReadyEntry
-# from .cenc_widevine_entry import CENCWidevineEntry
 
 class CENCDRM(DRM):
 
