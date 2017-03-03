@@ -5,6 +5,7 @@ from .playready_drm_service import PlayReadyDRM
 from .primetime_drm_service import PrimeTimeDRM
 from .marlin_drm_service import MarlinDRM
 from .clearkey_drm_service import ClearKeyDRM
+from .cenc_drm_service import CENCDRM
 
 
 class FMP4DRMService(DRMService):
@@ -19,3 +20,4 @@ class FMP4DRMService(DRMService):
         self.PrimeTime = PrimeTimeDRM(http_client=http_client, muxing_type_url=self.MUXING_TYPE_URL)
         self.Marlin = MarlinDRM(http_client=http_client, muxing_type_url=self.MUXING_TYPE_URL)
         self.ClearKey = ClearKeyDRM(http_client=http_client, muxing_type_url=self.MUXING_TYPE_URL)
+        self.CENC = CENCDRM(http_client=http_client, muxing_type_url=self.MUXING_TYPE_URL)
