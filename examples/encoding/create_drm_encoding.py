@@ -1,9 +1,8 @@
 import datetime
-from bitmovin import Bitmovin, Encoding, HTTPSInput, S3Output, H264CodecConfiguration, \
+from bitmovin import Bitmovin, Encoding, S3Output, H264CodecConfiguration, \
     AACCodecConfiguration, H264Profile, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
     FMP4Muxing, MuxingStream, CloudRegion, DashManifest, DRMFMP4Representation, FMP4RepresentationType, Period, \
     VideoAdaptationSet, AudioAdaptationSet, AWSCloudRegion, ContentProtection, S3Input
-from bitmovin import WidevineDRM
 from bitmovin import CENCDRM as CENCDRMResource
 from bitmovin.resources.models import CENCPlayReadyEntry, CENCWidevineEntry
 from bitmovin.errors import BitmovinError
