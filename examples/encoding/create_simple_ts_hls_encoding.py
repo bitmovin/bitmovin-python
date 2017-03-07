@@ -4,6 +4,7 @@ from bitmovin import Bitmovin, Encoding, HTTPSInput, S3Output, H264CodecConfigur
     TSMuxing, MuxingStream, CloudRegion, HlsManifest, AudioMedia, VariantStream
 from bitmovin.errors import BitmovinError
 
+
 API_KEY = '<YOUR_API_KEY>'
 
 # https://<INSERT_YOUR_HTTP_HOST>/<INSERT_YOUR_HTTP_PATH>
