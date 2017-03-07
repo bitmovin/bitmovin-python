@@ -32,10 +32,10 @@ def main():
     bitmovin = Bitmovin(api_key=API_KEY)
 
     s3_input = S3Input(access_key=S3_INPUT_ACCESSKEY,
-                         secret_key=S3_INPUT_SECRETKEY,
-                         bucket_name=S3_INPUT_BUCKETNAME,
-                         cloud_region=AWSCloudRegion.US_EAST_1,
-                         name='Sample S3 Output')
+                       secret_key=S3_INPUT_SECRETKEY,
+                       bucket_name=S3_INPUT_BUCKETNAME,
+                       cloud_region=AWSCloudRegion.US_EAST_1,
+                       name='Sample S3 Output')
     s3_input = bitmovin.inputs.S3.create(s3_input).resource
 
     s3_output = S3Output(access_key=S3_OUTPUT_ACCESSKEY,
@@ -51,11 +51,11 @@ def main():
     encoding = bitmovin.encodings.Encoding.create(encoding).resource
 
     video_codec_configuration_460p = H264CodecConfiguration(name='example_video_codec_configuration_460p',
-                                                             bitrate=2000000,
-                                                             rate=23.976,
-                                                             width=852,
-                                                             height=460,
-                                                             profile=H264Profile.HIGH)
+                                                            bitrate=2000000,
+                                                            rate=23.976,
+                                                            width=852,
+                                                            height=460,
+                                                            profile=H264Profile.HIGH)
     video_codec_configuration_460p = bitmovin.codecConfigurations.H264.create(video_codec_configuration_460p).resource
 
     video_codec_configuration_276p = H264CodecConfiguration(name='example_video_codec_configuration_276p',
@@ -67,17 +67,18 @@ def main():
     video_codec_configuration_276p = bitmovin.codecConfigurations.H264.create(video_codec_configuration_276p).resource
 
     video_codec_configuration_80p = H264CodecConfiguration(name='example_video_codec_configuration_80p',
-                                                            bitrate=186534,
-                                                            rate=23.976,
-                                                            width=144,
-                                                            height=80,
-                                                            profile=H264Profile.HIGH)
+                                                           bitrate=186534,
+                                                           rate=23.976,
+                                                           width=144,
+                                                           height=80,
+                                                           profile=H264Profile.HIGH)
     video_codec_configuration_80p = bitmovin.codecConfigurations.H264.create(video_codec_configuration_80p).resource
     
     audio_codec_configuration_stereo = AACCodecConfiguration(name='example_audio_codec_configuration_stereo',
                                                              bitrate=128000,
                                                              rate=48000)
-    audio_codec_configuration_stereo = bitmovin.codecConfigurations.AAC.create(audio_codec_configuration_stereo).resource
+    audio_codec_configuration_stereo = \
+        bitmovin.codecConfigurations.AAC.create(audio_codec_configuration_stereo).resource
 
     video_input_stream = StreamInput(input_id=s3_input.id,
                                      input_path=S3_INPUT_PATH,
@@ -88,10 +89,10 @@ def main():
                                                selection_mode=SelectionMode.AUTO)
 
     video_stream_460p = Stream(codec_configuration_id=video_codec_configuration_460p.id,
-                                input_streams=[video_input_stream],
-                                name='Sample Stream 460p')
+                               input_streams=[video_input_stream],
+                               name='Sample Stream 460p')
     video_stream_460p = bitmovin.encodings.Stream.create(object_=video_stream_460p,
-                                                          encoding_id=encoding.id).resource
+                                                         encoding_id=encoding.id).resource
 
     video_stream_276p = Stream(codec_configuration_id=video_codec_configuration_276p.id,
                                input_streams=[video_input_stream],
@@ -100,10 +101,10 @@ def main():
                                                          encoding_id=encoding.id).resource
     
     video_stream_80p = Stream(codec_configuration_id=video_codec_configuration_80p.id,
-                               input_streams=[video_input_stream],
-                               name='Sample Stream 80p')
+                              input_streams=[video_input_stream],
+                              name='Sample Stream 80p')
     video_stream_80p = bitmovin.encodings.Stream.create(object_=video_stream_80p,
-                                                         encoding_id=encoding.id).resource
+                                                        encoding_id=encoding.id).resource
     
     audio_stream_en_stereo = Stream(codec_configuration_id=audio_codec_configuration_stereo.id,
                                     input_streams=[audio_input_stream_en_stereo],
@@ -119,29 +120,29 @@ def main():
 
     audio_muxing_stream_en_stereo = MuxingStream(audio_stream_en_stereo.id)
     
-    widevineDRM = CENCWidevineEntry(pssh=CENC_WIDEVINE_PSSH)
-    playReadyDRM = CENCPlayReadyEntry(la_url=CENC_PLAYREADY_LA_URL)
+    widevine_drm = CENCWidevineEntry(pssh=CENC_WIDEVINE_PSSH)
+    play_ready_drm = CENCPlayReadyEntry(la_url=CENC_PLAYREADY_LA_URL)
 
     video_muxing_460p_output = EncodingOutput(output_id=s3_output.id,
-                                               output_path=OUTPUT_BASE_PATH + 'video/460p/',
-                                               acl=[acl_entry])
+                                              output_path=OUTPUT_BASE_PATH + 'video/460p/',
+                                              acl=[acl_entry])
     video_muxing_460p = FMP4Muxing(segment_length=4,
-                                    segment_naming='seg_%number%.m4s',
-                                    init_segment_name='init.mp4',
-                                    streams=[video_muxing_stream_460p],
-                                    name='Sample Muxing 460p')
+                                   segment_naming='seg_%number%.m4s',
+                                   init_segment_name='init.mp4',
+                                   streams=[video_muxing_stream_460p],
+                                   name='Sample Muxing 460p')
     video_muxing_460p = bitmovin.encodings.Muxing.FMP4.create(object_=video_muxing_460p,
-                                                               encoding_id=encoding.id).resource
+                                                              encoding_id=encoding.id).resource
     cenc_460p = CENCDRMResource(key=CENC_KEY,
-                                 kid=CENC_KID,
-                                 widevine=widevineDRM,
-                                 playReady=playReadyDRM,
-                                 outputs=[video_muxing_460p_output],
-                                 name='test cenc')
+                                kid=CENC_KID,
+                                widevine=widevine_drm,
+                                playReady=play_ready_drm,
+                                outputs=[video_muxing_460p_output],
+                                name='test cenc')
     cenc_460p = bitmovin.encodings.Muxing.FMP4.DRM.CENC.create(object_=cenc_460p,
-                                                    encoding_id=encoding.id,
-                                                    muxing_id=video_muxing_460p.id).resource                                                 
-    
+                                                               encoding_id=encoding.id,
+                                                               muxing_id=video_muxing_460p.id).resource
+
     video_muxing_276p_output = EncodingOutput(output_id=s3_output.id,
                                               output_path=OUTPUT_BASE_PATH + 'video/276p/',
                                               acl=[acl_entry])
@@ -154,35 +155,34 @@ def main():
                                                               encoding_id=encoding.id).resource
     cenc_276p = CENCDRMResource(key=CENC_KEY,
                                 kid=CENC_KID,
-                                widevine=widevineDRM,
-                                playReady=playReadyDRM,
+                                widevine=widevine_drm,
+                                playReady=play_ready_drm,
                                 outputs=[video_muxing_276p_output],
                                 name='test cenc')
     cenc_276p = bitmovin.encodings.Muxing.FMP4.DRM.CENC.create(object_=cenc_276p,
-                                                    encoding_id=encoding.id,
-                                                    muxing_id=video_muxing_276p.id).resource
+                                                               encoding_id=encoding.id,
+                                                               muxing_id=video_muxing_276p.id).resource
     
     video_muxing_80p_output = EncodingOutput(output_id=s3_output.id,
-                                              output_path=OUTPUT_BASE_PATH + 'video/80p/',
-                                              acl=[acl_entry])
+                                             output_path=OUTPUT_BASE_PATH + 'video/80p/',
+                                             acl=[acl_entry])
     video_muxing_80p = FMP4Muxing(segment_length=4,
-                                   segment_naming='seg_%number%.m4s',
-                                   init_segment_name='init.mp4',
-                                   streams=[video_muxing_stream_80p],
-                                   name='Sample Muxing 80p')
+                                  segment_naming='seg_%number%.m4s',
+                                  init_segment_name='init.mp4',
+                                  streams=[video_muxing_stream_80p],
+                                  name='Sample Muxing 80p')
     cenc_80p = CENCDRMResource(key=CENC_KEY,
-                                kid=CENC_KID,
-                                widevine=widevineDRM,
-                                playReady=playReadyDRM,
-                                outputs=[video_muxing_80p_output],
-                                name='test cenc')                                   
+                               kid=CENC_KID,
+                               widevine=widevine_drm,
+                               playReady=play_ready_drm,
+                               outputs=[video_muxing_80p_output],
+                               name='test cenc')
     video_muxing_80p = bitmovin.encodings.Muxing.FMP4.create(object_=video_muxing_80p,
-                                                              encoding_id=encoding.id).resource
+                                                             encoding_id=encoding.id).resource
     cenc_80p = bitmovin.encodings.Muxing.FMP4.DRM.CENC.create(object_=cenc_80p,
-                                                    encoding_id=encoding.id,
-                                                    muxing_id=video_muxing_80p.id).resource
-  
-    
+                                                              encoding_id=encoding.id,
+                                                              muxing_id=video_muxing_80p.id).resource
+
     audio_muxing_output_en_stereo = EncodingOutput(output_id=s3_output.id,
                                                    output_path=OUTPUT_BASE_PATH + 'audio/en_2_0/',
                                                    acl=[acl_entry])
@@ -195,13 +195,13 @@ def main():
                                                                    encoding_id=encoding.id).resource
     cenc_audio = CENCDRMResource(key=CENC_KEY,
                                  kid=CENC_KID,
-                                 widevine=widevineDRM,
-                                 playReady=playReadyDRM,
+                                 widevine=widevine_drm,
+                                 playReady=play_ready_drm,
                                  outputs=[audio_muxing_output_en_stereo],
                                  name='test cenc')
     cenc_audio = bitmovin.encodings.Muxing.FMP4.DRM.CENC.create(object_=cenc_audio,
-                                                    encoding_id=encoding.id,
-                                                    muxing_id=audio_muxing_en_stereo.id).resource
+                                                                encoding_id=encoding.id,
+                                                                muxing_id=audio_muxing_en_stereo.id).resource
 
     bitmovin.encodings.Encoding.start(encoding_id=encoding.id)
 
@@ -229,65 +229,67 @@ def main():
                                                                             period_id=period.id).resource
 
     video_content_protection = ContentProtection(encoding_id = encoding.id,
-    muxing_id=video_muxing_460p.id,
-    drm_id=cenc_460p.id)
+                                                 muxing_id=video_muxing_460p.id,
+                                                 drm_id=cenc_460p.id)
     bitmovin.manifests.DASH.add_content_protection_to_adaptionset(object_=video_content_protection,
-    manifest_id=dash_manifest.id,
-    period_id=period.id,
-    adaptationset_id=video_adaptation_set.id)
-    fmp4_representation_460p = DRMFMP4Representation(FMP4RepresentationType.TEMPLATE,
-                                                   encoding_id=encoding.id,
-                                                   muxing_id=video_muxing_460p.id,
-                                                   drm_id=cenc_460p.id,
-                                                   segment_path='video/460p/')
-    fmp4_representation_460p = bitmovin.manifests.DASH.add_drm_fmp4_representation(object_=fmp4_representation_460p,
-                                                                                manifest_id=dash_manifest.id,
-                                                                                period_id=period.id,
-                                                                                adaptationset_id=video_adaptation_set.id
-                                                                                ).resource
+                                                                  manifest_id=dash_manifest.id,
+                                                                  period_id=period.id,
+                                                                  adaptationset_id=video_adaptation_set.id)
+    fmp4_representation_460p = DRMFMP4Representation(type=FMP4RepresentationType.TEMPLATE,
+                                                     encoding_id=encoding.id,
+                                                     muxing_id=video_muxing_460p.id,
+                                                     drm_id=cenc_460p.id,
+                                                     segment_path='video/460p/')
+    fmp4_representation_460p = bitmovin.manifests.DASH.add_drm_fmp4_representation(
+        object_=fmp4_representation_460p,
+        manifest_id=dash_manifest.id,
+        period_id=period.id,
+        adaptationset_id=video_adaptation_set.id
+    ).resource
 
-    fmp4_representation_276p = DRMFMP4Representation(FMP4RepresentationType.TEMPLATE,
-                                                  encoding_id=encoding.id,
-                                                  muxing_id=video_muxing_276p.id,
-                                                  drm_id=cenc_276p.id,
-                                                  segment_path='video/276p/')
-    fmp4_representation_276p = bitmovin.manifests.DASH.add_drm_fmp4_representation(object_=fmp4_representation_276p,
-                                                                               manifest_id=dash_manifest.id,
-                                                                               period_id=period.id,
-                                                                               adaptationset_id=video_adaptation_set.id
-                                                                               ).resource
+    fmp4_representation_276p = DRMFMP4Representation(type=FMP4RepresentationType.TEMPLATE,
+                                                     encoding_id=encoding.id,
+                                                     muxing_id=video_muxing_276p.id,
+                                                     drm_id=cenc_276p.id,
+                                                     segment_path='video/276p/')
+    fmp4_representation_276p = bitmovin.manifests.DASH.add_drm_fmp4_representation(
+        object_=fmp4_representation_276p,
+        manifest_id=dash_manifest.id,
+        period_id=period.id,
+        adaptationset_id=video_adaptation_set.id
+    ).resource
 
-    fmp4_representation_80p = DRMFMP4Representation(FMP4RepresentationType.TEMPLATE,
-                                                  encoding_id=encoding.id,
-                                                  muxing_id=video_muxing_80p.id,
-                                                  drm_id=cenc_80p.id,
-                                                  segment_path='video/80p/')
-    fmp4_representation_80p = bitmovin.manifests.DASH.add_drm_fmp4_representation(object_=fmp4_representation_80p,
-                                                                               manifest_id=dash_manifest.id,
-                                                                               period_id=period.id,
-                                                                               adaptationset_id=video_adaptation_set.id
-                                                                               ).resource
-    
+    fmp4_representation_80p = DRMFMP4Representation(type=FMP4RepresentationType.TEMPLATE,
+                                                    encoding_id=encoding.id,
+                                                    muxing_id=video_muxing_80p.id,
+                                                    drm_id=cenc_80p.id,
+                                                    segment_path='video/80p/')
+    fmp4_representation_80p = bitmovin.manifests.DASH.add_drm_fmp4_representation(
+        object_=fmp4_representation_80p,
+        manifest_id=dash_manifest.id,
+        period_id=period.id,
+        adaptationset_id=video_adaptation_set.id
+    ).resource
 
     audio_adaptation_set_en_2_0 = AudioAdaptationSet(lang='EN 2.0')
     audio_adaptation_set_en_2_0 = bitmovin.manifests.DASH.add_audio_adaptation_set(object_=audio_adaptation_set_en_2_0,
                                                                                    manifest_id=dash_manifest.id,
                                                                                    period_id=period.id).resource
 
-    audio_content_protection = ContentProtection(encoding_id = encoding.id,
-    muxing_id=audio_muxing_en_stereo.id,
-    drm_id=cenc_audio.id)
+    audio_content_protection = ContentProtection(encoding_id=encoding.id,
+                                                 muxing_id=audio_muxing_en_stereo.id,
+                                                 drm_id=cenc_audio.id)
     bitmovin.manifests.DASH.add_content_protection_to_adaptionset(object_=audio_content_protection,
-    manifest_id=dash_manifest.id,
-    period_id=period.id,
-    adaptationset_id=audio_adaptation_set_en_2_0.id)
-    fmp4_representation_audio_en_2_0 = DRMFMP4Representation(FMP4RepresentationType.TEMPLATE,
-                                                          encoding_id=encoding.id,
-                                                          muxing_id=audio_muxing_en_stereo.id,
-                                                          drm_id=cenc_audio.id,
-                                                          segment_path='audio/en_2_0/')
-    fmp4_representation_audio_en_2_0 = bitmovin.manifests.DASH.add_drm_fmp4_representation(
-        object_=fmp4_representation_audio_en_2_0,
+                                                                  manifest_id=dash_manifest.id,
+                                                                  period_id=period.id,
+                                                                  adaptationset_id=audio_adaptation_set_en_2_0.id)
+    drm_cenc_fmp4_representation_audio_en_2_0 = DRMFMP4Representation(type=FMP4RepresentationType.TEMPLATE,
+                                                                      encoding_id=encoding.id,
+                                                                      muxing_id=audio_muxing_en_stereo.id,
+                                                                      drm_id=cenc_audio.id,
+                                                                      segment_path='audio/en_2_0/')
+    drm_cenc_fmp4_representation_audio_en_2_0 = bitmovin.manifests.DASH.add_drm_fmp4_representation(
+        object_=drm_cenc_fmp4_representation_audio_en_2_0,
         manifest_id=dash_manifest.id,
         period_id=period.id,
         adaptationset_id=audio_adaptation_set_en_2_0.id
