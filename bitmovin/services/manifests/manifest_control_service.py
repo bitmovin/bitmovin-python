@@ -8,7 +8,7 @@ from bitmovin.services.parsing_utils import ParsingUtils
 from bitmovin.utils import BitmovinJSONEncoder
 
 
-class DashManifestControlService(BitmovinObject):
+class ManifestControlService(BitmovinObject):
 
     def __init__(self, http_client, relative_url):
         super().__init__()
@@ -31,18 +31,6 @@ class DashManifestControlService(BitmovinObject):
     def stop(self, manifest_id):
         self.parsing_utils.check_arg_valid_uuid(manifest_id)
         url = self.relative_url + '/{}/stop'.format(manifest_id)
-        response = self.http_client.post_empty_body(url)
-
-        if response.status == Status.ERROR.value:
-            raise BitmovinApiError('Response was not successful', response)
-        if response.status == Status.SUCCESS.value:
-            created_resource = self.parsing_utils.parse_bitmovin_minimal_model_from_response(response=response)
-            return ResourceResponse(response=response, resource=created_resource)
-        raise InvalidStatusError('Unknown status {} received'.format(response.status))
-
-    def restart(self, manifest_id):
-        self.parsing_utils.check_arg_valid_uuid(manifest_id)
-        url = self.relative_url + '/{}/restart'.format(manifest_id)
         response = self.http_client.post_empty_body(url)
 
         if response.status == Status.ERROR.value:

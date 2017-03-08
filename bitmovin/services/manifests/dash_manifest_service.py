@@ -2,11 +2,11 @@ from urllib.parse import urljoin
 from bitmovin.errors import FunctionalityNotAvailableError, InvalidTypeError, BitmovinApiError, InvalidStatusError
 from bitmovin.resources import DashManifest, Period, ResourceResponse, Status, Response, AudioAdaptationSet, \
     VideoAdaptationSet, SubtitleAdaptationSet, FMP4Representation, DRMFMP4Representation, ContentProtection
-from .dash_manifest_control_service import DashManifestControlService
+from .manifest_control_service import ManifestControlService
 from ..rest_service import RestService
 
 
-class DASH(RestService, DashManifestControlService):
+class DASH(RestService, ManifestControlService):
     BASE_ENDPOINT_URL = 'encoding/manifests/dash'
 
     def __init__(self, http_client):
