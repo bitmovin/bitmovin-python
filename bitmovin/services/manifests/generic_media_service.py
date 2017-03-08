@@ -16,7 +16,7 @@ class GenericMediaService(RestService):
 
     def _get_endpoint_url(self, manifest_id):
         if not manifest_id:
-            raise MissingArgumentError('encoding_id must be given')
+            raise MissingArgumentError('manifest_id must be given')
         endpoint_url = self.BASE_ENDPOINT_URL\
             .replace('{manifest_id}', manifest_id)\
             .replace('{media_type}', self.media_type_url)
