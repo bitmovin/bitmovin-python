@@ -16,6 +16,8 @@ S3_OUTPUT_ACCESSKEY = '<YOUR_S3_ACCESS_KEY>'
 S3_OUTPUT_SECRETKEY = '<YOUR_S3_SECRET_KEY>'
 S3_OUTPUT_BUCKETNAME = '<YOUR_S3_BUCKET_NAME>'
 
+S3_PUBLIC_BASE_URL = '<INSERT_YOUR_S3_PUBLIC_BASE_URL>'  # Without trailing slash '/'
+
 INFRASTRUCTURE_ID = '<YOUR_INFRASTRUCTURE_ID>'
 CLOUD_REGION = CloudRegion.KUBERNETES
 ENCODER_VERSION=EncoderVersion.BETA
@@ -23,6 +25,7 @@ ENCODER_VERSION=EncoderVersion.BETA
 date_component = str(datetime.datetime.now()).replace(' ', '_').replace(':', '-').split('.')[0].replace('_', '__')
 OUTPUT_BASE_PATH = '/your/output/base/path/{}/'.format(date_component)
 
+DASH_MANIFEST_NAME = 'example_dash_manifest.mpd'
 
 def main():
     bitmovin = Bitmovin(api_key=API_KEY)
@@ -136,7 +139,7 @@ def main():
     manifest_output = EncodingOutput(output_id=s3_output.id,
                                      output_path=OUTPUT_BASE_PATH,
                                      acl=[acl_entry])
-    dash_manifest = DashManifest(manifest_name='example_manifest_sintel_dash.mpd',
+    dash_manifest = DashManifest(manifest_name=DASH_MANIFEST_NAME,
                                  outputs=[manifest_output],
                                  name='Sample DASH Manifest')
     dash_manifest = bitmovin.manifests.DASH.create(dash_manifest).resource
@@ -187,6 +190,8 @@ def main():
         bitmovin.manifests.DASH.wait_until_finished(manifest_id=dash_manifest.id)
     except BitmovinError as bitmovin_error:
         print("Exception occurred while waiting for manifest creation to finish: {}".format(bitmovin_error))
+
+    print('DASH Manifest download URL: {}'.format(S3_PUBLIC_BASE_URL + '/' + S3_OUTPUT_BUCKETNAME + OUTPUT_BASE_PATH + DASH_MANIFEST_NAME))
 
 
 if __name__ == '__main__':
