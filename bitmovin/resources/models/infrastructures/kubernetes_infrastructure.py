@@ -17,7 +17,7 @@ class KubernetesInfrastructure(AbstractInfrastructure, Serializable):
         description = json_object.get('description')
         online = json_object.get('online')
         connected = json_object.get('connected')
-        agent_run_command = json_object.get('agentRunCommand')
+        agent_run_command = json_object.get('agentDeploymentDownloadUrl')
 
         kubernetes_infrastructure = KubernetesInfrastructure(name=name, description=description, online=online,
                                                              connected=connected, agent_run_command=agent_run_command,
