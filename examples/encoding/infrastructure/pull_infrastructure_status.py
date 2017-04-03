@@ -44,6 +44,8 @@ def main(argv):
         table = [[k8s.name, k8s.online, k8s.connected]]
         print('\n{}'.format(datetime.datetime.now()))
         print(tabulate(table, headers=headers, tablefmt='fancy_grid'))
+        print('\nAgent Deployment Download Command:\n------------------\n' +
+              'curl -X GET -H "X-Api-Key: {}" {} > bitmovin-agent.tar\n'.format(apiKey, k8s.agentDeploymentDownloadUrl))
     except BitmovinApiError as e:
         print('An error occured: ', vars(e))
         sys.exit(5)
