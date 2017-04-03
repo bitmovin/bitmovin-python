@@ -8,6 +8,7 @@ from .http_input_service import HTTP
 from .https_input_service import HTTPS
 from .aspera_input_service import Aspera
 from .rtmp_input_service import RTMP
+from .generic_s3_input_service import GenericS3
 
 
 class InputService(BitmovinObject):
@@ -23,3 +24,4 @@ class InputService(BitmovinObject):
         self.HTTPS = HTTPS(http_client=self.http_client)
         self.Aspera = Aspera(http_client=self.http_client)
         self.RTMP = RTMP(http_client=self.http_client)
+        self.GenericS3 = GenericS3(http_client=self.http_client)
