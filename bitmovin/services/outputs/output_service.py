@@ -4,6 +4,7 @@ from .gcs_output_service import GCS
 from .azure_output_service import Azure
 from .ftp_output_service import FTP
 from .sftp_output_service import SFTP
+from .generic_s3_output_service import GenericS3
 
 
 class OutputService(BitmovinObject):
@@ -15,3 +16,4 @@ class OutputService(BitmovinObject):
         self.Azure = Azure(http_client=self.http_client)
         self.FTP = FTP(http_client=self.http_client)
         self.SFTP = SFTP(http_client=self.http_client)
+        self.GenericS3 = GenericS3(http_client=self.http_client)
