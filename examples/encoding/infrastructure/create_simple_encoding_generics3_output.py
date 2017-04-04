@@ -5,11 +5,9 @@ from bitmovin import Bitmovin, Encoding, GenericS3Output, GenericS3Input, H264Co
     VideoAdaptationSet, AudioAdaptationSet
 from bitmovin.errors import BitmovinError
 
-API_KEY = '<INSERT_YOUR_API_KEY>'
-CLOUD_REGION = CloudRegion.GOOGLE_EUROPE_WEST_1
 
-# optional infrastructure id for on-premise encodings
-INFRASTRUCTURE_ID = None
+INFRASTRUCTURE_ID = '<INSERT_YOUR_INFRASTRUCTURE_ID>'
+API_KEY = '<INSERT_YOUR_API_KEY>'
 
 GENERIC_S3_INPUT_ACCESSKEY = 'accessKey'
 GENERIC_S3_INPUT_SECRETKEY = 'secretKey'
@@ -24,6 +22,7 @@ GENERIC_S3_OUTPUT_BUCKETNAME = '<INSERT_YOUR_OUTPUT_BUCKET>'
 GENERIC_S3_OUTPUT_HOST = 'scality'
 GENERIC_S3_OUTPUT_PORT = 8000
 
+CLOUD_REGION = CloudRegion.KUBERNETES
 
 date_component = str(datetime.datetime.now()).replace(' ', '_').replace(':', '-').split('.')[0].replace('_', '__')
 OUTPUT_BASE_PATH = '/your/output/base/path/{}/'.format(date_component)
