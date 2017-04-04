@@ -28,7 +28,7 @@ def main():
     contentId = "<YOUR_VERIMATRIX_CONTENT_ID>"
     siteId = "<YOUR_VERIMATRIX_SITE_ID>"
 
-    contentURL = 'http://vcas41-emea.verimatrix.com:8058/cei/v1.0/content/{}?siteId={}'
+    contentURL = 'http://your.verimatrix.endpoint:8058/cei/v1.0/content/{}?siteId={}'
     contentURL = contentURL.format(contentId, siteId)
 
     contentRequest = """{
