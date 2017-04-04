@@ -6,6 +6,10 @@ from bitmovin import Bitmovin, Encoding, GenericS3Output, GenericS3Input, H264Co
 from bitmovin.errors import BitmovinError
 
 API_KEY = '<INSERT_YOUR_API_KEY>'
+CLOUD_REGION = CloudRegion.GOOGLE_EUROPE_WEST_1
+
+# optional infrastructure id for on-premise encodings
+INFRASTRUCTURE_ID = None
 
 GENERIC_S3_INPUT_ACCESSKEY = 'accessKey'
 GENERIC_S3_INPUT_SECRETKEY = 'secretKey'
@@ -19,6 +23,7 @@ GENERIC_S3_OUTPUT_SECRETKEY = 'secretKey'
 GENERIC_S3_OUTPUT_BUCKETNAME = '<INSERT_YOUR_OUTPUT_BUCKET>'
 GENERIC_S3_OUTPUT_HOST = 'scality'
 GENERIC_S3_OUTPUT_PORT = 8000
+
 
 date_component = str(datetime.datetime.now()).replace(' ', '_').replace(':', '-').split('.')[0].replace('_', '__')
 OUTPUT_BASE_PATH = '/your/output/base/path/{}/'.format(date_component)
@@ -45,7 +50,8 @@ def main():
     generic_s3_input = bitmovin.inputs.GenericS3.create(generic_s3_input).resource
 
     encoding = Encoding(name='example encoding',
-                        cloud_region=CloudRegion.GOOGLE_EUROPE_WEST_1)
+                        cloud_region=CLOUD_REGION,
+                        infrastructure_id=INFRASTRUCTURE_ID)
 
     encoding = bitmovin.encodings.Encoding.create(encoding).resource
 
