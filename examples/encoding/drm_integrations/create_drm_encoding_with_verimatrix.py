@@ -112,7 +112,7 @@ def main():
             CENC_WIDEVINE_PSSH = drmType["keyData"][0]["drmData"]["pssh"]["data"]
 
     if not (foundCENCPlayready & foundCENCWidevine):
-        print("something was not found")
+        print("Playready or Widevine was not found")
     
     bitmovin = Bitmovin(api_key=API_KEY)
 
