@@ -1,6 +1,7 @@
 import json
 import requests
 import datetime
+import urllib.parse
 from bitmovin import Bitmovin, Encoding, S3Output, H264CodecConfiguration, \
     AACCodecConfiguration, H264Profile, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
     FMP4Muxing, MuxingStream, DashManifest, DRMFMP4Representation, FMP4RepresentationType, Period, \
@@ -25,10 +26,11 @@ def main():
     date_component = str(datetime.datetime.now()).replace(' ', '_').replace(':', '-').split('.')[0].replace('_', '__')
     OUTPUT_BASE_PATH = '/encoding/{}/'.format(date_component)
 
+    VERIMATRIX_ENDPOINT = '<YOUR_VERIMATRIX_ENDPOINT>'
     contentId = "<YOUR_VERIMATRIX_CONTENT_ID>"
     siteId = "<YOUR_VERIMATRIX_SITE_ID>"
 
-    contentURL = 'http://your.verimatrix.endpoint:8058/cei/v1.0/content/{}?siteId={}'
+    contentURL = urllib.parse.urljoin(VERIMATRIX_ENDPOINT, 'cei/v1.0/content/{}?siteId={}')
     contentURL = contentURL.format(contentId, siteId)
 
     contentRequest = """{
@@ -36,7 +38,7 @@ def main():
             "siteId": "",
             "contentId": "",
             "contentType": "VOD",
-            "streamingProtocol": "SS",
+            "streamingProtocol": "DASH",
             "encryptionAlgorithm": "AES_CTR",
             "keyRotation": {
                 "chainedLicense": "FALSE",
@@ -62,7 +64,7 @@ def main():
         print("Did not get OPERATION_SUCCESS for content request")
         exit()
 
-    keyURL = 'http://your.verimatrix.endpoint:8058/cei/v1.0/content/{}/position/0/key?siteId={}'
+    keyURL = urllib.parse.urljoin(VERIMATRIX_ENDPOINT, 'cei/v1.0/content/{}/position/0/key?siteId={}')
     keyURL = keyURL.format(contentId, siteId)
 
     keyRequest = """{
