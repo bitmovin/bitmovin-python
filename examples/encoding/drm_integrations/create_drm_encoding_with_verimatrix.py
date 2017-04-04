@@ -11,26 +11,8 @@ from bitmovin import CENCDRM as CENCDRMResource
 from bitmovin.resources.models import CENCPlayReadyEntry, CENCWidevineEntry
 from bitmovin.errors import BitmovinError
 
-def main():
-
-    API_KEY = '<INSERT_YOUR_API_KEY>'
-
-    # https://<INSERT_YOUR_HTTP_HOST>/<INSERT_YOUR_HTTP_PATH>
-    HTTPS_INPUT_HOST = '<INSERT_YOUR_HTTPS_HOST>'
-    HTTPS_INPUT_PATH = '<INSERT_YOUR_HTTPS_PATH>'
-
-    S3_OUTPUT_ACCESSKEY = '<INSERT_YOUR_ACCESS_KEY>'
-    S3_OUTPUT_SECRETKEY = '<INSERT_YOUR_SECRET_KEY>'
-    S3_OUTPUT_BUCKETNAME = '<INSERT_YOUR_BUCKET_NAME>'
-
-    date_component = str(datetime.datetime.now()).replace(' ', '_').replace(':', '-').split('.')[0].replace('_', '__')
-    OUTPUT_BASE_PATH = '/encoding/{}/'.format(date_component)
-
-    VERIMATRIX_ENDPOINT = '<YOUR_VERIMATRIX_ENDPOINT>'
-    contentId = "<YOUR_VERIMATRIX_CONTENT_ID>"
-    siteId = "<YOUR_VERIMATRIX_SITE_ID>"
-
-    contentURL = urllib.parse.urljoin(VERIMATRIX_ENDPOINT, 'cei/v1.0/content/{}?siteId={}')
+def content_request(endpoint, contentId, siteId):
+    contentURL = urllib.parse.urljoin(endpoint, 'cei/v1.0/content/{}?siteId={}')
     contentURL = contentURL.format(contentId, siteId)
 
     contentRequest = """{
@@ -64,7 +46,8 @@ def main():
         print("Did not get OPERATION_SUCCESS for content request")
         exit()
 
-    keyURL = urllib.parse.urljoin(VERIMATRIX_ENDPOINT, 'cei/v1.0/content/{}/position/0/key?siteId={}')
+def key_request(endpoint, contentId, siteId):
+    keyURL = urllib.parse.urljoin(endpoint, 'cei/v1.0/content/{}/position/0/key?siteId={}')
     keyURL = keyURL.format(contentId, siteId)
 
     keyRequest = """{
@@ -84,6 +67,8 @@ def main():
     parsed_json = json.loads(keyRequest)
     parsed_json["keyRequest"]["contentInfo"]["contentId"] = contentId
     parsed_json["keyRequest"]["contentInfo"]["siteId"] = siteId
+
+    headers = {'Content-Type': 'application/json'}
 
     r = requests.put(keyURL, data=json.dumps(parsed_json),headers=headers)
     if r.status_code != 200:
@@ -115,10 +100,36 @@ def main():
 
     if not (foundCENCPlayready & foundCENCWidevine):
         print("Playready or Widevine was not found")
+        exit()
     
+    return CENC_KEY, CENC_KID, CENC_WIDEVINE_PSSH, CENC_PLAYREADY_LA_URL
+
+def main():
+
+    API_KEY = '<INSERT_YOUR_API_KEY>'
+
+    # https://<INSERT_YOUR_HTTP_HOST>/<INSERT_YOUR_HTTP_PATH>
+    HTTPS_INPUT_HOST = '<INSERT_YOUR_HTTPS_HOST>'
+    HTTPS_INPUT_PATH = '<INSERT_YOUR_HTTPS_PATH>'
+
+    S3_OUTPUT_ACCESSKEY = '<INSERT_YOUR_ACCESS_KEY>'
+    S3_OUTPUT_SECRETKEY = '<INSERT_YOUR_SECRET_KEY>'
+    S3_OUTPUT_BUCKETNAME = '<INSERT_YOUR_BUCKET_NAME>'
+
+    date_component = str(datetime.datetime.now()).replace(' ', '_').replace(':', '-').split('.')[0].replace('_', '__')
+    OUTPUT_BASE_PATH = '/encoding/{}/'.format(date_component)
+
+    VERIMATRIX_ENDPOINT = '<YOUR_VERIMATRIX_ENDPOINT>'
+    contentId = '<YOUR_VERIMATRIX_CONTENT_ID>'
+    siteId = '<YOUR_VERIMATRIX_SITE_ID>'
+
+    content_request(VERIMATRIX_ENDPOINT, contentId, siteId)
+    
+    CENC_KEY, CENC_KID, CENC_WIDEVINE_PSSH, CENC_PLAYREADY_LA_URL = key_request(VERIMATRIX_ENDPOINT, contentId, siteId)
+
     bitmovin = Bitmovin(api_key=API_KEY)
 
-    https_input = HTTPSInput(name='create_simple_encoding HTTPS input', host=HTTPS_INPUT_HOST)
+    https_input = HTTPSInput(name='create_drm_encoding_with_verimatrix HTTPS input', host=HTTPS_INPUT_HOST)
     https_input = bitmovin.inputs.HTTPS.create(https_input).resource
 
     s3_output = S3Output(access_key=S3_OUTPUT_ACCESSKEY,
@@ -128,7 +139,7 @@ def main():
                          name='Sample S3 Output')
     s3_output = bitmovin.outputs.S3.create(s3_output).resource
 
-    encoding = Encoding(name='example encoding')
+    encoding = Encoding(name='example encoding with Verimatrix DRM')
 
     encoding = bitmovin.encodings.Encoding.create(encoding).resource
 
