@@ -1,48 +1,51 @@
 import datetime
-from bitmovin import Bitmovin, Encoding, HTTPSInput, S3Output, H264CodecConfiguration, \
+from bitmovin import Bitmovin, Encoding, GenericS3Output, GenericS3Input, H264CodecConfiguration, \
     AACCodecConfiguration, H264Profile, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
     FMP4Muxing, MuxingStream, CloudRegion, DashManifest, FMP4Representation, FMP4RepresentationType, Period, \
-    VideoAdaptationSet, AudioAdaptationSet, EncoderVersion
+    VideoAdaptationSet, AudioAdaptationSet
 from bitmovin.errors import BitmovinError
-
 
 API_KEY = '<INSERT_YOUR_API_KEY>'
 
-# https://<INSERT_YOUR_HTTP_HOST>/<INSERT_YOUR_HTTP_PATH>
-HTTPS_INPUT_HOST = '<INSERT_YOUR_HTTP_HOST>'
-HTTPS_INPUT_PATH = '<INSERT_YOUR_HTTP_PATH>'
+GENERIC_S3_INPUT_ACCESSKEY = 'accessKey'
+GENERIC_S3_INPUT_SECRETKEY = 'secretKey'
+GENERIC_S3_INPUT_BUCKETNAME = '<INSERT_YOUR_INPUT_BUCKET>'
+GENERIC_S3_INPUT_HOST = 'scality'
+GENERIC_S3_INPUT_PORT = 8000
+GENERIC_S3_INPUT_PATH = '<INSERT_YOUR_INPUT_FILE_PATH>'
 
-S3_OUTPUT_ACCESSKEY = '<YOUR_S3_ACCESS_KEY>'
-S3_OUTPUT_SECRETKEY = '<YOUR_S3_SECRET_KEY>'
-S3_OUTPUT_BUCKETNAME = '<YOUR_S3_BUCKET_NAME>'
-
-S3_PUBLIC_BASE_URL = '<INSERT_YOUR_S3_PUBLIC_BASE_URL>'  # Without trailing slash '/'
-
-INFRASTRUCTURE_ID = '<YOUR_INFRASTRUCTURE_ID>'
-CLOUD_REGION = CloudRegion.KUBERNETES
-ENCODER_VERSION=EncoderVersion.BETA
+GENERIC_S3_OUTPUT_ACCESSKEY = 'accessKey'
+GENERIC_S3_OUTPUT_SECRETKEY = 'secretKey'
+GENERIC_S3_OUTPUT_BUCKETNAME = '<INSERT_YOUR_OUTPUT_BUCKET>'
+GENERIC_S3_OUTPUT_HOST = 'scality'
+GENERIC_S3_OUTPUT_PORT = 8000
 
 date_component = str(datetime.datetime.now()).replace(' ', '_').replace(':', '-').split('.')[0].replace('_', '__')
 OUTPUT_BASE_PATH = '/your/output/base/path/{}/'.format(date_component)
 
-DASH_MANIFEST_NAME = 'example_dash_manifest.mpd'
 
 def main():
     bitmovin = Bitmovin(api_key=API_KEY)
 
-    https_input = HTTPSInput(name='create_simple_encoding HTTPS input', host=HTTPS_INPUT_HOST)
-    https_input = bitmovin.inputs.HTTPS.create(https_input).resource
+    generic_s3_input = GenericS3Input(access_key=GENERIC_S3_INPUT_ACCESSKEY,
+                                      secret_key=GENERIC_S3_INPUT_SECRETKEY,
+                                      bucket_name=GENERIC_S3_INPUT_BUCKETNAME,
+                                      name='Sample GENERIC_S3 Input',
+                                      host=GENERIC_S3_INPUT_HOST,
+                                      port=GENERIC_S3_INPUT_PORT)
 
-    s3_output = S3Output(access_key=S3_OUTPUT_ACCESSKEY,
-                         secret_key=S3_OUTPUT_SECRETKEY,
-                         bucket_name=S3_OUTPUT_BUCKETNAME,
-                         name='Sample S3 Output')
-    s3_output = bitmovin.outputs.S3.create(s3_output).resource
+    generic_s3_output = GenericS3Output(access_key=GENERIC_S3_OUTPUT_ACCESSKEY,
+                                        secret_key=GENERIC_S3_OUTPUT_SECRETKEY,
+                                        bucket_name=GENERIC_S3_OUTPUT_BUCKETNAME,
+                                        name='Sample GENERIC_S3 Output',
+                                        host=GENERIC_S3_OUTPUT_HOST,
+                                        port=GENERIC_S3_OUTPUT_PORT)
+
+    generic_s3_output = bitmovin.outputs.GenericS3.create(generic_s3_output).resource
+    generic_s3_input = bitmovin.inputs.GenericS3.create(generic_s3_input).resource
 
     encoding = Encoding(name='example encoding',
-                        cloud_region=CLOUD_REGION,
-                        infrastructure_id=INFRASTRUCTURE_ID,
-                        encoder_version=ENCODER_VERSION)
+                        cloud_region=CloudRegion.GOOGLE_EUROPE_WEST_1)
 
     encoding = bitmovin.encodings.Encoding.create(encoding).resource
 
@@ -67,11 +70,11 @@ def main():
                                                       rate=48000)
     audio_codec_configuration = bitmovin.codecConfigurations.AAC.create(audio_codec_configuration).resource
 
-    video_input_stream = StreamInput(input_id=https_input.id,
-                                     input_path=HTTPS_INPUT_PATH,
+    video_input_stream = StreamInput(input_id=generic_s3_input.id,
+                                     input_path=GENERIC_S3_INPUT_PATH,
                                      selection_mode=SelectionMode.AUTO)
-    audio_input_stream = StreamInput(input_id=https_input.id,
-                                     input_path=HTTPS_INPUT_PATH,
+    audio_input_stream = StreamInput(input_id=generic_s3_input.id,
+                                     input_path=GENERIC_S3_INPUT_PATH,
                                      selection_mode=SelectionMode.AUTO)
 
     video_stream_1080p = Stream(codec_configuration_id=video_codec_configuration_1080p.id,
@@ -95,7 +98,7 @@ def main():
     video_muxing_stream_720p = MuxingStream(video_stream_720p.id)
     audio_muxing_stream = MuxingStream(audio_stream.id)
 
-    video_muxing_1080p_output = EncodingOutput(output_id=s3_output.id,
+    video_muxing_1080p_output = EncodingOutput(output_id=generic_s3_output.id,
                                                output_path=OUTPUT_BASE_PATH + 'video/1080p/',
                                                acl=[acl_entry])
     video_muxing_1080p = FMP4Muxing(segment_length=4,
@@ -106,7 +109,7 @@ def main():
                                     name='Sample Muxing 1080p')
     video_muxing_1080p = bitmovin.encodings.Muxing.FMP4.create(object_=video_muxing_1080p,
                                                                encoding_id=encoding.id).resource
-    video_muxing_720p_output = EncodingOutput(output_id=s3_output.id,
+    video_muxing_720p_output = EncodingOutput(output_id=generic_s3_output.id,
                                               output_path=OUTPUT_BASE_PATH + 'video/720p/',
                                               acl=[acl_entry])
     video_muxing_720p = FMP4Muxing(segment_length=4,
@@ -117,9 +120,9 @@ def main():
                                    name='Sample Muxing 720p')
     video_muxing_720p = bitmovin.encodings.Muxing.FMP4.create(object_=video_muxing_720p,
                                                               encoding_id=encoding.id).resource
-    audio_muxing_output = EncodingOutput(output_id=s3_output.id,
-                                              output_path=OUTPUT_BASE_PATH + 'audio/',
-                                              acl=[acl_entry])
+    audio_muxing_output = EncodingOutput(output_id=generic_s3_output.id,
+                                         output_path=OUTPUT_BASE_PATH + 'audio/',
+                                         acl=[acl_entry])
     audio_muxing = FMP4Muxing(segment_length=4,
                               segment_naming='seg_%number%.m4s',
                               init_segment_name='init.mp4',
@@ -136,10 +139,10 @@ def main():
     except BitmovinError as bitmovin_error:
         print("Exception occurred while waiting for encoding to finish: {}".format(bitmovin_error))
 
-    manifest_output = EncodingOutput(output_id=s3_output.id,
+    manifest_output = EncodingOutput(output_id=generic_s3_output.id,
                                      output_path=OUTPUT_BASE_PATH,
                                      acl=[acl_entry])
-    dash_manifest = DashManifest(manifest_name=DASH_MANIFEST_NAME,
+    dash_manifest = DashManifest(manifest_name='example_manifest_sintel_dash.mpd',
                                  outputs=[manifest_output],
                                  name='Sample DASH Manifest')
     dash_manifest = bitmovin.manifests.DASH.create(dash_manifest).resource
@@ -190,8 +193,6 @@ def main():
         bitmovin.manifests.DASH.wait_until_finished(manifest_id=dash_manifest.id)
     except BitmovinError as bitmovin_error:
         print("Exception occurred while waiting for manifest creation to finish: {}".format(bitmovin_error))
-
-    print('DASH Manifest download URL: {}'.format(S3_PUBLIC_BASE_URL + '/' + S3_OUTPUT_BUCKETNAME + OUTPUT_BASE_PATH + DASH_MANIFEST_NAME))
 
 
 if __name__ == '__main__':

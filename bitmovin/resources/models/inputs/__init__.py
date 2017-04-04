@@ -8,4 +8,5 @@ from .http_input import HTTPInput
 from .https_input import HTTPSInput
 from .aspera_input import AsperaInput
 from .rtmp_input import RTMPInput
+from .generic_s3_input import GenericS3Input
 from .analysis import *
