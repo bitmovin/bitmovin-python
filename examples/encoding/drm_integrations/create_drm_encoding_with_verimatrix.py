@@ -11,9 +11,9 @@ from bitmovin import CENCDRM as CENCDRMResource
 from bitmovin.resources.models import CENCPlayReadyEntry, CENCWidevineEntry
 from bitmovin.errors import BitmovinError
 
-def content_request(endpoint, contentId, siteId):
-    contentURL = urllib.parse.urljoin(endpoint, 'cei/v1.0/content/{}?siteId={}')
-    contentURL = contentURL.format(contentId, siteId)
+def content_request(endpoint, content_id, site_id):
+    content_url = urllib.parse.urljoin(endpoint, 'cei/v1.0/content/{}?siteId={}')
+    content_url = content_url.format(content_id, site_id)
 
     contentRequest = """{
         "contentRequest": {
@@ -30,12 +30,12 @@ def content_request(endpoint, contentId, siteId):
     }"""
 
     parsed_json = json.loads(contentRequest)
-    parsed_json["contentRequest"]["contentId"] = contentId
-    parsed_json["contentRequest"]["siteId"] = siteId
+    parsed_json["contentRequest"]["contentId"] = content_id
+    parsed_json["contentRequest"]["siteId"] = site_id
 
     headers = {'Content-Type': 'application/json'}
 
-    r = requests.put(contentURL, data=json.dumps(parsed_json),headers=headers)
+    r = requests.put(content_url, data=json.dumps(parsed_json),headers=headers)
     if r.status_code != 200:
         print(r.status_code)
         print("Did not get 200 back for content request")
@@ -46,11 +46,11 @@ def content_request(endpoint, contentId, siteId):
         print("Did not get OPERATION_SUCCESS for content request")
         exit()
 
-def key_request(endpoint, contentId, siteId):
-    keyURL = urllib.parse.urljoin(endpoint, 'cei/v1.0/content/{}/position/0/key?siteId={}')
-    keyURL = keyURL.format(contentId, siteId)
+def key_request(endpoint, content_id, site_id):
+    key_url = urllib.parse.urljoin(endpoint, 'cei/v1.0/content/{}/position/0/key?siteId={}')
+    key_url = key_url.format(content_id, site_id)
 
-    keyRequest = """{
+    key_request = """{
         "keyRequest": {
             "contentInfo": {
                 "contentId": "igetreplaced",
@@ -64,13 +64,13 @@ def key_request(endpoint, contentId, siteId):
             }
         }
     }"""
-    parsed_json = json.loads(keyRequest)
-    parsed_json["keyRequest"]["contentInfo"]["contentId"] = contentId
-    parsed_json["keyRequest"]["contentInfo"]["siteId"] = siteId
+    parsed_json = json.loads(key_request)
+    parsed_json["keyRequest"]["contentInfo"]["contentId"] = content_id
+    parsed_json["keyRequest"]["contentInfo"]["siteId"] = site_id
 
     headers = {'Content-Type': 'application/json'}
 
-    r = requests.put(keyURL, data=json.dumps(parsed_json),headers=headers)
+    r = requests.put(key_url, data=json.dumps(parsed_json),headers=headers)
     if r.status_code != 200:
         print(r.status_code)
         print("Did not get 200 back for key request")
@@ -81,28 +81,28 @@ def key_request(endpoint, contentId, siteId):
         print("Did not get OPERATION_SUCCESS for key request")
         exit()
 
-    foundCENCPlayready = False
-    foundCENCWidevine = False
+    found_cenc_playready = False
+    found_cenc_widevine = False
 
-    CENC_KEY = ''
-    CENC_KID = ''
-    CENC_WIDEVINE_PSSH = ''
-    CENC_PLAYREADY_LA_URL = 'http://your.verimatrix.endpoint/PlayReady/rightsmanager.asmx'
+    cenc_key = ''
+    cenc_kid = ''
+    cenc_widevine_pssh = ''
+    cenc_playready_la_url = 'http://your.verimatrix.endpoint/PlayReady/rightsmanager.asmx'
 
-    for drmType in parsed_json["keyResponse"]["drmList"]:
-        if (drmType["drmName"] == "PLAYREADY") & (drmType["streamingProtocol"] == "DASH"):
-            foundCENCPlayready = True
-        elif (drmType["drmName"] == "WIDEVINE") & (drmType["streamingProtocol"] == "DASH"):
-            foundCENCWidevine = True
-            CENC_KID = drmType["keyData"][0]["contentKey"]["keyId"]
-            CENC_KEY = drmType["keyData"][0]["contentKey"]["key"]
-            CENC_WIDEVINE_PSSH = drmType["keyData"][0]["drmData"]["pssh"]["data"]
+    for drm_type in parsed_json["keyResponse"]["drmList"]:
+        if (drm_type["drmName"] == "PLAYREADY") & (drm_type["streamingProtocol"] == "DASH"):
+            found_cenc_playready = True
+        elif (drm_type["drmName"] == "WIDEVINE") & (drm_type["streamingProtocol"] == "DASH"):
+            found_cenc_widevine = True
+            cenc_kid = drm_type["keyData"][0]["contentKey"]["keyId"]
+            cenc_key = drm_type["keyData"][0]["contentKey"]["key"]
+            cenc_widevine_pssh = drm_type["keyData"][0]["drmData"]["pssh"]["data"]
 
-    if not (foundCENCPlayready & foundCENCWidevine):
+    if not (found_cenc_playready & found_cenc_widevine):
         print("Playready or Widevine was not found")
         exit()
     
-    return CENC_KEY, CENC_KID, CENC_WIDEVINE_PSSH, CENC_PLAYREADY_LA_URL
+    return cenc_key, cenc_kid, cenc_widevine_pssh, cenc_playready_la_url
 
 def main():
 
@@ -120,12 +120,12 @@ def main():
     OUTPUT_BASE_PATH = '/encoding/{}/'.format(date_component)
 
     VERIMATRIX_ENDPOINT = '<YOUR_VERIMATRIX_ENDPOINT>'
-    contentId = '<YOUR_VERIMATRIX_CONTENT_ID>'
-    siteId = '<YOUR_VERIMATRIX_SITE_ID>'
+    content_id = '<YOUR_VERIMATRIX_CONTENT_ID>'
+    site_id = '<YOUR_VERIMATRIX_SITE_ID>'
 
-    content_request(VERIMATRIX_ENDPOINT, contentId, siteId)
+    content_request(VERIMATRIX_ENDPOINT, content_id, site_id)
     
-    CENC_KEY, CENC_KID, CENC_WIDEVINE_PSSH, CENC_PLAYREADY_LA_URL = key_request(VERIMATRIX_ENDPOINT, contentId, siteId)
+    cenc_key, cenc_kid, cenc_widevine_pssh, cenc_playready_la_url = key_request(VERIMATRIX_ENDPOINT, content_id, site_id)
 
     bitmovin = Bitmovin(api_key=API_KEY)
 
@@ -213,8 +213,8 @@ def main():
 
     audio_muxing_stream_en_stereo = MuxingStream(audio_stream_en_stereo.id)
 
-    widevine_drm = CENCWidevineEntry(pssh=CENC_WIDEVINE_PSSH)
-    play_ready_drm = CENCPlayReadyEntry(la_url=CENC_PLAYREADY_LA_URL)
+    widevine_drm = CENCWidevineEntry(pssh=cenc_widevine_pssh)
+    play_ready_drm = CENCPlayReadyEntry(la_url=cenc_playready_la_url)
 
     video_muxing_1080p_output = EncodingOutput(output_id=s3_output.id,
                                               output_path=OUTPUT_BASE_PATH + 'video/1080p/',
@@ -226,8 +226,8 @@ def main():
                                    name='Sample Muxing 1080p')
     video_muxing_1080p = bitmovin.encodings.Muxing.FMP4.create(object_=video_muxing_1080p,
                                                               encoding_id=encoding.id).resource
-    cenc_1080p = CENCDRMResource(key=CENC_KEY,
-                                kid=CENC_KID,
+    cenc_1080p = CENCDRMResource(key=cenc_key,
+                                kid=cenc_kid,
                                 widevine=widevine_drm,
                                 playReady=play_ready_drm,
                                 outputs=[video_muxing_1080p_output],
@@ -246,8 +246,8 @@ def main():
                                    name='Sample Muxing 720p')
     video_muxing_720p = bitmovin.encodings.Muxing.FMP4.create(object_=video_muxing_720p,
                                                               encoding_id=encoding.id).resource
-    cenc_720p = CENCDRMResource(key=CENC_KEY,
-                                kid=CENC_KID,
+    cenc_720p = CENCDRMResource(key=cenc_key,
+                                kid=cenc_kid,
                                 widevine=widevine_drm,
                                 playReady=play_ready_drm,
                                 outputs=[video_muxing_720p_output],
@@ -266,8 +266,8 @@ def main():
                                   name='Sample Muxing 540p')
     video_muxing_540p = bitmovin.encodings.Muxing.FMP4.create(object_=video_muxing_540p,
                                                              encoding_id=encoding.id).resource
-    cenc_540p = CENCDRMResource(key=CENC_KEY,
-                               kid=CENC_KID,
+    cenc_540p = CENCDRMResource(key=cenc_key,
+                               kid=cenc_kid,
                                widevine=widevine_drm,
                                playReady=play_ready_drm,
                                outputs=[video_muxing_540p_output],
@@ -287,8 +287,8 @@ def main():
     audio_muxing_en_stereo = bitmovin.encodings.Muxing.FMP4.create(object_=audio_muxing_en_stereo,
                                                                    encoding_id=encoding.id).resource
 
-    cenc_audio = CENCDRMResource(key=CENC_KEY,
-                                 kid=CENC_KID,
+    cenc_audio = CENCDRMResource(key=cenc_key,
+                                 kid=cenc_kid,
                                  widevine=widevine_drm,
                                  playReady=play_ready_drm,
                                  outputs=[audio_muxing_output_en_stereo],
