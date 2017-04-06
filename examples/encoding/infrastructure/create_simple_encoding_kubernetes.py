@@ -116,54 +116,54 @@ def main():
     video_muxing_streams = []
     audio_muxing_streams = []
 
-    for s in video_streams:
-        muxing_stream = MuxingStream(s.id)
-        video_muxing_streams.append({'mux': muxing_stream, 'stream': s})
+    for stream in video_streams:
+        muxing_stream = MuxingStream(stream.id)
+        video_muxing_streams.append({'mux': muxing_stream, 'stream': stream})
 
-    for s in audio_streams:
-        muxing_stream = MuxingStream(s.id)
-        audio_muxing_streams.append({'mux': muxing_stream, 'stream': s})
+    for stream in audio_streams:
+        muxing_stream = MuxingStream(stream.id)
+        audio_muxing_streams.append({'mux': muxing_stream, 'stream': stream})
 
     ##########################
     # dash muxings
     video_fmp4_muxings = []
     audio_fmp4_muxings = []
 
-    for ms in video_muxing_streams:
-        s = ms['stream']
-        m = ms['mux']
+    for mxuing_stream in video_muxing_streams:
+        stream = mxuing_stream['stream']
+        muxing = mxuing_stream['mux']
         encoding_output = EncodingOutput(output_id=output.id,
-                                         output_path=OUTPUT_BASE_PATH + f"video_dash/{s.name}/",
+                                         output_path=OUTPUT_BASE_PATH + f"video_dash/{stream.name}/",
                                          acl=[acl_entry])
-        print(vars(s))
-        print(s.name)
-        stream_array = [m]
+        print(vars(stream))
+        print(stream.name)
+        stream_array = [muxing]
         muxing = FMP4Muxing(segment_length=4,
                             segment_naming='seg_%number%.m4s',
                             init_segment_name='init.mp4',
                             streams=stream_array,
                             outputs=[encoding_output],
-                            name=f"dash_video_muxing_{s.name}")
+                            name=f"dash_video_muxing_{stream.name}")
         muxing_res = bitmovin.encodings.Muxing.FMP4.create(object_=muxing, encoding_id=encoding.id).resource
-        video_fmp4_muxings.append({'muxing': muxing_res, 'stream': s, 'muxing_stream': m, 'output': encoding_output})
+        video_fmp4_muxings.append({'muxing': muxing_res, 'stream': stream, 'muxing_stream': muxing, 'output': encoding_output})
 
-    for ms in audio_muxing_streams:
-        s = ms['stream']
-        m = ms['mux']
+    for muxing_stream in audio_muxing_streams:
+        stream = muxing_stream['stream']
+        muxing = muxing_stream['mux']
         encoding_output = EncodingOutput(output_id=output.id,
-                                         output_path=OUTPUT_BASE_PATH + f"audio_dash/{s.name}/",
+                                         output_path=OUTPUT_BASE_PATH + f"audio_dash/{stream.name}/",
                                          acl=[acl_entry])
-        print(vars(ms['stream']))
-        print(s.name)
-        stream_array = [m]
+        print(vars(muxing_stream['stream']))
+        print(stream.name)
+        stream_array = [muxing]
         muxing = FMP4Muxing(segment_length=4,
                             segment_naming='seg_%number%.m4s',
                             init_segment_name='init.mp4',
                             streams=stream_array,
                             outputs=[encoding_output],
-                            name=f"dash_audio_muxing_{s.name}")
+                            name=f"dash_audio_muxing_{stream.name}")
         muxing_res = bitmovin.encodings.Muxing.FMP4.create(object_=muxing, encoding_id=encoding.id).resource
-        audio_fmp4_muxings.append({'muxing': muxing_res, 'stream': s, 'muxing_stream': m, 'output': encoding_output})
+        audio_fmp4_muxings.append({'muxing': muxing_res, 'stream': stream, 'muxing_stream': muxing, 'output': encoding_output})
 
 
     bitmovin.encodings.Encoding.start(encoding_id=encoding.id)
@@ -174,7 +174,7 @@ def main():
         print("Exception occurred while waiting for encoding to finish: {}".format(bitmovin_error))
 
     manifest_output = EncodingOutput(output_id=output.id,
-                                     output_path=f"{OUTPUT_BASE_PATH}/manifests/",
+                                     output_path=f"{OUTPUT_BASE_PATH}manifests/",
                                      acl=[acl_entry])
 
     ##########################
@@ -196,29 +196,27 @@ def main():
                                                                             manifest_id=dash_manifest.id,
                                                                             period_id=period.id).resource
 
-    for fmp in video_fmp4_muxings:
-        f = fmp['muxing']
-        s = fmp['stream']
-        o = fmp['output']
+    for fmp4_muxing in video_fmp4_muxings:
+        muxing = fmp4_muxing['muxing']
+        encoding_output = fmp4_muxing['output']
 
         rep = FMP4Representation(FMP4RepresentationType.TEMPLATE,
                                  encoding_id=encoding.id,
-                                 muxing_id=f.id,
-                                 segment_path=f"/{o.outputPath}")
+                                 muxing_id=muxing.id,
+                                 segment_path=f"/{encoding_output.outputPath}")
         rep = bitmovin.manifests.DASH.add_fmp4_representation(object_=rep,
                                                               manifest_id=dash_manifest.id,
                                                               period_id=period.id,
                                                               adaptationset_id=video_adaptation_set.id
                                                               ).resource
     for fmp in audio_fmp4_muxings:
-        f = fmp['muxing']
-        s = fmp['stream']
-        o = fmp['output']
+        muxing = fmp['muxing']
+        encoding_output = fmp['output']
 
         rep = FMP4Representation(FMP4RepresentationType.TEMPLATE,
                                  encoding_id=encoding.id,
-                                 muxing_id=f.id,
-                                 segment_path=f"/{o.outputPath}")
+                                 muxing_id=muxing.id,
+                                 segment_path=f"/{encoding_output.outputPath}")
         rep = bitmovin.manifests.DASH.add_fmp4_representation(object_=rep,
                                                               manifest_id=dash_manifest.id,
                                                               period_id=period.id,
