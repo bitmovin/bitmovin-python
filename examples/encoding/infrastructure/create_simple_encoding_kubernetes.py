@@ -49,13 +49,13 @@ def main():
     ##########################
     # qualities
     video_qualities = [
-        {'width': 1280, 'height': 720, 'br': 2_400_000, 'bframes': None, 'profile': H264Profile.HIGH, 'level': None},
-        {'width': 854, 'height': 480, 'br': 1_200_000, 'bframes': None, 'profile': H264Profile.HIGH, 'level': None},
-        {'width': 640, 'height': 360, 'br': 800_000, 'bframes': None, 'profile': H264Profile.HIGH, 'level': None},
+        {'width': 1280, 'height': 720, 'br': 2400000, 'bframes': None, 'profile': H264Profile.HIGH, 'level': None},
+        {'width': 854, 'height': 480, 'br': 1200000, 'bframes': None, 'profile': H264Profile.HIGH, 'level': None},
+        {'width': 640, 'height': 360, 'br': 800000, 'bframes': None, 'profile': H264Profile.HIGH, 'level': None},
     ]
 
     audio_qualities = [
-        {'bitrate': 128_000, 'rate': 48_000},
+        {'bitrate': 128000, 'rate': 48000},
     ]
 
     ##########################

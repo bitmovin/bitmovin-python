@@ -68,7 +68,7 @@ def main():
     encoding = bitmovin.encodings.Encoding.create(encoding).resource
 
     video_codec_configuration_1080p = H264CodecConfiguration(name='example_video_codec_configuration_1080p',
-                                                             bitrate=4_800_000,
+                                                             bitrate=4800000,
                                                              rate=25.0,
                                                              width=1920,
                                                              height=1080,
@@ -76,7 +76,7 @@ def main():
     video_codec_configuration_1080p = bitmovin.codecConfigurations.H264.create(video_codec_configuration_1080p).resource
 
     video_codec_configuration_720p = H264CodecConfiguration(name='example_video_codec_configuration_720p',
-                                                            bitrate=2_400_000,
+                                                            bitrate=2400000,
                                                             rate=25.0,
                                                             width=1280,
                                                             height=720,
