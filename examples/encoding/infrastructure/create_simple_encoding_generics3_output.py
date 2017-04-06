@@ -25,7 +25,7 @@ GENERIC_S3_OUTPUT_PORT = 8000
 CLOUD_REGION = CloudRegion.KUBERNETES
 
 date_component = str(datetime.datetime.now()).replace(' ', '_').replace(':', '-').split('.')[0].replace('_', '__')
-OUTPUT_BASE_PATH = '/your/output/base/path/{}/'.format(date_component)
+OUTPUT_BASE_PATH = 'your/output/base/path/{}/'.format(date_component)
 
 
 def main():
@@ -55,7 +55,7 @@ def main():
     encoding = bitmovin.encodings.Encoding.create(encoding).resource
 
     video_codec_configuration_1080p = H264CodecConfiguration(name='example_video_codec_configuration_1080p',
-                                                             bitrate=2400000,
+                                                             bitrate=4_800_000,
                                                              rate=25.0,
                                                              width=1920,
                                                              height=1080,
@@ -63,7 +63,7 @@ def main():
     video_codec_configuration_1080p = bitmovin.codecConfigurations.H264.create(video_codec_configuration_1080p).resource
 
     video_codec_configuration_720p = H264CodecConfiguration(name='example_video_codec_configuration_720p',
-                                                            bitrate=4800000,
+                                                            bitrate=2_400_000,
                                                             rate=25.0,
                                                             width=1280,
                                                             height=720,

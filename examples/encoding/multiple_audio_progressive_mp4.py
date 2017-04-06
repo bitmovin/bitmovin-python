@@ -16,7 +16,7 @@ S3_OUTPUT_SECRETKEY = '<INSERT_YOUR_SECRET_KEY>'
 S3_OUTPUT_BUCKETNAME = '<INSERT_YOUR_BUCKET_NAME>'
 
 date_component = str(datetime.datetime.now()).replace(' ', '_').replace(':', '-').split('.')[0].replace('_', '__')
-OUTPUT_BASE_PATH = '/your/output/base/path/{}/'.format(date_component)
+OUTPUT_BASE_PATH = 'your/output/base/path/{}/'.format(date_component)
 
 
 def main():
