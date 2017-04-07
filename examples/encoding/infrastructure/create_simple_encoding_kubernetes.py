@@ -49,8 +49,8 @@ def main():
     ##########################
     # qualities
     video_qualities = [
-        {'width': 1280, 'height': 720, 'br': 2400000, 'bframes': None, 'profile': H264Profile.HIGH, 'level': None},
-        {'width': 854, 'height': 480, 'br': 1200000, 'bframes': None, 'profile': H264Profile.HIGH, 'level': None},
+        # {'width': 1280, 'height': 720, 'br': 2400000, 'bframes': None, 'profile': H264Profile.HIGH, 'level': None},
+        # {'width': 854, 'height': 480, 'br': 1200000, 'bframes': None, 'profile': H264Profile.HIGH, 'level': None},
         {'width': 640, 'height': 360, 'br': 800000, 'bframes': None, 'profile': H264Profile.HIGH, 'level': None},
     ]
 
@@ -65,6 +65,7 @@ def main():
 
     for q in video_qualities:
         config = H264CodecConfiguration(name=f"h264_{q['width']}x{q['height']}_{q['br']}",
+                                        rate=None,
                                         width=q['width'],
                                         height=q['height'],
                                         bitrate=q['br'],
