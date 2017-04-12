@@ -1,5 +1,10 @@
 from bitmovin.errors import InvalidTypeError
 from bitmovin.resources.enums import H264Profile, H264Level, MVPredictionMode
+from bitmovin.resources.enums.h264_motion_estimation_method import H264MotionEstimationMethod
+from bitmovin.resources.enums.h264_partition import H264Partition
+from bitmovin.resources.enums.h264_sub_me import H264SubMe
+from bitmovin.resources.enums.badapt import BAdapt
+
 from bitmovin.utils import Serializable
 from .video_codec_configuration import VideoCodecConfiguration
 
@@ -9,7 +14,8 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
     def __init__(self, name, bitrate, rate, profile, id_=None, description=None, custom_data=None, width=None,
                  height=None, bframes=None, ref_frames=None, qp_min=None, qp_max=None, mv_prediction_mode=None,
                  mv_search_range_max=None, cabac=None, max_bitrate=None, min_bitrate=None, bufsize=None,
-                 min_gop=None, max_gop=None, level=None):
+                 min_gop=None, max_gop=None, level=None, rc_lookahead=None, b_adapt=None, sub_me=None, motion_estimation_method=None,
+                 partitions=None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description, bitrate=bitrate,
                          rate=rate, width=width, height=height)
@@ -31,6 +37,15 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         self.maxGop = max_gop
         self._level = None
         self.level = level
+        self.rc_lookahead = rc_lookahead
+        self._b_adapt = None
+        self.b_adapt = b_adapt
+        self._sub_me = None
+        self.sub_me = sub_me
+        self._motion_estimation_method = None
+        self.motion_estimation_method = motion_estimation_method
+        self._partitions = None
+        self.partitions = partitions
 
     @property
     def profile(self):
@@ -83,6 +98,74 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
             raise InvalidTypeError(
                 'Invalid type {} for mvPredictionMode: must be either str or H264Level!'.format(type(new_mode)))
 
+    @property
+    def b_adapt(self):
+        return self._b_adapt
+
+    @b_adapt.setter
+    def b_adapt(self, new_value):
+        if new_value is None:
+            return
+        if isinstance(new_value, str):
+            self._b_adapt = new_value
+        elif isinstance(new_value, BAdapt):
+            self._b_adapt = new_value.value
+        else:
+            raise InvalidTypeError(
+                'Invalid type {} for b_adapt: must be either str or BAdapt!'.format(type(new_value)))
+
+    @property
+    def sub_me(self):
+        return self._sub_me
+
+    @sub_me.setter
+    def sub_me(self, new_value):
+        if new_value is None:
+            return
+        if isinstance(new_value, str):
+            self._sub_me = new_value
+        elif isinstance(new_value, H264SubMe):
+            self._sub_me = new_value.value
+        else:
+            raise InvalidTypeError(
+                'Invalid type {} for sub_me: must be either str or H264SubMe!'.format(type(new_value)))
+
+    @property
+    def motion_estimation_method(self):
+        return self._motion_estimation_method
+
+    @motion_estimation_method.setter
+    def motion_estimation_method(self, new_value):
+        if new_value is None:
+            return
+        if isinstance(new_value, str):
+            self._motion_estimation_method = new_value
+        elif isinstance(new_value, H264MotionEstimationMethod):
+            self._motion_estimation_method = new_value.value
+        else:
+            raise InvalidTypeError(
+                'Invalid type {} for motion_estimation_method: must be either str or H264MotionEstimationMethod!'.format(type(new_value)))
+
+    @property
+    def partitions(self):
+        return self._partitions
+
+    @partitions.setter
+    def partitions(self, new_value):
+        if new_value is None:
+            return
+
+        if not isinstance(new_value, list):
+            raise InvalidTypeError('partitions has to be a list of Partition enums')
+
+        if all(isinstance(output, H264Partition) for output in new_value):
+            partitions = []
+            for part in new_value:
+                partitions.append(part.value)
+            self._partitions = partitions
+        else:
+            self._partitions = new_value
+
     @classmethod
     def parse_from_json_object(cls, json_object):
         video_codec_configuration = VideoCodecConfiguration.parse_from_json_object(json_object=json_object)
@@ -110,6 +193,11 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         min_gop = json_object.get('minGop')
         max_gop = json_object.get('maxGop')
         level = json_object.get('level')
+        rc_lookahead = json_object.get('rcLookahead')
+        sub_me = json_object.get('subMe')
+        motion_estimation_method = json_object.get('motionEstimationMethod')
+        b_adapt = json_object.get('bAdaptiveStrategy')
+        partitions = json_object.get('partitions')
 
         h264_codec_configuration = H264CodecConfiguration(name=name, bitrate=bitrate, rate=rate, profile=profile,
                                                           id_=id_, description=description, custom_data=custom_data,
@@ -119,7 +207,9 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
                                                           mv_search_range_max=mv_search_range_max,
                                                           cabac=cabac, max_bitrate=max_bitrate, min_bitrate=min_bitrate,
                                                           bufsize=bufsize, min_gop=min_gop, max_gop=max_gop,
-                                                          level=level)
+                                                          level=level, rc_lookahead=rc_lookahead, sub_me=sub_me,
+                                                          motion_estimation_method=motion_estimation_method, b_adapt=b_adapt,
+                                                          partitions=partitions)
 
         return h264_codec_configuration
 
@@ -128,4 +218,9 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         serialized['profile'] = self.profile
         serialized['level'] = self.level
         serialized['mvPredictionMode'] = self.mvPredictionMode
+        serialized['rcLookahead'] = self.rc_lookahead
+        serialized['subMe'] = self.sub_me
+        serialized['motionEstimationMethod'] = self.motion_estimation_method
+        serialized['bAdaptiveStrategy'] = self.b_adapt
+        serialized['partitions'] = self.partitions
         return serialized
