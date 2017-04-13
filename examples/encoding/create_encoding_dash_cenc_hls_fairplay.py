@@ -30,7 +30,7 @@ FAIRPLAY_IV = '<YOUR_FAIRPLAY_IV>'
 FAIRPLAY_URI = '<YOUR_FAIRPLAY_LICENSING_URL>'
 
 date_component = str(datetime.datetime.now()).replace(' ', '_').replace(':', '-').split('.')[0].replace('_', '__')
-OUTPUT_BASE_PATH = '/your/output/base/path/{}/'.format(date_component)
+OUTPUT_BASE_PATH = 'your/output/base/path/{}/'.format(date_component)
 
 
 def main():
@@ -145,7 +145,7 @@ def main():
                                                                encoding_id=encoding.id,
                                                                muxing_id=video_muxing_460p.id).resource
     video_muxing_460p_ts = TSMuxing(segment_length=4,
-                                    segment_naming='seg_%number%.m4s',
+                                    segment_naming='seg_%number%.ts',
                                     streams=[video_muxing_stream_460p],
                                     name='Sample TS Muxing 460p')
     video_muxing_460p_ts = bitmovin.encodings.Muxing.TS.create(object_=video_muxing_460p_ts,
@@ -180,7 +180,7 @@ def main():
                                                                encoding_id=encoding.id,
                                                                muxing_id=video_muxing_276p.id).resource
     video_muxing_276p_ts = TSMuxing(segment_length=4,
-                                    segment_naming='seg_%number%.m4s',
+                                    segment_naming='seg_%number%.ts',
                                     streams=[video_muxing_stream_276p],
                                     name='Sample TS Muxing 276p')
     video_muxing_276p_ts = bitmovin.encodings.Muxing.TS.create(object_=video_muxing_276p_ts,
@@ -214,7 +214,7 @@ def main():
                                                               encoding_id=encoding.id,
                                                               muxing_id=video_muxing_80p.id).resource
     video_muxing_80p_ts = TSMuxing(segment_length=4,
-                                   segment_naming='seg_%number%.m4s',
+                                   segment_naming='seg_%number%.ts',
                                    streams=[video_muxing_stream_80p],
                                    name='Sample TS Muxing 80p')
     video_muxing_80p_ts = bitmovin.encodings.Muxing.TS.create(object_=video_muxing_80p_ts,

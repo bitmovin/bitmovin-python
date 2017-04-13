@@ -12,7 +12,7 @@ Installation
 To install the bitmovin client with pip, run the following command:
 
 ```bash
-pip install git+https://github.com/bitmovin/bitmovin-python.git@v1.4.0
+pip install git+https://github.com/bitmovin/bitmovin-python.git@v1.5.0
 ```
 
 Depending on the platform which you are using your default python version may be python2.7.
@@ -68,7 +68,7 @@ def main():
     encoding = bitmovin.encodings.Encoding.create(encoding).resource
 
     video_codec_configuration_1080p = H264CodecConfiguration(name='example_video_codec_configuration_1080p',
-                                                             bitrate=2400000,
+                                                             bitrate=4800000,
                                                              rate=25.0,
                                                              width=1920,
                                                              height=1080,
@@ -76,7 +76,7 @@ def main():
     video_codec_configuration_1080p = bitmovin.codecConfigurations.H264.create(video_codec_configuration_1080p).resource
 
     video_codec_configuration_720p = H264CodecConfiguration(name='example_video_codec_configuration_720p',
-                                                            bitrate=4800000,
+                                                            bitrate=2400000,
                                                             rate=25.0,
                                                             width=1280,
                                                             height=720,
