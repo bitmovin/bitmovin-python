@@ -1,9 +1,11 @@
 import unittest
 from bitmovin import Bitmovin, Response, H264CodecConfiguration, H264Profile, MVPredictionMode, H264Level, BAdapt
 from bitmovin.errors import BitmovinApiError
+from bitmovin.resources.enums.h264_interlace_mode import H264InterlaceMode
 from bitmovin.resources.enums.h264_motion_estimation_method import H264MotionEstimationMethod
 from bitmovin.resources.enums.h264_partition import H264Partition
 from bitmovin.resources.enums.h264_sub_me import H264SubMe
+from bitmovin.resources.enums.h264_trellis import H264Trellis
 from tests.bitmovin import BitmovinTestCase
 
 
@@ -187,6 +189,9 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         self.assertEqual(first.motion_estimation_method, second.motion_estimation_method)
         self.assertEqual(first.b_adapt, second.b_adapt)
         self.assertEqual(first.partitions, second.partitions)
+        self.assertEqual(first.trellis, second.trellis)
+        self.assertEqual(first.slices, second.slices)
+        self.assertEqual(first.interlaceMode, second.interlaceMode)
         return True
 
     def _get_sample_h264_codec_configuration(self):
@@ -214,7 +219,10 @@ class H264CodecConfigurationTests(BitmovinTestCase):
                                                           sub_me=H264SubMe.RD_IP,
                                                           motion_estimation_method=H264MotionEstimationMethod.HEX,
                                                           b_adapt=BAdapt.FAST,
-                                                          partitions=[H264Partition.I4X4, H264Partition.I8X8, H264Partition.P8X8, H264Partition.B8X8]
+                                                          partitions=[H264Partition.I4X4, H264Partition.I8X8, H264Partition.P8X8, H264Partition.B8X8],
+                                                          trellis=H264Trellis.ENABLED_FINAL_MB,
+                                                          slices=5,
+                                                          interlaceMode=H264InterlaceMode.BOTTOM_FIELD_FIRST
                                                           )
 
         self.assertIsNotNone(h264_codec_configuration.name)
@@ -239,6 +247,9 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         self.assertIsNotNone(h264_codec_configuration.motion_estimation_method)
         self.assertIsNotNone(h264_codec_configuration.b_adapt)
         self.assertIsNotNone(h264_codec_configuration.partitions)
+        self.assertIsNotNone(h264_codec_configuration.trellis)
+        self.assertIsNotNone(h264_codec_configuration.slices)
+        self.assertIsNotNone(h264_codec_configuration.interlaceMode)
 
         return h264_codec_configuration
 
