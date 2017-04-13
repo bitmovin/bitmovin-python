@@ -30,7 +30,7 @@ FAIRPLAY_IV = '<YOUR_FAIRPLAY_IV>'
 FAIRPLAY_URI = '<YOUR_FAIRPLAY_LICENSING_URL>'
 
 date_component = str(datetime.datetime.now()).replace(' ', '_').replace(':', '-').split('.')[0].replace('_', '__')
-OUTPUT_BASE_PATH = '/your/output/base/path/{}/'.format(date_component)
+OUTPUT_BASE_PATH = 'your/output/base/path/{}/'.format(date_component)
 
 
 def main():
