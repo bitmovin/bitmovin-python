@@ -2,6 +2,7 @@ import unittest
 import json
 from bitmovin import Bitmovin, Response, Encoding, CloudRegion
 from bitmovin.errors import BitmovinApiError
+from bitmovin.resources.enums.encoding_status_values import EncodingStatusValues
 from tests.bitmovin import BitmovinTestCase
 
 
@@ -67,7 +68,18 @@ class EncodingTests(BitmovinTestCase):
         except BitmovinApiError:
             pass
 
-    @unittest.skip("not yet implemented in bitmovin-python")
+    def test_get_encoding_status(self):
+        sample_encoding = self._get_sample_encoding()
+        created_encoding_response = self.bitmovin.encodings.Encoding.create(sample_encoding)
+        self.assertIsNotNone(created_encoding_response)
+        self.assertIsNotNone(created_encoding_response.resource)
+        self.assertIsNotNone(created_encoding_response.resource.id)
+        self._compare_encodings(sample_encoding, created_encoding_response.resource)
+
+        encoding_status = self.bitmovin.encodings.Encoding.status(created_encoding_response.resource.id)
+        self.assertIsNotNone(encoding_status)
+        self.assertEqual(encoding_status.resource.status, EncodingStatusValues.CREATED.value)
+
     def test_list_encodings(self):
         sample_encoding = self._get_sample_encoding()
         created_encoding_response = self.bitmovin.encodings.Encoding.create(sample_encoding)
@@ -77,6 +89,22 @@ class EncodingTests(BitmovinTestCase):
         self._compare_encodings(sample_encoding, created_encoding_response.resource)
 
         encodings = self.bitmovin.encodings.Encoding.list()
+        self.assertIsNotNone(encodings)
+        self.assertIsNotNone(encodings.resource)
+        self.assertIsNotNone(encodings.response)
+        self.assertIsInstance(encodings.resource, list)
+        self.assertIsInstance(encodings.response, Response)
+        self.assertGreater(encodings.resource.__sizeof__(), 1)
+
+    def test_get_encodings_by_status(self):
+        sample_encoding = self._get_sample_encoding()
+        created_encoding_response = self.bitmovin.encodings.Encoding.create(sample_encoding)
+        self.assertIsNotNone(created_encoding_response)
+        self.assertIsNotNone(created_encoding_response.resource)
+        self.assertIsNotNone(created_encoding_response.resource.id)
+        self._compare_encodings(sample_encoding, created_encoding_response.resource)
+
+        encodings = self.bitmovin.encodings.Encoding.filter_by_status(status=EncodingStatusValues.CREATED)
         self.assertIsNotNone(encodings)
         self.assertIsNotNone(encodings.resource)
         self.assertIsNotNone(encodings.response)
@@ -132,6 +160,7 @@ class EncodingTests(BitmovinTestCase):
         self.assertIsNotNone(encoding.description)
         self.assertIsNotNone(encoding.cloudRegion)
         return encoding
+
 
 
 if __name__ == '__main__':
