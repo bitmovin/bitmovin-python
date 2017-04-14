@@ -1,6 +1,5 @@
 from bitmovin.errors import BitmovinApiError, InvalidStatusError
 from bitmovin.resources import Status, ResourceResponse
-from bitmovin.resources.enums.encoding_status_values import EncodingStatusValues
 from bitmovin.resources.models import Encoding as EncodingResource
 from bitmovin.resources.models import EncodingLiveDetails
 from .encoding_control_service import EncodingControlService
@@ -45,4 +44,3 @@ class Encoding(RestService, EncodingControlService):
                                                                                         class_=EncodingLiveDetails)
             return ResourceResponse(response=response, resource=created_resource)
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
-
