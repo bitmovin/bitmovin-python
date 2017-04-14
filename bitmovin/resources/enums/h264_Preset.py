@@ -2,4 +2,13 @@ import enum
 
 
 class H264Preset(enum.Enum):
+    ULTRAFAST = 'ULTRAFAST'
+    SUPERFAST = 'SUPERFAST'
+    VERYFAST = 'VERYFAST'
+    FASTER = 'FASTER'
     FAST = 'FAST'
+    MEDIUM = 'MEDIUM'
+    SLOW = 'SLOW'
+    SLOWER = 'SLOWER'
+    VERYSLOW = 'VERYSLOW'
+    PLACEBO = 'PLACEBO'
