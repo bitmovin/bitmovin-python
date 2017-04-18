@@ -1,6 +1,7 @@
 import json
 import requests
 import datetime
+import base64
 import urllib.parse
 from bitmovin import Bitmovin, Encoding, S3Output, H264CodecConfiguration, \
     AACCodecConfiguration, H264Profile, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
@@ -87,11 +88,13 @@ def key_request(endpoint, content_id, site_id):
     cenc_key = ''
     cenc_kid = ''
     cenc_widevine_pssh = ''
-    cenc_playready_la_url = 'http://your.verimatrix.endpoint/PlayReady/rightsmanager.asmx'
+    cenc_playready_la_url = ''
 
     for drm_type in parsed_json["keyResponse"]["drmList"]:
         if (drm_type["drmName"] == "PLAYREADY") & (drm_type["streamingProtocol"] == "DASH"):
             found_cenc_playready = True
+            cenc_playready_la_url = drm_type["keyData"][0]["drmData"]["pssh"]["data"]
+            cenc_playready_la_url = str(base64.b64decode(cenc_playready_la_url)).replace('\\x00','').split('<LA_URL>')[1].split('</LA_URL>')[0]
         elif (drm_type["drmName"] == "WIDEVINE") & (drm_type["streamingProtocol"] == "DASH"):
             found_cenc_widevine = True
             cenc_kid = drm_type["keyData"][0]["contentKey"]["keyId"]
