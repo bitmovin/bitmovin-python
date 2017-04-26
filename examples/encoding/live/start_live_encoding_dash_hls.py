@@ -72,7 +72,7 @@ def main():
     s3_output = bitmovin.outputs.S3.create(s3_output).resource
 
     encoding = Encoding(
-        name='Test Live Stream TR',
+        name='Test Live Stream',
         encoder_version=ENCODER_VERSION,
         cloud_region=CloudRegion.AWS_EU_WEST_1
     )
