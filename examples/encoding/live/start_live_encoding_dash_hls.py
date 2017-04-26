@@ -29,13 +29,15 @@ VIDEO_FRAME_RATE = 25.0
 AUDIO_SAMPLE_RATE = 48000
 
 
+bitmovin = Bitmovin(api_key=API_KEY)
+
+
 class NoRtmpInputAvailableError(Exception):
     def __init__(self, message):
         super(message)
 
 
 def main():
-    bitmovin = Bitmovin(api_key=API_KEY)
     resource_response = bitmovin.inputs.RTMP.list()
 
     if not resource_response or \
@@ -46,7 +48,7 @@ def main():
         sys.exit(3)
 
     rtmp_input_id = resource_response.resource[0].id
-    print("Found RTMP input with ID '{}'".format(rtmp_input_id))
+    print('Found RTMP input with ID \'{}\''.format(rtmp_input_id))
 
     rtmp_input = bitmovin.inputs.RTMP.retrieve(id_=rtmp_input_id).resource
 
@@ -122,24 +124,23 @@ def main():
     )
     hls_manifest = bitmovin.manifests.HLS.create(object_=hls_manifest).resource
 
-    createH264Rendition(encoding, dash_manifest, period, video_adaptation_set, hls_manifest, "audio", video_input_stream, s3_output,
-        "video/1080p", 4800000, VIDEO_FRAME_RATE, 1920, 1080, H264Profile.HIGH)
+    createH264Rendition(encoding, dash_manifest, period, video_adaptation_set, hls_manifest, 'audio', video_input_stream, s3_output,
+        'video/1080p', 4800000, VIDEO_FRAME_RATE, 1920, 1080, H264Profile.HIGH)
 
-    createH264Rendition(encoding, dash_manifest, period, video_adaptation_set, hls_manifest, "audio", video_input_stream, s3_output,
-        "video/720p", 2400000, VIDEO_FRAME_RATE, 1280, 720, H264Profile.HIGH)
+    createH264Rendition(encoding, dash_manifest, period, video_adaptation_set, hls_manifest, 'audio', video_input_stream, s3_output,
+        'video/720p', 2400000, VIDEO_FRAME_RATE, 1280, 720, H264Profile.HIGH)
 
-    createH264Rendition(encoding, dash_manifest, period, video_adaptation_set, hls_manifest, "audio", video_input_stream, s3_output,
-        "video/480p", 1200000, VIDEO_FRAME_RATE, 854, 480, H264Profile.HIGH)
+    createH264Rendition(encoding, dash_manifest, period, video_adaptation_set, hls_manifest, 'audio', video_input_stream, s3_output,
+        'video/480p', 1200000, VIDEO_FRAME_RATE, 854, 480, H264Profile.HIGH)
 
-    createH264Rendition(encoding, dash_manifest, period, video_adaptation_set, hls_manifest, "audio", video_input_stream, s3_output,
-        "video/360p", 800000, VIDEO_FRAME_RATE, 640, 360, H264Profile.HIGH)
+    createH264Rendition(encoding, dash_manifest, period, video_adaptation_set, hls_manifest, 'audio', video_input_stream, s3_output,
+        'video/360p', 800000, VIDEO_FRAME_RATE, 640, 360, H264Profile.HIGH)
 
-    createH264Rendition(encoding, dash_manifest, period, video_adaptation_set, hls_manifest, "audio", video_input_stream, s3_output,
-        "video/240p", 400000, VIDEO_FRAME_RATE, 426, 240, H264Profile.HIGH)
+    createH264Rendition(encoding, dash_manifest, period, video_adaptation_set, hls_manifest, 'audio', video_input_stream, s3_output,
+        'video/240p', 400000, VIDEO_FRAME_RATE, 426, 240, H264Profile.HIGH)
 
-    createAACRendition(encoding, dash_manifest, period, audio_adaptation_set, hls_manifest, "audio", audio_input_stream, s3_output,
-        "audio/128kbps", 128000, AUDIO_SAMPLE_RATE)
-
+    createAACRendition(encoding, dash_manifest, period, audio_adaptation_set, hls_manifest, 'audio', audio_input_stream, s3_output,
+        'audio/128kbps', 128000, AUDIO_SAMPLE_RATE)
 
     live_dash_manifest = LiveDashManifest(
         manifest_id=dash_manifest.id,
@@ -175,7 +176,7 @@ def main():
         except BitmovinApiError as bitmovin_api_error:
             if bitmovin_api_error.response.data.code != ERROR_CODE_LIVE_STREAM_NOT_READY:
                 sys.exit(2)
-            print("Live stream is not ready yet. Retrying to fetch live stream information in {} seconds...".format(
+            print('Live stream is not ready yet. Retrying to fetch live stream information in {} seconds...'.format(
                 LIVE_STREAM_INFORMATION_FETCH_RETRY_INTERVAL
             ))
             retry += 1
@@ -184,11 +185,10 @@ def main():
     if live_details is not None:
         print_live_stream_details(encoding_id=encoding.id, live_stream_details=live_details.resource)
     else:
-        print("Unable to fetch live stream details!")
+        print('Unable to fetch live stream details!')
         sys.exit(1)
 
 def createH264Rendition(encoding, dash_manifest, period, adaptation_set, hls_manifest, audio_group_id, video_input_stream, output, output_path, bitrate, rate, width, height, profile):
-    bitmovin = Bitmovin(api_key=API_KEY)
     dash_output_path = output_path + '/dash'
     hls_output_path = output_path + '/hls'
     stream_identifier = str(bitrate) + '_' + str(width) + 'x' + str(height)
@@ -280,7 +280,6 @@ def createH264Rendition(encoding, dash_manifest, period, adaptation_set, hls_man
     )
     
 def createAACRendition(encoding, dash_manifest, period, adaptation_set, hls_manifest, audio_group_id, audio_input_stream, output, output_path, bitrate, rate):
-    bitmovin = Bitmovin(api_key=API_KEY)
     dash_output_path = output_path + '/dash'
     hls_output_path = output_path + '/hls'
     stream_identifier = str(bitrate)
