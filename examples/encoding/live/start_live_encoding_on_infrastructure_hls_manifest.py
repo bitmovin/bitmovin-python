@@ -225,11 +225,12 @@ def main():
 
     ###################################################################################################################
 
-    live_hls_manifest = LiveHlsManifest(manifest_id=hls_manifest.id)
+    live_hls_manifest = LiveHlsManifest(manifest_id=hls_manifest.id,
+                                        time_shift=60)
 
     live_stream_configuration = LiveStreamConfiguration(
         stream_key=STREAM_KEY,
-        live_hls_manifests=[live_hls_manifest]
+        live_hls_manifests=[live_hls_manifest],
     )
 
     resource_response = bitmovin.encodings.Encoding.start_live(
