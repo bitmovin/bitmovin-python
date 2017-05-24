@@ -64,7 +64,7 @@ def main():
     audio_configs = []
 
     for q in video_qualities:
-        config = H264CodecConfiguration(name=f"h264_{q['width']}x{q['height']}_{q['br']}",
+        config = H264CodecConfiguration(name='h264_{}x{}_{}'.format(q['width'], q['height'], q['br']),
                                         rate=None,
                                         width=q['width'],
                                         height=q['height'],
@@ -77,7 +77,7 @@ def main():
         video_configs.append(config)
 
     for q in audio_qualities:
-        config = AACCodecConfiguration(name=f"aac_{q['bitrate']}_{q['rate']}",
+        config = AACCodecConfiguration(name='aac_{}_{}'.format(q['bitrate'], q['rate']),
                                        bitrate=q['bitrate'],
                                        rate=q['rate'])
         config = bitmovin.codecConfigurations.AAC.create(config).resource
@@ -99,14 +99,14 @@ def main():
     for c in video_configs:
         stream = Stream(codec_configuration_id=c.id,
                         input_streams=[video_input_stream],
-                        name=f"{c.name}_stream")
+                        name='{}_stream'.format(c.name))
         stream = bitmovin.encodings.Stream.create(object_=stream, encoding_id=encoding.id).resource
         video_streams.append(stream)
 
     for c in audio_configs:
         stream = Stream(codec_configuration_id=c.id,
                         input_streams=[audio_input_stream],
-                        name=f"{c.name}_stream")
+                        name='{}_stream'.format(c.name))
         stream = bitmovin.encodings.Stream.create(object_=stream, encoding_id=encoding.id).resource
         audio_streams.append(stream)
 
@@ -134,7 +134,7 @@ def main():
         stream = mxuing_stream['stream']
         muxing = mxuing_stream['mux']
         encoding_output = EncodingOutput(output_id=output.id,
-                                         output_path=OUTPUT_BASE_PATH + f"video_dash/{stream.name}/",
+                                         output_path=OUTPUT_BASE_PATH + 'video_dash/{}/'.format(stream.name),
                                          acl=[acl_entry])
         print(vars(stream))
         print(stream.name)
@@ -144,7 +144,7 @@ def main():
                             init_segment_name='init.mp4',
                             streams=stream_array,
                             outputs=[encoding_output],
-                            name=f"dash_video_muxing_{stream.name}")
+                            name='dash_video_muxing_{}'.format(stream.name))
         muxing_res = bitmovin.encodings.Muxing.FMP4.create(object_=muxing, encoding_id=encoding.id).resource
         video_fmp4_muxings.append({'muxing': muxing_res, 'stream': stream, 'muxing_stream': muxing, 'output': encoding_output})
 
@@ -152,7 +152,7 @@ def main():
         stream = muxing_stream['stream']
         muxing = muxing_stream['mux']
         encoding_output = EncodingOutput(output_id=output.id,
-                                         output_path=OUTPUT_BASE_PATH + f"audio_dash/{stream.name}/",
+                                         output_path=OUTPUT_BASE_PATH + 'audio_dash/{}/'.format(stream.name),
                                          acl=[acl_entry])
         print(vars(muxing_stream['stream']))
         print(stream.name)
@@ -162,7 +162,7 @@ def main():
                             init_segment_name='init.mp4',
                             streams=stream_array,
                             outputs=[encoding_output],
-                            name=f"dash_audio_muxing_{stream.name}")
+                            name='dash_audio_muxing_{}'.format(stream.name))
         muxing_res = bitmovin.encodings.Muxing.FMP4.create(object_=muxing, encoding_id=encoding.id).resource
         audio_fmp4_muxings.append({'muxing': muxing_res, 'stream': stream, 'muxing_stream': muxing, 'output': encoding_output})
 
@@ -175,7 +175,7 @@ def main():
         print("Exception occurred while waiting for encoding to finish: {}".format(bitmovin_error))
 
     manifest_output = EncodingOutput(output_id=output.id,
-                                     output_path=f"{OUTPUT_BASE_PATH}manifests/",
+                                     output_path='{}manifests/'.format(OUTPUT_BASE_PATH),
                                      acl=[acl_entry])
 
     ##########################
@@ -204,7 +204,7 @@ def main():
         rep = FMP4Representation(FMP4RepresentationType.TEMPLATE,
                                  encoding_id=encoding.id,
                                  muxing_id=muxing.id,
-                                 segment_path=f"/{encoding_output.outputPath}")
+                                 segment_path='/{}'.format(encoding_output.outputPath))
         rep = bitmovin.manifests.DASH.add_fmp4_representation(object_=rep,
                                                               manifest_id=dash_manifest.id,
                                                               period_id=period.id,
@@ -217,7 +217,7 @@ def main():
         rep = FMP4Representation(FMP4RepresentationType.TEMPLATE,
                                  encoding_id=encoding.id,
                                  muxing_id=muxing.id,
-                                 segment_path=f"/{encoding_output.outputPath}")
+                                 segment_path='/{}'.format(encoding_output.outputPath))
         rep = bitmovin.manifests.DASH.add_fmp4_representation(object_=rep,
                                                               manifest_id=dash_manifest.id,
                                                               period_id=period.id,
@@ -229,7 +229,7 @@ def main():
     try:
         bitmovin.manifests.DASH.wait_until_finished(manifest_id=dash_manifest.id)
     except BitmovinError as bitmovin_error:
-        print("Exception occurred while waiting for manifest creation to finish: {}".format(bitmovin_error))
+        print('Exception occurred while waiting for manifest creation to finish: {}'.format(bitmovin_error))
 
     print('DASH Manifest download URL: {}'.format(S3_PUBLIC_BASE_URL + '/' + S3_OUTPUT_BUCKETNAME + OUTPUT_BASE_PATH + DASH_MANIFEST_NAME))
 
