@@ -107,6 +107,21 @@ class H265CodecConfigurationTests(BitmovinTestCase):
         custom_data = custom_data_response.resource
         self.assertEqual(sample_codec_configuration.customData, json.loads(custom_data.customData))
 
+    def test_create_h265_codec_config_with_bitrate_and_crf(self):
+        sample_codec_configuration = self._get_sample_h265_codec_configuration()
+        self.assertIsNotNone(sample_codec_configuration.bitrate)
+
+        sample_codec_configuration.crf = 51.0
+        self.assertEqual(sample_codec_configuration.crf, 51.0)
+        try:
+            self.bitmovin.codecConfigurations.H265.create(sample_codec_configuration)
+
+        except BitmovinApiError as error:
+            self.assertEqual(error.response.status, 'ERROR')
+            self.assertEqual(error.response.data.code, 1001)
+            self.assertEqual(error.response.data.message,
+                             '400 Both bitrate and crf are set. Only one of them is allowed.')
+
     def _compare_h265_codec_configurations(self, first: H265CodecConfiguration, second: H265CodecConfiguration):
         """
 
@@ -141,6 +156,7 @@ class H265CodecConfigurationTests(BitmovinTestCase):
         self.assertEqual(first.weightPredictionOnBSlice, second.weightPredictionOnBSlice)
         self.assertEqual(first.weightPredictionOnPSlice, second.weightPredictionOnPSlice)
         self.assertEqual(first.sao, second.sao)
+        self.assertEqual(first.crf, second.crf)
         return True
 
     def _get_sample_h265_codec_configuration(self):
@@ -197,7 +213,6 @@ class H265CodecConfigurationTests(BitmovinTestCase):
         self.assertIsNotNone(h265_codec_configuration.weightPredictionOnPSlice)
         self.assertIsNotNone(h265_codec_configuration.weightPredictionOnBSlice)
         self.assertIsNotNone(h265_codec_configuration.sao)
-
         return h265_codec_configuration
 
 
