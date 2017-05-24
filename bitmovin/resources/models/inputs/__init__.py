@@ -9,4 +9,5 @@ from .https_input import HTTPSInput
 from .aspera_input import AsperaInput
 from .rtmp_input import RTMPInput
 from .generic_s3_input import GenericS3Input
+from .local_input import LocalInput
 from .analysis import *
