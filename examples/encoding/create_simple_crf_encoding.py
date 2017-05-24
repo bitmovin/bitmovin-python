@@ -127,7 +127,7 @@ def main():
     try:
         bitmovin.encodings.Encoding.wait_until_finished(encoding_id=encoding.id)
     except BitmovinError as bitmovin_error:
-        print("Exception occurred while waiting for encoding to finish: {}".format(bitmovin_error))
+        print('Exception occurred while waiting for encoding to finish: {}'.format(bitmovin_error))
 
     manifest_output = EncodingOutput(output_id=s3_output.id,
                                      output_path=OUTPUT_BASE_PATH,
@@ -182,7 +182,7 @@ def main():
     try:
         bitmovin.manifests.DASH.wait_until_finished(manifest_id=dash_manifest.id)
     except BitmovinError as bitmovin_error:
-        print("Exception occurred while waiting for manifest creation to finish: {}".format(bitmovin_error))
+        print('Exception occurred while waiting for manifest creation to finish: {}'.format(bitmovin_error))
 
 
 if __name__ == '__main__':

@@ -219,8 +219,8 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
             return
         if not isinstance(new_value, float):
             raise InvalidTypeError('crf has to be a float value')
-        else:
-            self._crf = new_value
+
+        self._crf = new_value
 
     @classmethod
     def parse_from_json_object(cls, json_object):
