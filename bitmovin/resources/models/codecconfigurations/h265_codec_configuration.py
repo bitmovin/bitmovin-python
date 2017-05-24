@@ -11,7 +11,7 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
                  height=None, bframes=None, ref_frames=None, qp=None, max_bitrate=None, min_bitrate=None, bufsize=None,
                  min_gop=None, max_gop=None, level=None, rc_lookahead=None, b_adapt=None, max_ctu_size=None,
                  tu_intra_depth=None, tu_inter_depth=None, motion_search=None, sub_me=None, motion_search_range=None,
-                 weight_prediction_on_p_slice=None, weight_prediction_on_b_slice=None, sao=None):
+                 weight_prediction_on_p_slice=None, weight_prediction_on_b_slice=None, sao=None, crf=None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description, bitrate=bitrate,
                          rate=rate, width=width, height=height)
@@ -44,6 +44,8 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         self.weightPredictionOnPSlice = weight_prediction_on_p_slice
         self.weightPredictionOnBSlice = weight_prediction_on_b_slice
         self.sao = sao
+        self._crf = None
+        self.crf = crf
 
     @property
     def profile(self):
@@ -174,6 +176,19 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
             raise InvalidTypeError(
                 'Invalid type {} for motionSearch: must be either str or MotionSearch!'.format(type(new_motion_search)))
 
+    @property
+    def crf(self):
+        return self._crf
+
+    @crf.setter
+    def crf(self, new_value):
+        if new_value is None:
+            return
+        if not isinstance(new_value, float):
+            raise InvalidTypeError('crf has to be a float value')
+        else:
+            self._crf = new_value
+
     @classmethod
     def parse_from_json_object(cls, json_object):
         video_codec_configuration = VideoCodecConfiguration.parse_from_json_object(json_object=json_object)
@@ -208,6 +223,7 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         weight_prediction_on_p_slice = json_object.get('weightPredictionOnPSlice')
         weight_prediction_on_b_slice = json_object.get('weightPredictionOnBSlice')
         sao = json_object.get('sao')
+        crf = json_object.get('crf')
 
         h265_codec_configuration = H265CodecConfiguration(name=name, bitrate=bitrate, rate=rate, profile=profile,
                                                           id_=id_, description=description, custom_data=custom_data,
@@ -221,7 +237,7 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
                                                           motion_search_range=motion_search_range,
                                                           weight_prediction_on_p_slice=weight_prediction_on_p_slice,
                                                           weight_prediction_on_b_slice=weight_prediction_on_b_slice,
-                                                          sao=sao)
+                                                          sao=sao, crf=crf)
 
         return h265_codec_configuration
 
@@ -234,4 +250,5 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         serialized['tuIntraDepth'] = self.tuIntraDepth
         serialized['tuInterDepth'] = self.tuInterDepth
         serialized['motionSearch'] = self.motionSearch
+        serialized['crf'] = self.crf
         return serialized
