@@ -123,7 +123,6 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         custom_data = custom_data_response.resource
         self.assertEqual(sample_codec_configuration.customData['data'], custom_data.customData['data'])
 
-
     def test_retrieve_h264_codec_configuration_custom_data_object(self):
         myobject_1 = MyAwesomeClass('mystring', 12, 34, True, None)
         myobject_2 = MyAwesomeClass('mystring', 1234, 1234.0, myobject_1, "@@@漢漢%$%$")
@@ -156,6 +155,20 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         self.assertEqual(sample_codec_configuration.customData.value_b.value_c,
                          custom_data.customData['value_b']['value_c'])
 
+    def test_create_h264_codec_config_with_bitrate_and_crf(self):
+        sample_codec_configuration = self._get_sample_h264_codec_configuration()
+        self.assertIsNotNone(sample_codec_configuration.bitrate)
+
+        sample_codec_configuration.crf = 51.0
+        self.assertEqual(sample_codec_configuration.crf, 51.0)
+        try:
+            self.bitmovin.codecConfigurations.H264.create(sample_codec_configuration)
+
+        except BitmovinApiError as error:
+            self.assertEqual(error.response.status, 'ERROR')
+            self.assertEqual(error.response.data.code, 1001)
+            self.assertEqual(error.response.data.message,
+                             '400 Both bitrate and crf are set. Only one of them is allowed.')
 
     def _compare_h264_codec_configurations(self, first: H264CodecConfiguration, second: H264CodecConfiguration):
         """
@@ -192,6 +205,7 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         self.assertEqual(first.trellis, second.trellis)
         self.assertEqual(first.slices, second.slices)
         self.assertEqual(first.interlaceMode, second.interlaceMode)
+        self.assertEqual(first.crf, second.crf)
         return True
 
     def _get_sample_h264_codec_configuration(self):
@@ -222,8 +236,7 @@ class H264CodecConfigurationTests(BitmovinTestCase):
                                                           partitions=[H264Partition.I4X4, H264Partition.I8X8, H264Partition.P8X8, H264Partition.B8X8],
                                                           trellis=H264Trellis.ENABLED_FINAL_MB,
                                                           slices=5,
-                                                          interlaceMode=H264InterlaceMode.BOTTOM_FIELD_FIRST
-                                                          )
+                                                          interlaceMode=H264InterlaceMode.BOTTOM_FIELD_FIRST)
 
         self.assertIsNotNone(h264_codec_configuration.name)
         self.assertIsNotNone(h264_codec_configuration.description)
@@ -250,7 +263,6 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         self.assertIsNotNone(h264_codec_configuration.trellis)
         self.assertIsNotNone(h264_codec_configuration.slices)
         self.assertIsNotNone(h264_codec_configuration.interlaceMode)
-
         return h264_codec_configuration
 
 

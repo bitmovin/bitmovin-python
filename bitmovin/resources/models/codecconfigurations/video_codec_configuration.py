@@ -3,7 +3,7 @@ from .abstract_codec_configuration import AbstractCodecConfiguration
 
 class VideoCodecConfiguration(AbstractCodecConfiguration):
 
-    def __init__(self, id_, name, bitrate, rate, width=None, height=None, description=None, custom_data=None):
+    def __init__(self, id_, name, rate, bitrate=None, width=None, height=None, description=None, custom_data=None):
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self.bitrate = bitrate
         self.rate = rate
@@ -18,12 +18,12 @@ class VideoCodecConfiguration(AbstractCodecConfiguration):
         description = abstract_codec_configuration.description
         custom_data = abstract_codec_configuration.customData
         rate = json_object.get('rate')
-        bitrate = json_object['bitrate']
+        bitrate = json_object.get('bitrate')
         width = json_object.get('width')
         height = json_object.get('height')
 
         video_codec_configuration = VideoCodecConfiguration(id_=id_, name=name, description=description,
-                                                            custom_data=custom_data, bitrate=bitrate, rate=rate,
+                                                            custom_data=custom_data, rate=rate, bitrate=bitrate,
                                                             width=width, height=height)
 
         return video_codec_configuration
