@@ -14,12 +14,12 @@ class VP9CodecConfiguration(VideoCodecConfiguration, Serializable):
                  max_intra_rate=None, qp_min=None, qp_max=None, crf=None, rate_undershoot_pct=None,
                  rate_overshoot_pct=None, cpu_used=None, noise_sensitivity=None, quality=None,
                  lossless=None, static_thresh=None, aq_mode=None, arnr_max_frames=None, 
-                 arnr_max_strength=None, arnr_type=None):
+                 arnr_strength=None, arnr_type=None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description, bitrate=bitrate,
                          rate=rate, width=width, height=height)
 
-        self.lagInFrames =lag_in_frames
+        self.lagInFrames = lag_in_frames
         self.tileColumns = tile_columns
         self.tileRows = tile_rows
         self.frameParallel = frame_parallel
@@ -38,7 +38,7 @@ class VP9CodecConfiguration(VideoCodecConfiguration, Serializable):
         self._aqMode = None
         self.aqMode = aq_mode
         self.arnrMaxFrames = arnr_max_frames
-        self.arnrMaxStrength = arnr_max_strength
+        self.arnrStrength = arnr_strength
         self._arnrType = None
         self.arnrType = arnr_type
         
@@ -122,7 +122,7 @@ class VP9CodecConfiguration(VideoCodecConfiguration, Serializable):
         static_thresh = json_object.get('staticThresh')
         aq_mode = json_object.get('aqMode')
         arnr_max_frames = json_object.get('arnrMaxFrames')
-        arnr_max_strength = json_object.get('arnrMaxStrength')
+        arnr_strength = json_object.get('arnrStrength')
         arnr_type = json_object.get('arnrType')
 
         
@@ -138,7 +138,7 @@ class VP9CodecConfiguration(VideoCodecConfiguration, Serializable):
                                                         noise_sensitivity=noise_sensitivity, quality=quality, 
                                                         lossless=lossless, static_thresh=static_thresh, 
                                                         aq_mode=aq_mode, arnr_max_frames=arnr_max_frames, 
-                                                        arnr_max_strength=arnr_max_strength, arnr_type=arnr_type)
+                                                        arnr_strength=arnr_strength, arnr_type=arnr_type)
 
         return vp9_codec_configuration
 

@@ -8,6 +8,9 @@ from .h264_level import H264Level
 from .h264_profile import H264Profile
 from .h265_level import H265Level
 from .h265_profile import H265Profile
+from .vp9_aq_mode import VP9AQMode
+from .vp9_arnr_type import VP9ARNRType
+from .vp9_quality import VP9Quality
 from .max_ctu_size import MaxCTUSize
 from .motion_search import MotionSearch
 from .mv_prediction_mode import MVPredictionMode
