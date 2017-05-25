@@ -156,7 +156,6 @@ class VP9CodecConfigurationTests(BitmovinTestCase):
                                                           max_intra_rate=0,
                                                           qp_min=0,
                                                           qp_max=63,
-                                                        #   crf=0,
                                                           rate_undershoot_pct=25,
                                                           rate_overshoot_pct=25,
                                                           cpu_used=1,
@@ -182,7 +181,6 @@ class VP9CodecConfigurationTests(BitmovinTestCase):
         self.assertIsNotNone(vp9_codec_configuration.maxIntraRate)
         self.assertIsNotNone(vp9_codec_configuration.qpMin)
         self.assertIsNotNone(vp9_codec_configuration.qpMax)
-        # self.assertIsNotNone(vp9_codec_configuration.crf)
         self.assertIsNotNone(vp9_codec_configuration.rateUndershootPct)
         self.assertIsNotNone(vp9_codec_configuration.rateOvershootPct)
         self.assertIsNotNone(vp9_codec_configuration.cpuUsed)
