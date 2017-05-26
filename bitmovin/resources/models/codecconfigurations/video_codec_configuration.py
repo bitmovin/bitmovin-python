@@ -18,7 +18,7 @@ class VideoCodecConfiguration(AbstractCodecConfiguration):
         description = abstract_codec_configuration.description
         custom_data = abstract_codec_configuration.customData
         rate = json_object.get('rate')
-        bitrate = json_object['bitrate']
+        bitrate = json_object.get('bitrate')
         width = json_object.get('width')
         height = json_object.get('height')
 
