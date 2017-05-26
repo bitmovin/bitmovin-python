@@ -1,57 +1,44 @@
-import datetime
-from bitmovin import Bitmovin, Encoding, HTTPSInput, S3Output, H264CodecConfiguration, \
+from bitmovin import Bitmovin, Encoding, H264CodecConfiguration, \
     AACCodecConfiguration, H264Profile, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
     FMP4Muxing, MuxingStream, CloudRegion, DashManifest, FMP4Representation, FMP4RepresentationType, Period, \
-    VideoAdaptationSet, AudioAdaptationSet, EncoderVersion
+    VideoAdaptationSet, AudioAdaptationSet, LocalOutput, LocalInput
 from bitmovin.errors import BitmovinError
 
 
 API_KEY = '<INSERT_YOUR_API_KEY>'
-INFRASTRUCTURE_ID = '<YOUR_INFRASTRUCTURE_ID>'
+INFRASTRUCTURE_ID = '<INSERT_YOUR_INFRASTRUCTURE_ID>'
 CLOUD_REGION = CloudRegion.KUBERNETES
-ENCODER_VERSION=EncoderVersion.BETA
 
-# https://<INSERT_YOUR_HTTP_HOST>/<INSERT_YOUR_HTTP_PATH>
-HTTPS_INPUT_HOST = '<INSERT_YOUR_HTTP_HOST>'
-INPUT_PATH = '<INSERT_YOUR_HTTP_PATH>'
+INPUT_BASE_PATH = '/tmp/inputs'
+RELATIVE_INPUT_FILE_PATH = 'relative/path/to/you/input.mkv'
 
-S3_OUTPUT_ACCESSKEY = '<YOUR_S3_ACCESS_KEY>'
-S3_OUTPUT_SECRETKEY = '<YOUR_S3_SECRET_KEY>'
-S3_OUTPUT_BUCKETNAME = '<YOUR_S3_BUCKET_NAME>'
-
-S3_PUBLIC_BASE_URL = '<INSERT_YOUR_S3_PUBLIC_BASE_URL>'  # Without trailing slash '/'
-
-date_component = str(datetime.datetime.now()).replace(' ', '_').replace(':', '-').split('.')[0].replace('_', '__')
-OUTPUT_BASE_PATH = 'your/output/base/path/{}/'.format(date_component)
+OUTPUT_BASE_PATH = '/tmp/outputs'
+RELATIVE_OUTPUT_PATH = 'relative/path/to/your/output/'
 
 DASH_MANIFEST_NAME = 'example_dash_manifest.mpd'
+
 
 def main():
     bitmovin = Bitmovin(api_key=API_KEY)
 
-    https_input = HTTPSInput(name='create_simple_encoding HTTPS input', host=HTTPS_INPUT_HOST)
+    local_input = LocalInput(name='My Local Input', path=INPUT_BASE_PATH)
+    local_output = LocalOutput(name='My Local Output', path=OUTPUT_BASE_PATH)
 
-    s3_output = S3Output(access_key=S3_OUTPUT_ACCESSKEY,
-                         secret_key=S3_OUTPUT_SECRETKEY,
-                         bucket_name=S3_OUTPUT_BUCKETNAME,
-                         name='Sample S3 Output')
+    created_input = bitmovin.inputs.Local.create(local_input).resource
+    created_output = bitmovin.outputs.Local.create(local_output).resource
 
-    input = bitmovin.inputs.HTTPS.create(https_input).resource
-    output = bitmovin.outputs.S3.create(s3_output).resource
-
-    encoding = Encoding(name='example encoding',
+    encoding = Encoding(name='Local Input Output Example',
                         cloud_region=CLOUD_REGION,
-                        infrastructure_id=INFRASTRUCTURE_ID,
-                        encoder_version=ENCODER_VERSION)
+                        infrastructure_id=INFRASTRUCTURE_ID)
 
     encoding = bitmovin.encodings.Encoding.create(encoding).resource
 
     ##########################
     # qualities
     video_qualities = [
-        # {'width': 1280, 'height': 720, 'br': 2400000, 'bframes': None, 'profile': H264Profile.HIGH, 'level': None},
-        # {'width': 854, 'height': 480, 'br': 1200000, 'bframes': None, 'profile': H264Profile.HIGH, 'level': None},
-        {'width': 640, 'height': 360, 'br': 800000, 'bframes': None, 'profile': H264Profile.HIGH, 'level': None},
+        {'width': 1280, 'height': 720, 'bitrate': 2400000, 'bframes': None, 'profile': H264Profile.HIGH, 'level': None},
+        {'width': 854, 'height': 480, 'bitrate': 1200000, 'bframes': None, 'profile': H264Profile.HIGH, 'level': None},
+        {'width': 640, 'height': 360, 'bitrate': 800000, 'bframes': None, 'profile': H264Profile.HIGH, 'level': None},
     ]
 
     audio_qualities = [
@@ -64,11 +51,12 @@ def main():
     audio_configs = []
 
     for video_quality in video_qualities:
-        config = H264CodecConfiguration(name='h264_{}x{}_{}'.format(video_quality['width'], video_quality['height'], video_quality['br']),
+        config = H264CodecConfiguration(name='h264_{}x{}_{}'.format(video_quality['width'], video_quality['height'],
+                                                                    video_quality['bitrate']),
                                         rate=None,
                                         width=video_quality['width'],
                                         height=video_quality['height'],
-                                        bitrate=video_quality['br'],
+                                        bitrate=video_quality['bitrate'],
                                         bframes=video_quality['bframes'],
                                         profile=video_quality['profile'],
                                         level=video_quality['level']
@@ -76,19 +64,19 @@ def main():
         config = bitmovin.codecConfigurations.H264.create(config).resource
         video_configs.append(config)
 
-    for video_quality in audio_qualities:
-        config = AACCodecConfiguration(name='aac_{}_{}'.format(video_quality['bitrate'], video_quality['rate']),
-                                       bitrate=video_quality['bitrate'],
-                                       rate=video_quality['rate'])
+    for audio_quality in audio_qualities:
+        config = AACCodecConfiguration(name='aac_{}_{}'.format(audio_quality['bitrate'], audio_quality['rate']),
+                                       bitrate=audio_quality['bitrate'],
+                                       rate=audio_quality['rate'])
         config = bitmovin.codecConfigurations.AAC.create(config).resource
         audio_configs.append(config)
 
-    video_input_stream = StreamInput(input_id=input.id,
-                                     input_path=INPUT_PATH,
+    video_input_stream = StreamInput(input_id=created_input.id,
+                                     input_path=RELATIVE_INPUT_FILE_PATH,
                                      selection_mode=SelectionMode.AUTO)
 
-    audio_input_stream = StreamInput(input_id=input.id,
-                                     input_path=INPUT_PATH,
+    audio_input_stream = StreamInput(input_id=created_input.id,
+                                     input_path=RELATIVE_INPUT_FILE_PATH,
                                      selection_mode=SelectionMode.AUTO)
 
     ##########################
@@ -103,10 +91,10 @@ def main():
         stream = bitmovin.encodings.Stream.create(object_=stream, encoding_id=encoding.id).resource
         video_streams.append(stream)
 
-    for video_config in audio_configs:
-        stream = Stream(codec_configuration_id=video_config.id,
+    for audio_config in audio_configs:
+        stream = Stream(codec_configuration_id=audio_config.id,
                         input_streams=[audio_input_stream],
-                        name='{}_stream'.format(video_config.name))
+                        name='{}_stream'.format(audio_config.name))
         stream = bitmovin.encodings.Stream.create(object_=stream, encoding_id=encoding.id).resource
         audio_streams.append(stream)
 
@@ -133,8 +121,8 @@ def main():
     for video_muxing_stream in video_muxing_streams:
         stream = video_muxing_stream['stream']
         muxing = video_muxing_stream['mux']
-        encoding_output = EncodingOutput(output_id=output.id,
-                                         output_path=OUTPUT_BASE_PATH + 'video_dash/{}/'.format(stream.name),
+        encoding_output = EncodingOutput(output_id=created_output.id,
+                                         output_path=RELATIVE_OUTPUT_PATH + 'video_dash/{}/'.format(stream.name),
                                          acl=[acl_entry])
         stream_array = [muxing]
         muxing = FMP4Muxing(segment_length=4,
@@ -149,8 +137,8 @@ def main():
     for audio_muxing_stream in audio_muxing_streams:
         stream = audio_muxing_stream['stream']
         muxing = audio_muxing_stream['mux']
-        encoding_output = EncodingOutput(output_id=output.id,
-                                         output_path=OUTPUT_BASE_PATH + 'audio_dash/{}/'.format(stream.name),
+        encoding_output = EncodingOutput(output_id=created_output.id,
+                                         output_path=RELATIVE_OUTPUT_PATH + 'audio_dash/{}/'.format(stream.name),
                                          acl=[acl_entry])
         stream_array = [muxing]
         muxing = FMP4Muxing(segment_length=4,
@@ -160,18 +148,18 @@ def main():
                             outputs=[encoding_output],
                             name='dash_audio_muxing_{}'.format(stream.name))
         created_muxing = bitmovin.encodings.Muxing.FMP4.create(object_=muxing, encoding_id=encoding.id).resource
-        audio_fmp4_muxings.append({'muxing': created_muxing, 'stream': stream, 'muxing_stream': muxing, 'output': encoding_output})
-
+        audio_fmp4_muxings.append({'muxing': created_muxing, 'stream': stream, 'muxing_stream': muxing,
+                                   'output': encoding_output})
 
     bitmovin.encodings.Encoding.start(encoding_id=encoding.id)
 
     try:
         bitmovin.encodings.Encoding.wait_until_finished(encoding_id=encoding.id)
     except BitmovinError as bitmovin_error:
-        print("Exception occurred while waiting for encoding to finish: {}".format(bitmovin_error))
+        print('Exception occurred while waiting for encoding to finish: {}'.format(bitmovin_error))
 
-    manifest_output = EncodingOutput(output_id=output.id,
-                                     output_path='{}manifests/'.format(OUTPUT_BASE_PATH),
+    manifest_output = EncodingOutput(output_id=created_output.id,
+                                     output_path='{}manifests/'.format(RELATIVE_OUTPUT_PATH),
                                      acl=[acl_entry])
 
     ##########################
@@ -198,9 +186,9 @@ def main():
         encoding_output = video_fmp4_muxing['output']
 
         video_fmp4_representation = FMP4Representation(FMP4RepresentationType.TEMPLATE,
-                                                       encoding_id=encoding.id,
-                                                       muxing_id=muxing.id,
-                                                       segment_path='/{}'.format(encoding_output.outputPath))
+                                 encoding_id=encoding.id,
+                                 muxing_id=muxing.id,
+                                 segment_path='/{}'.format(encoding_output.outputPath))
         video_fmp4_representation = bitmovin.manifests.DASH.add_fmp4_representation(object_=video_fmp4_representation,
                                                               manifest_id=dash_manifest.id,
                                                               period_id=period.id,
@@ -211,9 +199,9 @@ def main():
         encoding_output = audio_fmp4_muxing['output']
 
         audio_fmp4_representation = FMP4Representation(FMP4RepresentationType.TEMPLATE,
-                                                       encoding_id=encoding.id,
-                                                       muxing_id=muxing.id,
-                                                       segment_path='/{}'.format(encoding_output.outputPath))
+                                 encoding_id=encoding.id,
+                                 muxing_id=muxing.id,
+                                 segment_path='/{}'.format(encoding_output.outputPath))
         audio_fmp4_representation = bitmovin.manifests.DASH.add_fmp4_representation(object_=audio_fmp4_representation,
                                                               manifest_id=dash_manifest.id,
                                                               period_id=period.id,
@@ -226,9 +214,6 @@ def main():
         bitmovin.manifests.DASH.wait_until_finished(manifest_id=dash_manifest.id)
     except BitmovinError as bitmovin_error:
         print('Exception occurred while waiting for manifest creation to finish: {}'.format(bitmovin_error))
-
-    print('DASH Manifest download URL: {}'.format(S3_PUBLIC_BASE_URL + '/' + S3_OUTPUT_BUCKETNAME + OUTPUT_BASE_PATH + DASH_MANIFEST_NAME))
-
 
 if __name__ == '__main__':
     main()

@@ -161,34 +161,6 @@ class CENCDRMTests(BitmovinTestCase):
         custom_data = custom_data_response.resource
         self.assertEqual(sample_drm.customData, json.loads(custom_data.customData))
 
-    def test_retrieve_drm_status(self):
-        fmp4_muxing = self._create_muxing()
-        self.assertIsNotNone(fmp4_muxing.id)
-        sample_drm = self._get_sample_drm_cenc()
-        sample_drm.outputs = fmp4_muxing.outputs
-        sample_drm.customData = 'my_fancy_awesome_custom_data'
-
-        created_drm_response = self.bitmovin.encodings.Muxing.FMP4.DRM.CENC.create(
-            object_=sample_drm, encoding_id=self.sampleEncoding.id, muxing_id=fmp4_muxing.id)
-
-        self.assertIsNotNone(created_drm_response)
-        self.assertIsNotNone(created_drm_response.resource)
-        self.assertIsNotNone(created_drm_response.resource.id)
-        drm_resource = created_drm_response.resource  # type: CENCDRM
-        self._compare_drms(sample_drm, drm_resource)
-
-        drm_status_response = self.bitmovin.encodings.Muxing.FMP4.DRM.CENC.retrieve_status(
-            muxing_id=fmp4_muxing.id,
-            encoding_id=self.sampleEncoding.id,
-            drm_id=drm_resource.id
-        )
-
-        self.assertIsNotNone(drm_status_response)
-        self.assertIsNotNone(drm_status_response.resource)
-        resource = drm_status_response.resource  # type: DRMStatus
-        self.assertIsNotNone(resource.status)
-        self.assertEqual('CREATED', resource.status)
-
     def _create_muxing(self):
         sample_muxing = self._get_sample_muxing()
         created_muxing_response = self.bitmovin.encodings.Muxing.FMP4.create(object_=sample_muxing,
