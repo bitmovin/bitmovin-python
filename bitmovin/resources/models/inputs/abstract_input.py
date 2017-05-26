@@ -1,6 +1,7 @@
 from bitmovin.resources.models import AbstractModel
 from bitmovin.resources import AbstractNameDescriptionResource
 
+
 class AbstractInput(AbstractNameDescriptionResource, AbstractModel):
 
     def __init__(self, id_, name=None, description=None, custom_data=None):

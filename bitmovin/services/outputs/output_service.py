@@ -5,6 +5,7 @@ from .azure_output_service import Azure
 from .ftp_output_service import FTP
 from .sftp_output_service import SFTP
 from .generic_s3_output_service import GenericS3
+from .local_output_service import Local
 
 
 class OutputService(BitmovinObject):
@@ -17,3 +18,4 @@ class OutputService(BitmovinObject):
         self.FTP = FTP(http_client=self.http_client)
         self.SFTP = SFTP(http_client=self.http_client)
         self.GenericS3 = GenericS3(http_client=self.http_client)
+        self.Local = Local(http_client=self.http_client)

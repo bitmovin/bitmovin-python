@@ -41,7 +41,6 @@ class HTTPInputTests(BitmovinTestCase):
         self.assertIsNotNone(input_resource_response.resource.id)
         self._compare_http_inputs(sample_input, input_resource_response.resource)
 
-    @unittest.skip('not ready - see issue 574')
     def test_create_http_input_credentials(self):
         (sample_input, sample_files) = self._get_sample_http_input()
         sample_input.username = 'bitmovin-testuser-python'
@@ -51,8 +50,6 @@ class HTTPInputTests(BitmovinTestCase):
         self.assertIsNotNone(input_resource_response.resource)
         self.assertIsNotNone(input_resource_response.resource.id)
         self._compare_http_inputs(sample_input, input_resource_response.resource)
-        # self.assertIsNotNone(input_resource_response.resource.username)  # issue 574
-        # self.assertEqual(sample_input.username, input_resource_response.resource.username)  # issue 574
 
     def test_retrieve_http_input(self):
         (sample_input, sample_files) = self._get_sample_http_input()

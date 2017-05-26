@@ -124,25 +124,6 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
         custom_data = custom_data_response.resource
         self.assertEqual(sample_muxing.customData, json.loads(custom_data.customData))
 
-    def test_retrieve_stream_status(self):
-        sample_muxing = self._get_sample_muxing()
-        created_muxing_response = self.bitmovin.encodings.Muxing.MP4.create(object_=sample_muxing,
-                                                                            encoding_id=self.sampleEncoding.id)
-        self.assertIsNotNone(created_muxing_response)
-        self.assertIsNotNone(created_muxing_response.resource)
-        self.assertIsNotNone(created_muxing_response.resource.id)
-        self._compare_muxings(sample_muxing, created_muxing_response.resource)
-
-        muxing_status_response = self.bitmovin.encodings.Muxing.MP4.retrieve_status(
-            muxing_id=created_muxing_response.resource.id,
-            encoding_id=self.sampleEncoding.id)
-
-        self.assertIsNotNone(muxing_status_response)
-        self.assertIsNotNone(muxing_status_response.resource)
-        resource = muxing_status_response.resource  # type: EncodingStatus
-        self.assertIsNotNone(resource.status)
-        self.assertEqual('CREATED', resource.status)
-
     def _compare_muxings(self, first: MP4Muxing, second: MP4Muxing):
         """
 

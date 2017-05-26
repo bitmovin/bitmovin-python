@@ -161,34 +161,6 @@ class FairPlayDRMTests(BitmovinTestCase):
         custom_data = custom_data_response.resource
         self.assertEqual(sample_drm.customData, json.loads(custom_data.customData))
 
-    def test_retrieve_drm_status_fmp4(self):
-        fmp4_muxing = self._create_muxing_fmp4()
-        self.assertIsNotNone(fmp4_muxing.id)
-        sample_drm = self._get_sample_drm_fairplay()
-        sample_drm.outputs = fmp4_muxing.outputs
-        sample_drm.customData = 'my_fancy_awesome_custom_data'
-
-        created_drm_response = self.bitmovin.encodings.Muxing.FMP4.DRM.FairPlay.create(
-            object_=sample_drm, encoding_id=self.sampleEncoding.id, muxing_id=fmp4_muxing.id)
-
-        self.assertIsNotNone(created_drm_response)
-        self.assertIsNotNone(created_drm_response.resource)
-        self.assertIsNotNone(created_drm_response.resource.id)
-        drm_resource = created_drm_response.resource  # type: FairPlayDRM
-        self._compare_drms(sample_drm, drm_resource)
-
-        drm_status_response = self.bitmovin.encodings.Muxing.FMP4.DRM.FairPlay.retrieve_status(
-            muxing_id=fmp4_muxing.id,
-            encoding_id=self.sampleEncoding.id,
-            drm_id=drm_resource.id
-        )
-
-        self.assertIsNotNone(drm_status_response)
-        self.assertIsNotNone(drm_status_response.resource)
-        resource = drm_status_response.resource  # type: DRMStatus
-        self.assertIsNotNone(resource.status)
-        self.assertEqual('CREATED', resource.status)
-
     def test_create_drm_ts(self):
         ts_muxing = self._create_muxing_ts()  # type: TSMuxing
         self.assertIsNotNone(ts_muxing.id)
@@ -303,33 +275,6 @@ class FairPlayDRMTests(BitmovinTestCase):
 
         custom_data = custom_data_response.resource
         self.assertEqual(sample_drm.customData, json.loads(custom_data.customData))
-
-    def test_retrieve_drm_status_ts(self):
-        ts_muxing = self._create_muxing_ts()
-        self.assertIsNotNone(ts_muxing.id)
-        sample_drm = self._get_sample_drm_fairplay()
-        sample_drm.outputs = ts_muxing.outputs
-        sample_drm.customData = 'my_fancy_awesome_custom_data'
-        created_drm_response = self.bitmovin.encodings.Muxing.TS.DRM.FairPlay.create(object_=sample_drm,
-                                                                                     encoding_id=self.sampleEncoding.id,
-                                                                                     muxing_id=ts_muxing.id)
-        self.assertIsNotNone(created_drm_response)
-        self.assertIsNotNone(created_drm_response.resource)
-        self.assertIsNotNone(created_drm_response.resource.id)
-        drm_resource = created_drm_response.resource  # type: FairPlayDRM
-        self._compare_drms(sample_drm, drm_resource)
-
-        drm_status_response = self.bitmovin.encodings.Muxing.TS.DRM.FairPlay.retrieve_status(
-            muxing_id=ts_muxing.id,
-            encoding_id=self.sampleEncoding.id,
-            drm_id=drm_resource.id
-        )
-
-        self.assertIsNotNone(drm_status_response)
-        self.assertIsNotNone(drm_status_response.resource)
-        resource = drm_status_response.resource  # type: DRMStatus
-        self.assertIsNotNone(resource.status)
-        self.assertEqual('CREATED', resource.status)
 
     def _create_muxing_fmp4(self):
         sample_muxing = self._get_sample_fmp4_muxing()

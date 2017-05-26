@@ -7,7 +7,7 @@ from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
 
 
-class EncodingFMP4MuxingTests(BitmovinTestCase):
+class EncodingSpriteTests(BitmovinTestCase):
 
     @classmethod
     def setUpClass(cls):
