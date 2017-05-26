@@ -123,25 +123,6 @@ class EncodingStreamTests(BitmovinTestCase):
         custom_data = custom_data_response.resource
         self.assertEqual(sample_stream.customData, json.loads(custom_data.customData))
 
-    def test_retrieve_stream_status(self):
-        sample_stream = self._get_sample_stream()
-        created_stream_response = self.bitmovin.encodings.Stream.create(object_=sample_stream,
-                                                                        encoding_id=self.sampleEncoding.id)
-        self.assertIsNotNone(created_stream_response)
-        self.assertIsNotNone(created_stream_response.resource)
-        self.assertIsNotNone(created_stream_response.resource.id)
-        self._compare_streams(sample_stream, created_stream_response.resource)
-
-        stream_status_response = self.bitmovin.encodings.Stream.retrieve_status(
-            stream_id=created_stream_response.resource.id,
-            encoding_id=self.sampleEncoding.id)
-
-        self.assertIsNotNone(stream_status_response)
-        self.assertIsNotNone(stream_status_response.resource)
-        resource = stream_status_response.resource  # type: EncodingStatus
-        self.assertIsNotNone(resource.status)
-        self.assertEqual('CREATED', resource.status)
-
     def _compare_streams(self, first: Stream, second: Stream):
         """
 

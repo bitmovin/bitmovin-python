@@ -9,6 +9,7 @@ from .https_input_service import HTTPS
 from .aspera_input_service import Aspera
 from .rtmp_input_service import RTMP
 from .generic_s3_input_service import GenericS3
+from .local_input_service import Local
 
 
 class InputService(BitmovinObject):
@@ -25,3 +26,4 @@ class InputService(BitmovinObject):
         self.Aspera = Aspera(http_client=self.http_client)
         self.RTMP = RTMP(http_client=self.http_client)
         self.GenericS3 = GenericS3(http_client=self.http_client)
+        self.Local = Local(http_client=self.http_client)
