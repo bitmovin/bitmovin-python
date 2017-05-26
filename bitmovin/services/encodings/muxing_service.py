@@ -2,6 +2,7 @@ from bitmovin.bitmovin_object import BitmovinObject
 from .fmp4_muxing_service import FMP4Muxing
 from .ts_muxing_service import TSMuxing
 from .mp4_muxing_service import MP4Muxing
+from .webm_muxing_service import WebMMuxing
 
 
 class MuxingService(BitmovinObject):
@@ -11,3 +12,4 @@ class MuxingService(BitmovinObject):
         self.FMP4 = FMP4Muxing(http_client=self.http_client)
         self.MP4 = MP4Muxing(http_client=self.http_client)
         self.TS = TSMuxing(http_client=self.http_client)
+        self.WebM = WebMMuxing(http_client=self.http_client)

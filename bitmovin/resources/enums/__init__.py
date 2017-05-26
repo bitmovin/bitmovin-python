@@ -8,6 +8,9 @@ from .h264_level import H264Level
 from .h264_profile import H264Profile
 from .h265_level import H265Level
 from .h265_profile import H265Profile
+from .vp9_aq_mode import VP9AQMode
+from .vp9_arnr_type import VP9ARNRType
+from .vp9_quality import VP9Quality
 from .max_ctu_size import MaxCTUSize
 from .motion_search import MotionSearch
 from .mv_prediction_mode import MVPredictionMode
@@ -17,3 +20,4 @@ from .encoder_version import EncoderVersion
 from .selection_mode import SelectionMode
 from .acl_permission import ACLPermission
 from .fmp4_representation_type import FMP4RepresentationType
+from .webm_representation_type import WebMRepresentationType
