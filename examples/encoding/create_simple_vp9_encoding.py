@@ -1,8 +1,8 @@
 import datetime
-from bitmovin import Bitmovin, Encoding, HTTPSInput, S3Output, VP9CodecConfiguration, H264CodecConfiguration,\
-    AACCodecConfiguration, H264Profile, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
+from bitmovin import Bitmovin, Encoding, HTTPSInput, S3Output, VP9CodecConfiguration,\
+    AACCodecConfiguration, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
     FMP4Muxing, WebMMuxing, MuxingStream, CloudRegion, DashManifest, FMP4Representation, FMP4RepresentationType, WebMRepresentation, Period, \
-    VideoAdaptationSet, AudioAdaptationSet, AWSCloudRegion, Analysis
+    VideoAdaptationSet, AudioAdaptationSet, AWSCloudRegion
 from bitmovin.errors import BitmovinError
 
 
@@ -39,17 +39,17 @@ def main():
     encoding = bitmovin.encodings.Encoding.create(encoding).resource
 
     video_codec_configuration_1080p = VP9CodecConfiguration(name='example_video_codec_configuration_1080p',
-                                                             bitrate=3600000,
-                                                             rate=25.0,
-                                                             width=1920,
-                                                             height=1080)
+                                                            bitrate=3600000,
+                                                            rate=25.0,
+                                                            width=1920,
+                                                            height=1080)
     video_codec_configuration_1080p = bitmovin.codecConfigurations.VP9.create(video_codec_configuration_1080p).resource
 
     video_codec_configuration_720p = VP9CodecConfiguration(name='example_video_codec_configuration_720p',
-                                                            bitrate=1800000,
-                                                            rate=25.0,
-                                                            width=1280,
-                                                            height=720)
+                                                           bitrate=1800000,
+                                                           rate=25.0,
+                                                           width=1280,
+                                                           height=720)
     video_codec_configuration_720p = bitmovin.codecConfigurations.VP9.create(video_codec_configuration_720p).resource
 
     audio_codec_configuration = AACCodecConfiguration(name='example_audio_codec_configuration_english',
