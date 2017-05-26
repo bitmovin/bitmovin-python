@@ -36,21 +36,3 @@ class Stream(RestService):
     def retrieve_custom_data(self, encoding_id, stream_id):
         self.relative_url = self._get_endpoint_url(encoding_id=encoding_id)
         return super().retrieve_custom_data(id_=stream_id)
-
-    def retrieve_status(self, encoding_id, stream_id):
-        self.parsing_utils.check_arg_valid_uuid(argument=encoding_id)
-        self.parsing_utils.check_arg_valid_uuid(argument=stream_id)
-        url = '{}/{}/status'.format(self._get_endpoint_url(encoding_id=encoding_id), stream_id)
-        response = self.http_client.get(url)
-
-        if response.status == Status.ERROR.value:
-            raise BitmovinApiError('Response was not successful', response)
-
-        if response.status == Status.SUCCESS.value:
-            retrieved_resource = self.parsing_utils.parse_bitmovin_resource_from_response(
-                response=response, class_=EncodingStatus)
-
-            return ResourceResponse(response=response, resource=retrieved_resource)
-
-        raise InvalidStatusError('Unknown status {} received'.format(response.status))
-
