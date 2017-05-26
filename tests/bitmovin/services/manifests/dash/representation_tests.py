@@ -2,7 +2,8 @@ import unittest
 import uuid
 from bitmovin import Bitmovin, DashManifest, ACLEntry, ACLPermission, EncodingOutput, Period, VideoAdaptationSet, \
     AbstractAdaptationSet, FMP4Representation, FMP4RepresentationType, DRMFMP4Representation, Encoding, \
-    Stream, StreamInput, MuxingStream, FMP4Muxing, MarlinDRM, AbstractFMP4Representation, WebMRepresentation
+    Stream, StreamInput, MuxingStream, FMP4Muxing, MarlinDRM, AbstractFMP4Representation, WebMRepresentation, \
+    WebMRepresentationType
 from tests.bitmovin import BitmovinTestCase
 
 
@@ -253,7 +254,7 @@ class RepresentationTests(BitmovinTestCase):
     def _get_sample_webm_representation(self):
         encoding_id = self.sampleEncoding.id
         muxing_id = self.sampleMuxing.id
-        webm_representation = WebMRepresentation(type=FMP4RepresentationType.TEMPLATE,
+        webm_representation = WebMRepresentation(type=WebMRepresentationType.TEMPLATE,
                                                  encoding_id=encoding_id,
                                                  muxing_id=muxing_id,
                                                  segment_path='/path/to/segments/',

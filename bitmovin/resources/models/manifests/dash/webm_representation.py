@@ -1,6 +1,6 @@
 from bitmovin.errors import InvalidTypeError
 from bitmovin.resources.models import AbstractModel
-from bitmovin.resources.enums import FMP4RepresentationType
+from bitmovin.resources.enums import WebMRepresentationType
 from bitmovin.utils import Serializable
 
 
@@ -21,7 +21,7 @@ class WebMRepresentation(AbstractModel, Serializable):
         if self._type is not None:
             return self._type
         else:
-            return FMP4RepresentationType.default().value
+            return WebMRepresentationType.default().value
 
     @type.setter
     def type(self, new_type):
@@ -29,11 +29,11 @@ class WebMRepresentation(AbstractModel, Serializable):
             return
         if isinstance(new_type, str):
             self._type = new_type
-        elif isinstance(new_type, FMP4RepresentationType):
+        elif isinstance(new_type, WebMRepresentationType):
             self._type = new_type.value
         else:
             raise InvalidTypeError(
-                'Invalid type {} for \'type\': must be either str or FMP4RepresentationType!'.format(type(new_type)))
+                'Invalid type {} for \'type\': must be either str or WebMRepresentationType!'.format(type(new_type)))
 
 
     @classmethod
