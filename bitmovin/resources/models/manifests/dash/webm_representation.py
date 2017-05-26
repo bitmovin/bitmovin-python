@@ -40,13 +40,13 @@ class WebMRepresentation(AbstractModel, Serializable):
     def parse_from_json_object(cls, json_object):
         id_ = json_object['id']
         custom_data = json_object.get('customData')
-        type = json_object['type']
+        type_ = json_object['type']
         encoding_id = json_object['encodingId']
         muxing_id = json_object['muxingId']
         segment_path = json_object['segmentPath']
         start_segment_number = json_object.get('startSegmentNumber')
         webm_representation = WebMRepresentation(
-            id_=id_, custom_data=custom_data, type=type, encoding_id=encoding_id, muxing_id=muxing_id,
+            id_=id_, custom_data=custom_data, type=type_, encoding_id=encoding_id, muxing_id=muxing_id,
             segment_path=segment_path, start_segment_number=start_segment_number)
         return webm_representation
 

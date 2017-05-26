@@ -1,7 +1,6 @@
 import unittest
 import json
-from bitmovin import Bitmovin, Response, VP9CodecConfiguration, VP9Quality, VP9AQMode, VP9ARNRType, \
-    TUIntraDepth, TUInterDepth, MotionSearch
+from bitmovin import Bitmovin, Response, VP9CodecConfiguration, VP9Quality, VP9AQMode, VP9ARNRType
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
 
@@ -33,7 +32,7 @@ class VP9CodecConfigurationTests(BitmovinTestCase):
         self.assertIsNotNone(codec_configuration_resource_response.resource)
         self.assertIsNotNone(codec_configuration_resource_response.resource.id)
         self._compare_vp9_codec_configurations(sample_codec_configuration,
-                                                codec_configuration_resource_response.resource)
+                                               codec_configuration_resource_response.resource)
 
     def test_retrieve_vp9_codec_configuration(self):
         sample_codec_configuration = self._get_sample_vp9_codec_configuration()
@@ -42,14 +41,14 @@ class VP9CodecConfigurationTests(BitmovinTestCase):
         self.assertIsNotNone(created_codec_configuration_response.resource)
         self.assertIsNotNone(created_codec_configuration_response.resource.id)
         self._compare_vp9_codec_configurations(sample_codec_configuration,
-                                                created_codec_configuration_response.resource)
+                                               created_codec_configuration_response.resource)
 
         retrieved_codec_configuration_response = self.bitmovin.codecConfigurations.VP9.retrieve(
             created_codec_configuration_response.resource.id)
         self.assertIsNotNone(retrieved_codec_configuration_response)
         self.assertIsNotNone(retrieved_codec_configuration_response.resource)
         self._compare_vp9_codec_configurations(created_codec_configuration_response.resource,
-                                                retrieved_codec_configuration_response.resource)
+                                               retrieved_codec_configuration_response.resource)
 
     def test_delete_vp9_codec_configuration(self):
         sample_codec_configuration = self._get_sample_vp9_codec_configuration()
@@ -58,7 +57,7 @@ class VP9CodecConfigurationTests(BitmovinTestCase):
         self.assertIsNotNone(created_codec_configuration_response.resource)
         self.assertIsNotNone(created_codec_configuration_response.resource.id)
         self._compare_vp9_codec_configurations(sample_codec_configuration,
-                                                created_codec_configuration_response.resource)
+                                               created_codec_configuration_response.resource)
 
         deleted_minimal_resource = self.bitmovin.codecConfigurations.VP9.delete(
             created_codec_configuration_response.resource.id)
@@ -82,7 +81,7 @@ class VP9CodecConfigurationTests(BitmovinTestCase):
         self.assertIsNotNone(created_codec_configuration_response.resource)
         self.assertIsNotNone(created_codec_configuration_response.resource.id)
         self._compare_vp9_codec_configurations(sample_codec_configuration,
-                                                created_codec_configuration_response.resource)
+                                               created_codec_configuration_response.resource)
 
         codec_configurations = self.bitmovin.codecConfigurations.VP9.list()
         self.assertIsNotNone(codec_configurations)
@@ -100,7 +99,7 @@ class VP9CodecConfigurationTests(BitmovinTestCase):
         self.assertIsNotNone(created_codec_configuration_response.resource)
         self.assertIsNotNone(created_codec_configuration_response.resource.id)
         self._compare_vp9_codec_configurations(sample_codec_configuration,
-                                                created_codec_configuration_response.resource)
+                                               created_codec_configuration_response.resource)
 
         custom_data_response = self.bitmovin.codecConfigurations.VP9.retrieve_custom_data(
             created_codec_configuration_response.resource.id)
@@ -144,29 +143,29 @@ class VP9CodecConfigurationTests(BitmovinTestCase):
 
     def _get_sample_vp9_codec_configuration(self):
         vp9_codec_configuration = VP9CodecConfiguration(name='VP9 Sample Codec Config',
-                                                          description='Long description for VP9 Codec Config',
-                                                          bitrate=10000000,
-                                                          rate=23.97,
-                                                          width=1920,
-                                                          height=1080,
-                                                          lag_in_frames=5,
-                                                          tile_columns=0,
-                                                          tile_rows=0,
-                                                          frame_parallel=False,
-                                                          max_intra_rate=0,
-                                                          qp_min=0,
-                                                          qp_max=63,
-                                                          rate_undershoot_pct=25,
-                                                          rate_overshoot_pct=25,
-                                                          cpu_used=1,
-                                                          noise_sensitivity=False,
-                                                          quality=VP9Quality.GOOD,
-                                                          lossless=False,
-                                                          static_thresh=0,
-                                                          aq_mode=VP9AQMode.NONE,
-                                                          arnr_max_frames=0,
-                                                          arnr_strength=3,
-                                                          arnr_type=VP9ARNRType.CENTERED)
+                                                        description='Long description for VP9 Codec Config',
+                                                        bitrate=10000000,
+                                                        rate=23.97,
+                                                        width=1920,
+                                                        height=1080,
+                                                        lag_in_frames=5,
+                                                        tile_columns=0,
+                                                        tile_rows=0,
+                                                        frame_parallel=False,
+                                                        max_intra_rate=0,
+                                                        qp_min=0,
+                                                        qp_max=63,
+                                                        rate_undershoot_pct=25,
+                                                        rate_overshoot_pct=25,
+                                                        cpu_used=1,
+                                                        noise_sensitivity=False,
+                                                        quality=VP9Quality.GOOD,
+                                                        lossless=False,
+                                                        static_thresh=0,
+                                                        aq_mode=VP9AQMode.NONE,
+                                                        arnr_max_frames=0,
+                                                        arnr_strength=3,
+                                                        arnr_type=VP9ARNRType.CENTERED)
 
         self.assertIsNotNone(vp9_codec_configuration.name)
         self.assertIsNotNone(vp9_codec_configuration.description)
