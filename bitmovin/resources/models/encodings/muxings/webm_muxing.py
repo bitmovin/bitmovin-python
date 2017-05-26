@@ -21,12 +21,18 @@ class WebMMuxing(Muxing):
         outputs = muxing.outputs
         name = muxing.name
         description = muxing.description
-        segment_length = json_object['segmentLength']
+        segment_length = json_object.get('segmentLength')
         segment_naming = json_object.get('segmentNaming')
         init_segment_name = json_object.get('initSegmentName')
 
-        fmp4_muxing = WebMMuxing(streams=streams, segment_length=segment_length, segment_naming=segment_naming,
-                                 init_segment_name=init_segment_name, outputs=outputs, id_=id_, custom_data=custom_data,
-                                 name=name, description=description)
+        webm_muxing = WebMMuxing(streams=streams,
+                                 segment_length=segment_length,
+                                 segment_naming=segment_naming,
+                                 init_segment_name=init_segment_name,
+                                 outputs=outputs,
+                                 id_=id_,
+                                 custom_data=custom_data,
+                                 name=name,
+                                 description=description)
 
-        return fmp4_muxing
+        return webm_muxing
