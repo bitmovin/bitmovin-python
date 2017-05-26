@@ -1,13 +1,13 @@
 import unittest
 import uuid
 import json
-from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, EncodingStatus, \
-    MP4Muxing, MuxingStream, ACLPermission, SelectionMode
+from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, ACLPermission, Encoding, \
+    EncodingStatus, WebMMuxing, MuxingStream, SelectionMode
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
 
 
-class EncodingMP4MuxingTests(BitmovinTestCase):
+class EncodingWebMMuxingTests(BitmovinTestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -29,8 +29,8 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
 
     def test_create_muxing(self):
         sample_muxing = self._get_sample_muxing()
-        muxing_resource_response = self.bitmovin.encodings.Muxing.MP4.create(object_=sample_muxing,
-                                                                             encoding_id=self.sampleEncoding.id)
+        muxing_resource_response = self.bitmovin.encodings.Muxing.WebM.create(object_=sample_muxing,
+                                                                              encoding_id=self.sampleEncoding.id)
         self.assertIsNotNone(muxing_resource_response)
         self.assertIsNotNone(muxing_resource_response.resource)
         self.assertIsNotNone(muxing_resource_response.resource.id)
@@ -39,8 +39,8 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
     def test_create_muxing_without_name(self):
         sample_muxing = self._get_sample_muxing()
         sample_muxing.name = None
-        muxing_resource_response = self.bitmovin.encodings.Muxing.MP4.create(object_=sample_muxing,
-                                                                             encoding_id=self.sampleEncoding.id)
+        muxing_resource_response = self.bitmovin.encodings.Muxing.WebM.create(object_=sample_muxing,
+                                                                              encoding_id=self.sampleEncoding.id)
         self.assertIsNotNone(muxing_resource_response)
         self.assertIsNotNone(muxing_resource_response.resource)
         self.assertIsNotNone(muxing_resource_response.resource.id)
@@ -48,14 +48,14 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
 
     def test_retrieve_muxing(self):
         sample_muxing = self._get_sample_muxing()
-        created_muxing_response = self.bitmovin.encodings.Muxing.MP4.create(object_=sample_muxing,
-                                                                            encoding_id=self.sampleEncoding.id)
+        created_muxing_response = self.bitmovin.encodings.Muxing.WebM.create(object_=sample_muxing,
+                                                                             encoding_id=self.sampleEncoding.id)
         self.assertIsNotNone(created_muxing_response)
         self.assertIsNotNone(created_muxing_response.resource)
         self.assertIsNotNone(created_muxing_response.resource.id)
         self._compare_muxings(sample_muxing, created_muxing_response.resource)
 
-        retrieved_muxing_response = self.bitmovin.encodings.Muxing.MP4.retrieve(
+        retrieved_muxing_response = self.bitmovin.encodings.Muxing.WebM.retrieve(
             muxing_id=created_muxing_response.resource.id, encoding_id=self.sampleEncoding.id)
 
         self.assertIsNotNone(retrieved_muxing_response)
@@ -65,14 +65,14 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
     @unittest.skip('DELETE route not available yet.')  # TODO: implement delete route in service
     def test_delete_muxing(self):
         sample_muxing = self._get_sample_muxing()
-        created_muxing_response = self.bitmovin.encodings.Muxing.MP4.create(object_=sample_muxing,
-                                                                            encoding_id=self.sampleEncoding.id)
+        created_muxing_response = self.bitmovin.encodings.Muxing.WebM.create(object_=sample_muxing,
+                                                                             encoding_id=self.sampleEncoding.id)
         self.assertIsNotNone(created_muxing_response)
         self.assertIsNotNone(created_muxing_response.resource)
         self.assertIsNotNone(created_muxing_response.resource.id)
         self._compare_muxings(sample_muxing, created_muxing_response.resource)
 
-        deleted_minimal_resource = self.bitmovin.encodings.Muxing.MP4.delete(
+        deleted_minimal_resource = self.bitmovin.encodings.Muxing.WebM.delete(
             muxing_id=created_muxing_response.resource.id,
             encoding_id=self.sampleEncoding.id
         )
@@ -82,7 +82,7 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
         self.assertIsNotNone(deleted_minimal_resource.resource.id)
 
         try:
-            self.bitmovin.encodings.Muxing.MP4.retrieve(created_muxing_response.resource.id)
+            self.bitmovin.encodings.Muxing.WebM.retrieve(created_muxing_response.resource.id)
             self.fail(
                 'Previous statement should have thrown an exception. ' +
                 'Retrieving muxing after deleting it should not be possible.'
@@ -92,14 +92,14 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
 
     def test_list_muxings(self):
         sample_muxing = self._get_sample_muxing()
-        created_muxing_response = self.bitmovin.encodings.Muxing.MP4.create(object_=sample_muxing,
-                                                                            encoding_id=self.sampleEncoding.id)
+        created_muxing_response = self.bitmovin.encodings.Muxing.WebM.create(object_=sample_muxing,
+                                                                             encoding_id=self.sampleEncoding.id)
         self.assertIsNotNone(created_muxing_response)
         self.assertIsNotNone(created_muxing_response.resource)
         self.assertIsNotNone(created_muxing_response.resource.id)
         self._compare_muxings(sample_muxing, created_muxing_response.resource)
 
-        muxings = self.bitmovin.encodings.Muxing.MP4.list(encoding_id=self.sampleEncoding.id)
+        muxings = self.bitmovin.encodings.Muxing.WebM.list(encoding_id=self.sampleEncoding.id)
         self.assertIsNotNone(muxings)
         self.assertIsNotNone(muxings.resource)
         self.assertIsNotNone(muxings.response)
@@ -110,21 +110,21 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
     def test_retrieve_stream_custom_data(self):
         sample_muxing = self._get_sample_muxing()
         sample_muxing.customData = '<pre>my custom data</pre>'
-        created_muxing_response = self.bitmovin.encodings.Muxing.MP4.create(object_=sample_muxing,
-                                                                            encoding_id=self.sampleEncoding.id)
+        created_muxing_response = self.bitmovin.encodings.Muxing.WebM.create(object_=sample_muxing,
+                                                                        encoding_id=self.sampleEncoding.id)
         self.assertIsNotNone(created_muxing_response)
         self.assertIsNotNone(created_muxing_response.resource)
         self.assertIsNotNone(created_muxing_response.resource.id)
         self._compare_muxings(sample_muxing, created_muxing_response.resource)
 
-        custom_data_response = self.bitmovin.encodings.Muxing.MP4.retrieve_custom_data(
+        custom_data_response = self.bitmovin.encodings.Muxing.WebM.retrieve_custom_data(
             muxing_id=created_muxing_response.resource.id,
             encoding_id=self.sampleEncoding.id)
 
         custom_data = custom_data_response.resource
         self.assertEqual(sample_muxing.customData, json.loads(custom_data.customData))
 
-    def _compare_muxings(self, first: MP4Muxing, second: MP4Muxing):
+    def _compare_muxings(self, first: WebMMuxing, second: WebMMuxing):
         """
 
         :param first: Stream
@@ -132,8 +132,10 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
         :return: bool
         """
 
-        self.assertEqual(first.filename, second.filename)
+        self.assertEqual(first.initSegmentName, second.initSegmentName)
         self.assertEqual(len(first.outputs), len(second.outputs))
+        self.assertEqual(first.segmentLength, second.segmentLength)
+        self.assertEqual(first.segmentNaming, second.segmentNaming)
         self.assertEqual(first.name, second.name)
         self.assertEqual(first.description, second.description)
         return True
@@ -149,10 +151,12 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
 
         muxing_stream = MuxingStream(stream_id=create_stream_response.resource.id)
 
-        muxing = MP4Muxing(streams=[muxing_stream],
-                           filename='myprogressive.mp4',
-                           outputs=stream.outputs,
-                           name='Sample MP4 Muxing')
+        muxing = WebMMuxing(streams=[muxing_stream],
+                            segment_length=4,
+                            segment_naming='seg_%number%.chk',
+                            init_segment_name='init.hdr',
+                            outputs=stream.outputs,
+                            name='Sample WebM Muxing')
         return muxing
 
     def _get_sample_stream(self):
