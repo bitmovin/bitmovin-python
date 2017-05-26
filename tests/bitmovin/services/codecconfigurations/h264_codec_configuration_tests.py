@@ -168,8 +168,6 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         except BitmovinApiError as error:
             self.assertEqual(error.response.status, 'ERROR')
             self.assertEqual(error.response.data.code, 1001)
-            self.assertEqual(error.response.data.message,
-                             '400 Both bitrate and crf are set. Only one of them is allowed.')
 
     def test_create_h264_codec_configuration_with_crf(self):
             sample_codec_configuration = self._get_sample_h264_codec_configuration()

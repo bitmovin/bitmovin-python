@@ -111,8 +111,8 @@ def main():
     video_muxing_720p = bitmovin.encodings.Muxing.FMP4.create(object_=video_muxing_720p,
                                                               encoding_id=encoding.id).resource
     audio_muxing_output = EncodingOutput(output_id=s3_output.id,
-                                              output_path=OUTPUT_BASE_PATH + 'audio/',
-                                              acl=[acl_entry])
+                                         output_path=OUTPUT_BASE_PATH + 'audio/',
+                                         acl=[acl_entry])
     audio_muxing = FMP4Muxing(segment_length=4,
                               segment_naming='seg_%number%.m4s',
                               init_segment_name='init.mp4',
@@ -147,7 +147,7 @@ def main():
                                                                             manifest_id=dash_manifest.id,
                                                                             period_id=period.id).resource
 
-    fmp4_representation_1080p = FMP4Representation(FMP4RepresentationType.TEMPLATE,
+    fmp4_representation_1080p = FMP4Representation(type=FMP4RepresentationType.TEMPLATE,
                                                    encoding_id=encoding.id,
                                                    muxing_id=video_muxing_1080p.id,
                                                    segment_path='video/1080p/')
@@ -157,7 +157,7 @@ def main():
                                                                                 adaptationset_id=video_adaptation_set.id
                                                                                 ).resource
 
-    fmp4_representation_720p = FMP4Representation(FMP4RepresentationType.TEMPLATE,
+    fmp4_representation_720p = FMP4Representation(type=FMP4RepresentationType.TEMPLATE,
                                                   encoding_id=encoding.id,
                                                   muxing_id=video_muxing_720p.id,
                                                   segment_path='video/720p/')
@@ -167,7 +167,7 @@ def main():
                                                                                adaptationset_id=video_adaptation_set.id
                                                                                ).resource
 
-    fmp4_representation_audio = FMP4Representation(FMP4RepresentationType.TEMPLATE,
+    fmp4_representation_audio = FMP4Representation(type=FMP4RepresentationType.TEMPLATE,
                                                    encoding_id=encoding.id,
                                                    muxing_id=audio_muxing.id,
                                                    segment_path='audio/')
