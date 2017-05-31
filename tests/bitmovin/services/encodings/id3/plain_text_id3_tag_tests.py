@@ -258,7 +258,7 @@ class PlainTextID3TagTests(BitmovinTestCase):
 
         id3 = PlainTextID3Tag(position_mode=ID3TagPositionMode.TIME, time=12.34,
                               text='MyTag Python TeSt', frame_id='AVIA',
-                              name='PlainTextID3 Frame', description='n')
+                              name='PlainTextID3 Time', description='n')
 
         return id3
 

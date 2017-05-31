@@ -254,7 +254,7 @@ class FrameIdID3TagTests(BitmovinTestCase):
 
         id3 = FrameIdID3Tag(position_mode=ID3TagPositionMode.TIME, time=12.34,
                             bytes_=base64.b64encode(b'MyTag Python TeSt').decode('utf-8'), frame_id='OAYN',
-                            name='FrameIdID3 Frame', description='n')
+                            name='FrameIdID3 Time', description='n')
 
         return id3
 

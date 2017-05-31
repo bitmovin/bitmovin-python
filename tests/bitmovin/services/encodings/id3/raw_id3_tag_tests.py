@@ -254,7 +254,7 @@ class RawID3TagTests(BitmovinTestCase):
 
         id3 = RawID3Tag(position_mode=ID3TagPositionMode.TIME, time=12.34,
                         bytes_=base64.b64encode(b'MyTag Python TeSt').decode('utf-8'),
-                        name='RawID3 Frame', description='n')
+                        name='RawID3 Time', description='n')
 
         return id3
 
