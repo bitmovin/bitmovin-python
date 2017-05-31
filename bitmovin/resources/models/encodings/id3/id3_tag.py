@@ -20,7 +20,7 @@ class ID3Tag(AbstractNameDescriptionResource, AbstractModel, Serializable):
         return self._position_mode
 
     @position_mode.setter
-    def profile(self, new_position_mode):
+    def position_mode(self, new_position_mode):
         if new_position_mode is None:
             return
         if isinstance(new_position_mode, str):
