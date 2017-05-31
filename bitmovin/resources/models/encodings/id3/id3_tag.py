@@ -11,16 +11,16 @@ class ID3Tag(AbstractNameDescriptionResource, AbstractModel, Serializable):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self._position_mode = None
-        self.position_mode = position_mode
+        self.positionMode = position_mode
         self.time = time
         self.frame = frame
 
     @property
-    def position_mode(self):
+    def positionMode(self):
         return self._position_mode
 
-    @position_mode.setter
-    def position_mode(self, new_position_mode):
+    @positionMode.setter
+    def positionMode(self, new_position_mode):
         if new_position_mode is None:
             return
         if isinstance(new_position_mode, str):
@@ -49,5 +49,5 @@ class ID3Tag(AbstractNameDescriptionResource, AbstractModel, Serializable):
 
     def serialize(self):
         serialized = super().serialize()
-        serialized['position_mode'] = self.position_mode
+        serialized['positionMode'] = self.positionMode
         return serialized

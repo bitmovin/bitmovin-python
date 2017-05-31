@@ -18,7 +18,7 @@ class FrameIdID3Tag(ID3Tag):
         custom_data = id3_tag.customData
         name = id3_tag.name
         description = id3_tag.description
-        position_mode = id3_tag.position_mode
+        position_mode = id3_tag.positionMode
         time = id3_tag.time
         frame = id3_tag.frame
 
