@@ -42,13 +42,15 @@ def main():
     video_codec_configuration_480p = H264CodecConfiguration(name='example_video_codec_configuration_480p',
                                                             bitrate=1200000,
                                                             height=480,
-                                                            profile=H264Profile.MAIN)
+                                                            profile=H264Profile.MAIN,
+                                                            rate=None)
     video_codec_configuration_480p = bitmovin.codecConfigurations.H264.create(video_codec_configuration_480p).resource
 
     video_codec_configuration_360p = H264CodecConfiguration(name='example_video_codec_configuration_360p',
                                                             bitrate=800000,
                                                             height=360,
-                                                            profile=H264Profile.MAIN)
+                                                            profile=H264Profile.MAIN,
+                                                            rate=None)
     video_codec_configuration_360p = bitmovin.codecConfigurations.H264.create(video_codec_configuration_360p).resource
 
     audio_codec_configuration = AACCodecConfiguration(name='example_audio_codec_configuration_english',
