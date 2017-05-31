@@ -7,7 +7,7 @@ from .video_codec_configuration import VideoCodecConfiguration
 
 class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
 
-    def __init__(self, name, bitrate, rate, profile, id_=None, description=None, custom_data=None, width=None,
+    def __init__(self, name, bitrate, profile, rate=None, id_=None, description=None, custom_data=None, width=None,
                  height=None, bframes=None, ref_frames=None, qp=None, max_bitrate=None, min_bitrate=None, bufsize=None,
                  min_gop=None, max_gop=None, level=None, rc_lookahead=None, b_adapt=None, max_ctu_size=None,
                  tu_intra_depth=None, tu_inter_depth=None, motion_search=None, sub_me=None, motion_search_range=None,
