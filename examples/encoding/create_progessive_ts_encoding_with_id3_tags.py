@@ -1,7 +1,9 @@
 import datetime
+import base64
 from bitmovin import Bitmovin, Encoding, HTTPSInput, S3Output, H264CodecConfiguration, AACCodecConfiguration, \
     H264Profile, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, ProgressiveTSMuxing, \
-    MuxingStream, CloudRegion, HlsManifest, VariantStream, RawID3Tag, FrameIdID3Tag, PlainTextID3Tag
+    MuxingStream, CloudRegion, HlsManifest, VariantStream, RawID3Tag, FrameIdID3Tag, PlainTextID3Tag, \
+    ID3TagPositionMode
 
 from bitmovin.errors import BitmovinError
 
@@ -32,30 +34,26 @@ def main():
                          name='Sample S3 Output')
     s3_output = bitmovin.outputs.S3.create(s3_output).resource
 
-    encoding = Encoding(name='example hls ts encoding',
+    encoding = Encoding(name='example hls progressive ts encoding with various id3 tags',
                         cloud_region=CloudRegion.GOOGLE_EUROPE_WEST_1)
 
     encoding = bitmovin.encodings.Encoding.create(encoding).resource
 
-    video_codec_configuration_1080p = H264CodecConfiguration(name='example_video_codec_configuration_1080p',
-                                                             bitrate=4800000,
-                                                             rate=25.0,
-                                                             width=1920,
-                                                             height=1080,
-                                                             profile=H264Profile.HIGH)
-    video_codec_configuration_1080p = bitmovin.codecConfigurations.H264.create(video_codec_configuration_1080p).resource
+    video_codec_configuration_480p = H264CodecConfiguration(name='example_video_codec_configuration_480p',
+                                                            bitrate=1200000,
+                                                            height=480,
+                                                            profile=H264Profile.MAIN)
+    video_codec_configuration_480p = bitmovin.codecConfigurations.H264.create(video_codec_configuration_480p).resource
 
-    video_codec_configuration_720p = H264CodecConfiguration(name='example_video_codec_configuration_720p',
-                                                            bitrate=2400000,
-                                                            rate=25.0,
-                                                            width=1280,
-                                                            height=720,
-                                                            profile=H264Profile.HIGH)
-    video_codec_configuration_720p = bitmovin.codecConfigurations.H264.create(video_codec_configuration_720p).resource
+    video_codec_configuration_360p = H264CodecConfiguration(name='example_video_codec_configuration_360p',
+                                                            bitrate=800000,
+                                                            height=360,
+                                                            profile=H264Profile.MAIN)
+    video_codec_configuration_360p = bitmovin.codecConfigurations.H264.create(video_codec_configuration_360p).resource
 
     audio_codec_configuration = AACCodecConfiguration(name='example_audio_codec_configuration_english',
                                                       bitrate=128000,
-                                                      rate=48000)
+                                                      rate=44100)
     audio_codec_configuration = bitmovin.codecConfigurations.AAC.create(audio_codec_configuration).resource
 
     video_input_stream = StreamInput(input_id=https_input.id,
@@ -65,14 +63,14 @@ def main():
                                      input_path=HTTPS_INPUT_PATH,
                                      selection_mode=SelectionMode.AUTO)
 
-    video_stream_1080p = Stream(codec_configuration_id=video_codec_configuration_1080p.id,
-                                input_streams=[video_input_stream], name='Sample Stream 1080p')
-    video_stream_1080p = bitmovin.encodings.Stream.create(object_=video_stream_1080p,
-                                                          encoding_id=encoding.id).resource
+    video_stream_480p = Stream(codec_configuration_id=video_codec_configuration_480p.id,
+                               input_streams=[video_input_stream], name='Sample Stream 480p')
+    video_stream_480p = bitmovin.encodings.Stream.create(object_=video_stream_480p,
+                                                         encoding_id=encoding.id).resource
 
-    video_stream_720p = Stream(codec_configuration_id=video_codec_configuration_720p.id,
-                               input_streams=[video_input_stream], name='Sample Stream 720p')
-    video_stream_720p = bitmovin.encodings.Stream.create(object_=video_stream_720p,
+    video_stream_360p = Stream(codec_configuration_id=video_codec_configuration_360p.id,
+                               input_streams=[video_input_stream], name='Sample Stream 360p')
+    video_stream_360p = bitmovin.encodings.Stream.create(object_=video_stream_360p,
                                                          encoding_id=encoding.id).resource
 
     audio_stream = Stream(codec_configuration_id=audio_codec_configuration.id,
@@ -82,30 +80,106 @@ def main():
 
     acl_entry = ACLEntry(permission=ACLPermission.PUBLIC_READ)
 
-    video_muxing_stream_1080p = MuxingStream(video_stream_1080p.id)
-    video_muxing_stream_720p = MuxingStream(video_stream_720p.id)
+    video_muxing_stream_480p = MuxingStream(video_stream_480p.id)
+    video_muxing_stream_360p = MuxingStream(video_stream_360p.id)
     audio_muxing_stream = MuxingStream(audio_stream.id)
 
-    video_muxing_1080p_output = EncodingOutput(output_id=s3_output.id,
-                                               output_path=OUTPUT_BASE_PATH + 'video/1080p/',
-                                               acl=[acl_entry])
-    muxing_1080p = ProgressiveTSMuxing(segment_length=4,
-                                       filename='progressive.ts',
-                                       streams=[video_muxing_stream_1080p, audio_muxing_stream],
-                                       outputs=[video_muxing_1080p_output],
-                                       name='Sample Muxing 1080p')
-    muxing_1080p = bitmovin.encodings.Muxing.TS.create(object_=muxing_1080p,
-                                                       encoding_id=encoding.id).resource
-    muxing_1080p_output = EncodingOutput(output_id=s3_output.id,
-                                         output_path=OUTPUT_BASE_PATH + 'video/720p/',
-                                         acl=[acl_entry])
-    muxing_720p = ProgressiveTSMuxing(segment_length=4,
+    muxing_480p_path = '480p'
+    muxing_480p_output = EncodingOutput(output_id=s3_output.id,
+                                        output_path=OUTPUT_BASE_PATH + muxing_480p_path,
+                                        acl=[acl_entry])
+    muxing_480p = ProgressiveTSMuxing(segment_length=4,
                                       filename='progressive.ts',
-                                      streams=[video_muxing_stream_720p, audio_muxing_stream],
-                                      outputs=[muxing_1080p_output],
-                                      name='Sample Muxing 720p')
-    muxing_720p = bitmovin.encodings.Muxing.TS.create(object_=muxing_720p,
-                                                      encoding_id=encoding.id).resource
+                                      streams=[video_muxing_stream_480p, audio_muxing_stream],
+                                      outputs=[muxing_480p_output],
+                                      name='Sample Muxing 480p')
+    muxing_480p = bitmovin.encodings.Muxing.ProgressiveTS.create(object_=muxing_480p,
+                                                                 encoding_id=encoding.id).resource
+
+    muxing_360p_path = '360p'
+    muxing_360p_output = EncodingOutput(output_id=s3_output.id,
+                                        output_path=OUTPUT_BASE_PATH + muxing_360p_path,
+                                        acl=[acl_entry])
+    muxing_360p = ProgressiveTSMuxing(segment_length=4,
+                                      filename='progressive.ts',
+                                      streams=[video_muxing_stream_360p, audio_muxing_stream],
+                                      outputs=[muxing_360p_output],
+                                      name='Sample Muxing 360p')
+    muxing_360p = bitmovin.encodings.Muxing.ProgressiveTS.create(object_=muxing_360p,
+                                                                 encoding_id=encoding.id).resource
+
+    raw_id3_tag_1 = RawID3Tag(position_mode=ID3TagPositionMode.TIME,
+                              time=1.0,
+                              bytes_=base64.b64encode(b'My awesome Raw ID3 Tag #1').decode('utf-8'),
+                              name='Raw ID3 #1', description='Just some descriptive information')
+
+    raw_id3_tag_2 = RawID3Tag(position_mode=ID3TagPositionMode.TIME,
+                              time=2.0,
+                              bytes_=base64.b64encode(b'My awesome Raw ID3 Tag #2').decode('utf-8'),
+                              name='Raw ID3 #2', description='Just some descriptive information')
+
+    frame_id_id3_tag_1 = FrameIdID3Tag(position_mode=ID3TagPositionMode.TIME,
+                                       time=5.12,
+                                       frame_id='ABCD',
+                                       bytes_=base64.b64encode(b'My awesome FrameId ID3 Tag #1').decode('utf-8'),
+                                       name='FrameId ID3 #1', description='Just some descriptive information')
+
+    frame_id_id3_tag_2 = FrameIdID3Tag(position_mode=ID3TagPositionMode.TIME,
+                                       time=6.3422172,
+                                       frame_id='EFGH',
+                                       bytes_=base64.b64encode(b'My awesome FrameId ID3 Tag #2').decode('utf-8'),
+                                       name='FrameId ID3 #2', description='Just some descriptive information')
+
+    plain_text_id3_tag_1 = PlainTextID3Tag(position_mode=ID3TagPositionMode.TIME,
+                                           time=8.34,
+                                           frame_id='IJKL',
+                                           text='My awesome PlainText ID3 Tag #1',
+                                           name='PlainText ID3 #1', description='Just some descriptive information')
+
+    plain_text_id3_tag_2 = PlainTextID3Tag(position_mode=ID3TagPositionMode.TIME,
+                                           time=9.013,
+                                           frame_id='MNOP',
+                                           text='My awesome PlainText ID3 Tag #2',
+                                           name='PlainText ID3 #2', description='Just some descriptive information')
+
+    bitmovin.encodings.Muxing.ProgressiveTS.ID3Tags.Raw.create(object_=raw_id3_tag_1,
+                                                               encoding_id=encoding.id,
+                                                               muxing_id=muxing_360p.id)
+    bitmovin.encodings.Muxing.ProgressiveTS.ID3Tags.Raw.create(object_=raw_id3_tag_1,
+                                                               encoding_id=encoding.id,
+                                                               muxing_id=muxing_480p.id)
+    bitmovin.encodings.Muxing.ProgressiveTS.ID3Tags.Raw.create(object_=raw_id3_tag_2,
+                                                               encoding_id=encoding.id,
+                                                               muxing_id=muxing_360p.id)
+    bitmovin.encodings.Muxing.ProgressiveTS.ID3Tags.Raw.create(object_=raw_id3_tag_2,
+                                                               encoding_id=encoding.id,
+                                                               muxing_id=muxing_480p.id)
+
+    bitmovin.encodings.Muxing.ProgressiveTS.ID3Tags.FrameId.create(object_=frame_id_id3_tag_1,
+                                                                   encoding_id=encoding.id,
+                                                                   muxing_id=muxing_360p.id)
+    bitmovin.encodings.Muxing.ProgressiveTS.ID3Tags.FrameId.create(object_=frame_id_id3_tag_1,
+                                                                   encoding_id=encoding.id,
+                                                                   muxing_id=muxing_480p.id)
+    bitmovin.encodings.Muxing.ProgressiveTS.ID3Tags.FrameId.create(object_=frame_id_id3_tag_2,
+                                                                   encoding_id=encoding.id,
+                                                                   muxing_id=muxing_360p.id)
+    bitmovin.encodings.Muxing.ProgressiveTS.ID3Tags.FrameId.create(object_=frame_id_id3_tag_2,
+                                                                   encoding_id=encoding.id,
+                                                                   muxing_id=muxing_480p.id)
+
+    bitmovin.encodings.Muxing.ProgressiveTS.ID3Tags.PlainText.create(object_=plain_text_id3_tag_1,
+                                                                     encoding_id=encoding.id,
+                                                                     muxing_id=muxing_360p.id)
+    bitmovin.encodings.Muxing.ProgressiveTS.ID3Tags.PlainText.create(object_=plain_text_id3_tag_1,
+                                                                     encoding_id=encoding.id,
+                                                                     muxing_id=muxing_480p.id)
+    bitmovin.encodings.Muxing.ProgressiveTS.ID3Tags.PlainText.create(object_=plain_text_id3_tag_2,
+                                                                     encoding_id=encoding.id,
+                                                                     muxing_id=muxing_360p.id)
+    bitmovin.encodings.Muxing.ProgressiveTS.ID3Tags.PlainText.create(object_=plain_text_id3_tag_2,
+                                                                     encoding_id=encoding.id,
+                                                                     muxing_id=muxing_480p.id)
 
     bitmovin.encodings.Encoding.start(encoding_id=encoding.id)
 
@@ -118,29 +192,29 @@ def main():
                                      output_path=OUTPUT_BASE_PATH,
                                      acl=[acl_entry])
 
-    hls_manifest = HlsManifest(manifest_name='example_manifest_hls.m3u8', outputs=[manifest_output],
-                               name='Sample HLS Manifest')
+    hls_manifest = HlsManifest(manifest_name='master.m3u8', outputs=[manifest_output],
+                               name='Sample HLS Manifest - Master - ProgressiveTS+ID3')
     hls_manifest = bitmovin.manifests.HLS.create(object_=hls_manifest).resource
 
-    variant_stream_1080p = VariantStream(closed_captions='NONE',
-                                         segment_path=video_muxing_1080p_output.outputPath,
-                                         uri='1080p.m3u8',
-                                         encoding_id=encoding.id,
-                                         stream_id=video_stream_1080p.id,
-                                         muxing_id=muxing_1080p.id)
-
-    variant_stream_1080p = bitmovin.manifests.HLS.VariantStream.create(manifest_id=hls_manifest.id,
-                                                                       object_=variant_stream_1080p)
-
-    variant_stream_720p = VariantStream(closed_captions='NONE',
-                                        segment_path=muxing_1080p_output.outputPath,
-                                        uri='720p.m3u8',
+    variant_stream_480p = VariantStream(closed_captions='NONE',
+                                        segment_path='{}/'.format(muxing_480p_path),
+                                        uri='480p.m3u8',
                                         encoding_id=encoding.id,
-                                        stream_id=video_stream_720p.id,
-                                        muxing_id=muxing_720p.id)
+                                        stream_id=video_stream_480p.id,
+                                        muxing_id=muxing_480p.id)
 
-    variant_stream_720p = bitmovin.manifests.HLS.VariantStream.create(manifest_id=hls_manifest.id,
-                                                                      object_=variant_stream_720p)
+    variant_stream_480p = bitmovin.manifests.HLS.VariantStream.create(manifest_id=hls_manifest.id,
+                                                                      object_=variant_stream_480p)
+
+    variant_stream_360p = VariantStream(closed_captions='NONE',
+                                        segment_path='{}/'.format(muxing_360p_path),
+                                        uri='360p.m3u8',
+                                        encoding_id=encoding.id,
+                                        stream_id=video_stream_360p.id,
+                                        muxing_id=muxing_360p.id)
+
+    variant_stream_360p = bitmovin.manifests.HLS.VariantStream.create(manifest_id=hls_manifest.id,
+                                                                      object_=variant_stream_360p)
 
     bitmovin.manifests.HLS.start(manifest_id=hls_manifest.id)
 
