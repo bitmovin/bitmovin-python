@@ -70,6 +70,7 @@ class EncodingTSMuxingTests(BitmovinTestCase):
         self.assertIsNotNone(retrieved_muxing_response.resource)
         self._compare_muxings(created_muxing_response.resource, retrieved_muxing_response.resource)
 
+    @unittest.skip('DELETE route not available yet.')  # TODO: implement delete route in service
     def test_delete_muxing(self):
         sample_muxing = self._get_sample_muxing()
         created_muxing_response = self.bitmovin.encodings.Muxing.ProgressiveTS.create(
