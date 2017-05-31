@@ -9,3 +9,4 @@ from .stream_input import StreamInput
 from .encoding_live_details import EncodingLiveDetails
 from .live import LiveHlsManifest, LiveDashManifest, LiveStreamConfiguration
 from .sprite import Sprite
+from .id3 import ID3Tag, RawID3Tag, FrameIdID3Tag, PlainTextID3Tag
