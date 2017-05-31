@@ -1,1 +1,1 @@
-from .analytics_license_service import AnalyticsLicenseService
+from .analytics_service import AnalyticsService

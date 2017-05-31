@@ -24,16 +24,18 @@ class AnalyticsLicenseServiceTests(BitmovinTestCase):
         super().tearDown()
 
     def test_get_licenses(self):
-        licenses = self.bitmovin.analytics.list()
+        licenses = self.bitmovin.analytics.licenses.list()
         self.assertIsInstance(licenses.resource, list)
         self.assertIsInstance(licenses.resource[0].domains, list)
         self.assertIsInstance(licenses.resource[0].id, str)
 
     def test_get_license(self):
-        license = self.bitmovin.analytics.retrieve("7353eef2-ca20-4593-b4c1-8dd81033229f")
+        license = self.bitmovin.analytics.licenses.retrieve("7353eef2-ca20-4593-b4c1-8dd81033229f")
         self.assertIsInstance(license.resource.id, str)
 
     def test_get_domains_from_license(self):
-        license = self.bitmovin.analytics.retrieve("7353eef2-ca20-4593-b4c1-8dd81033229f")
+        license = self.bitmovin.analytics.licenses.retrieve("7353eef2-ca20-4593-b4c1-8dd81033229f")
         domains = license.resource.domains
         self.assertIsInstance(domains, list)
+        self.assertIsInstance(domains[0].id, str)
+        self.assertIsInstance(domains[0].url, str)

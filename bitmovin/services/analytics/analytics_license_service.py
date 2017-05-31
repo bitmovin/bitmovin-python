@@ -12,6 +12,11 @@ class AnalyticsLicenseService(RestService):
     def delete(self, id_):
         raise FunctionalityNotAvailableError()
 
+    def add_domain(self, license, url):
+        url = '{}/{}/domains'.format(self.relative_url, license.id)
+        payload = dict(url=url)
+        response = self.http_client.post(url, payload)
+
     def list(self, offset=None, limit=None):
         if not offset:
             offset = self.DEFAULT_LIST_OFFSET_PARAM
