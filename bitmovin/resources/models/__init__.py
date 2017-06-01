@@ -8,3 +8,4 @@ from .codecconfigurations import *
 from .encodings import *
 from .manifests import *
 from .infrastructures import *
+from .analytics import *
