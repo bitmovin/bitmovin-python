@@ -2,7 +2,7 @@ import unittest
 import json
 import uuid
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, \
-    FMP4Muxing, MuxingStream, CENCDRM, CENCPlayReadyEntry, CENCWidevineEntry, DRMStatus, SelectionMode, ACLPermission
+    FMP4Muxing, MuxingStream, CENCDRM, CENCPlayReadyEntry, CENCWidevineEntry, SelectionMode, ACLPermission
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
 

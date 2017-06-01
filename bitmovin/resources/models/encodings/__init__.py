@@ -1,4 +1,4 @@
-from .muxings import Muxing, FMP4Muxing, MP4Muxing, TSMuxing, WebMMuxing, MuxingStream
+from .muxings import Muxing, FMP4Muxing, MP4Muxing, TSMuxing, WebMMuxing, ProgressiveTSMuxing, MuxingStream
 from .drms import DRM, DRMStatus, AESDRM, ClearKeyDRM, FairPlayDRM, MarlinDRM, PlayReadyDRM, PrimeTimeDRM, WidevineDRM, CENCDRM, CENCPlayReadyEntry, CENCWidevineEntry
 from .acl_entry import ACLEntry
 from .encoding import Encoding
@@ -9,3 +9,4 @@ from .stream_input import StreamInput
 from .encoding_live_details import EncodingLiveDetails
 from .live import LiveHlsManifest, LiveDashManifest, LiveStreamConfiguration
 from .sprite import Sprite
+from .id3 import ID3Tag, RawID3Tag, FrameIdID3Tag, PlainTextID3Tag
