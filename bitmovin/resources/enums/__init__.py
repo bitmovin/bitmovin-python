@@ -21,3 +21,4 @@ from .selection_mode import SelectionMode
 from .acl_permission import ACLPermission
 from .fmp4_representation_type import FMP4RepresentationType
 from .webm_representation_type import WebMRepresentationType
+from .id3_tag_position_mode import ID3TagPositionMode
