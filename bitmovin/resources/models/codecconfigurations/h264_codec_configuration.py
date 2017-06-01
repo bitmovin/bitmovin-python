@@ -1,6 +1,5 @@
 from bitmovin.errors import InvalidTypeError
 from bitmovin.resources.enums import H264Profile, H264Level, MVPredictionMode
-from bitmovin.resources.enums.h264_Preset import H264Preset
 from bitmovin.resources.enums.h264_interlace_mode import H264InterlaceMode
 from bitmovin.resources.enums.h264_motion_estimation_method import H264MotionEstimationMethod
 from bitmovin.resources.enums.h264_partition import H264Partition
