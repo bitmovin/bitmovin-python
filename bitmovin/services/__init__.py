@@ -5,3 +5,4 @@ from .codecconfigurations import CodecConfigurationService
 from .encodings import EncodingService
 from .manifests import ManifestService
 from .infrastructures import InfrastructureService
+from .analytics import AnalyticsService
