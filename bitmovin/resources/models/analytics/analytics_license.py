@@ -1,6 +1,6 @@
-from bitmovin.utils import Serializable
 from bitmovin.resources.models import AbstractModel
 from .domain import AnalyticsDomain
+
 
 class AnalyticsLicense(AbstractModel):
     def __init__(self, id_, name, licenseKey, domains=None, custom_data=None):
