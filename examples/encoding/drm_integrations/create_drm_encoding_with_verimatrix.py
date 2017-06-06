@@ -5,11 +5,11 @@ import urllib.parse
 from bitmovin import Bitmovin, Encoding, S3Output, H264CodecConfiguration, \
     AACCodecConfiguration, H264Profile, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
     FMP4Muxing, MuxingStream, DashManifest, DRMFMP4Representation, FMP4RepresentationType, Period, \
-    VideoAdaptationSet, AudioAdaptationSet, ContentProtection, HTTPSInput, HlsManifest, VariantStream, \
-    AudioMedia, FairPlayDRM, TSMuxing, AWSCloudRegion
+    VideoAdaptationSet, AudioAdaptationSet, ContentProtection, HTTPSInput, AWSCloudRegion
 from bitmovin import CENCDRM as CENCDRMResource
 from bitmovin.resources.models import CENCPlayReadyEntry, CENCWidevineEntry
 from bitmovin.errors import BitmovinError
+
 
 def content_request(endpoint, content_id, site_id):
     content_url = urllib.parse.urljoin(endpoint, 'cei/v1.0/content/{}?siteId={}')
@@ -45,6 +45,7 @@ def content_request(endpoint, content_id, site_id):
         print(parsed_json["contentResponse"]["statusCode"])
         print("Did not get OPERATION_SUCCESS for content request")
         exit()
+
 
 def key_request(endpoint, content_id, site_id):
     key_url = urllib.parse.urljoin(endpoint, 'cei/v1.0/content/{}/position/0/key?siteId={}')
@@ -103,6 +104,7 @@ def key_request(endpoint, content_id, site_id):
         exit()
     
     return cenc_key, cenc_kid, cenc_widevine_pssh, cenc_playready_la_url
+
 
 def main():
 
