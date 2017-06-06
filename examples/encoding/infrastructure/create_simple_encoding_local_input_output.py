@@ -7,7 +7,7 @@ from bitmovin.errors import BitmovinError
 
 API_KEY = '<INSERT_YOUR_API_KEY>'
 INFRASTRUCTURE_ID = '<INSERT_YOUR_INFRASTRUCTURE_ID>'
-CLOUD_REGION = CloudRegion.KUBERNETES
+CLOUD_REGION = CloudRegion.EXTERNAL
 
 INPUT_BASE_PATH = '/tmp/inputs'
 RELATIVE_INPUT_FILE_PATH = 'relative/path/to/you/input.mkv'

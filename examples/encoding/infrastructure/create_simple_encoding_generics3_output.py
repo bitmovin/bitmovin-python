@@ -22,7 +22,7 @@ GENERIC_S3_OUTPUT_BUCKETNAME = '<INSERT_YOUR_OUTPUT_BUCKET>'
 GENERIC_S3_OUTPUT_HOST = 'scality'
 GENERIC_S3_OUTPUT_PORT = 8000
 
-CLOUD_REGION = CloudRegion.KUBERNETES
+CLOUD_REGION = CloudRegion.EXTERNAL
 
 date_component = str(datetime.datetime.now()).replace(' ', '_').replace(':', '-').split('.')[0].replace('_', '__')
 OUTPUT_BASE_PATH = 'your/output/base/path/{}/'.format(date_component)
