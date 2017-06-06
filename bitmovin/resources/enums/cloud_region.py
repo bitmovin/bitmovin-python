@@ -18,6 +18,7 @@ class CloudRegion(enum.Enum):
     GOOGLE_US_CENTRAL_1 = 'GOOGLE_US_CENTRAL_1'
     GOOGLE_US_EAST_1 = 'GOOGLE_US_EAST_1'
     KUBERNETES = 'KUBERNETES'
+    EXTERNAL = 'EXTERNAL'
 
     @staticmethod
     def default():
