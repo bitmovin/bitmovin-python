@@ -33,6 +33,17 @@ class RestService(BitmovinObject):
 
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
 
+    def create_without_check(self, object_):
+        response = self.http_client.post(self.relative_url, object_)  # type: Response
+
+        if response.status == Status.ERROR.value:
+            raise BitmovinApiError('Response was not successful: {}'.format(response.raw_response), response)
+
+        if response.status == Status.SUCCESS.value:
+            return None
+
+        raise InvalidStatusError('Unknown status {} received'.format(response.status))
+
     def retrieve(self, id_):
         self.parsing_utils.check_arg_valid_uuid(argument=id_)
         url = '{}/{}'.format(self.relative_url, id_)

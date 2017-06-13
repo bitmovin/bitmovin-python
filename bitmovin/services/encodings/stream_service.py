@@ -1,8 +1,8 @@
-from bitmovin.errors import BitmovinApiError, MissingArgumentError, InvalidStatusError
-from bitmovin.resources import Status, ResourceResponse
-from bitmovin.resources.models import Stream as StreamResource, EncodingStatus
-from ..rest_service import RestService
+from bitmovin.errors import MissingArgumentError
+from bitmovin.resources.models import Stream as StreamResource
 from .sprite_service import SpriteService
+from .stream_filter_service import StreamFilterService
+from ..rest_service import RestService
 
 
 class Stream(RestService):
@@ -11,6 +11,7 @@ class Stream(RestService):
     def __init__(self, http_client):
         super().__init__(http_client=http_client, relative_url=self.BASE_ENDPOINT_URL, class_=StreamResource)
         self.Sprite = SpriteService(http_client=http_client)
+        self.Filter = StreamFilterService(http_client=http_client)
 
     def _get_endpoint_url(self, encoding_id):
         if not encoding_id:
@@ -36,3 +37,4 @@ class Stream(RestService):
     def retrieve_custom_data(self, encoding_id, stream_id):
         self.relative_url = self._get_endpoint_url(encoding_id=encoding_id)
         return super().retrieve_custom_data(id_=stream_id)
+
