@@ -24,5 +24,3 @@ from .webm_representation_type import WebMRepresentationType
 from .id3_tag_position_mode import ID3TagPositionMode
 from .deinterlace_mode import DeinterlaceMode
 from .picture_field_parity import PictureFieldParity
-from .audio_mix_filter_channel_layout import AudioMixFilterChannelLayout
-from .audio_mix_filter_channel_type import AudioMixFilterChannelType
