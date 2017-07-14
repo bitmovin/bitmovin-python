@@ -1,12 +1,12 @@
-from . import AbstractFilter
 from bitmovin.utils import Serializable
 from bitmovin.errors import InvalidTypeError
 from bitmovin.resources.enums import AudioMixFilterChannelLayout
+from . import AbstractFilter
 from . import AudioMixChannel
 
 
 class AudioMixFilter(AbstractFilter, Serializable):
-    def __init__(self, name=None, channel_layout=None, audio_mix_channels=None, id_=None,
+    def __init__(self, name, channel_layout, audio_mix_channels=None, id_=None,
                  custom_data=None, description=None):
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self._channel_layout = None
@@ -42,7 +42,7 @@ class AudioMixFilter(AbstractFilter, Serializable):
             return
 
         if not isinstance(new_value, list):
-            raise InvalidTypeError('partitions has to be a list of AudioMixChannel enums')
+            raise InvalidTypeError('audioMixChannels has to be a list of AudioMixChannel enums')
 
         if all(isinstance(output, AudioMixChannel) for output in new_value):
             audio_mix_channels = []

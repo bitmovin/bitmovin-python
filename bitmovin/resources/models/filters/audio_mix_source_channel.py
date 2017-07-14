@@ -1,15 +1,14 @@
-from . import AbstractFilter
-from bitmovin.utils import Serializable
 from bitmovin.errors import InvalidTypeError
 from bitmovin.resources.enums import AudioMixFilterChannelType
+from bitmovin.utils import Serializable
 
 
 class AudioMixSourceChannel(Serializable):
-    def __init__(self, channel_type=None, channel_number=None, gain=1.0):
+    def __init__(self, channel_type, channel_number, gain=1.0):
         super().__init__()
         self._channel_type = None
 
-        self.channel_number = channel_number
+        self.channelNumber = channel_number
         self.gain = gain
         self.channel_type = channel_type
 
@@ -32,8 +31,6 @@ class AudioMixSourceChannel(Serializable):
 
     def serialize(self):
         serialized = super().serialize()
-        serialized['channelNumber'] = self.channel_number
-        serialized['gain'] = self.gain
         serialized['type'] = self.channel_type
         return serialized
 

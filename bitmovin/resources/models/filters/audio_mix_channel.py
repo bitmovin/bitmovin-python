@@ -1,13 +1,14 @@
 from bitmovin.errors import InvalidTypeError
 from bitmovin.utils import Serializable
+from . import AudioMixSourceChannel
 
 
 class AudioMixChannel(Serializable):
-    def __init__(self, channel_number=None, source_channels=None):
+    def __init__(self, channel_number, source_channels):
         super().__init__()
         self._source_channels = None
 
-        self.channel_number = channel_number
+        self.channelNumber = channel_number
         self.source_channels = source_channels
 
     @property
@@ -20,9 +21,9 @@ class AudioMixChannel(Serializable):
             return
 
         if not isinstance(new_value, list):
-            raise InvalidTypeError('partitions has to be a list of AudioMixSourceChannel enums')
+            raise InvalidTypeError('source_channels has to be a list of AudioMixSourceChannel enums')
 
-        if all(isinstance(output, AudioMixChannel) for output in new_value):
+        if all(isinstance(output, AudioMixSourceChannel) for output in new_value):
             source_channels = []
             for item in new_value:
                 source_channels.append(item)
@@ -32,7 +33,6 @@ class AudioMixChannel(Serializable):
 
     def serialize(self):
         serialized = super().serialize()
-        serialized['channelNumber'] = self.channel_number
         serialized['sourceChannels'] = self.source_channels
         return serialized
 
