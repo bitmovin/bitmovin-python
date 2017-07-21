@@ -26,3 +26,4 @@ from .deinterlace_mode import DeinterlaceMode
 from .picture_field_parity import PictureFieldParity
 from .audio_mix_filter_channel_layout import AudioMixFilterChannelLayout
 from .audio_mix_filter_channel_type import AudioMixFilterChannelType
+from .ftp_transfer_version import FTPTransferVersion
