@@ -80,6 +80,8 @@ class FTPOutputTests(BitmovinTestCase):
         self.assertIsNotNone(created_output_response)
         self.assertIsNotNone(created_output_response.resource)
         self.assertIsNotNone(created_output_response.resource.id)
+        self.assertIsNotNone(created_output_response.resource.transferVersion)
+        self.assertIsNotNone(created_output_response.resource.maxConcurrentConnections)
         self._compare_ftp_outputs(sample_output, created_output_response.resource)
 
         retrieved_output_response = self.bitmovin.outputs.FTP.retrieve(created_output_response.resource.id)
@@ -148,6 +150,8 @@ class FTPOutputTests(BitmovinTestCase):
         self.assertEqual(first.host, second.host)
         self.assertEqual(first.name, second.name)
         self.assertEqual(first.description, second.description)
+        self.assertEqual(first.transferVersion, second.transferVersion)
+        self.assertEqual(first.maxConcurrentConnections, second.maxConcurrentConnections)
 
     def _get_sample_ftp_output(self):
         ftp_output_settings = self.settings.get('sampleObjects').get('outputs').get('ftp')\
@@ -171,14 +175,14 @@ class FTPOutputTests(BitmovinTestCase):
             username=ftp_output_settings.get('username'),
             password=ftp_output_settings.get('password'),
             transfer_version=ftp_output_settings.get('transferVersion'),
-            max_current_connections=ftp_output_settings.get('maxConcurrentConnections'),
+            max_concurrent_connections=ftp_output_settings.get('maxConcurrentConnections'),
             name='Sample FTP Output With Pooling'
         )
         self.assertIsNotNone(ftp_output.host)
         self.assertIsNotNone(ftp_output.username)
         self.assertIsNotNone(ftp_output.password)
-        self.assertIsNotNone(ftp_output.transfer_version)
-        self.assertIsNotNone(ftp_output.max_current_connections)
+        self.assertIsNotNone(ftp_output.transferVersion)
+        self.assertIsNotNone(ftp_output.maxConcurrentConnections)
         return ftp_output
 
 
