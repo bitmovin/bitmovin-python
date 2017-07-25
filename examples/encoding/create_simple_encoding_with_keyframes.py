@@ -23,24 +23,24 @@ def main():
     bitmovin = Bitmovin(api_key=API_KEY)
 
     https_input = HTTPSInput(name='create_simple_encoding HTTPS input', host=HTTPS_INPUT_HOST)
-    https_input = bitmovin.inputs.HTTPS.create(https_input).resource
+    https_input = bitmovin.inputs.HTTPS.create(object_=https_input).resource
 
     s3_output = S3Output(access_key=S3_OUTPUT_ACCESSKEY,
                          secret_key=S3_OUTPUT_SECRETKEY,
                          bucket_name=S3_OUTPUT_BUCKETNAME,
                          name='Sample S3 Output')
-    s3_output = bitmovin.outputs.S3.create(s3_output).resource
+    s3_output = bitmovin.outputs.S3.create(object_=s3_output).resource
 
     encoding = Encoding(name='example encoding',
                         cloud_region=CloudRegion.GOOGLE_EUROPE_WEST_1)
 
-    encoding = bitmovin.encodings.Encoding.create(encoding).resource
+    encoding = bitmovin.encodings.Encoding.create(object_=encoding).resource
 
     keyframe1 = Keyframe(time=3.0, segment_cut=True)
     keyframe2 = Keyframe(time=5.5, segment_cut=True)
 
     keyframe1 = bitmovin.encodings.Keyframe.create(object_=keyframe1, encoding_id=encoding.id)
-    keyframe2 = bitmovin.encodings.Keyframe.create(keyframe2, encoding.id)
+    keyframe2 = bitmovin.encodings.Keyframe.create(object_=keyframe2, encoding_id=encoding.id)
 
     video_codec_configuration_1080p = H264CodecConfiguration(name='example_video_codec_configuration_1080p',
                                                              bitrate=4800000,
@@ -48,7 +48,7 @@ def main():
                                                              width=1920,
                                                              height=1080,
                                                              profile=H264Profile.HIGH)
-    video_codec_configuration_1080p = bitmovin.codecConfigurations.H264.create(video_codec_configuration_1080p).resource
+    video_codec_configuration_1080p = bitmovin.codecConfigurations.H264.create(object_=video_codec_configuration_1080p).resource
 
     video_codec_configuration_720p = H264CodecConfiguration(name='example_video_codec_configuration_720p',
                                                             bitrate=2400000,
@@ -56,12 +56,12 @@ def main():
                                                             width=1280,
                                                             height=720,
                                                             profile=H264Profile.HIGH)
-    video_codec_configuration_720p = bitmovin.codecConfigurations.H264.create(video_codec_configuration_720p).resource
+    video_codec_configuration_720p = bitmovin.codecConfigurations.H264.create(object_=video_codec_configuration_720p).resource
 
     audio_codec_configuration = AACCodecConfiguration(name='example_audio_codec_configuration_english',
                                                       bitrate=128000,
                                                       rate=48000)
-    audio_codec_configuration = bitmovin.codecConfigurations.AAC.create(audio_codec_configuration).resource
+    audio_codec_configuration = bitmovin.codecConfigurations.AAC.create(object_=audio_codec_configuration).resource
 
     video_input_stream = StreamInput(input_id=https_input.id,
                                      input_path=HTTPS_INPUT_PATH,
@@ -71,25 +71,31 @@ def main():
                                      selection_mode=SelectionMode.AUTO)
 
     video_stream_1080p = Stream(codec_configuration_id=video_codec_configuration_1080p.id,
-                                input_streams=[video_input_stream], name='Sample Stream 1080p')
+                                input_streams=[video_input_stream],
+                                name='Sample Stream 1080p')
+
     video_stream_1080p = bitmovin.encodings.Stream.create(object_=video_stream_1080p,
                                                           encoding_id=encoding.id).resource
 
     video_stream_720p = Stream(codec_configuration_id=video_codec_configuration_720p.id,
-                               input_streams=[video_input_stream], name='Sample Stream 720p')
+                               input_streams=[video_input_stream],
+                               name='Sample Stream 720p')
+
     video_stream_720p = bitmovin.encodings.Stream.create(object_=video_stream_720p,
                                                          encoding_id=encoding.id).resource
 
     audio_stream = Stream(codec_configuration_id=audio_codec_configuration.id,
-                          input_streams=[audio_input_stream], name='Sample Stream AUDIO')
+                          input_streams=[audio_input_stream],
+                          name='Sample Stream AUDIO')
+
     audio_stream = bitmovin.encodings.Stream.create(object_=audio_stream,
                                                     encoding_id=encoding.id).resource
 
     acl_entry = ACLEntry(permission=ACLPermission.PUBLIC_READ)
 
-    video_muxing_stream_1080p = MuxingStream(video_stream_1080p.id)
-    video_muxing_stream_720p = MuxingStream(video_stream_720p.id)
-    audio_muxing_stream = MuxingStream(audio_stream.id)
+    video_muxing_stream_1080p = MuxingStream(stream_id=video_stream_1080p.id)
+    video_muxing_stream_720p = MuxingStream(stream_id=video_stream_720p.id)
+    audio_muxing_stream = MuxingStream(stream_id=audio_stream.id)
 
     video_muxing_1080p_output = EncodingOutput(output_id=s3_output.id,
                                                output_path=OUTPUT_BASE_PATH + 'video/1080p/',
@@ -154,6 +160,7 @@ def main():
                                                    encoding_id=encoding.id,
                                                    muxing_id=video_muxing_1080p.id,
                                                    segment_path='video/1080p/')
+
     fmp4_representation_1080p = bitmovin.manifests.DASH.add_fmp4_representation(object_=fmp4_representation_1080p,
                                                                                 manifest_id=dash_manifest.id,
                                                                                 period_id=period.id,
@@ -164,6 +171,7 @@ def main():
                                                   encoding_id=encoding.id,
                                                   muxing_id=video_muxing_720p.id,
                                                   segment_path='video/720p/')
+
     fmp4_representation_720p = bitmovin.manifests.DASH.add_fmp4_representation(object_=fmp4_representation_720p,
                                                                                manifest_id=dash_manifest.id,
                                                                                period_id=period.id,
@@ -174,6 +182,7 @@ def main():
                                                    encoding_id=encoding.id,
                                                    muxing_id=audio_muxing.id,
                                                    segment_path='audio/')
+
     fmp4_representation_audio = bitmovin.manifests.DASH.add_fmp4_representation(object_=fmp4_representation_audio,
                                                                                 manifest_id=dash_manifest.id,
                                                                                 period_id=period.id,
