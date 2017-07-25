@@ -31,6 +31,14 @@ class FTPOutputTests(BitmovinTestCase):
         self.assertIsNotNone(output_resource_response.resource)
         self.assertIsNotNone(output_resource_response.resource.id)
         self._compare_ftp_outputs(sample_output, output_resource_response.resource)
+    
+    def test_create_ftp_output_with_pooling(self):
+        sample_output = self._get_sample_ftp_output_with_pooling()
+        output_resource_response = self.bitmovin.outputs.FTP.create(sample_output)
+        self.assertIsNotNone(output_resource_response)
+        self.assertIsNotNone(output_resource_response.resource)
+        self.assertIsNotNone(output_resource_response.resource.id)
+        self._compare_ftp_outputs(sample_output, output_resource_response.resource)
 
     def test_create_ftp_output_without_name(self):
         sample_output = self._get_sample_ftp_output()
@@ -59,6 +67,21 @@ class FTPOutputTests(BitmovinTestCase):
         self.assertIsNotNone(created_output_response)
         self.assertIsNotNone(created_output_response.resource)
         self.assertIsNotNone(created_output_response.resource.id)
+        self._compare_ftp_outputs(sample_output, created_output_response.resource)
+
+        retrieved_output_response = self.bitmovin.outputs.FTP.retrieve(created_output_response.resource.id)
+        self.assertIsNotNone(retrieved_output_response)
+        self.assertIsNotNone(retrieved_output_response.resource)
+        self._compare_ftp_outputs(created_output_response.resource, retrieved_output_response.resource)
+
+    def test_retrieve_ftp_output_with_pooling(self):
+        sample_output = self._get_sample_ftp_output_with_pooling()
+        created_output_response = self.bitmovin.outputs.FTP.create(sample_output)
+        self.assertIsNotNone(created_output_response)
+        self.assertIsNotNone(created_output_response.resource)
+        self.assertIsNotNone(created_output_response.resource.id)
+        self.assertIsNotNone(created_output_response.resource.transferVersion)
+        self.assertIsNotNone(created_output_response.resource.maxConcurrentConnections)
         self._compare_ftp_outputs(sample_output, created_output_response.resource)
 
         retrieved_output_response = self.bitmovin.outputs.FTP.retrieve(created_output_response.resource.id)
@@ -127,6 +150,8 @@ class FTPOutputTests(BitmovinTestCase):
         self.assertEqual(first.host, second.host)
         self.assertEqual(first.name, second.name)
         self.assertEqual(first.description, second.description)
+        self.assertEqual(first.transferVersion, second.transferVersion)
+        self.assertEqual(first.maxConcurrentConnections, second.maxConcurrentConnections)
 
     def _get_sample_ftp_output(self):
         ftp_output_settings = self.settings.get('sampleObjects').get('outputs').get('ftp')\
@@ -140,6 +165,24 @@ class FTPOutputTests(BitmovinTestCase):
         self.assertIsNotNone(ftp_output.host)
         self.assertIsNotNone(ftp_output.username)
         self.assertIsNotNone(ftp_output.password)
+        return ftp_output
+
+    def _get_sample_ftp_output_with_pooling(self):
+        ftp_output_settings = self.settings.get('sampleObjects').get('outputs').get('ftp')\
+            .get('cb54171b-c695-4274-a243-f862ff5731a4')
+        ftp_output = FTPOutput(
+            host=ftp_output_settings.get('host'),
+            username=ftp_output_settings.get('username'),
+            password=ftp_output_settings.get('password'),
+            transfer_version=ftp_output_settings.get('transferVersion'),
+            max_concurrent_connections=ftp_output_settings.get('maxConcurrentConnections'),
+            name='Sample FTP Output With Pooling'
+        )
+        self.assertIsNotNone(ftp_output.host)
+        self.assertIsNotNone(ftp_output.username)
+        self.assertIsNotNone(ftp_output.password)
+        self.assertIsNotNone(ftp_output.transferVersion)
+        self.assertIsNotNone(ftp_output.maxConcurrentConnections)
         return ftp_output
 
 
