@@ -4,7 +4,6 @@ from tests.bitmovin import BitmovinTestCase
 
 
 class EncodingKeyframeTests(BitmovinTestCase):
-
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -18,7 +17,7 @@ class EncodingKeyframeTests(BitmovinTestCase):
         self.bitmovin = Bitmovin(self.api_key)
         self.assertIsNotNone(self.bitmovin)
         self.assertTrue(isinstance(self.bitmovin, Bitmovin))
-        self.sampleEncoding = self._create_sample_encoding()  # type: Encoding
+        self.sample_encoding = self._create_sample_encoding()  # type: Encoding
 
     def tearDown(self):
         super().tearDown()
@@ -26,7 +25,7 @@ class EncodingKeyframeTests(BitmovinTestCase):
     def test_create_keyframe(self):
         sample_keyframe = self._get_sample_keyframe()
         keyframe_resource_response = self.bitmovin.encodings.Keyframe.create(object_=sample_keyframe,
-                                                                         encoding_id=self.sampleEncoding.id)
+                                                                             encoding_id=self.sample_encoding.id)
         self.assertIsNotNone(keyframe_resource_response)
         self.assertIsNotNone(keyframe_resource_response.resource)
         self.assertIsNotNone(keyframe_resource_response.resource.id)
@@ -35,7 +34,7 @@ class EncodingKeyframeTests(BitmovinTestCase):
     def test_retrieve_keyframe(self):
         sample_keyframe = self._get_sample_keyframe()
         created_keyframe_response = self.bitmovin.encodings.Keyframe.create(object_=sample_keyframe,
-                                                                        encoding_id=self.sampleEncoding.id)
+                                                                            encoding_id=self.sample_encoding.id)
         self.assertIsNotNone(created_keyframe_response)
         self.assertIsNotNone(created_keyframe_response.resource)
         self.assertIsNotNone(created_keyframe_response.resource.id)
@@ -43,7 +42,7 @@ class EncodingKeyframeTests(BitmovinTestCase):
 
         retrieved_keyframe_response = self.bitmovin.encodings.Keyframe.retrieve(
             keyframe_id=created_keyframe_response.resource.id,
-            encoding_id=self.sampleEncoding.id
+            encoding_id=self.sample_encoding.id
         )
 
         self.assertIsNotNone(retrieved_keyframe_response)
@@ -53,13 +52,13 @@ class EncodingKeyframeTests(BitmovinTestCase):
     def test_list_keyframes(self):
         sample_keyframe = self._get_sample_keyframe()
         created_keyframe_response = self.bitmovin.encodings.Keyframe.create(object_=sample_keyframe,
-                                                                        encoding_id=self.sampleEncoding.id)
+                                                                            encoding_id=self.sample_encoding.id)
         self.assertIsNotNone(created_keyframe_response)
         self.assertIsNotNone(created_keyframe_response.resource)
         self.assertIsNotNone(created_keyframe_response.resource.id)
         self._compare_keyframes(sample_keyframe, created_keyframe_response.resource)
 
-        keyframes = self.bitmovin.encodings.Keyframe.list(encoding_id=self.sampleEncoding.id)
+        keyframes = self.bitmovin.encodings.Keyframe.list(encoding_id=self.sample_encoding.id)
         self.assertIsNotNone(keyframes)
         self.assertIsNotNone(keyframes.resource)
         self.assertIsNotNone(keyframes.response)
@@ -73,9 +72,7 @@ class EncodingKeyframeTests(BitmovinTestCase):
         return True
 
     def _get_sample_keyframe(self):
-
         keyframe = Keyframe(time=3.2, segment_cut=True)
-
         self.assertIsNotNone(keyframe.time)
         self.assertIsNotNone(keyframe.segmentCut)
         return keyframe
