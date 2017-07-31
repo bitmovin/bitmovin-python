@@ -240,7 +240,7 @@ class CENCDRMTests(BitmovinTestCase):
                       kid=cenc_drm_settings[0].get('kid'),
                       widevine=widevine,
                       playReady=playReady,
-                      marlin = marlin,
+                      marlin=marlin,
                       name='Sample CENC DRM')
 
         return drm
