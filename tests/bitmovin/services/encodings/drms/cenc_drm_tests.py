@@ -42,6 +42,21 @@ class CENCDRMTests(BitmovinTestCase):
         drm_resource = created_drm_response.resource  # type: CENCDRM
         self._compare_drms(sample_drm, drm_resource)
 
+    def test_create_drm_with_marlin(self):
+        fmp4_muxing = self._create_muxing()  # type: FMP4Muxing
+        self.assertIsNotNone(fmp4_muxing.id)
+        sample_drm = self._get_sample_drm_cenc_with_marlin()
+        sample_drm.outputs = fmp4_muxing.outputs
+
+        created_drm_response = self.bitmovin.encodings.Muxing.FMP4.DRM.CENC.create(
+            object_=sample_drm, encoding_id=self.sampleEncoding.id, muxing_id=fmp4_muxing.id)
+
+        self.assertIsNotNone(created_drm_response)
+        self.assertIsNotNone(created_drm_response.resource)
+        self.assertIsNotNone(created_drm_response.resource.id)
+        drm_resource = created_drm_response.resource  # type: CENCDRM
+        self._compare_drms(sample_drm, drm_resource)
+
     def test_create_drm_without_name(self):
         fmp4_muxing = self._create_muxing()  # type: FMP4Muxing
         self.assertIsNotNone(fmp4_muxing.id)
@@ -184,6 +199,7 @@ class CENCDRMTests(BitmovinTestCase):
         self.assertEqual(len(first.outputs), len(second.outputs))
         self.assertEqual(first.name, second.name)
         self.assertEqual(first.description, second.description)
+        self.assertEqual(first.marlin, second.marlin)
         return True
 
     def _compare_muxings(self, first: FMP4Muxing, second: FMP4Muxing):
@@ -207,10 +223,25 @@ class CENCDRMTests(BitmovinTestCase):
         playReady = CENCPlayReadyEntry(la_url=cenc_drm_settings[0].get('playReady').get('laUrl'))
 
         drm = CENCDRM(key=cenc_drm_settings[0].get('key'),
-                          kid=cenc_drm_settings[0].get('kid'),
-                          widevine=widevine,
-                          playReady=playReady,
-                          name='Sample CENC DRM')
+                      kid=cenc_drm_settings[0].get('kid'),
+                      widevine=widevine,
+                      playReady=playReady,
+                      name='Sample CENC DRM')
+
+        return drm
+
+    def _get_sample_drm_cenc_with_marlin(self):
+        cenc_drm_settings = self.settings.get('sampleObjects').get('drmConfigurations').get('Cenc')
+        widevine = CENCWidevineEntry(pssh=cenc_drm_settings[0].get('widevine').get('pssh'))
+        playReady = CENCPlayReadyEntry(la_url=cenc_drm_settings[0].get('playReady').get('laUrl'))
+        marlin = {}
+
+        drm = CENCDRM(key=cenc_drm_settings[0].get('key'),
+                      kid=cenc_drm_settings[0].get('kid'),
+                      widevine=widevine,
+                      playReady=playReady,
+                      marlin=marlin,
+                      name='Sample CENC DRM')
 
         return drm
 

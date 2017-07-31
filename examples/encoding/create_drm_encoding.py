@@ -122,6 +122,7 @@ def main():
     
     widevine_drm = CENCWidevineEntry(pssh=CENC_WIDEVINE_PSSH)
     play_ready_drm = CENCPlayReadyEntry(la_url=CENC_PLAYREADY_LA_URL)
+    marlin_drm = {}
 
     video_muxing_460p_output = EncodingOutput(output_id=s3_output.id,
                                               output_path=OUTPUT_BASE_PATH + 'video/460p/',
@@ -136,7 +137,8 @@ def main():
     cenc_460p = CENCDRMResource(key=CENC_KEY,
                                 kid=CENC_KID,
                                 widevine=widevine_drm,
-                                playReady=play_ready_drm,
+                                play_ready=play_ready_drm,
+                                marlin=marlin_drm,
                                 outputs=[video_muxing_460p_output],
                                 name='test cenc')
     cenc_460p = bitmovin.encodings.Muxing.FMP4.DRM.CENC.create(object_=cenc_460p,
@@ -156,7 +158,8 @@ def main():
     cenc_276p = CENCDRMResource(key=CENC_KEY,
                                 kid=CENC_KID,
                                 widevine=widevine_drm,
-                                playReady=play_ready_drm,
+                                play_ready=play_ready_drm,
+                                marlin=marlin_drm,
                                 outputs=[video_muxing_276p_output],
                                 name='test cenc')
     cenc_276p = bitmovin.encodings.Muxing.FMP4.DRM.CENC.create(object_=cenc_276p,
@@ -174,7 +177,8 @@ def main():
     cenc_80p = CENCDRMResource(key=CENC_KEY,
                                kid=CENC_KID,
                                widevine=widevine_drm,
-                               playReady=play_ready_drm,
+                               play_ready=play_ready_drm,
+                               marlin=marlin_drm,
                                outputs=[video_muxing_80p_output],
                                name='test cenc')
     video_muxing_80p = bitmovin.encodings.Muxing.FMP4.create(object_=video_muxing_80p,
@@ -196,7 +200,8 @@ def main():
     cenc_audio = CENCDRMResource(key=CENC_KEY,
                                  kid=CENC_KID,
                                  widevine=widevine_drm,
-                                 playReady=play_ready_drm,
+                                 play_ready=play_ready_drm,
+                                 marlin=marlin_drm,
                                  outputs=[audio_muxing_output_en_stereo],
                                  name='test cenc')
     cenc_audio = bitmovin.encodings.Muxing.FMP4.DRM.CENC.create(object_=cenc_audio,
