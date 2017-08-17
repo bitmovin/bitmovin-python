@@ -10,3 +10,4 @@ from .drm_status import DRMStatus
 from .cenc_drm import CENCDRM
 from .cenc_playready_entry import CENCPlayReadyEntry
 from .cenc_widevine_entry import CENCWidevineEntry
+from .cenc_marlin_entry import CENCMarlinEntry

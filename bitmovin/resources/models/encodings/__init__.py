@@ -8,7 +8,8 @@ from .stream import Stream
 from .stream_input import StreamInput
 from .encoding_live_details import EncodingLiveDetails
 from .live import LiveHlsManifest, LiveDashManifest, LiveStreamConfiguration
+from .thumbnail import Thumbnail
 from .sprite import Sprite
-from .stream_filter  import StreamFilter
+from .stream_filter import StreamFilter
 from .keyframe  import Keyframe
 from .id3 import ID3Tag, RawID3Tag, FrameIdID3Tag, PlainTextID3Tag

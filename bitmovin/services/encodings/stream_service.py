@@ -1,5 +1,6 @@
 from bitmovin.errors import MissingArgumentError
 from bitmovin.resources.models import Stream as StreamResource
+from .thumbnail_service import ThumbnailService
 from .sprite_service import SpriteService
 from .stream_filter_service import StreamFilterService
 from ..rest_service import RestService
@@ -11,6 +12,7 @@ class Stream(RestService):
     def __init__(self, http_client):
         super().__init__(http_client=http_client, relative_url=self.BASE_ENDPOINT_URL, class_=StreamResource)
         self.Sprite = SpriteService(http_client=http_client)
+        self.Thumbnail = ThumbnailService(http_client=http_client)
         self.Filter = StreamFilterService(http_client=http_client)
 
     def _get_endpoint_url(self, encoding_id):
