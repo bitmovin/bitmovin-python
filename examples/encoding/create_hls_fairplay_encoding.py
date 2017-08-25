@@ -4,7 +4,6 @@ from bitmovin import Bitmovin, Encoding, S3Output, H264CodecConfiguration, AACCo
     S3Input, FairPlayDRM, TSMuxing, HlsManifest, AudioMedia, VariantStream
 from bitmovin.errors import BitmovinError
 
-
 API_KEY = '<YOUR_API_KEY>'
 
 S3_INPUT_ACCESSKEY = '<YOUR_S3_OUTPUT_ACCESSKEY>'
@@ -42,29 +41,26 @@ def main():
     encoding = Encoding(name='hls fairplay example encoding - {}'.format(date_component))
     encoding = bitmovin.encodings.Encoding.create(encoding).resource
 
-    video_codec_configuration_460p = H264CodecConfiguration(name='example_video_codec_configuration_460p',
-                                                            bitrate=2000000,
-                                                            rate=23.976,
-                                                            width=852,
-                                                            height=460,
+    video_codec_configuration_480p = H264CodecConfiguration(name='example_video_codec_configuration_480p',
+                                                            bitrate=1200000,
+                                                            rate=None,
+                                                            height=480,
                                                             profile=H264Profile.HIGH)
-    video_codec_configuration_460p = bitmovin.codecConfigurations.H264.create(video_codec_configuration_460p).resource
+    video_codec_configuration_480p = bitmovin.codecConfigurations.H264.create(video_codec_configuration_480p).resource
 
-    video_codec_configuration_276p = H264CodecConfiguration(name='example_video_codec_configuration_276p',
-                                                            bitrate=1000000,
-                                                            rate=23.976,
-                                                            width=512,
-                                                            height=276,
+    video_codec_configuration_360p = H264CodecConfiguration(name='example_video_codec_configuration_360p',
+                                                            bitrate=800000,
+                                                            rate=None,
+                                                            height=360,
                                                             profile=H264Profile.HIGH)
-    video_codec_configuration_276p = bitmovin.codecConfigurations.H264.create(video_codec_configuration_276p).resource
+    video_codec_configuration_360p = bitmovin.codecConfigurations.H264.create(video_codec_configuration_360p).resource
 
-    video_codec_configuration_80p = H264CodecConfiguration(name='example_video_codec_configuration_80p',
-                                                           bitrate=186534,
-                                                           rate=23.976,
-                                                           width=144,
-                                                           height=80,
-                                                           profile=H264Profile.HIGH)
-    video_codec_configuration_80p = bitmovin.codecConfigurations.H264.create(video_codec_configuration_80p).resource
+    video_codec_configuration_240p = H264CodecConfiguration(name='example_video_codec_configuration_240p',
+                                                            bitrate=400000,
+                                                            rate=None,
+                                                            height=240,
+                                                            profile=H264Profile.HIGH)
+    video_codec_configuration_240p = bitmovin.codecConfigurations.H264.create(video_codec_configuration_240p).resource
 
     audio_codec_configuration_stereo = AACCodecConfiguration(name='example_audio_codec_configuration_stereo',
                                                              bitrate=128000,
@@ -80,23 +76,23 @@ def main():
                                                input_path=S3_INPUT_PATH,
                                                selection_mode=SelectionMode.AUTO)
 
-    video_stream_460p = Stream(codec_configuration_id=video_codec_configuration_460p.id,
+    video_stream_480p = Stream(codec_configuration_id=video_codec_configuration_480p.id,
                                input_streams=[video_input_stream],
-                               name='Sample Stream 460p')
-    video_stream_460p = bitmovin.encodings.Stream.create(object_=video_stream_460p,
+                               name='Sample Stream 480p')
+    video_stream_480p = bitmovin.encodings.Stream.create(object_=video_stream_480p,
                                                          encoding_id=encoding.id).resource
 
-    video_stream_276p = Stream(codec_configuration_id=video_codec_configuration_276p.id,
+    video_stream_360p = Stream(codec_configuration_id=video_codec_configuration_360p.id,
                                input_streams=[video_input_stream],
-                               name='Sample Stream 276p')
-    video_stream_276p = bitmovin.encodings.Stream.create(object_=video_stream_276p,
+                               name='Sample Stream 360p')
+    video_stream_360p = bitmovin.encodings.Stream.create(object_=video_stream_360p,
                                                          encoding_id=encoding.id).resource
 
-    video_stream_80p = Stream(codec_configuration_id=video_codec_configuration_80p.id,
-                              input_streams=[video_input_stream],
-                              name='Sample Stream 80p')
-    video_stream_80p = bitmovin.encodings.Stream.create(object_=video_stream_80p,
-                                                        encoding_id=encoding.id).resource
+    video_stream_240p = Stream(codec_configuration_id=video_codec_configuration_240p.id,
+                               input_streams=[video_input_stream],
+                               name='Sample Stream 240p')
+    video_stream_240p = bitmovin.encodings.Stream.create(object_=video_stream_240p,
+                                                         encoding_id=encoding.id).resource
 
     audio_stream_en_stereo = Stream(codec_configuration_id=audio_codec_configuration_stereo.id,
                                     input_streams=[audio_input_stream_en_stereo],
@@ -106,72 +102,70 @@ def main():
 
     acl_entry = ACLEntry(permission=ACLPermission.PUBLIC_READ)
 
-    video_muxing_stream_460p = MuxingStream(video_stream_460p.id)
-    video_muxing_stream_276p = MuxingStream(video_stream_276p.id)
-    video_muxing_stream_80p = MuxingStream(video_stream_80p.id)
+    video_muxing_stream_480p = MuxingStream(video_stream_480p.id)
+    video_muxing_stream_360p = MuxingStream(video_stream_360p.id)
+    video_muxing_stream_240p = MuxingStream(video_stream_240p.id)
 
     audio_muxing_stream_en_stereo = MuxingStream(audio_stream_en_stereo.id)
 
-    fair_play_drm = FairPlayDRM(key=FAIRPLAY_KEY, iv=FAIRPLAY_IV, uri=FAIRPLAY_URI)
-
-    video_muxing_460p_output = EncodingOutput(output_id=s3_output.id,
-                                              output_path=OUTPUT_BASE_PATH + 'video/460p/',
+    video_muxing_480p_output = EncodingOutput(output_id=s3_output.id,
+                                              output_path=OUTPUT_BASE_PATH + 'video/hls/480p',
                                               acl=[acl_entry])
-    video_muxing_460p = TSMuxing(segment_length=4,
+    video_muxing_480p = TSMuxing(segment_length=4,
                                  segment_naming='seg_%number%.ts',
-                                 streams=[video_muxing_stream_460p],
-                                 name='Sample Muxing 460p')
-    video_muxing_460p = bitmovin.encodings.Muxing.TS.create(object_=video_muxing_460p,
-                                                              encoding_id=encoding.id).resource
-
-    fair_play_460p = FairPlayDRM(key=FAIRPLAY_KEY,
-                                 iv=FAIRPLAY_IV,
-                                 uri=FAIRPLAY_URI,
-                                 outputs=[video_muxing_460p_output],
-                                 name='FairPlay 460p')
-    fair_play_460p = bitmovin.encodings.Muxing.TS.DRM.FairPlay.create(object_=fair_play_460p,
-                                                                      encoding_id=encoding.id,
-                                                                      muxing_id=video_muxing_460p.id).resource
-
-    video_muxing_276p_output = EncodingOutput(output_id=s3_output.id,
-                                              output_path=OUTPUT_BASE_PATH + 'video/276p/',
-                                              acl=[acl_entry])
-    video_muxing_276p = TSMuxing(segment_length=4,
-                                 segment_naming='seg_%number%.ts',
-                                 streams=[video_muxing_stream_276p],
-                                 name='Sample Muxing 276p')
-    video_muxing_276p = bitmovin.encodings.Muxing.TS.create(object_=video_muxing_276p,
+                                 streams=[video_muxing_stream_480p],
+                                 name='Sample Muxing 480p')
+    video_muxing_480p = bitmovin.encodings.Muxing.TS.create(object_=video_muxing_480p,
                                                             encoding_id=encoding.id).resource
-    fair_play_276p = FairPlayDRM(key=FAIRPLAY_KEY,
+
+    fair_play_480p = FairPlayDRM(key=FAIRPLAY_KEY,
                                  iv=FAIRPLAY_IV,
                                  uri=FAIRPLAY_URI,
-                                 outputs=[video_muxing_276p_output],
-                                 name='FairPlay 276p')
-    fair_play_276p = bitmovin.encodings.Muxing.TS.DRM.FairPlay.create(object_=fair_play_276p,
+                                 outputs=[video_muxing_480p_output],
+                                 name='FairPlay 480p')
+    fair_play_480p = bitmovin.encodings.Muxing.TS.DRM.FairPlay.create(object_=fair_play_480p,
                                                                       encoding_id=encoding.id,
-                                                                      muxing_id=video_muxing_276p.id).resource
+                                                                      muxing_id=video_muxing_480p.id).resource
 
-    video_muxing_80p_output = EncodingOutput(output_id=s3_output.id,
-                                             output_path=OUTPUT_BASE_PATH + 'video/80p/',
-                                             acl=[acl_entry])
-    video_muxing_80p = TSMuxing(segment_length=4,
-                                segment_naming='seg_%number%.ts',
-                                streams=[video_muxing_stream_80p],
-                                name='Sample Muxing 80p')
-    video_muxing_80p = bitmovin.encodings.Muxing.TS.create(object_=video_muxing_80p,
-                                                           encoding_id=encoding.id).resource
+    video_muxing_360p_output = EncodingOutput(output_id=s3_output.id,
+                                              output_path=OUTPUT_BASE_PATH + 'video/hls/360p',
+                                              acl=[acl_entry])
+    video_muxing_360p = TSMuxing(segment_length=4,
+                                 segment_naming='seg_%number%.ts',
+                                 streams=[video_muxing_stream_360p],
+                                 name='Sample Muxing 360p')
+    video_muxing_360p = bitmovin.encodings.Muxing.TS.create(object_=video_muxing_360p,
+                                                            encoding_id=encoding.id).resource
+    fair_play_360p = FairPlayDRM(key=FAIRPLAY_KEY,
+                                 iv=FAIRPLAY_IV,
+                                 uri=FAIRPLAY_URI,
+                                 outputs=[video_muxing_360p_output],
+                                 name='FairPlay 360p')
+    fair_play_360p = bitmovin.encodings.Muxing.TS.DRM.FairPlay.create(object_=fair_play_360p,
+                                                                      encoding_id=encoding.id,
+                                                                      muxing_id=video_muxing_360p.id).resource
 
-    fair_play_80p = FairPlayDRM(key=FAIRPLAY_KEY,
-                                iv=FAIRPLAY_IV,
-                                uri=FAIRPLAY_URI,
-                                outputs=[video_muxing_80p_output],
-                                name='FairPlay 80p')
-    fair_play_80p = bitmovin.encodings.Muxing.TS.DRM.FairPlay.create(object_=fair_play_80p,
-                                                                     encoding_id=encoding.id,
-                                                                     muxing_id=video_muxing_80p.id).resource
+    video_muxing_240p_output = EncodingOutput(output_id=s3_output.id,
+                                              output_path=OUTPUT_BASE_PATH + 'video/hls/240p',
+                                              acl=[acl_entry])
+    video_muxing_240p = TSMuxing(segment_length=4,
+                                 segment_naming='seg_%number%.ts',
+                                 streams=[video_muxing_stream_240p],
+                                 name='Sample Muxing 240p')
+    video_muxing_240p = bitmovin.encodings.Muxing.TS.create(object_=video_muxing_240p,
+                                                            encoding_id=encoding.id).resource
+
+    fair_play_240p = FairPlayDRM(key=FAIRPLAY_KEY,
+                                 iv=FAIRPLAY_IV,
+                                 uri=FAIRPLAY_URI,
+                                 outputs=[video_muxing_240p_output],
+                                 name='FairPlay 240p')
+    fair_play_240p = bitmovin.encodings.Muxing.TS.DRM.FairPlay.create(object_=fair_play_240p,
+                                                                      encoding_id=encoding.id,
+                                                                      muxing_id=video_muxing_240p.id).resource
 
     audio_muxing_output_en_stereo = EncodingOutput(output_id=s3_output.id,
-                                                   output_path=OUTPUT_BASE_PATH + 'audio/en_2_0/',
+                                                   output_path=OUTPUT_BASE_PATH + 'audio/hls/en_2_0',
                                                    acl=[acl_entry])
     audio_muxing_en_stereo = TSMuxing(segment_length=4,
                                       segment_naming='seg_%number%.ts',
@@ -218,41 +212,41 @@ def main():
 
     audio_media = bitmovin.manifests.HLS.AudioMedia.create(manifest_id=hls_manifest.id, object_=audio_media).resource
 
-    variant_stream_460p = VariantStream(audio=audio_media.groupId,
+    variant_stream_480p = VariantStream(audio=audio_media.groupId,
                                         closed_captions='NONE',
-                                        segment_path=video_muxing_460p_output.outputPath,
-                                        uri='video_460p.m3u8',
+                                        segment_path=video_muxing_480p_output.outputPath,
+                                        uri='video_480p.m3u8',
                                         encoding_id=encoding.id,
-                                        stream_id=video_stream_460p.id,
-                                        muxing_id=video_muxing_460p.id,
-                                        drm_id=fair_play_460p.id)
+                                        stream_id=video_stream_480p.id,
+                                        muxing_id=video_muxing_480p.id,
+                                        drm_id=fair_play_480p.id)
 
-    variant_stream_460p = bitmovin.manifests.HLS.VariantStream.create(manifest_id=hls_manifest.id,
-                                                                      object_=variant_stream_460p)
-    
-    variant_stream_276p = VariantStream(audio=audio_media.groupId,
+    bitmovin.manifests.HLS.VariantStream.create(manifest_id=hls_manifest.id,
+                                                object_=variant_stream_480p)
+
+    variant_stream_360p = VariantStream(audio=audio_media.groupId,
                                         closed_captions='NONE',
-                                        segment_path=video_muxing_276p_output.outputPath,
-                                        uri='video_276p.m3u8',
+                                        segment_path=video_muxing_360p_output.outputPath,
+                                        uri='video_360p.m3u8',
                                         encoding_id=encoding.id,
-                                        stream_id=video_stream_276p.id,
-                                        muxing_id=video_muxing_276p.id,
-                                        drm_id=fair_play_276p.id)
+                                        stream_id=video_stream_360p.id,
+                                        muxing_id=video_muxing_360p.id,
+                                        drm_id=fair_play_360p.id)
 
-    variant_stream_276p = bitmovin.manifests.HLS.VariantStream.create(manifest_id=hls_manifest.id,
-                                                                      object_=variant_stream_276p)
-    
-    variant_stream_80p = VariantStream(audio=audio_media.groupId,
-                                       closed_captions='NONE',
-                                       segment_path=video_muxing_80p_output.outputPath,
-                                       uri='video_80p.m3u8',
-                                       encoding_id=encoding.id,
-                                       stream_id=video_stream_80p.id,
-                                       muxing_id=video_muxing_80p.id,
-                                       drm_id=fair_play_80p.id)
+    bitmovin.manifests.HLS.VariantStream.create(manifest_id=hls_manifest.id,
+                                                object_=variant_stream_360p)
 
-    variant_stream_80p = bitmovin.manifests.HLS.VariantStream.create(manifest_id=hls_manifest.id,
-                                                                      object_=variant_stream_80p)
+    variant_stream_240p = VariantStream(audio=audio_media.groupId,
+                                        closed_captions='NONE',
+                                        segment_path=video_muxing_240p_output.outputPath,
+                                        uri='video_240p.m3u8',
+                                        encoding_id=encoding.id,
+                                        stream_id=video_stream_240p.id,
+                                        muxing_id=video_muxing_240p.id,
+                                        drm_id=fair_play_240p.id)
+
+    bitmovin.manifests.HLS.VariantStream.create(manifest_id=hls_manifest.id,
+                                                object_=variant_stream_240p)
 
     bitmovin.manifests.HLS.start(manifest_id=hls_manifest.id)
 
