@@ -4,6 +4,7 @@ import json
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, EncodingStatus, \
     ACLPermission, SelectionMode
 from bitmovin.errors import BitmovinApiError
+from bitmovin.resources.models.encodings.conditions import AndConjunction, OrConjunction, Condition
 from tests.bitmovin import BitmovinTestCase
 
 
@@ -137,11 +138,14 @@ class EncodingStreamTests(BitmovinTestCase):
             self.assertEqual(len(first.inputStreams), len(second.inputStreams))
         if first.outputs:
             self.assertEqual(len(first.outputs), len(second.outputs))
+        if first.conditions:
+            self.assertEqual(first.conditions, second.conditions)
         return True
 
     def _get_sample_stream(self):
         sample_codec_configuration = self.utils.get_sample_h264_codec_configuration()
         h264_codec_configuration = self.bitmovin.codecConfigurations.H264.create(sample_codec_configuration)
+        conditions = self._get_sample_conditions()
 
         (sample_input, sample_files) = self.utils.get_sample_s3_input()
         s3_input = self.bitmovin.inputs.S3.create(sample_input)
@@ -160,12 +164,31 @@ class EncodingStreamTests(BitmovinTestCase):
         stream = Stream(codec_configuration_id=h264_codec_configuration.resource.id,
                         input_streams=[stream_input],
                         outputs=[encoding_output],
-                        name='Sample Stream')
+                        name='Sample Stream',
+                        conditions=conditions)
 
         self.assertIsNotNone(stream.codecConfigId)
         self.assertIsNotNone(stream.inputStreams)
         self.assertIsNotNone(stream.outputs)
+        self.assertIsNotNone(stream.conditions)
         return stream
+
+    def _get_sample_conditions(self):
+        bitrate_condition = Condition("BITRATE", "!=", "2000000")
+        fps_condition = Condition("FPS", "==", "24")
+
+        or_conjunctions = []
+        or_conjunctions.append(bitrate_condition)
+        or_conjunctions.append(fps_condition)
+        sub_condition_or = OrConjunction(or_conjunctions)
+
+        height_condition_condition = Condition("HEIGHT", "<=", "400")
+        and_conditions = []
+        and_conditions.append(sub_condition_or)
+        and_conditions.append(height_condition_condition)
+
+        and_conjunction = AndConjunction(and_conditions)
+        return and_conjunction
 
     def _create_sample_encoding(self):
         sample_encoding = self.utils.get_sample_encoding()

@@ -1,17 +1,15 @@
 from bitmovin.errors import InvalidTypeError
 from bitmovin.resources import AbstractNameDescriptionResource
 from bitmovin.resources.models import AbstractModel
-from bitmovin.resources.models.encodings.streamconditions import StreamCondition
 from bitmovin.utils import Serializable
 from .encoding_output import EncodingOutput
 from .stream_input import StreamInput
+from .conditions.ConditionJsonConverter import ConditionJsonConverter
+from .conditions import AbstractCondition
 
 
 class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
 
-    @property
-    def conditions(self):
-        return self._conditions
 
     def __init__(self, codec_configuration_id, input_streams=None, outputs=None, id_=None, custom_data=None,
                  name=None, description=None, conditions=None):
@@ -20,8 +18,6 @@ class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
         self._outputs = None
         self._conditions = None
         self.codecConfigId = codec_configuration_id
-        if conditions is not None and not isinstance(conditions, list):
-            raise InvalidTypeError('conditions must be a list')
         self.conditions = conditions
         if input_streams is not None and not isinstance(input_streams, list):
             raise InvalidTypeError('input_streams must be a list')
@@ -45,6 +41,10 @@ class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
                         codec_configuration_id=codec_configuration_id, input_streams=input_streams, outputs=outputs,
                         name=name, description=description, conditions=conditions)
         return stream
+
+    @property
+    def conditions(self):
+        return self._conditions
 
     @property
     def inputStreams(self):
@@ -74,19 +74,14 @@ class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
     @conditions.setter
     def conditions(self, new_conditions):
         if new_conditions is None:
+            self._conditions = None
             return
 
-        if not isinstance(new_conditions, list):
-            raise InvalidTypeError('new_conditions has to be a list of StreamCondition objects')
-
-        if all(isinstance(stream_condition, StreamCondition) for stream_condition in new_conditions):
+        if isinstance(new_conditions, AbstractCondition):
             self._conditions = new_conditions
         else:
-            conditions = []
-            for json_object in new_conditions:
-                condition = StreamCondition.parse_from_json_object(json_object)
-                conditions.append(condition)
-            self._conditions = conditions
+            new_conditions_parsed = ConditionJsonConverter.parse_conditions(conditions_json=new_conditions)
+            self._conditions = new_conditions_parsed
 
     @outputs.setter
     def outputs(self, new_outputs):
