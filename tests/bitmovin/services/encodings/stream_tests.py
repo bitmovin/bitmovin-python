@@ -65,7 +65,7 @@ class EncodingStreamTests(BitmovinTestCase):
         self.assertIsNotNone(retrieved_stream_response.resource)
         self._compare_streams(created_stream_response.resource, retrieved_stream_response.resource)
 
-    @unittest.skip("Currently there's no route for stream deletion")
+    @unittest.skip('Currently there is no route for stream deletion')
     def test_delete_stream(self):
         sample_stream = self._get_sample_stream()
         created_stream_response = self.bitmovin.encodings.Stream.create(object_=sample_stream,
@@ -174,13 +174,13 @@ class EncodingStreamTests(BitmovinTestCase):
         return stream
 
     def _get_sample_conditions(self):
-        bitrate_condition = Condition(attribute="BITRATE", operator="!=", value="2000000")
-        fps_condition = Condition(attribute="FPS", operator="==", value="24")
+        bitrate_condition = Condition(attribute='BITRATE', operator='!=', value='2000000')
+        fps_condition = Condition(attribute='FPS', operator='==', value='24')
 
         or_conjunctions = [bitrate_condition, fps_condition]
         sub_condition_or = OrConjunction(conditions=or_conjunctions)
 
-        height_condition_condition = Condition(attribute="HEIGHT", operator="<=", value="400")
+        height_condition_condition = Condition(attribute='HEIGHT', operator='<=', value='400')
         and_conditions = [sub_condition_or, height_condition_condition]
 
         and_conjunction = AndConjunction(conditions=and_conditions)
@@ -204,22 +204,22 @@ class EncodingStreamTests(BitmovinTestCase):
         if isinstance(first, Condition):
             if isinstance(second, Condition):
                 if first.attribute != second.attribute:
-                    raise self.failureException("first.attribute is {}, second.attribute is {}".format(
+                    raise self.failureException('first.attribute is {}, second.attribute is {}'.format(
                         first.attribute, second.attribute))
                 if first.operator != second.operator:
-                    raise self.failureException("first.operator is {}, second.operator is {}".format(
+                    raise self.failureException('first.operator is {}, second.operator is {}'.format(
                         first.operator, second.operator))
                 if first.value != second.value:
-                    raise self.failureException("first.value is {}, second.value is {}".format(
+                    raise self.failureException('first.value is {}, second.value is {}'.format(
                         first.value, second.value))
             else:
-                raise self.failureException("first is {}, second is {}".format(type(first), type(second)))
+                raise self.failureException('first is {}, second is {}'.format(type(first), type(second)))
 
         if isinstance(first, OrConjunction):
             if isinstance(second, OrConjunction):
                 self.assertEqual(len(first.conditions), len(second.conditions))
             else:
-                raise self.failureException("first is {}, second is {}".format(type(first), type(second)))
+                raise self.failureException('first is {}, second is {}'.format(type(first), type(second)))
 
 
 if __name__ == '__main__':
