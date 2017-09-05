@@ -1,2 +1,2 @@
 NAME = 'bitmovin-python'
-VERSION = '1.12.0.dev'
+VERSION = '1.12.0.dev2'
