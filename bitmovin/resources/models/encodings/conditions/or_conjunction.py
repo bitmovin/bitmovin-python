@@ -1,5 +1,5 @@
-from .AbstractConjunction import AbstractConjunction
-from .ConditionType import ConditionType
+from .abstract_conjunction import AbstractConjunction
+from .condition_type import ConditionType
 
 
 class OrConjunction(AbstractConjunction):

@@ -1,6 +1,6 @@
 from bitmovin.errors import InvalidTypeError
 from bitmovin.utils import Serializable
-from .ConditionType import ConditionType
+from .condition_type import ConditionType
 
 
 class AbstractCondition(Serializable):

@@ -1,5 +1,5 @@
 from bitmovin.errors import InvalidTypeError
-from .AbstractCondition import AbstractCondition
+from .abstract_condition import AbstractCondition
 
 
 class AbstractConjunction(AbstractCondition):

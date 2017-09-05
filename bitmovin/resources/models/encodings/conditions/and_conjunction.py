@@ -1,5 +1,5 @@
-from .ConditionType import ConditionType
-from .AbstractConjunction import AbstractConjunction
+from .condition_type import ConditionType
+from .abstract_conjunction import AbstractConjunction
 
 
 class AndConjunction(AbstractConjunction):

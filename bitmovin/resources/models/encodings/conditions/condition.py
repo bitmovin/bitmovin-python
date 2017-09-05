@@ -1,5 +1,5 @@
-from .AbstractCondition import AbstractCondition
-from .ConditionType import ConditionType
+from .abstract_condition import AbstractCondition
+from .condition_type import ConditionType
 
 
 class Condition(AbstractCondition):

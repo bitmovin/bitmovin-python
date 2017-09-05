@@ -4,7 +4,7 @@ from bitmovin.resources.models import AbstractModel
 from bitmovin.utils import Serializable
 from .encoding_output import EncodingOutput
 from .stream_input import StreamInput
-from .conditions.ConditionJsonConverter import ConditionJsonConverter
+from .conditions.condition_json_converter import ConditionJsonConverter
 from .conditions import AbstractCondition
 
 

@@ -1,8 +1,8 @@
 from bitmovin.errors import InvalidTypeError
-from .OrConjunction import OrConjunction
-from .AndConjunction import AndConjunction
-from .ConditionType import ConditionType
-from .Condition import Condition
+from .or_conjunction import OrConjunction
+from .and_conjunction import AndConjunction
+from .condition_type import ConditionType
+from .condition import Condition
 
 
 class ConditionJsonConverter:
