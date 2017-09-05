@@ -1,7 +1,6 @@
 from bitmovin.errors import InvalidTypeError
 from .AbstractCondition import AbstractCondition
 
-
 class AbstractConjunction(AbstractCondition):
 
     @property
@@ -24,11 +23,7 @@ class AbstractConjunction(AbstractCondition):
         if all(isinstance(new_condition, AbstractCondition) for new_condition in new_conditions):
             self._conditions = new_conditions
         else:
-            conditions = []
-            for new_condition in new_conditions:
-                condition = AbstractCondition.parse_conditions(new_condition)
-                conditions.append(condition)
-            self._conditions = conditions
+            raise InvalidTypeError('Invalid type for conditions list')
 
     def serialize(self):
         serialized = super().serialize()

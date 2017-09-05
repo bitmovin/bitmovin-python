@@ -139,7 +139,7 @@ class EncodingStreamTests(BitmovinTestCase):
         if first.outputs:
             self.assertEqual(len(first.outputs), len(second.outputs))
         if first.conditions:
-            self.assertEqual(first.conditions, second.conditions)
+            self._assertEqualConditions(first.conditions, second.conditions)
         return True
 
     def _get_sample_stream(self):
@@ -174,26 +174,54 @@ class EncodingStreamTests(BitmovinTestCase):
         return stream
 
     def _get_sample_conditions(self):
-        bitrate_condition = Condition("BITRATE", "!=", "2000000")
-        fps_condition = Condition("FPS", "==", "24")
+        bitrate_condition = Condition(attribute="BITRATE", operator="!=", value="2000000")
+        fps_condition = Condition(attribute="FPS", operator="==", value="24")
 
         or_conjunctions = []
         or_conjunctions.append(bitrate_condition)
         or_conjunctions.append(fps_condition)
-        sub_condition_or = OrConjunction(or_conjunctions)
+        sub_condition_or = OrConjunction(conditions=or_conjunctions)
 
-        height_condition_condition = Condition("HEIGHT", "<=", "400")
+        height_condition_condition = Condition(attribute="HEIGHT", operator="<=", value="400")
         and_conditions = []
         and_conditions.append(sub_condition_or)
         and_conditions.append(height_condition_condition)
 
-        and_conjunction = AndConjunction(and_conditions)
+        and_conjunction = AndConjunction(conditions=and_conditions)
         return and_conjunction
 
     def _create_sample_encoding(self):
         sample_encoding = self.utils.get_sample_encoding()
         resource_response = self.bitmovin.encodings.Encoding.create(sample_encoding)
         return resource_response.resource
+
+
+    def _assertEqualConditions(self, first, second):
+        if first is None and second is None:
+            return True
+
+        if first is not None and second is None:
+            raise self.failureException('second condition is none but not first')
+
+        if first is None and second is not None:
+            raise self.failureException('first condition is none but not second')
+
+        if isinstance(first, Condition):
+            if isinstance(second, Condition):
+                if first.attribute != second.attribute:
+                    raise self.failureException("first.attribute is {}, second.attribute is {}".format(first.attribute, second.attribute))
+                if first.operator != second.operator:
+                    raise self.failureException("first.operator is {}, second.operator is {}".format(first.operator, second.operator))
+                if first.value != second.value:
+                    raise self.failureException("first.value is {}, second.value is {}".format(first.value, second.value))
+            else:
+                raise self.failureException("first is {}, second is {}".format(type(first), type(second)))
+
+        if isinstance(first, OrConjunction):
+            if isinstance(second, OrConjunction):
+                self.assertEqual(len(first.conditions), len(second.conditions))
+            else:
+                raise self.failureException("first is {}, second is {}".format(type(first), type(second)))
 
 
 if __name__ == '__main__':
