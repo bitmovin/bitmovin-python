@@ -5,7 +5,7 @@ from .condition_type import ConditionType
 class Condition(AbstractCondition):
 
     def __init__(self, attribute, operator, value):
-        super().__init__(type=ConditionType.CONDITION.value)
+        super().__init__(type_=ConditionType.CONDITION.value)
         self.attribute = attribute
         self.operator = operator
         self.value = value
