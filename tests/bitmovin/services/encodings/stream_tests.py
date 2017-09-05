@@ -1,8 +1,8 @@
 import unittest
 import uuid
 import json
-from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, EncodingStatus, \
-    ACLPermission, SelectionMode
+from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, ACLPermission, \
+    SelectionMode
 from bitmovin.errors import BitmovinApiError
 from bitmovin.resources.models.encodings.conditions import AndConjunction, OrConjunction, Condition
 from tests.bitmovin import BitmovinTestCase
@@ -177,15 +177,11 @@ class EncodingStreamTests(BitmovinTestCase):
         bitrate_condition = Condition(attribute="BITRATE", operator="!=", value="2000000")
         fps_condition = Condition(attribute="FPS", operator="==", value="24")
 
-        or_conjunctions = []
-        or_conjunctions.append(bitrate_condition)
-        or_conjunctions.append(fps_condition)
+        or_conjunctions = [bitrate_condition, fps_condition]
         sub_condition_or = OrConjunction(conditions=or_conjunctions)
 
         height_condition_condition = Condition(attribute="HEIGHT", operator="<=", value="400")
-        and_conditions = []
-        and_conditions.append(sub_condition_or)
-        and_conditions.append(height_condition_condition)
+        and_conditions = [sub_condition_or, height_condition_condition]
 
         and_conjunction = AndConjunction(conditions=and_conditions)
         return and_conjunction
@@ -194,7 +190,6 @@ class EncodingStreamTests(BitmovinTestCase):
         sample_encoding = self.utils.get_sample_encoding()
         resource_response = self.bitmovin.encodings.Encoding.create(sample_encoding)
         return resource_response.resource
-
 
     def _assertEqualConditions(self, first, second):
         if first is None and second is None:
@@ -209,11 +204,14 @@ class EncodingStreamTests(BitmovinTestCase):
         if isinstance(first, Condition):
             if isinstance(second, Condition):
                 if first.attribute != second.attribute:
-                    raise self.failureException("first.attribute is {}, second.attribute is {}".format(first.attribute, second.attribute))
+                    raise self.failureException("first.attribute is {}, second.attribute is {}".format(
+                        first.attribute, second.attribute))
                 if first.operator != second.operator:
-                    raise self.failureException("first.operator is {}, second.operator is {}".format(first.operator, second.operator))
+                    raise self.failureException("first.operator is {}, second.operator is {}".format(
+                        first.operator, second.operator))
                 if first.value != second.value:
-                    raise self.failureException("first.value is {}, second.value is {}".format(first.value, second.value))
+                    raise self.failureException("first.value is {}, second.value is {}".format(
+                        first.value, second.value))
             else:
                 raise self.failureException("first is {}, second is {}".format(type(first), type(second)))
 

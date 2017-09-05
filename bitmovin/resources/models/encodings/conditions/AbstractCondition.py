@@ -5,11 +5,11 @@ from .ConditionType import ConditionType
 
 class AbstractCondition(Serializable):
 
-    def __init__(self, type):
+    def __init__(self, type_):
         super().__init__()
 
         self._type = None
-        self.type = type
+        self.type = type_
 
     @property
     def type(self):

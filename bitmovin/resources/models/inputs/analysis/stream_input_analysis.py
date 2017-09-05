@@ -1,31 +1,32 @@
-from bitmovin.errors import BitmovinApiError, InvalidTypeError
+from bitmovin.errors import BitmovinApiError
 from bitmovin.resources import Resource
 from .stream_analysis_details import StreamAnalysisDetails
 
 
 class StreamInputAnalysis(Resource):
 
-    def __init__(self, inputId, inputPath, details):
+    def __init__(self, input_id, input_path, details):
         super().__init__()
-        self.inputPath = inputId
-        self.inputId = inputPath
+        self._details = None
+        self.inputPath = input_path
+        self.inputId = input_id
         self.details = details
 
     @classmethod
     def parse_from_json_object(cls, json_object):
-        inputId = json_object.get('inputId')
-        if inputId is None:
+        input_id = json_object.get('inputId')
+        if input_id is None:
             raise BitmovinApiError('Invalid json object: missing field \'inputId\'')
 
-        inputPath = json_object.get('inputPath')
-        if inputPath is None:
+        input_path = json_object.get('inputPath')
+        if input_path is None:
             raise BitmovinApiError('Invalid json object: missing field \'inputPath\'')
 
         details_json = json_object.get('details')
         if details_json is None:
             raise BitmovinApiError('Invalid json object: missing field \'details_json\'')
 
-        details = StreamInputAnalysis(inputId=inputId, inputPath=inputPath, details=details_json)
+        details = StreamInputAnalysis(input_id=input_id, input_path=input_path, details=details_json)
         return details
 
     @property
@@ -41,4 +42,3 @@ class StreamInputAnalysis(Resource):
             self._details = new_details
         else:
             self._details = StreamAnalysisDetails.parse_from_json_object(new_details)
-

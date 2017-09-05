@@ -5,11 +5,11 @@ from .ConditionType import ConditionType
 from .Condition import Condition
 
 
-class ConditionJsonConverter():
+class ConditionJsonConverter:
 
     @classmethod
     def parse_conditions(cls, conditions_json):
-        if(conditions_json is None):
+        if conditions_json is None:
             return None
 
         condition_type = conditions_json.get('type')
@@ -29,10 +29,9 @@ class ConditionJsonConverter():
 
         raise InvalidTypeError('unknown ConditionType {}'.format(condition_type))
 
-
     @classmethod
     def parse_conditions_list(cls, conditions_list):
-        if(conditions_list is None):
+        if conditions_list is None:
             return None
 
         if not isinstance(conditions_list, list):
@@ -43,4 +42,3 @@ class ConditionJsonConverter():
             condition = ConditionJsonConverter.parse_conditions(condition_json)
             conditions.append(condition)
         return conditions
-

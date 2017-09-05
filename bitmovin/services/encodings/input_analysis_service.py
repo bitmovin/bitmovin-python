@@ -1,5 +1,5 @@
 from bitmovin.errors import MissingArgumentError
-from bitmovin.resources.models.inputs.analysis.StreamInputAnalysis import StreamInputAnalysis
+from bitmovin.resources.models.inputs.analysis.stream_input_analysis import StreamInputAnalysis
 from bitmovin.services.rest_service import RestService
 
 

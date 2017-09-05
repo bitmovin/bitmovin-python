@@ -1,14 +1,15 @@
 from bitmovin.errors import InvalidTypeError
 from .AbstractCondition import AbstractCondition
 
+
 class AbstractConjunction(AbstractCondition):
 
     @property
     def conditions(self):
         return self._conditions
 
-    def __init__(self, type, conditions):
-        super().__init__(type)
+    def __init__(self, type_, conditions):
+        super().__init__(type_=type_)
         self._conditions = None
         self.conditions=conditions
 

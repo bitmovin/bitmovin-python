@@ -1,10 +1,7 @@
-from bitmovin.errors import BitmovinApiError, InvalidTypeError
+from bitmovin.errors import InvalidTypeError
 from bitmovin.resources import Resource
 from .analysis_audio_stream import AnalysisAudioStream
 from .analysis_video_stream import AnalysisVideoStream
-from .analysis_meta_stream import AnalysisMetaStream
-from .analysis_subtitle_stream import AnalysisSubtitleStream
-from .analysis_message import AnalysisMessage
 
 
 class StreamAnalysisDetails(Resource):
@@ -34,7 +31,7 @@ class StreamAnalysisDetails(Resource):
             return
 
         if not isinstance(new_audio_streams, list):
-            raise InvalidTypeError('messages has to be a list of Message objects')
+            raise InvalidTypeError('audioStreams has to be a list')
 
         if all(isinstance(audio_stream, AnalysisAudioStream) for audio_stream in new_audio_streams):
             self._audioStreams = new_audio_streams
@@ -55,7 +52,7 @@ class StreamAnalysisDetails(Resource):
             return
 
         if not isinstance(new_video_streams, list):
-            raise InvalidTypeError('messages has to be a list of Message objects')
+            raise InvalidTypeError('videoStreams has to be a list')
 
         if all(isinstance(video_stream, AnalysisVideoStream) for video_stream in new_video_streams):
             self._videoStreams = new_video_streams
