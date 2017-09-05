@@ -1,9 +1,10 @@
 import unittest
 import uuid
 import json
-from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, EncodingStatus, \
-    ACLPermission, SelectionMode
+from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, ACLPermission, \
+    SelectionMode
 from bitmovin.errors import BitmovinApiError
+from bitmovin.resources.models.encodings.conditions import AndConjunction, OrConjunction, Condition
 from tests.bitmovin import BitmovinTestCase
 
 
@@ -64,7 +65,7 @@ class EncodingStreamTests(BitmovinTestCase):
         self.assertIsNotNone(retrieved_stream_response.resource)
         self._compare_streams(created_stream_response.resource, retrieved_stream_response.resource)
 
-    @unittest.skip("Currently there's no route for stream deletion")
+    @unittest.skip('Currently there is no route for stream deletion')
     def test_delete_stream(self):
         sample_stream = self._get_sample_stream()
         created_stream_response = self.bitmovin.encodings.Stream.create(object_=sample_stream,
@@ -137,11 +138,14 @@ class EncodingStreamTests(BitmovinTestCase):
             self.assertEqual(len(first.inputStreams), len(second.inputStreams))
         if first.outputs:
             self.assertEqual(len(first.outputs), len(second.outputs))
+        if first.conditions:
+            self._assertEqualConditions(first.conditions, second.conditions)
         return True
 
     def _get_sample_stream(self):
         sample_codec_configuration = self.utils.get_sample_h264_codec_configuration()
         h264_codec_configuration = self.bitmovin.codecConfigurations.H264.create(sample_codec_configuration)
+        conditions = self._get_sample_conditions()
 
         (sample_input, sample_files) = self.utils.get_sample_s3_input()
         s3_input = self.bitmovin.inputs.S3.create(sample_input)
@@ -160,17 +164,62 @@ class EncodingStreamTests(BitmovinTestCase):
         stream = Stream(codec_configuration_id=h264_codec_configuration.resource.id,
                         input_streams=[stream_input],
                         outputs=[encoding_output],
-                        name='Sample Stream')
+                        name='Sample Stream',
+                        conditions=conditions)
 
         self.assertIsNotNone(stream.codecConfigId)
         self.assertIsNotNone(stream.inputStreams)
         self.assertIsNotNone(stream.outputs)
+        self.assertIsNotNone(stream.conditions)
         return stream
+
+    def _get_sample_conditions(self):
+        bitrate_condition = Condition(attribute='BITRATE', operator='!=', value='2000000')
+        fps_condition = Condition(attribute='FPS', operator='==', value='24')
+
+        or_conjunctions = [bitrate_condition, fps_condition]
+        sub_condition_or = OrConjunction(conditions=or_conjunctions)
+
+        height_condition_condition = Condition(attribute='HEIGHT', operator='<=', value='400')
+        and_conditions = [sub_condition_or, height_condition_condition]
+
+        and_conjunction = AndConjunction(conditions=and_conditions)
+        return and_conjunction
 
     def _create_sample_encoding(self):
         sample_encoding = self.utils.get_sample_encoding()
         resource_response = self.bitmovin.encodings.Encoding.create(sample_encoding)
         return resource_response.resource
+
+    def _assertEqualConditions(self, first, second):
+        if first is None and second is None:
+            return True
+
+        if first is not None and second is None:
+            raise self.failureException('second condition is none but not first')
+
+        if first is None and second is not None:
+            raise self.failureException('first condition is none but not second')
+
+        if isinstance(first, Condition):
+            if isinstance(second, Condition):
+                if first.attribute != second.attribute:
+                    raise self.failureException('first.attribute is {}, second.attribute is {}'.format(
+                        first.attribute, second.attribute))
+                if first.operator != second.operator:
+                    raise self.failureException('first.operator is {}, second.operator is {}'.format(
+                        first.operator, second.operator))
+                if first.value != second.value:
+                    raise self.failureException('first.value is {}, second.value is {}'.format(
+                        first.value, second.value))
+            else:
+                raise self.failureException('first is {}, second is {}'.format(type(first), type(second)))
+
+        if isinstance(first, OrConjunction):
+            if isinstance(second, OrConjunction):
+                self.assertEqual(len(first.conditions), len(second.conditions))
+            else:
+                raise self.failureException('first is {}, second is {}'.format(type(first), type(second)))
 
 
 if __name__ == '__main__':
