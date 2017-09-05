@@ -3,6 +3,7 @@ from .encoding_service import Encoding
 from .stream_service import Stream
 from .muxing_service import MuxingService
 from .keyframe_service import KeyframeService
+from .input_analysis_service import InputAnalysisService
 
 
 class EncodingService(BitmovinObject):
@@ -13,3 +14,4 @@ class EncodingService(BitmovinObject):
         self.Stream = Stream(http_client=self.http_client)
         self.Muxing = MuxingService(http_client=self.http_client)
         self.Keyframe = KeyframeService(http_client=self.http_client)
+        self.InputAnalysis = InputAnalysisService(http_client=self.http_client)
