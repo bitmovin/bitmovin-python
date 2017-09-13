@@ -23,9 +23,9 @@ class FMP4Muxing(Muxing):
         outputs = muxing.outputs
         name = muxing.name
         description = muxing.description
-        max_bitrate = muxing.max_bitrate
-        min_bitrate = muxing.min_bitrate
-        avg_bitrate = muxing.avg_bitrate
+        max_bitrate = muxing.maxBitrate
+        min_bitrate = muxing.minBitrate
+        avg_bitrate = muxing.avgBitrate
         segment_length = json_object['segmentLength']
         segment_naming = json_object.get('segmentNaming')
         init_segment_name = json_object.get('initSegmentName')
