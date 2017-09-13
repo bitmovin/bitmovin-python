@@ -20,9 +20,9 @@ class Muxing(AbstractNameDescriptionResource, AbstractModel, Serializable):
         if outputs is not None and not isinstance(outputs, list):
             raise InvalidTypeError('outputs must be a list')
         self.outputs = outputs
-        self.avg_bitrate = avg_bitrate
-        self.min_bitrate = min_bitrate
-        self.max_bitrate = max_bitrate
+        self.avgBitrate = avg_bitrate
+        self.minBitrate = min_bitrate
+        self.maxBitrate = max_bitrate
 
     @classmethod
     def parse_from_json_object(cls, json_object):
