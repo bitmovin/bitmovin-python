@@ -107,7 +107,7 @@ def main():
     try:
         bitmovin.encodings.Encoding.wait_until_finished(encoding_id=encoding_analysis.id, check_interval=5)
     except BitmovinError as bitmovin_error:
-        print("Exception occurred while waiting for encoding to finish: {}".format(bitmovin_error))
+        print('Exception occurred while waiting for encoding to finish: {}'.format(bitmovin_error))
         exit(-1)
 
     encoding_analysis_muxing = bitmovin.encodings.Muxing.FMP4.retrieve(encoding_id=encoding_analysis.id,
@@ -121,11 +121,11 @@ def main():
     elif complexity_factor < MIN_COMPLEXITY_FACTOR:
         complexity_factor = MIN_COMPLEXITY_FACTOR
 
-    print("Got complexity factor of: {:0.2f}".format(complexity_factor))
+    print('Got complexity factor of: {:0.2f}'.format(complexity_factor))
 
-    print("Updating encoding profile from:")
+    print('Updating encoding profile from:')
     pprint(encoding_profiles)
-    print("To")
+    print('To')
     # Multiply every bitrate with the complexity factor
     for profile in encoding_profiles:
         profile['bitrate'] = int(profile['bitrate'] * complexity_factor)
@@ -147,7 +147,7 @@ def main():
                                                            encoding_profile.get('bitrate')),
             bitrate=encoding_profile.get('bitrate') * 1000,
             height=encoding_profile.get('height'),
-            rate=encoding_profile.get("fps"),
+            rate=encoding_profile.get('fps'),
             profile=H264Profile.HIGH)
         encoding_config['codec'] = bitmovin.codecConfigurations.H264.create(codec).resource
         encoding_configs.append(encoding_config)
@@ -160,8 +160,8 @@ def main():
 
     # With the configurations and the input file streams are now created and muxed later on.
     for encoding_config in encoding_configs:
-        encoding_profile = encoding_config.get("profile")
-        video_stream = Stream(codec_configuration_id=encoding_config.get("codec").id,
+        encoding_profile = encoding_config.get('profile')
+        video_stream = Stream(codec_configuration_id=encoding_config.get('codec').id,
                               input_streams=[video_input_stream],
                               name='Stream {}p_{}k'.format(encoding_profile.get('height'),
                                                            encoding_profile.get('bitrate')))
@@ -176,8 +176,8 @@ def main():
     # Create FMP4 muxings which are later used for the DASH manifest. The current settings will set a segment length
     # of 4 seconds.
     for encoding_config in encoding_configs:
-        encoding_profile = encoding_config.get("profile")
-        video_muxing_stream = MuxingStream(encoding_config.get("stream").id)
+        encoding_profile = encoding_config.get('profile')
+        video_muxing_stream = MuxingStream(encoding_config.get('stream').id)
         video_muxing_output = EncodingOutput(output_id=s3_output.id,
                                              output_path=OUTPUT_BASE_PATH + 'video/dash/{}p_{}k/'.format(
                                                  encoding_profile.get('height'),
@@ -209,8 +209,8 @@ def main():
     # Create TS muxings which are later used for the DASH manifest. The current settings will set a segment length
     # of 4 seconds.
     for encoding_config in encoding_configs:
-        encoding_profile = encoding_config.get("profile")
-        video_muxing_stream = MuxingStream(encoding_config.get("stream").id)
+        encoding_profile = encoding_config.get('profile')
+        video_muxing_stream = MuxingStream(encoding_config.get('stream').id)
         video_muxing_output = EncodingOutput(output_id=s3_output.id,
                                              output_path=OUTPUT_BASE_PATH + 'video/hls/{}p_{}k/'.format(
                                                  encoding_profile.get('height'),
@@ -242,7 +242,7 @@ def main():
     try:
         bitmovin.encodings.Encoding.wait_until_finished(encoding_id=encoding.id, check_interval=5)
     except BitmovinError as bitmovin_error:
-        print("Exception occurred while waiting for encoding to finish: {}".format(bitmovin_error))
+        print('Exception occurred while waiting for encoding to finish: {}'.format(bitmovin_error))
         exit(-1)
 
     # Specify the output for manifest which will be in the OUTPUT_BASE_PATH.
@@ -268,7 +268,7 @@ def main():
 
     # Add all representation to the video adaption set
     for encoding_config in encoding_configs:
-        encoding_profile = encoding_config.get("profile")
+        encoding_profile = encoding_config.get('profile')
         muxing = encoding_config.get('fmp4_muxing')
         fmp4_representation_1080p = FMP4Representation(FMP4RepresentationType.TEMPLATE,
                                                        encoding_id=encoding.id,
@@ -306,10 +306,10 @@ def main():
 
     # Add all representation to the video adaption set
     for encoding_config in encoding_configs:
-        encoding_profile = encoding_config.get("profile")
+        encoding_profile = encoding_config.get('profile')
         stream = encoding_config.get('stream')
         muxing = encoding_config.get('ts_muxing')
-        variant_stream = VariantStream(audio=None,
+        variant_stream = VariantStream(audio='audio',
                                        closed_captions='NONE',
                                        segment_path='video/hls/{}p_{}k/'.format(
                                            encoding_profile.get('height'),
@@ -328,13 +328,13 @@ def main():
     try:
         bitmovin.manifests.DASH.wait_until_finished(manifest_id=dash_manifest.id, check_interval=1)
     except BitmovinError as bitmovin_error:
-        print("Exception occurred while waiting for manifest creation to finish: {}".format(bitmovin_error))
+        print('Exception occurred while waiting for manifest creation to finish: {}'.format(bitmovin_error))
         exit(-1)
 
     try:
         bitmovin.manifests.HLS.wait_until_finished(manifest_id=hls_manifest.id, check_interval=1)
     except BitmovinError as bitmovin_error:
-        print("Exception occurred while waiting for manifest creation to finish: {}".format(bitmovin_error))
+        print('Exception occurred while waiting for manifest creation to finish: {}'.format(bitmovin_error))
         exit(-1)
 
 
