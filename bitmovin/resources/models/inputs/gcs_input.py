@@ -25,7 +25,7 @@ class GCSInput(AbstractInput, Serializable):
     @cloudRegion.setter
     def cloudRegion(self, new_region):
         if new_region is None:
-            return
+            self._cloudRegion = None
         if isinstance(new_region, str):
             self._cloudRegion = new_region
         elif isinstance(new_region, GoogleCloudRegion):
