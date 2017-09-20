@@ -26,7 +26,7 @@ class S3Input(AbstractInput, Serializable):
     def cloudRegion(self, new_region):
         if new_region is None:
             self._cloudRegion = None
-        if isinstance(new_region, str):
+        elif isinstance(new_region, str):
             self._cloudRegion = new_region
         elif isinstance(new_region, AWSCloudRegion):
             self._cloudRegion = new_region.value
