@@ -13,3 +13,5 @@ from .sprite import Sprite
 from .stream_filter import StreamFilter
 from .keyframe import Keyframe
 from .id3 import ID3Tag, RawID3Tag, FrameIdID3Tag, PlainTextID3Tag
+from .byte_range import ByteRange
+from .progressive_ts_information import ProgressiveTSInformation
