@@ -4,10 +4,10 @@ from .muxing import Muxing
 class WebMMuxing(Muxing):
 
     def __init__(self, streams, segment_length, segment_naming=None, init_segment_name=None, outputs=None,
-                 id_=None, custom_data=None, name=None, description=None):
+                 id_=None, custom_data=None, name=None, description=None, ignored_by=None):
 
         super().__init__(id_=id_, custom_data=custom_data, streams=streams, outputs=outputs,
-                         name=name, description=description)
+                         name=name, description=description, ignored_by=ignored_by)
         self.segmentLength = segment_length
         self.segmentNaming = segment_naming
         self.initSegmentName = init_segment_name
@@ -24,6 +24,7 @@ class WebMMuxing(Muxing):
         segment_length = json_object.get('segmentLength')
         segment_naming = json_object.get('segmentNaming')
         init_segment_name = json_object.get('initSegmentName')
+        ignored_by = json_object.get('ignoredBy')
 
         webm_muxing = WebMMuxing(streams=streams,
                                  segment_length=segment_length,
@@ -33,6 +34,7 @@ class WebMMuxing(Muxing):
                                  id_=id_,
                                  custom_data=custom_data,
                                  name=name,
-                                 description=description)
+                                 description=description,
+                                 ignored_by=ignored_by)
 
         return webm_muxing

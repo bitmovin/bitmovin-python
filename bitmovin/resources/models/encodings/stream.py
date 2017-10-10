@@ -6,16 +6,17 @@ from .encoding_output import EncodingOutput
 from .stream_input import StreamInput
 from .conditions.condition_json_converter import ConditionJsonConverter
 from .conditions import AbstractCondition
+from .ignored_by import IgnoredBy
 
 
 class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
-
     def __init__(self, codec_configuration_id, input_streams=None, outputs=None, id_=None, custom_data=None,
-                 name=None, description=None, conditions=None):
+                 name=None, description=None, conditions=None, ignored_by=None):
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self._inputStreams = None
         self._outputs = None
         self._conditions = None
+        self._ignoredBy = None
         self.codecConfigId = codec_configuration_id
         self.conditions = conditions
         if input_streams is not None and not isinstance(input_streams, list):
@@ -24,6 +25,9 @@ class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
         if outputs is not None and not isinstance(outputs, list):
             raise InvalidTypeError('outputs must be a list')
         self.outputs = outputs
+        if ignored_by is not None and not isinstance(ignored_by, list):
+            raise InvalidTypeError('ignoredBy must be a list')
+        self.ignored_by = ignored_by
 
     @classmethod
     def parse_from_json_object(cls, json_object):
@@ -35,10 +39,11 @@ class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
         name = json_object.get('name')
         description = json_object.get('description')
         conditions = json_object.get('conditions')
+        ignored_by = json_object.get('ignoredBy')
 
         stream = Stream(id_=id_, custom_data=custom_data,
                         codec_configuration_id=codec_configuration_id, input_streams=input_streams, outputs=outputs,
-                        name=name, description=description, conditions=conditions)
+                        name=name, description=description, conditions=conditions, ignored_by=ignored_by)
         return stream
 
     @property
@@ -98,6 +103,27 @@ class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
                 output = EncodingOutput.parse_from_json_object(json_object)
                 outputs.append(output)
             self._outputs = outputs
+
+    @property
+    def ignored_by(self):
+        return self._ignoredBy
+
+    @ignored_by.setter
+    def ignored_by(self, new_ignored_by):
+        if new_ignored_by is None:
+            return
+
+        if not isinstance(new_ignored_by, list):
+            raise InvalidTypeError('new_outputs has to be a list of EncodingOutput objects')
+
+        if all(isinstance(ignored_by, EncodingOutput) for ignored_by in new_ignored_by):
+            self._ignoredBy = new_ignored_by
+        else:
+            ignored_by_array = []
+            for json_object in new_ignored_by:
+                ignored_by_obj = IgnoredBy.parse_from_json_object(json_object)
+                ignored_by_array.append(ignored_by_obj)
+            self._ignoredBy = ignored_by_array
 
     def serialize(self):
         serialized = super().serialize()
