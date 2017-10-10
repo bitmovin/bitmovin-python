@@ -114,9 +114,9 @@ class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
             return
 
         if not isinstance(new_ignored_by, list):
-            raise InvalidTypeError('new_outputs has to be a list of EncodingOutput objects')
+            raise InvalidTypeError('new_outputs has to be a list of IgnoredBy objects')
 
-        if all(isinstance(ignored_by, EncodingOutput) for ignored_by in new_ignored_by):
+        if all(isinstance(ignored_by, IgnoredBy) for ignored_by in new_ignored_by):
             self._ignoredBy = new_ignored_by
         else:
             ignored_by_array = []
