@@ -18,6 +18,7 @@ INPUT_PATH = '<INSERT_YOUR_HTTP_PATH>'
 S3_OUTPUT_ACCESSKEY = '<YOUR_S3_ACCESS_KEY>'
 S3_OUTPUT_SECRETKEY = '<YOUR_S3_SECRET_KEY>'
 S3_OUTPUT_BUCKETNAME = '<YOUR_S3_BUCKET_NAME>'
+S3_CLOUD_REGION = '<YOUR_S3_REGION>'
 
 S3_PUBLIC_BASE_URL = '<INSERT_YOUR_S3_PUBLIC_BASE_URL>'  # Without trailing slash '/'
 
@@ -34,6 +35,7 @@ def main():
     s3_output = S3Output(access_key=S3_OUTPUT_ACCESSKEY,
                          secret_key=S3_OUTPUT_SECRETKEY,
                          bucket_name=S3_OUTPUT_BUCKETNAME,
+                         cloud_region=S3_CLOUD_REGION,
                          name='Sample S3 Output')
 
     input = bitmovin.inputs.HTTPS.create(https_input).resource
@@ -171,13 +173,13 @@ def main():
         print("Exception occurred while waiting for encoding to finish: {}".format(bitmovin_error))
 
     manifest_output = EncodingOutput(output_id=output.id,
-                                     output_path='{}manifests/'.format(OUTPUT_BASE_PATH),
+                                     output_path=OUTPUT_BASE_PATH,
                                      acl=[acl_entry])
 
     ##########################
     # dash manifest
 
-    dash_manifest = DashManifest(manifest_name='example_manifest_dash.mpd',
+    dash_manifest = DashManifest(manifest_name=DASH_MANIFEST_NAME,
                                  outputs=[manifest_output],
                                  name='Sample DASH Manifest')
 
@@ -200,7 +202,7 @@ def main():
         video_fmp4_representation = FMP4Representation(FMP4RepresentationType.TEMPLATE,
                                                        encoding_id=encoding.id,
                                                        muxing_id=muxing.id,
-                                                       segment_path='/{}'.format(encoding_output.outputPath))
+                                                       segment_path='/{}/{}'.format(S3_OUTPUT_BUCKETNAME, encoding_output.outputPath))
         video_fmp4_representation = bitmovin.manifests.DASH.add_fmp4_representation(object_=video_fmp4_representation,
                                                               manifest_id=dash_manifest.id,
                                                               period_id=period.id,
@@ -213,7 +215,7 @@ def main():
         audio_fmp4_representation = FMP4Representation(FMP4RepresentationType.TEMPLATE,
                                                        encoding_id=encoding.id,
                                                        muxing_id=muxing.id,
-                                                       segment_path='/{}'.format(encoding_output.outputPath))
+                                                       segment_path='/{}/{}'.format(S3_OUTPUT_BUCKETNAME, encoding_output.outputPath))
         audio_fmp4_representation = bitmovin.manifests.DASH.add_fmp4_representation(object_=audio_fmp4_representation,
                                                               manifest_id=dash_manifest.id,
                                                               period_id=period.id,
@@ -227,7 +229,7 @@ def main():
     except BitmovinError as bitmovin_error:
         print('Exception occurred while waiting for manifest creation to finish: {}'.format(bitmovin_error))
 
-    print('DASH Manifest download URL: {}'.format(S3_PUBLIC_BASE_URL + '/' + S3_OUTPUT_BUCKETNAME + OUTPUT_BASE_PATH + DASH_MANIFEST_NAME))
+    print('DASH Manifest download URL: {}'.format(S3_PUBLIC_BASE_URL + '/' + S3_OUTPUT_BUCKETNAME + '/' + OUTPUT_BASE_PATH + DASH_MANIFEST_NAME))
 
 
 if __name__ == '__main__':
