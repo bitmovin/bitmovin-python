@@ -133,8 +133,9 @@ def main():
     for video_muxing_stream in video_muxing_streams:
         stream = video_muxing_stream['stream']
         muxing = video_muxing_stream['mux']
+        video_path = 'video_dash/{}/'.format(stream.name)
         encoding_output = EncodingOutput(output_id=output.id,
-                                         output_path=OUTPUT_BASE_PATH + 'video_dash/{}/'.format(stream.name),
+                                         output_path=OUTPUT_BASE_PATH + video_path,
                                          acl=[acl_entry])
         stream_array = [muxing]
         muxing = FMP4Muxing(segment_length=4,
@@ -144,13 +145,20 @@ def main():
                             outputs=[encoding_output],
                             name='dash_video_muxing_{}'.format(stream.name))
         created_muxing = bitmovin.encodings.Muxing.FMP4.create(object_=muxing, encoding_id=encoding.id).resource
-        video_fmp4_muxings.append({'muxing': created_muxing, 'stream': stream, 'muxing_stream': muxing, 'output': encoding_output})
+        video_fmp4_muxings.append({
+            'muxing': created_muxing,
+            'stream': stream,
+            'muxing_stream': muxing,
+            'output': encoding_output,
+            'video_path': video_path
+        })
 
     for audio_muxing_stream in audio_muxing_streams:
         stream = audio_muxing_stream['stream']
         muxing = audio_muxing_stream['mux']
+        audio_path = 'audio_dash/{}/'.format(stream.name)
         encoding_output = EncodingOutput(output_id=output.id,
-                                         output_path=OUTPUT_BASE_PATH + 'audio_dash/{}/'.format(stream.name),
+                                         output_path=OUTPUT_BASE_PATH + audio_path,
                                          acl=[acl_entry])
         stream_array = [muxing]
         muxing = FMP4Muxing(segment_length=4,
@@ -160,7 +168,13 @@ def main():
                             outputs=[encoding_output],
                             name='dash_audio_muxing_{}'.format(stream.name))
         created_muxing = bitmovin.encodings.Muxing.FMP4.create(object_=muxing, encoding_id=encoding.id).resource
-        audio_fmp4_muxings.append({'muxing': created_muxing, 'stream': stream, 'muxing_stream': muxing, 'output': encoding_output})
+        audio_fmp4_muxings.append({
+            'muxing': created_muxing,
+            'stream': stream,
+            'muxing_stream': muxing,
+            'output': encoding_output,
+            'audio_path': audio_path
+        })
 
 
     bitmovin.encodings.Encoding.start(encoding_id=encoding.id)
@@ -171,13 +185,13 @@ def main():
         print("Exception occurred while waiting for encoding to finish: {}".format(bitmovin_error))
 
     manifest_output = EncodingOutput(output_id=output.id,
-                                     output_path='{}manifests/'.format(OUTPUT_BASE_PATH),
+                                     output_path=OUTPUT_BASE_PATH,
                                      acl=[acl_entry])
 
     ##########################
     # dash manifest
 
-    dash_manifest = DashManifest(manifest_name='example_manifest_dash.mpd',
+    dash_manifest = DashManifest(manifest_name=DASH_MANIFEST_NAME,
                                  outputs=[manifest_output],
                                  name='Sample DASH Manifest')
 
@@ -196,11 +210,12 @@ def main():
     for video_fmp4_muxing in video_fmp4_muxings:
         muxing = video_fmp4_muxing['muxing']
         encoding_output = video_fmp4_muxing['output']
+        video_path = video_fmp4_muxing['video_path']
 
         video_fmp4_representation = FMP4Representation(FMP4RepresentationType.TEMPLATE,
                                                        encoding_id=encoding.id,
                                                        muxing_id=muxing.id,
-                                                       segment_path='/{}'.format(encoding_output.outputPath))
+                                                       segment_path=video_path)
         video_fmp4_representation = bitmovin.manifests.DASH.add_fmp4_representation(object_=video_fmp4_representation,
                                                               manifest_id=dash_manifest.id,
                                                               period_id=period.id,
@@ -209,11 +224,12 @@ def main():
     for audio_fmp4_muxing in audio_fmp4_muxings:
         muxing = audio_fmp4_muxing['muxing']
         encoding_output = audio_fmp4_muxing['output']
+        audio_path = audio_fmp4_muxing['audio_path']
 
         audio_fmp4_representation = FMP4Representation(FMP4RepresentationType.TEMPLATE,
                                                        encoding_id=encoding.id,
                                                        muxing_id=muxing.id,
-                                                       segment_path='/{}'.format(encoding_output.outputPath))
+                                                       segment_path=audio_path)
         audio_fmp4_representation = bitmovin.manifests.DASH.add_fmp4_representation(object_=audio_fmp4_representation,
                                                               manifest_id=dash_manifest.id,
                                                               period_id=period.id,
@@ -227,7 +243,7 @@ def main():
     except BitmovinError as bitmovin_error:
         print('Exception occurred while waiting for manifest creation to finish: {}'.format(bitmovin_error))
 
-    print('DASH Manifest download URL: {}'.format(S3_PUBLIC_BASE_URL + '/' + S3_OUTPUT_BUCKETNAME + OUTPUT_BASE_PATH + DASH_MANIFEST_NAME))
+    print('DASH Manifest download URL: {}'.format(S3_PUBLIC_BASE_URL + '/' + S3_OUTPUT_BUCKETNAME + '/' + OUTPUT_BASE_PATH + DASH_MANIFEST_NAME))
 
 
 if __name__ == '__main__':
