@@ -4,10 +4,10 @@ from .muxing import Muxing
 class TSMuxing(Muxing):
 
     def __init__(self, streams, segment_length, segment_naming=None, outputs=None, id_=None, custom_data=None,
-                 name=None, description=None, avg_bitrate=None, max_bitrate=None, min_bitrate=None):
+                 name=None, description=None, avg_bitrate=None, max_bitrate=None, min_bitrate=None, ignored_by=None):
         super().__init__(id_=id_, custom_data=custom_data, streams=streams, outputs=outputs,
                          name=name, description=description, avg_bitrate=avg_bitrate, max_bitrate=max_bitrate,
-                         min_bitrate=min_bitrate)
+                         min_bitrate=min_bitrate, ignored_by=ignored_by)
         self.segmentLength = segment_length
         self.segmentNaming = segment_naming
 
@@ -25,9 +25,11 @@ class TSMuxing(Muxing):
         avg_bitrate = muxing.avgBitrate
         segment_length = json_object['segmentLength']
         segment_naming = json_object.get('segmentNaming')
+        ignored_by = json_object.get('ignoredBy')
 
         ts_muxing = TSMuxing(streams=streams, segment_length=segment_length, segment_naming=segment_naming,
                              outputs=outputs, id_=id_, custom_data=custom_data, name=name, description=description,
-                             max_bitrate=max_bitrate, avg_bitrate=avg_bitrate, min_bitrate=min_bitrate)
+                             max_bitrate=max_bitrate, avg_bitrate=avg_bitrate, min_bitrate=min_bitrate,
+                             ignored_by=ignored_by)
 
         return ts_muxing
