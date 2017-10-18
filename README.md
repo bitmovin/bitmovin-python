@@ -12,7 +12,7 @@ Installation
 To install the bitmovin client with pip, run the following command:
 
 ```bash
-pip install git+https://github.com/bitmovin/bitmovin-python.git@v1.14.0
+pip install git+https://github.com/bitmovin/bitmovin-python.git@v1.15.0
 ```
 
 Depending on the platform which you are using your default python version may be python2.7.

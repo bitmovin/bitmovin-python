@@ -4,9 +4,9 @@ from .muxing import Muxing
 class ProgressiveTSMuxing(Muxing):
 
     def __init__(self, streams, segment_length, filename, outputs=None, id_=None, custom_data=None,
-                 name=None, description=None):
+                 name=None, description=None, ignored_by=None):
         super().__init__(id_=id_, custom_data=custom_data, streams=streams, outputs=outputs,
-                         name=name, description=description)
+                         name=name, description=description, ignored_by=ignored_by)
         self.segmentLength = segment_length
         self.filename = filename
 
@@ -21,9 +21,10 @@ class ProgressiveTSMuxing(Muxing):
         description = muxing.description
         segment_length = json_object.get('segmentLength')
         filename = json_object.get('filename')
+        ignored_by = json_object.get('ignoredBy')
 
         progressive_ts_muxing = ProgressiveTSMuxing(streams=streams, segment_length=segment_length, filename=filename,
                                                     outputs=outputs, id_=id_, custom_data=custom_data,
-                                                    name=name, description=description)
+                                                    name=name, description=description, ignored_by=ignored_by)
 
         return progressive_ts_muxing
