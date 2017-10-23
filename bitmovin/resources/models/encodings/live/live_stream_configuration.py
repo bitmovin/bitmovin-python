@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from typing import List
 
 from bitmovin.utils import Serializable
