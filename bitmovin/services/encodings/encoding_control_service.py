@@ -2,6 +2,7 @@ import time
 import json
 from bitmovin.bitmovin_object import BitmovinObject
 from bitmovin.errors import BitmovinApiError, InvalidStatusError
+from bitmovin.resources.models.encodings.start import StartEncodingRequest
 from bitmovin.rest import BitmovinHttpClient
 from bitmovin.resources import ResourceResponse, Status, EncodingStatus, LiveStreamConfiguration
 from bitmovin.services.parsing_utils import ParsingUtils
@@ -9,17 +10,19 @@ from bitmovin.utils import BitmovinJSONEncoder
 
 
 class EncodingControlService(BitmovinObject):
-
     def __init__(self, http_client, relative_url):
         super().__init__()
         self.http_client = http_client  # type: BitmovinHttpClient
         self.parsing_utils = ParsingUtils()
         self.relative_url = relative_url
 
-    def start(self, encoding_id):
+    def start(self, encoding_id, start_encoding_request: StartEncodingRequest = None):
         self.parsing_utils.check_arg_valid_uuid(encoding_id)
         url = self.relative_url + '/{}/start'.format(encoding_id)
-        response = self.http_client.post_empty_body(url)
+        if start_encoding_request is None:
+            response = self.http_client.post_empty_body(url)
+        else:
+            response = self.http_client.post(url, start_encoding_request)
 
         if response.status == Status.ERROR.value:
             raise BitmovinApiError('Response was not successful', response)
@@ -99,7 +102,6 @@ class EncodingControlService(BitmovinObject):
 
         raise BitmovinApiError("Encoding with ID '{}' was not successfull! Status: {}".format(
             encoding_id, encoding_status.status), status_response)
-
 
     def wait_until_running(self, encoding_id, check_interval=5):
         status_response = None
