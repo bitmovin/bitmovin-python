@@ -7,7 +7,6 @@ class Serializable:
     def __init__(self):
         super().__init__()
 
-    @abc.abstractmethod
     def serialize(self):
         serialized = {}
         serialized.update(self.__dict__)

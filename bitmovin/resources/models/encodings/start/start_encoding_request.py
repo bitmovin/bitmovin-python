@@ -1,16 +1,13 @@
 from bitmovin.errors import InvalidTypeError
-from bitmovin.resources.models.encodings.start import StartEncodingTrimming
-
 from bitmovin.utils import Serializable
+
+from .start_encoding_trimming import StartEncodingTrimming
 
 
 class StartEncodingRequest(Serializable):
     def __init__(self, trimming):
         super().__init__()
-        self._trimming = trimming
-        if not isinstance(trimming, StartEncodingTrimming):
-            raise InvalidTypeError(
-                'Invalid type {} for trimming: must be StartEncodingTrimming!'.format(type(trimming)))
+        self._trimming = None
         self.trimming = trimming
 
     @property

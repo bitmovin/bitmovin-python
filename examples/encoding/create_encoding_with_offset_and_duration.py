@@ -126,10 +126,10 @@ def main():
     audio_muxing = bitmovin.encodings.Muxing.FMP4.create(object_=audio_muxing,
                                                          encoding_id=encoding.id).resource
 
+    start_encoding_request = StartEncodingRequest(trimming=StartEncodingTrimming(offset=60.0, duration=10.0))
+
     bitmovin.encodings.Encoding.start(encoding_id=encoding.id,
-                                      start_encoding_request=StartEncodingRequest(
-                                          trimming=StartEncodingTrimming(offset=60.0, duration=10.0))
-                                      )
+                                      start_encoding_request=start_encoding_request)
 
     try:
         bitmovin.encodings.Encoding.wait_until_finished(encoding_id=encoding.id, check_interval=1)

@@ -20,9 +20,9 @@ class EncodingControlService(BitmovinObject):
         self.parsing_utils.check_arg_valid_uuid(encoding_id)
         url = self.relative_url + '/{}/start'.format(encoding_id)
         if start_encoding_request is None:
-            response = self.http_client.post_empty_body(url)
+            response = self.http_client.post_empty_body(relative_url=url)
         else:
-            response = self.http_client.post(url, start_encoding_request)
+            response = self.http_client.post(relative_url=url, payload=start_encoding_request)
 
         if response.status == Status.ERROR.value:
             raise BitmovinApiError('Response was not successful', response)
