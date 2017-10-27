@@ -6,6 +6,7 @@ from bitmovin.resources.enums.h264_motion_estimation_method import H264MotionEst
 from bitmovin.resources.enums.h264_partition import H264Partition
 from bitmovin.resources.enums.h264_sub_me import H264SubMe
 from bitmovin.resources.enums.h264_trellis import H264Trellis
+from bitmovin.resources.enums.pixel_format import PixelFormat
 from tests.bitmovin import BitmovinTestCase
 
 
@@ -219,6 +220,9 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         self.assertEqual(first.slices, second.slices)
         self.assertEqual(first.interlaceMode, second.interlaceMode)
         self.assertEqual(first.crf, second.crf)
+        self.assertEqual(first.minKeyframeInterval, second.minKeyframeInterval)
+        self.assertEqual(first.maxKeyframeInterval, second.maxKeyframeInterval)
+        self.assertEqual(first.pixelFormat, second.pixelFormat)
         return True
 
     def _get_sample_h264_codec_configuration(self):
@@ -249,8 +253,10 @@ class H264CodecConfigurationTests(BitmovinTestCase):
                                                           partitions=[H264Partition.I4X4, H264Partition.I8X8, H264Partition.P8X8, H264Partition.B8X8],
                                                           trellis=H264Trellis.ENABLED_FINAL_MB,
                                                           slices=5,
-                                                          interlaceMode=H264InterlaceMode.BOTTOM_FIELD_FIRST
-                                                          )
+                                                          interlaceMode=H264InterlaceMode.BOTTOM_FIELD_FIRST,
+                                                          min_keyframe_interval=10.23,
+                                                          max_keyframe_interval=20.91,
+                                                          pixel_format=PixelFormat.YUV440P10BE)
 
         self.assertIsNotNone(h264_codec_configuration.name)
         self.assertIsNotNone(h264_codec_configuration.description)
@@ -277,6 +283,9 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         self.assertIsNotNone(h264_codec_configuration.trellis)
         self.assertIsNotNone(h264_codec_configuration.slices)
         self.assertIsNotNone(h264_codec_configuration.interlaceMode)
+        self.assertIsNotNone(h264_codec_configuration.minKeyframeInterval)
+        self.assertIsNotNone(h264_codec_configuration.maxKeyframeInterval)
+        self.assertIsNotNone(h264_codec_configuration.pixelFormat)
 
         return h264_codec_configuration
 
