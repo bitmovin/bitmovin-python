@@ -16,11 +16,12 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
     def __init__(self, name, bitrate, rate, profile, id_=None, description=None, custom_data=None, width=None,
                  height=None, bframes=None, ref_frames=None, qp_min=None, qp_max=None, mv_prediction_mode=None,
                  mv_search_range_max=None, cabac=None, max_bitrate=None, min_bitrate=None, bufsize=None,
-                 min_gop=None, max_gop=None, level=None, rc_lookahead=None, b_adapt=None, sub_me=None, motion_estimation_method=None,
-                 partitions=None, trellis=None, slices=None, interlaceMode=None, crf=None):
+                 min_gop=None, max_gop=None, level=None, rc_lookahead=None, b_adapt=None, sub_me=None,
+                 motion_estimation_method=None,partitions=None, trellis=None, slices=None, interlaceMode=None, crf=None,
+                 pixel_format=None, min_keyframe_interval=None, max_keyframe_interval=None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description, bitrate=bitrate,
-                         rate=rate, width=width, height=height)
+                         rate=rate, width=width, height=height, pixel_format=pixel_format)
 
         self._b_adapt = None
         self._level = None
@@ -56,6 +57,8 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         self.sub_me = sub_me
         self.trellis = trellis
         self.crf = crf
+        self.minKeyframeInterval = min_keyframe_interval
+        self.maxKeyframeInterval = max_keyframe_interval
 
     @property
     def profile(self):
@@ -233,6 +236,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         height = video_codec_configuration.height
         bitrate = video_codec_configuration.bitrate
         rate = video_codec_configuration.rate
+        pixel_format = video_codec_configuration.pixelFormat
 
         profile = json_object.get('profile')
         bframes = json_object.get('bframes')
@@ -257,6 +261,8 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         slices = json_object.get('slices')
         interlaceMode = json_object.get('interlaceMode')
         crf = json_object.get('crf')
+        min_keyframe_interval = json_object.get('minKeyframeInterval')
+        max_keyframe_interval = json_object.get('maxKeyframeInterval')
 
         h264_codec_configuration = H264CodecConfiguration(name=name, bitrate=bitrate, rate=rate, profile=profile,
                                                           id_=id_, description=description, custom_data=custom_data,
@@ -267,9 +273,12 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
                                                           cabac=cabac, max_bitrate=max_bitrate, min_bitrate=min_bitrate,
                                                           bufsize=bufsize, min_gop=min_gop, max_gop=max_gop,
                                                           level=level, rc_lookahead=rc_lookahead, sub_me=sub_me,
-                                                          motion_estimation_method=motion_estimation_method, b_adapt=b_adapt,
-                                                          partitions=partitions, trellis=trellis, slices=slices,
-                                                          interlaceMode=interlaceMode, crf=crf)
+                                                          motion_estimation_method=motion_estimation_method,
+                                                          b_adapt=b_adapt, partitions=partitions, trellis=trellis,
+                                                          slices=slices, interlaceMode=interlaceMode, crf=crf,
+                                                          min_keyframe_interval=min_keyframe_interval,
+                                                          max_keyframe_interval=max_keyframe_interval,
+                                                          pixel_format=pixel_format)
 
         return h264_codec_configuration
 
@@ -287,5 +296,3 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         serialized['trellis'] = self.trellis
         serialized['crf'] = self.crf
         return serialized
-
-

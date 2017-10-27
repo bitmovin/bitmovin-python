@@ -11,10 +11,11 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
                  height=None, bframes=None, ref_frames=None, qp=None, max_bitrate=None, min_bitrate=None, bufsize=None,
                  min_gop=None, max_gop=None, level=None, rc_lookahead=None, b_adapt=None, max_ctu_size=None,
                  tu_intra_depth=None, tu_inter_depth=None, motion_search=None, sub_me=None, motion_search_range=None,
-                 weight_prediction_on_p_slice=None, weight_prediction_on_b_slice=None, sao=None, crf=None):
+                 weight_prediction_on_p_slice=None, weight_prediction_on_b_slice=None, sao=None, crf=None,
+                 pixel_format=None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description, bitrate=bitrate,
-                         rate=rate, width=width, height=height)
+                         rate=rate, width=width, height=height, pixel_format=pixel_format)
 
         self._profile = None
         self.profile = profile
@@ -201,6 +202,7 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         height = video_codec_configuration.height
         bitrate = video_codec_configuration.bitrate
         rate = video_codec_configuration.rate
+        pixel_format = video_codec_configuration.pixelFormat
 
         profile = json_object.get('profile')
         bframes = json_object.get('bframes')
@@ -237,7 +239,7 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
                                                           motion_search_range=motion_search_range,
                                                           weight_prediction_on_p_slice=weight_prediction_on_p_slice,
                                                           weight_prediction_on_b_slice=weight_prediction_on_b_slice,
-                                                          sao=sao, crf=crf)
+                                                          sao=sao, crf=crf, pixel_format=pixel_format)
 
         return h265_codec_configuration
 
