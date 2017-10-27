@@ -14,10 +14,10 @@ class VP9CodecConfiguration(VideoCodecConfiguration, Serializable):
                  max_intra_rate=None, qp_min=None, qp_max=None, crf=None, rate_undershoot_pct=None,
                  rate_overshoot_pct=None, cpu_used=None, noise_sensitivity=None, quality=None,
                  lossless=None, static_thresh=None, aq_mode=None, arnr_max_frames=None, 
-                 arnr_strength=None, arnr_type=None):
+                 arnr_strength=None, arnr_type=None, pixel_format=None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description, bitrate=bitrate,
-                         rate=rate, width=width, height=height)
+                         rate=rate, width=width, height=height, pixel_format=pixel_format)
 
         self.lagInFrames = lag_in_frames
         self.tileColumns = tile_columns
@@ -104,6 +104,7 @@ class VP9CodecConfiguration(VideoCodecConfiguration, Serializable):
         height = video_codec_configuration.height
         bitrate = video_codec_configuration.bitrate
         rate = video_codec_configuration.rate
+        pixel_format = video_codec_configuration.pixelFormat
 
         lag_in_frames = json_object.get('lagInFrames')
         tile_columns = json_object.get('tileColumns')
@@ -138,7 +139,8 @@ class VP9CodecConfiguration(VideoCodecConfiguration, Serializable):
                                                         noise_sensitivity=noise_sensitivity, quality=quality, 
                                                         lossless=lossless, static_thresh=static_thresh, 
                                                         aq_mode=aq_mode, arnr_max_frames=arnr_max_frames, 
-                                                        arnr_strength=arnr_strength, arnr_type=arnr_type)
+                                                        arnr_strength=arnr_strength, arnr_type=arnr_type,
+                                                        pixel_format=pixel_format)
 
         return vp9_codec_configuration
 
