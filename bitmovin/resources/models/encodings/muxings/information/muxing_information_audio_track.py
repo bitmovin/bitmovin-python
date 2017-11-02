@@ -1,7 +1,9 @@
+from bitmovin.resources import Resource
+
 from bitmovin.utils import Serializable
 
 
-class MuxingInformationAudioTrack(Serializable):
+class MuxingInformationAudioTrack(Resource, Serializable):
 
     def __init__(self, index, codec, codec_iso, bit_rate, sampling_rate, channels):
         super().__init__()

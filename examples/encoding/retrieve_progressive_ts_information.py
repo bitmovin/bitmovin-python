@@ -1,5 +1,5 @@
-from bitmovin import Bitmovin, ProgressiveTSInformation
-
+from bitmovin import Bitmovin
+from bitmovin.resources.models.encodings.muxings.information import ProgressiveTsMuxingInformation
 
 API_KEY = '<API_KEY>'
 ENCODING_ID = '<ENCODING_ID>'
@@ -9,7 +9,7 @@ MUXING_ID = '<MUXING_ID>'
 def main():
     bitmovin = Bitmovin(api_key=API_KEY)
 
-    progressive_ts_muxing_information = bitmovin.encodings.Muxing.ProgressiveTS.retrieve_information(
+    progressive_ts_muxing_information = bitmovin.encodings.Muxing.ProgressiveTS.information(
         encoding_id=ENCODING_ID,
         muxing_id=MUXING_ID
     )
@@ -17,7 +17,7 @@ def main():
     print_muxing_information(progressive_ts_muxing_information=progressive_ts_muxing_information.resource)
 
 
-def print_muxing_information(progressive_ts_muxing_information: ProgressiveTSInformation):
+def print_muxing_information(progressive_ts_muxing_information: ProgressiveTsMuxingInformation):
     print('\n')
     print('#######################################################################')
     print('# Byte Ranges of Progressive TS Muxing')

@@ -1,3 +1,5 @@
+from bitmovin.resources import Resource
+from bitmovin.resources.models.encodings.muxings.information import ByteRange
 from bitmovin.errors import InvalidTypeError
 from bitmovin.resources.models.encodings.muxings.information.muxing_information_audio_track import \
     MuxingInformationAudioTrack
@@ -7,10 +9,10 @@ from bitmovin.resources.models.encodings.muxings.information.muxing_information_
 from bitmovin.utils import Serializable
 
 
-class ProgressiveTsMuxingInformation(Serializable):
+class ProgressiveTsMuxingInformation(Resource, Serializable):
 
     def __init__(self, mime_type=None, file_size=None, container_format=None, container_bitrate=None, duration=None,
-                 video_tracks=None, audio_tracks=None):
+                 video_tracks=None, audio_tracks=None, byte_ranges=None):
         super().__init__()
 
         self.mimeType = mime_type
@@ -20,6 +22,7 @@ class ProgressiveTsMuxingInformation(Serializable):
         self.duration = duration
         self._video_tracks = video_tracks
         self._audio_tracks = audio_tracks
+        self._byte_ranges = byte_ranges
 
     @classmethod
     def parse_from_json_object(cls, json_object):
@@ -31,6 +34,7 @@ class ProgressiveTsMuxingInformation(Serializable):
 
         video_tracks = json_object.get('videoTracks')
         audio_tracks = json_object.get('audioTracks')
+        byte_ranges = json_object.get('byteRanges')
 
         progressive_ts_muxing_information = ProgressiveTsMuxingInformation(mime_type=mime_type,
                                                                            file_size=file_size,
@@ -38,7 +42,8 @@ class ProgressiveTsMuxingInformation(Serializable):
                                                                            container_bitrate=container_bitrate,
                                                                            duration=duration,
                                                                            video_tracks=video_tracks,
-                                                                           audio_tracks=audio_tracks)
+                                                                           audio_tracks=audio_tracks,
+                                                                           byte_ranges=byte_ranges)
 
         return progressive_ts_muxing_information
 
@@ -84,8 +89,32 @@ class ProgressiveTsMuxingInformation(Serializable):
                 video_tracks.append(video_track)
             self._video_tracks = video_tracks
 
+    @property
+    def byte_ranges(self):
+        return self._byte_ranges
+
+    @byte_ranges.setter
+    def byte_ranges(self, new_value):
+        if new_value is None:
+            return
+
+        if not isinstance(new_value, list):
+            raise InvalidTypeError('byte_ranges has to be a list of ByteRange instances')
+
+        if all(isinstance(output, ByteRange) for output in new_value):
+            byte_ranges = []
+            for item in new_value:
+                byte_ranges.append(item)
+            self._byte_ranges = byte_ranges
+        else:
+            byte_ranges = []
+            for item in new_value:
+                byte_ranges.append(ByteRange.parse_from_json_object(item))
+            self._byte_ranges = byte_ranges
+
     def serialize(self):
         serialized = super().serialize()
-        serialized['videoTracks'] = self._video_tracks.serialize()
-        serialized['audioTracks'] = self._audio_tracks.serialize()
+        serialized['videoTracks'] = self._video_tracks
+        serialized['audioTracks'] = self._audio_tracks
+        serialized['byteRanges'] = self._byte_ranges
         return serialized
