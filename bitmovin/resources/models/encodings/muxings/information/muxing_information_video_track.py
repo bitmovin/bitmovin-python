@@ -1,9 +1,7 @@
 from bitmovin.resources import Resource
 
-from bitmovin.utils import Serializable
 
-
-class MuxingInformationVideoTrack(Resource, Serializable):
+class MuxingInformationVideoTrack(Resource):
 
     def __init__(self, index, codec, codec_iso, bit_rate, pixel_format, frame_mode, frame_width, frame_height,
                  frame_rate, start_time, duration, number_of_frames):
