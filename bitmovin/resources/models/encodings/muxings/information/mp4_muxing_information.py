@@ -19,8 +19,11 @@ class Mp4MuxingInformation(Resource, Serializable):
         self.containerFormat = container_format
         self.containerBitrate = container_bitrate
         self.duration = duration
-        self._video_tracks = video_tracks
-        self._audio_tracks = audio_tracks
+
+        self._video_tracks = None
+        self._audio_tracks = None
+        self.audio_tracks = audio_tracks
+        self.video_tracks = video_tracks
 
     @classmethod
     def parse_from_json_object(cls, json_object):
@@ -87,6 +90,6 @@ class Mp4MuxingInformation(Resource, Serializable):
 
     def serialize(self):
         serialized = super().serialize()
-        serialized['videoTracks'] = self._video_tracks
-        serialized['audioTracks'] = self._audio_tracks
+        serialized['videoTracks'] = self.video_tracks
+        serialized['audioTracks'] = self.audio_tracks
         return serialized
