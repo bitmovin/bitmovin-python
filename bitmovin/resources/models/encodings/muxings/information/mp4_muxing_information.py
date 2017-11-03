@@ -4,7 +4,6 @@ from bitmovin.resources.models.encodings.muxings.information.muxing_information_
     MuxingInformationAudioTrack
 from bitmovin.resources.models.encodings.muxings.information.muxing_information_video_track import \
     MuxingInformationVideoTrack
-
 from bitmovin.utils import Serializable
 
 
