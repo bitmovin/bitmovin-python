@@ -92,8 +92,10 @@ def main():
     except BitmovinError as bitmovin_error:
         print("Exception occurred while waiting for encoding to finish: {}".format(bitmovin_error))
 
-    mp4_muxing_information = bitmovin.encodings.Muxing.MP4.information(encoding_id=encoding.id,
-                                                                       muxing_id=mp4_muxing.id).resource
+    mp4_muxing_information = bitmovin.encodings.Muxing.MP4.retrieve_information(
+        encoding_id=encoding.id,
+        muxing_id=mp4_muxing.id
+    ).resource
 
     print(mp4_muxing_information.serialize())
 

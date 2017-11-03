@@ -93,7 +93,7 @@ def main():
     except BitmovinError as bitmovin_error:
         print("Exception occurred while waiting for encoding to finish: {}".format(bitmovin_error))
 
-    progressive_ts_muxing_information = bitmovin.encodings.Muxing.ProgressiveTS.information(
+    progressive_ts_muxing_information = bitmovin.encodings.Muxing.ProgressiveTS.retrieve_information(
         encoding_id=encoding.id,
         muxing_id=progressive_ts_muxing.id
     ).resource

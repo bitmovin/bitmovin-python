@@ -9,7 +9,7 @@ MUXING_ID = '<MUXING_ID>'
 def main():
     bitmovin = Bitmovin(api_key=API_KEY)
 
-    progressive_ts_muxing_information = bitmovin.encodings.Muxing.ProgressiveTS.information(
+    progressive_ts_muxing_information = bitmovin.encodings.Muxing.ProgressiveTS.retrieve_information(
         encoding_id=ENCODING_ID,
         muxing_id=MUXING_ID
     )
