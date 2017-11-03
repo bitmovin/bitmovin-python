@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from bitmovin import Bitmovin, Encoding, HTTPSInput, S3Output, H264CodecConfiguration, \
     AACCodecConfiguration, H264Profile, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
@@ -97,7 +98,7 @@ def main():
         muxing_id=mp4_muxing.id
     ).resource
 
-    print(mp4_muxing_information.serialize())
+    print(json.dumps(obj=mp4_muxing_information, indent=True))
 
 
 if __name__ == '__main__':

@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from bitmovin import Bitmovin, Encoding, HTTPSInput, S3Output, H264CodecConfiguration, \
     AACCodecConfiguration, H264Profile, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
@@ -98,7 +99,7 @@ def main():
         muxing_id=progressive_ts_muxing.id
     ).resource
 
-    print(progressive_ts_muxing_information.serialize())
+    print(json.dumps(obj=progressive_ts_muxing_information, indent=True))
 
 
 if __name__ == '__main__':
