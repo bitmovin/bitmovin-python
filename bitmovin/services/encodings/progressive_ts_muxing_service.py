@@ -1,6 +1,6 @@
 from bitmovin.errors import BitmovinApiError, InvalidStatusError
 from bitmovin.resources import ResourceResponse, Status
-from bitmovin.resources.models import ProgressiveTSMuxing as ProgressiveTSMuxingResource
+from bitmovin.resources.models import ProgressiveTSMuxing as ProgressiveTSMuxingResource, ProgressiveTSInformation
 from .generic_muxing_service import GenericMuxingService
 from .progressive_ts_id3_service import ProgressiveTSID3Service
 
@@ -23,7 +23,7 @@ class ProgressiveTSMuxing(GenericMuxingService):
 
         if response.status == Status.SUCCESS.value:
             retrieved_resource = self.parsing_utils.parse_bitmovin_resource_from_response(
-                response=response, class_=ProgressiveTsMuxingInformation)
+                response=response, class_=ProgressiveTSInformation)
             return ResourceResponse(response=response, resource=retrieved_resource)
 
         raise InvalidStatusError('Unknown status {} received'.format(response.status))

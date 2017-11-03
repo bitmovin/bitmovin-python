@@ -1,9 +1,6 @@
 from bitmovin.resources import Status, ResourceResponse
-
 from bitmovin.errors import BitmovinApiError, InvalidStatusError
-
-from bitmovin.resources.models import MP4Muxing as MP4MuxingResource
-from bitmovin.resources.models.encodings.muxings.information import Mp4MuxingInformation
+from bitmovin.resources.models import MP4Muxing as MP4MuxingResource, Mp4MuxingInformation
 from .generic_muxing_service import GenericMuxingService
 
 
