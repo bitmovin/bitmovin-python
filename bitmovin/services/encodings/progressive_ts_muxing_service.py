@@ -1,6 +1,6 @@
 from bitmovin.errors import BitmovinApiError, InvalidStatusError
-from bitmovin.resources import ResourceResponse, Status
-from bitmovin.resources.models import ProgressiveTSMuxing as ProgressiveTSMuxingResource, ProgressiveTSInformation
+from bitmovin.resources import ResourceResponse, Status, ProgressiveTSInformation
+from bitmovin.resources.models import ProgressiveTSMuxing as ProgressiveTSMuxingResource
 from .generic_muxing_service import GenericMuxingService
 from .progressive_ts_id3_service import ProgressiveTSID3Service
 
