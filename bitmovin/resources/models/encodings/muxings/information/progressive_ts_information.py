@@ -14,10 +14,10 @@ class ProgressiveTSInformation(Resource, Serializable):
                  video_tracks=None, audio_tracks=None, byte_ranges=None):
         super().__init__()
 
-        self.mimeType = mime_type
-        self.fileSize = file_size
-        self.containerFormat = container_format
-        self.containerBitrate = container_bitrate
+        self.mime_type = mime_type
+        self.file_size = file_size
+        self.container_format = container_format
+        self.container_bitrate = container_bitrate
         self.duration = duration
 
         self._video_tracks = None

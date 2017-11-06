@@ -7,16 +7,16 @@ from bitmovin.resources.models.encodings.muxings.information.muxing_information_
 from bitmovin.utils import Serializable
 
 
-class Mp4MuxingInformation(Resource, Serializable):
+class MP4MuxingInformation(Resource, Serializable):
 
     def __init__(self, mime_type=None, file_size=None, container_format=None, container_bitrate=None,
                  duration=None, video_tracks=None, audio_tracks=None):
         super().__init__()
 
-        self.mimeType = mime_type
-        self.fileSize = file_size
-        self.containerFormat = container_format
-        self.containerBitrate = container_bitrate
+        self.mime_type = mime_type
+        self.file_size = file_size
+        self.container_format = container_format
+        self.container_bitrate = container_bitrate
         self.duration = duration
 
         self._video_tracks = None
@@ -35,7 +35,7 @@ class Mp4MuxingInformation(Resource, Serializable):
         video_tracks = json_object.get('videoTracks')
         audio_tracks = json_object.get('audioTracks')
 
-        mp4_muxing_information = Mp4MuxingInformation(mime_type=mime_type,
+        mp4_muxing_information = MP4MuxingInformation(mime_type=mime_type,
                                                       file_size=file_size,
                                                       container_format=container_format,
                                                       container_bitrate=container_bitrate,

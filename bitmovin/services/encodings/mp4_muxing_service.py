@@ -1,6 +1,6 @@
 from bitmovin.resources import Status, ResourceResponse
 from bitmovin.errors import BitmovinApiError, InvalidStatusError
-from bitmovin.resources.models import MP4Muxing as MP4MuxingResource, Mp4MuxingInformation
+from bitmovin.resources.models import MP4Muxing as MP4MuxingResource, MP4MuxingInformation
 from .generic_muxing_service import GenericMuxingService
 
 
@@ -22,7 +22,7 @@ class MP4Muxing(GenericMuxingService):
         if response.status == Status.SUCCESS.value:
             retrieved_resource = self.parsing_utils.parse_bitmovin_resource_from_response(
                 response=response,
-                class_=Mp4MuxingInformation)
+                class_=MP4MuxingInformation)
             return ResourceResponse(response=response, resource=retrieved_resource)
 
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
