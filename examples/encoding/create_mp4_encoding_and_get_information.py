@@ -103,7 +103,7 @@ def main():
 def print_muxing_information(mp4_muxing_information: MP4MuxingInformation):
     print('\n')
     print('#######################################################################')
-    print('# Progressive TS Muxing Information')
+    print('# MP4 Muxing Information')
     print('# Mime Type:             {}'.format(mp4_muxing_information.mime_type))
     print('# File Size:             {}'.format(mp4_muxing_information.file_size))
     print('# Container Format:      {}'.format(mp4_muxing_information.container_format))
