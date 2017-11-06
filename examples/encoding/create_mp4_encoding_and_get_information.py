@@ -1,9 +1,8 @@
 import datetime
-import json
 
 from bitmovin import Bitmovin, Encoding, HTTPSInput, S3Output, H264CodecConfiguration, \
     AACCodecConfiguration, H264Profile, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
-    MuxingStream, CloudRegion, MP4Muxing
+    MuxingStream, CloudRegion, MP4Muxing, MP4MuxingInformation
 from bitmovin.errors import BitmovinError
 
 
@@ -98,7 +97,47 @@ def main():
         muxing_id=mp4_muxing.id
     ).resource
 
-    print(json.dumps(obj=mp4_muxing_information, indent=True))
+    print_muxing_information(mp4_muxing_information)
+
+
+def print_muxing_information(mp4_muxing_information: MP4MuxingInformation):
+    print('\n')
+    print('#######################################################################')
+    print('# Progressive TS Muxing Information')
+    print('# Mime Type:             {}'.format(mp4_muxing_information.mime_type))
+    print('# File Size:             {}'.format(mp4_muxing_information.file_size))
+    print('# Container Format:      {}'.format(mp4_muxing_information.container_format))
+    print('# Container Bitrate:     {}'.format(mp4_muxing_information.container_bitrate))
+    print('# Duration:              {}'.format(mp4_muxing_information.duration))
+    print('# ---------------------------------------------------------------------')
+    print('# Video Tracks:')
+    for video_track in mp4_muxing_information.video_tracks:
+        print('# ---------------------------------------------------------------------')
+        print('# Index:             {}'.format(video_track.index))
+        print('# Codec:             {}'.format(video_track.codec))
+        print('# Codec ISO:         {}'.format(video_track.codec_iso))
+        print('# Bit Rate:          {}'.format(video_track.bitrate))
+        print('# Pixel Format:      {}'.format(video_track.pixel_format))
+        print('# Frame Mode:        {}'.format(video_track.frame_mode))
+        print('# Frame Width:       {}'.format(video_track.frame_width))
+        print('# Frame Height:      {}'.format(video_track.frame_height))
+        print('# Start Time:        {}'.format(video_track.start_time))
+        print('# Duration:          {}'.format(video_track.duration))
+        print('# Number of Frames:  {}'.format(video_track.number_of_frames))
+        print('# ---------------------------------------------------------------------')
+
+    print('# Audio Tracks:')
+    for audio_track in mp4_muxing_information.audio_tracks:
+        print('# ---------------------------------------------------------------------')
+        print('# Index:             {}'.format(audio_track.index))
+        print('# Codec:             {}'.format(audio_track.codec))
+        print('# Codec ISO:         {}'.format(audio_track.codec_iso))
+        print('# Bit Rate:          {}'.format(audio_track.bitrate))
+        print('# Sample Rate:       {}'.format(audio_track.sampling_rate))
+        print('# Channels:          {}'.format(audio_track.channels))
+        print('# ---------------------------------------------------------------------')
+
+    print('#######################################################################')
 
 
 if __name__ == '__main__':
