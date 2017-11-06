@@ -33,7 +33,8 @@ def main():
     s3_output = bitmovin.outputs.S3.create(s3_output).resource
 
     encoding = Encoding(name='example encoding',
-                        cloud_region=CloudRegion.GOOGLE_EUROPE_WEST_1)
+                        cloud_region=CloudRegion.GOOGLE_EUROPE_WEST_1,
+                        encoder_version='BETA')
 
     encoding = bitmovin.encodings.Encoding.create(encoding).resource
 
