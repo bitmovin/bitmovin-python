@@ -17,7 +17,6 @@ class GCSInput(AbstractInput, Serializable):
 
     @property
     def cloudRegion(self):
-        if self._cloudRegion is not None:
             return self._cloudRegion
 
     @cloudRegion.setter
