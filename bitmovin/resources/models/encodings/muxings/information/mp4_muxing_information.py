@@ -1,10 +1,9 @@
 from bitmovin.resources import Resource
 from bitmovin.errors import InvalidTypeError
-from bitmovin.resources.models.encodings.muxings.information.muxing_information_audio_track import \
-    MuxingInformationAudioTrack
-from bitmovin.resources.models.encodings.muxings.information.muxing_information_video_track import \
-    MuxingInformationVideoTrack
 from bitmovin.utils import Serializable
+
+from .muxing_information_audio_track import MuxingInformationAudioTrack
+from .muxing_information_video_track import MuxingInformationVideoTrack
 
 
 class MP4MuxingInformation(Resource, Serializable):
