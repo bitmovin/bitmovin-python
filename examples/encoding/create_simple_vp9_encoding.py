@@ -1,10 +1,10 @@
 import datetime
-from bitmovin import Bitmovin, Encoding, HTTPSInput, S3Output, VP9CodecConfiguration,\
-    AACCodecConfiguration, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
-    FMP4Muxing, WebMMuxing, MuxingStream, CloudRegion, DashManifest, FMP4Representation, FMP4RepresentationType, WebMRepresentation, Period, \
-    VideoAdaptationSet, AudioAdaptationSet, AWSCloudRegion
-from bitmovin.errors import BitmovinError
 
+from bitmovin import Bitmovin, Encoding, HTTPSInput, S3Output, VP9CodecConfiguration, \
+    AACCodecConfiguration, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
+    FMP4Muxing, WebMMuxing, MuxingStream, CloudRegion, DashManifest, FMP4Representation, WebMRepresentation, Period, \
+    VideoAdaptationSet, AudioAdaptationSet, AWSCloudRegion, WebMRepresentationType
+from bitmovin.errors import BitmovinError
 
 API_KEY = '<INSERT_YOUR_API_KEY>'
 
@@ -144,7 +144,7 @@ def main():
                                                                             manifest_id=dash_manifest.id,
                                                                             period_id=period.id).resource
 
-    webm_representation_1080p = WebMRepresentation(type=FMP4RepresentationType.TEMPLATE,
+    webm_representation_1080p = WebMRepresentation(type=WebMRepresentationType.TEMPLATE,
                                                    encoding_id=encoding.id,
                                                    muxing_id=video_muxing_1080p.id,
                                                    segment_path='video/1080p/')
@@ -154,7 +154,7 @@ def main():
                                                                                 adaptationset_id=video_adaptation_set.id
                                                                                 ).resource
 
-    webm_representation_720p = WebMRepresentation(type=FMP4RepresentationType.TEMPLATE,
+    webm_representation_720p = WebMRepresentation(type=WebMRepresentationType.TEMPLATE,
                                                   encoding_id=encoding.id,
                                                   muxing_id=video_muxing_720p.id,
                                                   segment_path='video/720p/')
@@ -164,7 +164,7 @@ def main():
                                                                                adaptationset_id=video_adaptation_set.id
                                                                                ).resource
 
-    fmp4_representation_audio = FMP4Representation(type=FMP4RepresentationType.TEMPLATE,
+    fmp4_representation_audio = FMP4Representation(type=WebMRepresentationType.TEMPLATE,
                                                    encoding_id=encoding.id,
                                                    muxing_id=audio_muxing.id,
                                                    segment_path='audio/')
