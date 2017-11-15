@@ -17,10 +17,7 @@ class S3Output(AbstractOutput, Serializable):
 
     @property
     def cloudRegion(self):
-        if self._cloudRegion is not None:
-            return self._cloudRegion
-        else:
-            return AWSCloudRegion.default().value
+        return self._cloudRegion
 
     @cloudRegion.setter
     def cloudRegion(self, new_region):

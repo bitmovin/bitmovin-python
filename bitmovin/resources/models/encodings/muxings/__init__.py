@@ -5,3 +5,5 @@ from .mp4_muxing import MP4Muxing
 from .ts_muxing import TSMuxing
 from .webm_muxing import WebMMuxing
 from .progressive_ts_muxing import ProgressiveTSMuxing
+from .information import ByteRange, MuxingInformationAudioTrack, MuxingInformationVideoTrack, \
+    ProgressiveTSInformation, MP4MuxingInformation
