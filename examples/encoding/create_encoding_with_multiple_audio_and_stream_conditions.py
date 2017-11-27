@@ -72,7 +72,7 @@ NUMBER_OF_AUDIO_CHANNELS_TO_CREATE = 10
 
 # Please specify the necessary manifests.
 MANIFESTS = [
-    dict(type=DASH, video_codecs=[H264, H265, VP9], audio_codecs=[AAC]),
+    dict(type=DASH, video_codecs=[H264], audio_codecs=[AAC]),
     dict(type=HLS, video_codecs=[H264], audio_codecs=[AAC]),
 ]
 
@@ -142,12 +142,13 @@ def main():
 
     # create muxings for audio
     for audio_config in audio_encoding_configs:
-        for stream in audio_config['streams']:
+        for stream_number, stream in enumerate(audio_config['streams']):
             make_audio_muxings(bitmovin=bitmovin,
                                encoding=encoding,
                                audio_config=audio_config,
                                stream=stream,
-                               output=output)
+                               output=output,
+                               stream_number=stream_number)
 
     # start the encoding process and wait until finished
     bitmovin.encodings.Encoding.start(encoding_id=encoding.id)
@@ -386,22 +387,24 @@ def make_video_muxings(bitmovin, encoding, video_config, output):
                 hls_map[video_config_codec](video_config_codec, manifest['type'])
 
 
-def make_audio_muxings(bitmovin, encoding, audio_config, stream, output):
+def make_audio_muxings(bitmovin, encoding, audio_config, stream, output, stream_number):
     """
     Makes audio muxings based on the given audio_config and the MANIFEST const.
     It creates all the necessary muxings to later be added to the manifests.
     """
     def make_fmp4(codec, manifest_type):
         encoding_profile = audio_config['profile']
-        muxing_output_path = '{}audio/fmp4/{}/{}/'.format(OUTPUT_BASE_PATH,
-                                                          encoding_profile['codec'],
-                                                          encoding_profile['bitrate'])
+        muxing_output_path = '{}audio/fmp4/{}/{}/{}/'.format(OUTPUT_BASE_PATH,
+                                                             stream_number,
+                                                             encoding_profile['codec'],
+                                                             encoding_profile['bitrate'])
 
         audio_config['muxing_list'].append(dict(
             type=FMP4,
             codec=codec,
             encoding_profile=encoding_profile,
             manifest_type=manifest_type,
+            stream_number=stream_number,
             object_=make_fmp4_muxing(bitmovin=bitmovin,
                                      encoding=encoding,
                                      stream=stream,
@@ -411,15 +414,17 @@ def make_audio_muxings(bitmovin, encoding, audio_config, stream, output):
 
     def make_ts(codec, manifest_type):
         encoding_profile = audio_config['profile']
-        muxing_output_path = '{}audio/ts/{}/{}/'.format(OUTPUT_BASE_PATH,
-                                                        encoding_profile['codec'],
-                                                        encoding_profile['bitrate'])
+        muxing_output_path = '{}audio/ts/{}/{}/{}/'.format(OUTPUT_BASE_PATH,
+                                                           stream_number,
+                                                           encoding_profile['codec'],
+                                                           encoding_profile['bitrate'])
 
         audio_config['muxing_list'].append(dict(
             type=TS,
             codec=codec,
             encoding_profile=encoding_profile,
             manifest_type=manifest_type,
+            stream_number=stream_number,
             object_=make_ts_muxing(bitmovin=bitmovin,
                                    encoding=encoding,
                                    stream=stream,
@@ -519,9 +524,9 @@ def make_dash_manifest(bitmovin, manifest_spec, encoding, output, video_encoding
                                                                                 manifest_id=dash_manifest.id,
                                                                                 period_id=period.id).resource
 
-        muxings = get_muxings_from_configs(configs=video_encoding_configs,
-                                           codec=manifest_video_codec,
-                                           manifest_type=DASH)
+        muxings = get_video_muxings_from_configs(configs=video_encoding_configs,
+                                                 codec=manifest_video_codec,
+                                                 manifest_type=DASH)
 
         for muxing_spec in muxings:
             muxing = muxing_spec['object_']
@@ -559,14 +564,15 @@ def make_dash_manifest(bitmovin, manifest_spec, encoding, output, video_encoding
         audio_stream_language = audio_stream_languages[stream_number]
 
         lang = audio_stream_language['lang']
-        audio_codec = audio_stream_language['codec']
 
         audio_adaptation_set = AudioAdaptationSet(lang=lang)
         audio_adaptation_set = bitmovin.manifests.DASH.add_audio_adaptation_set(object_=audio_adaptation_set,
                                                                                 manifest_id=dash_manifest.id,
                                                                                 period_id=period.id).resource
 
-        muxings = get_muxings_from_configs(configs=audio_encoding_configs, codec=audio_codec, manifest_type=DASH)
+        muxings = get_audio_muxings_from_configs(configs=audio_encoding_configs,
+                                                 stream_number=stream_number,
+                                                 manifest_type=DASH)
 
         for muxing_spec in muxings:
             muxing = muxing_spec['object_']
@@ -601,38 +607,45 @@ def make_hls_manifest(bitmovin, manifest_spec, encoding, output, video_encoding_
 
     audio_groups = []
 
-    for stream_number in range(number_of_audio_streams):
-        audio_stream_language = audio_stream_languages[stream_number]
+    audio_profiles_for_manifest = get_audio_profiles_from_codecs(codecs=manifest_spec['audio_codecs'])
 
-        lang = audio_stream_language['lang']
-        audio_codec = audio_stream_language['codec']
+    for audio_group_index, audio_profie_spec in enumerate(audio_profiles_for_manifest):
+        audio_codec = audio_profie_spec['codec']
 
-        muxings = get_muxings_from_configs(configs=audio_encoding_configs, codec=audio_codec, manifest_type=HLS)
-        audio_group_id = 'audio_{}'.format(audio_codec)
-
+        audio_group_id = 'audio_group_{}_{}'.format(audio_group_index, audio_codec)
         audio_groups.append(audio_group_id)
 
-        for muxing_spec in muxings:
-            muxing = muxing_spec['object_']
+        for stream_number in range(number_of_audio_streams):
+            audio_stream_language = audio_stream_languages[stream_number]
 
-            segment_path = get_segment_output_path(output_path=OUTPUT_BASE_PATH,
-                                                   muxing_output_path=muxing.outputs[0].outputPath)
+            lang = audio_stream_language['lang']
 
-            hls_audio_media = AudioMedia(name=lang, group_id=audio_group_id,
-                                         segment_path=segment_path,
-                                         encoding_id=encoding.id,
-                                         stream_id=muxing.streams[0].streamId,
-                                         muxing_id=muxing.id,
-                                         language=lang,
-                                         uri="audio_{}_{}.m3u8".format(stream_number, lang))
+            muxings = get_audio_muxings_from_configs(configs=audio_encoding_configs,
+                                                     stream_number=stream_number,
+                                                     manifest_type=HLS)
 
-            bitmovin.manifests.HLS.AudioMedia.create(manifest_id=hls_manifest.id, object_=hls_audio_media)
+            for muxing_spec in muxings:
+                muxing = muxing_spec['object_']
+
+                segment_path = get_segment_output_path(output_path=OUTPUT_BASE_PATH,
+                                                       muxing_output_path=muxing.outputs[0].outputPath)
+
+                hls_audio_media = AudioMedia(name=lang,
+                                             group_id=audio_group_id,
+                                             segment_path=segment_path,
+                                             encoding_id=encoding.id,
+                                             stream_id=muxing.streams[0].streamId,
+                                             muxing_id=muxing.id,
+                                             language=lang,
+                                             uri="audio_{}_{}_{}.m3u8".format(audio_group_index, stream_number, lang))
+
+                bitmovin.manifests.HLS.AudioMedia.create(manifest_id=hls_manifest.id, object_=hls_audio_media)
 
     for audio_group_id in audio_groups:
         for manifest_video_codec in manifest_spec['video_codecs']:
-            muxings = get_muxings_from_configs(configs=video_encoding_configs,
-                                               codec=manifest_video_codec,
-                                               manifest_type=HLS)
+            muxings = get_video_muxings_from_configs(configs=video_encoding_configs,
+                                                     codec=manifest_video_codec,
+                                                     manifest_type=HLS)
 
             for muxing_spec in muxings:
                 muxing = muxing_spec['object_']
@@ -655,9 +668,9 @@ def make_hls_manifest(bitmovin, manifest_spec, encoding, output, video_encoding_
     return hls_manifest
 
 
-def get_muxings_from_configs(configs, codec, manifest_type):
+def get_video_muxings_from_configs(configs, codec, manifest_type):
     """
-    Returns all muxings of a given codec to be used with a given manifest type (DASH/HLS).
+    Returns all video muxings of a given codec to be used with a given manifest type (DASH/HLS).
     """
     muxings = []
 
@@ -668,6 +681,28 @@ def get_muxings_from_configs(configs, codec, manifest_type):
             ]
 
     return muxings
+
+
+def get_audio_muxings_from_configs(configs, stream_number, manifest_type):
+    """
+    Returns all audio muxings of a given codec to be used with a given manifest type (DASH/HLS).
+    """
+    muxings = []
+
+    for config in configs:
+        muxings += [
+            muxing_spec for muxing_spec in config['muxing_list'] \
+                if muxing_spec['manifest_type'] == manifest_type and muxing_spec['stream_number'] == stream_number
+        ]
+
+    return muxings
+
+
+def get_audio_profiles_from_codecs(codecs):
+    """
+    Returns audio profiles with the given codecs.
+    """
+    return [config for config in AUDIO_ENCODING_PROFILES if config['codec'] in codecs]
 
 
 def get_audio_input_stream_analysis(bitmovin, encoding, stream):
