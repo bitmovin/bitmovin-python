@@ -1,15 +1,14 @@
 import datetime
 from pprint import pprint
 
-from bitmovin import Bitmovin, Encoding, SFTPInput, SFTPOutput, H264CodecConfiguration, VP9CodecConfiguration, H265CodecConfiguration,  \
-    AACCodecConfiguration, H264Profile, H264Level, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, \
-    ACLPermission, FMP4Muxing, MuxingStream, CloudRegion, DashManifest, FMP4Representation, FMP4RepresentationType, WebMRepresentation, \
-    WebMRepresentationType, Period, VideoAdaptationSet, AudioAdaptationSet, TSMuxing, WebMMuxing, HlsManifest, AudioMedia, VariantStream
+from bitmovin import Bitmovin, Encoding, SFTPInput, SFTPOutput, H264CodecConfiguration, VP9CodecConfiguration, \
+    H265CodecConfiguration, AACCodecConfiguration, H264Profile, H264Level, StreamInput, SelectionMode, Stream, \
+    EncodingOutput, ACLEntry, ACLPermission, FMP4Muxing, MuxingStream, CloudRegion, DashManifest, FMP4Representation, \
+    FMP4RepresentationType, WebMRepresentation, WebMRepresentationType, Period, VideoAdaptationSet, \
+    AudioAdaptationSet, TSMuxing, WebMMuxing, HlsManifest, AudioMedia, VariantStream
 from bitmovin.errors import BitmovinError
 from bitmovin.resources.models.encodings.conditions import Condition
 
-
-# useful constants.
 H264 = 'h264'
 H265 = 'h265'
 VP9 = 'vp9'
@@ -82,11 +81,18 @@ def main():
     bitmovin = Bitmovin(api_key=API_KEY)
 
     # Create a SFTP input. This resource is then used as base path for the input file.
-    input_ = SFTPInput(host=SFTP_INPUT_HOST, username=SFTP_INPUT_USERNAME, password=SFTP_INPUT_PASSWORD, name='SFTP Input')
-    input_ = bitmovin.inputs.SFTP.create(input_).resource
+    input_ = SFTPInput(host=SFTP_INPUT_HOST,
+                       username=SFTP_INPUT_USERNAME,
+                       password=SFTP_INPUT_PASSWORD,
+                       name='SFTP Input')
+
+    input_ = bitmovin.inputs.SFTP.create(object_=input_).resource
 
     # Create a SFTP output. This will be used as target storage for the muxings, sprites and manifests
-    output = SFTPOutput(host=SFTP_OUTPUT_HOST, username=SFTP_OUTPUT_USERNAME, password=SFTP_OUTPUT_PASSWORD, name='SFTP Output')
+    output = SFTPOutput(host=SFTP_OUTPUT_HOST,
+                        username=SFTP_OUTPUT_USERNAME,
+                        password=SFTP_OUTPUT_PASSWORD,
+                        name='SFTP Output')
     output = bitmovin.outputs.SFTP.create(output).resource
 
     # Create an Encoding. This will run in AWS_AP_SOUTHEAST_1. This is the base entity used to configure the encoding.
@@ -94,12 +100,23 @@ def main():
     encoding = bitmovin.encodings.Encoding.create(encoding).resource
 
     # create video/audio input streams
-    video_input_stream = make_stream_input(input_=input_, position=0, selection_mode=SelectionMode.VIDEO_RELATIVE)
-    audio_input_streams = [make_stream_input(input_=input_, position=i) for i in range(NUMBER_OF_AUDIO_CHANNELS_TO_CREATE)]
+    video_input_stream = make_stream_input(input_=input_,
+                                           position=0,
+                                           selection_mode=SelectionMode.VIDEO_RELATIVE)
+
+    audio_input_streams = [make_stream_input(input_=input_,
+                                             position=i) for i in range(NUMBER_OF_AUDIO_CHANNELS_TO_CREATE)]
 
     # create video/audio configurations
-    video_encoding_configs = [make_video_encoding_config(bitmovin=bitmovin, profile=video_profile) for video_profile in VIDEO_ENCODING_PROFILES]
-    audio_encoding_configs = [make_audio_encoding_config(bitmovin=bitmovin, profile=audio_profile) for audio_profile in AUDIO_ENCODING_PROFILES]
+    video_encoding_configs = [
+        make_video_encoding_config(bitmovin=bitmovin,
+                                   profile=video_profile) for video_profile in VIDEO_ENCODING_PROFILES
+    ]
+
+    audio_encoding_configs = [
+        make_audio_encoding_config(bitmovin=bitmovin,
+                                   profile=audio_profile) for audio_profile in AUDIO_ENCODING_PROFILES
+    ]
 
     # input stream audio conditions
     audio_stream_condition = Condition(attribute="INPUTSTREAM", operator="==", value="TRUE")
@@ -113,7 +130,9 @@ def main():
     # create audio streams
     for audio_config in audio_encoding_configs:
         for audio_stream_input in audio_input_streams:
-            audio_stream = Stream(codec_configuration_id=audio_config['codec'].id, input_streams=[audio_stream_input], conditions=audio_stream_condition)
+            audio_stream = Stream(codec_configuration_id=audio_config['codec'].id,
+                                  input_streams=[audio_stream_input],
+                                  conditions=audio_stream_condition)
             audio_stream = bitmovin.encodings.Stream.create(object_=audio_stream, encoding_id=encoding.id).resource
             audio_config['streams'].append(audio_stream)
 
@@ -124,7 +143,11 @@ def main():
     # create muxings for audio
     for audio_config in audio_encoding_configs:
         for stream in audio_config['streams']:
-            make_audio_muxings(bitmovin=bitmovin, encoding=encoding, audio_config=audio_config, stream=stream, output=output)
+            make_audio_muxings(bitmovin=bitmovin,
+                               encoding=encoding,
+                               audio_config=audio_config,
+                               stream=stream,
+                               output=output)
 
     # start the encoding process and wait until finished
     bitmovin.encodings.Encoding.start(encoding_id=encoding.id)
@@ -137,9 +160,11 @@ def main():
         exit(-1)
 
     # retrieve the input stream analysis to get the exact number of audio streams encoded.
-    number_of_audio_streams, audio_stream_languages = get_audio_input_stream_analysis(bitmovin=bitmovin,
-                                                                                      encoding=encoding,
-                                                                                      stream=audio_encoding_configs[0]['streams'][0])
+    number_of_audio_streams, audio_stream_languages = get_audio_input_stream_analysis(
+        bitmovin=bitmovin,
+        encoding=encoding,
+        stream=audio_encoding_configs[0]['streams'][0]
+    )
 
     # this holds the manifests to be started later.
     manifests_to_start = []
@@ -197,17 +222,14 @@ def main():
             print("Exception occurred while waiting for HLS manifest creation to finish: {}".format(bitmovin_error))
 
 
-################################################## Auxiliary functions ##################################################
-
-
 def make_video_encoding_config(bitmovin, profile):
-    '''
+    """
     Makes the video encoding configuration based on the given profile.
     This function can create configurations for the following codecs:
      - H264
      - H265
      - VP9
-    '''
+    """
     def make_h264_config():
         config = H264CodecConfiguration(name='h264_codecconfig_{}'.format(profile['bitrate']),
                                         bitrate=profile['bitrate'] * 1000,
@@ -250,11 +272,11 @@ def make_video_encoding_config(bitmovin, profile):
 
 
 def make_audio_encoding_config(bitmovin, profile):
-    '''
+    """
     Makes the audio encoding configuration based on the given profile.
     This function can create configurations for the following codecs:
      - AAC
-    '''
+    """
     def make_aac_config():
         config = AACCodecConfiguration(name='aac_codecconfig_{}'.format(profile['bitrate']),
                                        bitrate=profile['bitrate'] * 1000,
@@ -271,10 +293,10 @@ def make_audio_encoding_config(bitmovin, profile):
 
 
 def make_stream_input(input_, position, selection_mode=SelectionMode.AUDIO_RELATIVE):
-    '''
+    """
     Makes the stream input using the given position and selection_mode.
     Stream inputs are used to identify a certain stream in the input file.
-    '''
+    """
     return StreamInput(input_id=input_.id,
                        input_path=SFTP_INPUT_PATH,
                        selection_mode=selection_mode,
@@ -282,10 +304,10 @@ def make_stream_input(input_, position, selection_mode=SelectionMode.AUDIO_RELAT
 
 
 def make_video_muxings(bitmovin, encoding, video_config, output):
-    '''
+    """
     Makes video muxings based on the given video_config and the MANIFEST const.
     It creates all the necessary muxings to later be added to the manifests.
-    '''
+    """
     def make_fmp4(codec, manifest_type):
         encoding_profile = video_config['profile']
         muxing_output_path = '{}video/fmp4/{}/{}_{}/'.format(OUTPUT_BASE_PATH,
@@ -365,10 +387,10 @@ def make_video_muxings(bitmovin, encoding, video_config, output):
 
 
 def make_audio_muxings(bitmovin, encoding, audio_config, stream, output):
-    '''
+    """
     Makes audio muxings based on the given audio_config and the MANIFEST const.
     It creates all the necessary muxings to later be added to the manifests.
-    '''
+    """
     def make_fmp4(codec, manifest_type):
         encoding_profile = audio_config['profile']
         muxing_output_path = '{}audio/fmp4/{}/{}/'.format(OUTPUT_BASE_PATH,
@@ -425,9 +447,9 @@ def make_audio_muxings(bitmovin, encoding, audio_config, stream, output):
 
 
 def make_fmp4_muxing(bitmovin, encoding, stream, output, muxing_output_path):
-    '''
+    """
     Makes a fMP4 muxing.
-    '''
+    """
     acl_entry = ACLEntry(permission=ACLPermission.PUBLIC_READ)
 
     muxing_stream = MuxingStream(stream.id)
@@ -443,9 +465,9 @@ def make_fmp4_muxing(bitmovin, encoding, stream, output, muxing_output_path):
 
 
 def make_webm_muxing(bitmovin, encoding, stream, output, muxing_output_path):
-    '''
+    """
     Makes a WebM muxing.
-    '''
+    """
     acl_entry = ACLEntry(permission=ACLPermission.PUBLIC_READ)
 
     muxing_stream = MuxingStream(stream.id)
@@ -461,9 +483,9 @@ def make_webm_muxing(bitmovin, encoding, stream, output, muxing_output_path):
 
 
 def make_ts_muxing(bitmovin, encoding, stream, output, muxing_output_path):
-    '''
+    """
     Makes a TS muxing.
-    '''
+    """
     acl_entry = ACLEntry(permission=ACLPermission.PUBLIC_READ)
 
     muxing_stream = MuxingStream(stream.id)
@@ -477,10 +499,11 @@ def make_ts_muxing(bitmovin, encoding, stream, output, muxing_output_path):
     return bitmovin.encodings.Muxing.TS.create(object_=ts_muxing, encoding_id=encoding.id).resource
 
 
-def make_dash_manifest(bitmovin, manifest_spec, encoding, output, video_encoding_configs, audio_encoding_configs, number_of_audio_streams, audio_stream_languages):
-    '''
+def make_dash_manifest(bitmovin, manifest_spec, encoding, output, video_encoding_configs, audio_encoding_configs,
+                       number_of_audio_streams, audio_stream_languages):
+    """
     Makes the dash manifest. Adds all audio and video adaptation set with its own representations.
-    '''
+    """
     acl_entry = ACLEntry(permission=ACLPermission.PUBLIC_READ)
     manifest_output = EncodingOutput(output_id=output.id, output_path=OUTPUT_BASE_PATH, acl=[acl_entry])
 
@@ -496,13 +519,16 @@ def make_dash_manifest(bitmovin, manifest_spec, encoding, output, video_encoding
                                                                                 manifest_id=dash_manifest.id,
                                                                                 period_id=period.id).resource
 
-        muxings = get_muxings_from_configs(configs=video_encoding_configs, codec=manifest_video_codec, manifest_type=DASH)
+        muxings = get_muxings_from_configs(configs=video_encoding_configs,
+                                           codec=manifest_video_codec,
+                                           manifest_type=DASH)
 
         for muxing_spec in muxings:
             muxing = muxing_spec['object_']
             muxing_type = muxing_spec['type']
 
-            segment_path = get_segment_output_path(output_path=OUTPUT_BASE_PATH, muxing_output_path=muxing.outputs[0].outputPath)
+            segment_path = get_segment_output_path(output_path=OUTPUT_BASE_PATH,
+                                                   muxing_output_path=muxing.outputs[0].outputPath)
 
             if muxing_type == FMP4:
                 fmp4_representation = FMP4Representation(FMP4RepresentationType.TEMPLATE,
@@ -545,7 +571,8 @@ def make_dash_manifest(bitmovin, manifest_spec, encoding, output, video_encoding
         for muxing_spec in muxings:
             muxing = muxing_spec['object_']
 
-            segment_path = get_segment_output_path(output_path=OUTPUT_BASE_PATH, muxing_output_path=muxing.outputs[0].outputPath)
+            segment_path = get_segment_output_path(output_path=OUTPUT_BASE_PATH,
+                                                   muxing_output_path=muxing.outputs[0].outputPath)
 
             fmp4_representation_audio = FMP4Representation(FMP4RepresentationType.TEMPLATE,
                                                            encoding_id=encoding.id,
@@ -560,10 +587,11 @@ def make_dash_manifest(bitmovin, manifest_spec, encoding, output, video_encoding
     return dash_manifest
 
 
-def make_hls_manifest(bitmovin, manifest_spec, encoding, output, video_encoding_configs, audio_encoding_configs, number_of_audio_streams, audio_stream_languages):
-    '''
+def make_hls_manifest(bitmovin, manifest_spec, encoding, output, video_encoding_configs, audio_encoding_configs,
+                      number_of_audio_streams, audio_stream_languages):
+    """
     Makes the HLS manifes. Adds all audio groups and stream variants.
-    '''
+    """
     acl_entry = ACLEntry(permission=ACLPermission.PUBLIC_READ)
     manifest_output = EncodingOutput(output_id=output.id, output_path=OUTPUT_BASE_PATH, acl=[acl_entry])
 
@@ -587,7 +615,8 @@ def make_hls_manifest(bitmovin, manifest_spec, encoding, output, video_encoding_
         for muxing_spec in muxings:
             muxing = muxing_spec['object_']
 
-            segment_path = get_segment_output_path(output_path=OUTPUT_BASE_PATH, muxing_output_path=muxing.outputs[0].outputPath)
+            segment_path = get_segment_output_path(output_path=OUTPUT_BASE_PATH,
+                                                   muxing_output_path=muxing.outputs[0].outputPath)
 
             hls_audio_media = AudioMedia(name=lang, group_id=audio_group_id,
                                          segment_path=segment_path,
@@ -601,18 +630,22 @@ def make_hls_manifest(bitmovin, manifest_spec, encoding, output, video_encoding_
 
     for audio_group_id in audio_groups:
         for manifest_video_codec in manifest_spec['video_codecs']:
-            muxings = get_muxings_from_configs(configs=video_encoding_configs, codec=manifest_video_codec, manifest_type=HLS)
+            muxings = get_muxings_from_configs(configs=video_encoding_configs,
+                                               codec=manifest_video_codec,
+                                               manifest_type=HLS)
 
             for muxing_spec in muxings:
                 muxing = muxing_spec['object_']
                 encoding_profile = muxing_spec['encoding_profile']
 
-                segment_path = get_segment_output_path(output_path=OUTPUT_BASE_PATH, muxing_output_path=muxing.outputs[0].outputPath)
+                segment_path = get_segment_output_path(output_path=OUTPUT_BASE_PATH,
+                                                       muxing_output_path=muxing.outputs[0].outputPath)
 
                 # append another variant stream for this video quality to our hls renditions.
                 hls_variant_stream = VariantStream(audio=audio_group_id,
                                                    segment_path=segment_path,
-                                                   uri='video_{}_{}.m3u8'.format(encoding_profile.get('width'), encoding_profile.get('bitrate')),
+                                                   uri='video_{}_{}.m3u8'.format(encoding_profile.get('width'),
+                                                                                 encoding_profile.get('bitrate')),
                                                    encoding_id=encoding.id,
                                                    stream_id=muxing.streams[0].streamId,
                                                    muxing_id=muxing.id)
@@ -623,23 +656,26 @@ def make_hls_manifest(bitmovin, manifest_spec, encoding, output, video_encoding_
 
 
 def get_muxings_from_configs(configs, codec, manifest_type):
-    '''
+    """
     Returns all muxings of a given codec to be used with a given manifest type (DASH/HLS).
-    '''
+    """
     muxings = []
 
     for config in configs:
         if config['profile']['codec'] == codec:
-            muxings += [muxing_spec for muxing_spec in config['muxing_list'] if muxing_spec['manifest_type'] == manifest_type]
+            muxings += [
+                muxing_spec for muxing_spec in config['muxing_list'] if muxing_spec['manifest_type'] == manifest_type
+            ]
 
     return muxings
 
 
 def get_audio_input_stream_analysis(bitmovin, encoding, stream):
-    '''
+    """
     Returns number_of_audio_streams, audio_stream_languages.
-    '''
-    stream_input_analysis_list = bitmovin.encodings.InputAnalysis.list(encoding_id=encoding.id, stream_id=stream.id).resource
+    """
+    stream_input_analysis_list = bitmovin.encodings.InputAnalysis.list(encoding_id=encoding.id,
+                                                                       stream_id=stream.id).resource
     stream_input_analysis = stream_input_analysis_list[0]
     audio_stream_languages = []
     number_of_audio_streams = len(stream_input_analysis.details.audioStreams)
@@ -649,15 +685,16 @@ def get_audio_input_stream_analysis(bitmovin, encoding, stream):
 
     for audio_stream_analysis in stream_input_analysis.details.audioStreams:
         audio_stream_position = int(audio_stream_analysis.position) - 1
-        audio_stream_languages[audio_stream_position] = dict(lang=audio_stream_analysis.language, codec=audio_stream_analysis.codec)
+        audio_stream_languages[audio_stream_position] = dict(lang=audio_stream_analysis.language,
+                                                             codec=audio_stream_analysis.codec)
 
     return number_of_audio_streams, audio_stream_languages
 
 
 def get_segment_output_path(output_path, muxing_output_path):
-    '''
+    """
     Returns the output path for a stream segment.
-    '''
+    """
     segment_path = muxing_output_path
     substr = muxing_output_path[0:len(output_path)]
 
