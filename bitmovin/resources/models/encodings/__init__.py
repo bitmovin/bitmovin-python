@@ -18,3 +18,4 @@ from .id3 import ID3Tag, RawID3Tag, FrameIdID3Tag, PlainTextID3Tag
 from .ignored_by_type import IgnoredByType
 from .ignored_by import IgnoredBy
 from .start import StartEncodingRequest, StartEncodingTrimming
+from .conditions import ConditionType, Condition, AndConjunction, OrConjunction
