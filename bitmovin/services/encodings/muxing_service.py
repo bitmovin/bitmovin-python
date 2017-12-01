@@ -4,6 +4,7 @@ from .ts_muxing_service import TSMuxing
 from .mp4_muxing_service import MP4Muxing
 from .webm_muxing_service import WebMMuxing
 from .progressive_ts_muxing_service import ProgressiveTSMuxing
+from .progressive_mov_muxing_service import ProgressiveMOVMuxing
 
 
 class MuxingService(BitmovinObject):
@@ -15,3 +16,4 @@ class MuxingService(BitmovinObject):
         self.TS = TSMuxing(http_client=self.http_client)
         self.WebM = WebMMuxing(http_client=self.http_client)
         self.ProgressiveTS = ProgressiveTSMuxing(http_client=self.http_client)
+        self.ProgressiveMOV = ProgressiveMOVMuxing(http_client=self.http_client)
