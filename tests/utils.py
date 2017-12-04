@@ -1,7 +1,8 @@
 import os
 import json
 from bitmovin.errors import BitmovinError
-from bitmovin.resources.models import S3Output, S3Input, Encoding, H264CodecConfiguration
+from bitmovin.resources.models import S3Output, S3Input, Encoding, H264CodecConfiguration, MJPEGCodecConfiguration
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -87,3 +88,12 @@ def get_sample_h264_codec_configuration():
                                                       max_gop=None,
                                                       level='5.1')
     return h264_codec_configuration
+
+
+def get_sample_mjpeg_codec_config():
+    mjpeg_codec_configuration = MJPEGCodecConfiguration(name='MJPEG Sample Codec Config',
+                                                        description='MJPEG Sample Codec Config Long description',
+                                                        rate=1.0,
+                                                        q_scale=2)
+
+    return mjpeg_codec_configuration

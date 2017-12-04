@@ -171,8 +171,8 @@ class ProgressiveMOVMuxingTests(BitmovinTestCase):
         return muxing
 
     def _get_sample_stream(self):
-        sample_codec_configuration = self.utils.get_sample_h264_codec_configuration()
-        h264_codec_configuration = self.bitmovin.codecConfigurations.H264.create(sample_codec_configuration)
+        sample_codec_configuration = self.utils.get_sample_mjpeg_codec_config()
+        mjpeg_codec_config = self.bitmovin.codecConfigurations.MJPEG.create(sample_codec_configuration)
 
         (sample_input, sample_files) = self.utils.get_sample_s3_input()
         s3_input = self.bitmovin.inputs.S3.create(sample_input)
@@ -188,7 +188,7 @@ class ProgressiveMOVMuxingTests(BitmovinTestCase):
                                          output_path='/bitmovin-python/StreamTests/'+str(uuid.uuid4()),
                                          acl=[acl_entry])
 
-        stream = Stream(codec_configuration_id=h264_codec_configuration.resource.id,
+        stream = Stream(codec_configuration_id=mjpeg_codec_config.resource.id,
                         input_streams=[stream_input],
                         outputs=[encoding_output],
                         name='Sample Stream')
