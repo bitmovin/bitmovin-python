@@ -22,12 +22,12 @@ OUTPUT_BASE_PATH = '/output/bitmovin_python/{}/'.format(date_component)
 bitmovin = Bitmovin(api_key=API_KEY)
 
 encoding_profiles = [
-    dict(name='180p_300', height=180, bitrate=300, fps=None),
-    dict(name='270p_500', height=270, bitrate=500, fps=None),
-    dict(name='360p_800', height=360, bitrate=800, fps=None),
-    dict(name='480p_1500', height=480, bitrate=1500, fps=None),
-    dict(name='720p_3000', height=720, bitrate=3000, fps=None),
-    dict(name='1080p_6000', height=1080, bitrate=6000, fps=None)
+    dict(name='180p_300kbit', height=180, bitrate=300 * 1000, fps=None),
+    dict(name='270p_500kbit', height=270, bitrate=500 * 1000, fps=None),
+    dict(name='360p_800kbit', height=360, bitrate=800 * 1000, fps=None),
+    dict(name='480p_1500kbit', height=480, bitrate=1500 * 1000, fps=None),
+    dict(name='720p_3000kbit', height=720, bitrate=3000 * 1000, fps=None),
+    dict(name='1080p_6000kbit', height=1080, bitrate=6000 * 1000, fps=None)
 ]
 
 
