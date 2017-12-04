@@ -1,7 +1,8 @@
 import datetime
 
 from bitmovin import Bitmovin, Encoding, HTTPSInput, S3Output, StreamInput, SelectionMode, Stream, EncodingOutput, \
-    ACLEntry, ACLPermission, MuxingStream, CloudRegion, ProgressiveMOVMuxing, MJPEGCodecConfiguration
+    ACLEntry, ACLPermission, MuxingStream, CloudRegion, ProgressiveMOVMuxing, MJPEGCodecConfiguration, \
+    H264CodecConfiguration, H264Profile, FMP4Muxing, AACCodecConfiguration
 from bitmovin.errors import BitmovinError
 
 
@@ -18,11 +19,92 @@ S3_OUTPUT_BUCKETNAME = '<INSERT_YOUR_BUCKET_NAME>'
 date_component = str(datetime.datetime.now()).replace(' ', '_').replace(':', '-').split('.')[0].replace('_', '__')
 OUTPUT_BASE_PATH = '/output/bitmovin_python/{}/'.format(date_component)
 
+bitmovin = Bitmovin(api_key=API_KEY)
+
+encoding_profiles = [
+    dict(name='180p_300', height=180, bitrate=300, fps=None),
+    dict(name='270p_500', height=270, bitrate=500, fps=None),
+    dict(name='360p_800', height=360, bitrate=800, fps=None),
+    dict(name='480p_1500', height=480, bitrate=1500, fps=None),
+    dict(name='720p_3000', height=720, bitrate=3000, fps=None),
+    dict(name='1080p_6000', height=1080, bitrate=6000, fps=None)
+]
+
+
+def create_fmp4_muxings(encoding_id,
+                        video_input_stream,
+                        s3_output_id,
+                        audio_input_stream=None):
+
+    if audio_input_stream is not None:
+        aac_codec_config = AACCodecConfiguration(
+            'AAC Audio Config',
+            bitrate=128000,
+            rate=48000
+        )
+        aac_codec_config = bitmovin.codecConfigurations.AAC.create(aac_codec_config).resource
+
+        audio_stream = Stream(
+            codec_configuration_id=aac_codec_config.id,
+            input_streams=[audio_input_stream],
+            name='Audio Stream'
+        )
+        audio_stream = bitmovin.encodings.Stream.create(object_=audio_stream,
+                                                        encoding_id=encoding_id).resource
+
+        audio_muxing_stream = MuxingStream(audio_stream.id)
+        acl_entry = ACLEntry(permission=ACLPermission.PUBLIC_READ)
+        audio_fmp4_muxing_output = EncodingOutput(output_id=s3_output_id,
+                                                  output_path=OUTPUT_BASE_PATH + 'audio',
+                                                  acl=[acl_entry])
+
+        audio_fmp4_muxing = FMP4Muxing(streams=[audio_muxing_stream],
+                                       segment_length=4,
+                                       outputs=[audio_fmp4_muxing_output],
+                                       name='Audio Muxing')
+
+        audio_fmp4_muxing = bitmovin.encodings.Muxing.FMP4.create(object_=audio_fmp4_muxing,
+                                                                  encoding_id=encoding_id).resource
+
+    for encoding_profile in encoding_profiles:
+        h264_codec_config = H264CodecConfiguration(
+            name='{} H264 Codec Config'.format(encoding_profile.get('name')),
+            bitrate=encoding_profile.get('bitrate'),
+            height=encoding_profile.get('height'),
+            rate=encoding_profile.get('fps'),
+            profile=H264Profile.MAIN
+        )
+        h264_codec_config = bitmovin.codecConfigurations.H264.create(h264_codec_config).resource
+        video_stream = Stream(
+            codec_configuration_id=h264_codec_config.id,
+            input_streams=[video_input_stream],
+            name='{} Stream'.format(encoding_profile.get('name'))
+        )
+        video_stream = bitmovin.encodings.Stream.create(object_=video_stream,
+                                                        encoding_id=encoding_id).resource
+
+        video_muxing_stream = MuxingStream(video_stream.id)
+        acl_entry = ACLEntry(permission=ACLPermission.PUBLIC_READ)
+        fmp4_muxing_output = EncodingOutput(
+            output_id=s3_output_id,
+            output_path=OUTPUT_BASE_PATH + 'video/{}'.format(encoding_profile.get('name')),
+            acl=[acl_entry]
+        )
+
+        fmp4_muxing = FMP4Muxing(streams=[video_muxing_stream],
+                                 segment_length=4,
+                                 outputs=[fmp4_muxing_output],
+                                 name='{} Muxing'.format(encoding_profile.get('name')))
+
+        fmp4_muxing = bitmovin.encodings.Muxing.FMP4.create(object_=fmp4_muxing,
+                                                            encoding_id=encoding_id).resource
+
+    return
+
 
 def main():
-    bitmovin = Bitmovin(api_key=API_KEY)
 
-    https_input = HTTPSInput(name='keyframe_archive_encoding HTTPS input', host=HTTPS_INPUT_HOST)
+    https_input = HTTPSInput(name='create_simple_encoding HTTPS input', host=HTTPS_INPUT_HOST)
     https_input = bitmovin.inputs.HTTPS.create(https_input).resource
 
     s3_output = S3Output(access_key=S3_OUTPUT_ACCESSKEY,
@@ -38,15 +120,25 @@ def main():
 
     encoding = bitmovin.encodings.Encoding.create(encoding).resource
 
+    video_input_stream = StreamInput(input_id=https_input.id,
+                                     input_path=HTTPS_INPUT_PATH,
+                                     selection_mode=SelectionMode.AUTO)
+
+    audio_input_stream = StreamInput(input_id=https_input.id,
+                                     input_path=HTTPS_INPUT_PATH,
+                                     selection_mode=SelectionMode.AUTO,
+                                     position=1)
+
+    create_fmp4_muxings(encoding_id=encoding.id,
+                        video_input_stream=video_input_stream,
+                        audio_input_stream=audio_input_stream,
+                        s3_output_id=s3_output.id)
+
     mjpeg_codec_config = MJPEGCodecConfiguration(name='mjpeg codec configuration',
                                                  q_scale=2,
                                                  rate=1.0)
 
     mjpeg_codec_config = bitmovin.codecConfigurations.MJPEG.create(mjpeg_codec_config).resource
-
-    video_input_stream = StreamInput(input_id=https_input.id,
-                                     input_path=HTTPS_INPUT_PATH,
-                                     selection_mode=SelectionMode.AUTO)
 
     video_stream = Stream(codec_configuration_id=mjpeg_codec_config.id,
                           input_streams=[video_input_stream],
