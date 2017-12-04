@@ -2,7 +2,8 @@ import datetime
 
 from bitmovin import Bitmovin, Encoding, HTTPSInput, S3Output, StreamInput, SelectionMode, Stream, EncodingOutput, \
     ACLEntry, ACLPermission, MuxingStream, CloudRegion, ProgressiveMOVMuxing, MJPEGCodecConfiguration, \
-    H264CodecConfiguration, H264Profile, FMP4Muxing, AACCodecConfiguration
+    H264CodecConfiguration, H264Profile, FMP4Muxing, AACCodecConfiguration, DashManifest, Period, VideoAdaptationSet, \
+    AudioAdaptationSet, FMP4Representation, FMP4RepresentationType
 from bitmovin.errors import BitmovinError
 
 
@@ -29,6 +30,8 @@ encoding_profiles = [
     dict(name='720p_3000kbit', height=720, bitrate=3000 * 1000, fps=None),
     dict(name='1080p_6000kbit', height=1080, bitrate=6000 * 1000, fps=None)
 ]
+
+fmp4_muxings = []
 
 
 def create_fmp4_muxings(encoding_id,
@@ -66,6 +69,10 @@ def create_fmp4_muxings(encoding_id,
         audio_fmp4_muxing = bitmovin.encodings.Muxing.FMP4.create(object_=audio_fmp4_muxing,
                                                                   encoding_id=encoding_id).resource
 
+        fmp4_muxings.append(dict(type='audio',
+                                 muxing=audio_fmp4_muxing,
+                                 segment_path='audio'))
+
     for encoding_profile in encoding_profiles:
         h264_codec_config = H264CodecConfiguration(
             name='{} H264 Codec Config'.format(encoding_profile.get('name')),
@@ -99,7 +106,57 @@ def create_fmp4_muxings(encoding_id,
         fmp4_muxing = bitmovin.encodings.Muxing.FMP4.create(object_=fmp4_muxing,
                                                             encoding_id=encoding_id).resource
 
+        fmp4_muxings.append(dict(type='video',
+                                 muxing=fmp4_muxing,
+                                 segment_path='video/{}'.format(encoding_profile.get('name'))))
+
     return
+
+
+def create_dash_manifest(encoding_id, s3_output_id):
+
+    acl_entry = ACLEntry(permission=ACLPermission.PUBLIC_READ)
+    manifest_output = EncodingOutput(output_id=s3_output_id,
+                                     output_path=OUTPUT_BASE_PATH,
+                                     acl=[acl_entry])
+
+    dash_manifest = DashManifest(manifest_name='myManifest.mpd',
+                                 outputs=[manifest_output],
+                                 name='Sample DASH Manifest')
+
+    dash_manifest = bitmovin.manifests.DASH.create(dash_manifest).resource
+    period = Period()
+    period = bitmovin.manifests.DASH.add_period(object_=period,
+                                                manifest_id=dash_manifest.id).resource
+
+    video_adaptation_set = VideoAdaptationSet()
+    video_adaptation_set = bitmovin.manifests.DASH.add_video_adaptation_set(object_=video_adaptation_set,
+                                                                            manifest_id=dash_manifest.id,
+                                                                            period_id=period.id).resource
+    audio_adaptation_set = AudioAdaptationSet(lang='en')
+    audio_adaptation_set = bitmovin.manifests.DASH.add_audio_adaptation_set(object_=audio_adaptation_set,
+                                                                            manifest_id=dash_manifest.id,
+                                                                            period_id=period.id).resource
+
+    for fmp4_muxing in fmp4_muxings:
+        fmp4_representation = FMP4Representation(FMP4RepresentationType.TEMPLATE,
+                                                 encoding_id=encoding_id,
+                                                 muxing_id=fmp4_muxing.get('muxing').id,
+                                                 segment_path=fmp4_muxing.get('segment_path'))
+
+        if fmp4_muxing.get('type') == 'audio':
+            adapation_set_id = audio_adaptation_set.id
+        else:
+            adapation_set_id = video_adaptation_set.id
+
+        fmp4_representation = bitmovin.manifests.DASH.add_fmp4_representation(
+            object_=fmp4_representation,
+            manifest_id=dash_manifest.id,
+            period_id=period.id,
+            adaptationset_id=adapation_set_id
+        ).resource
+
+    return dash_manifest
 
 
 def main():
@@ -126,8 +183,7 @@ def main():
 
     audio_input_stream = StreamInput(input_id=https_input.id,
                                      input_path=HTTPS_INPUT_PATH,
-                                     selection_mode=SelectionMode.AUTO,
-                                     position=1)
+                                     selection_mode=SelectionMode.AUTO)
 
     create_fmp4_muxings(encoding_id=encoding.id,
                         video_input_stream=video_input_stream,
@@ -169,6 +225,14 @@ def main():
         bitmovin.encodings.Encoding.wait_until_finished(encoding_id=encoding.id)
     except BitmovinError as bitmovin_error:
         print("Exception occurred while waiting for encoding to finish: {}".format(bitmovin_error))
+
+    dash_manifest = create_dash_manifest(encoding_id=encoding.id, s3_output_id=s3_output.id)
+    bitmovin.manifests.DASH.start(manifest_id=dash_manifest.id)
+
+    try:
+        bitmovin.manifests.DASH.wait_until_finished(manifest_id=dash_manifest.id)
+    except BitmovinError as bitmovin_error:
+        print("Exception occurred while waiting for manifest creation to finish: {}".format(bitmovin_error))
 
 
 if __name__ == '__main__':
