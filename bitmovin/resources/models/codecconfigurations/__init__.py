@@ -2,3 +2,4 @@ from .aac_codec_configuration import AACCodecConfiguration
 from .h264_codec_configuration import H264CodecConfiguration
 from .h265_codec_configuration import H265CodecConfiguration
 from .vp9_codec_configuration import VP9CodecConfiguration
+from .mjpeg_codec_configuration import MJPEGCodecConfiguration

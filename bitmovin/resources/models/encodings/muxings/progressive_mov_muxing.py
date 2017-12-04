@@ -1,10 +1,10 @@
 from .muxing import Muxing
 
 
-class MP4Muxing(Muxing):
+class ProgressiveMOVMuxing(Muxing):
 
-    def __init__(self, streams, filename=None, outputs=None, id_=None, custom_data=None, name=None, description=None,
-                 ignored_by=None):
+    def __init__(self, streams, filename, outputs=None, id_=None, custom_data=None,
+                 name=None, description=None, ignored_by=None):
         super().__init__(id_=id_, custom_data=custom_data, streams=streams, outputs=outputs,
                          name=name, description=description, ignored_by=ignored_by)
         self.filename = filename
@@ -21,8 +21,10 @@ class MP4Muxing(Muxing):
         description = muxing.description
         ignored_by = muxing.ignored_by
 
-        filename = json_object['filename']
+        filename = json_object.get('filename')
 
-        mp4_muxing = MP4Muxing(streams=streams, filename=filename, outputs=outputs, id_=id_, custom_data=custom_data,
-                               name=name, description=description, ignored_by=ignored_by)
-        return mp4_muxing
+        progressive_ts_muxing = ProgressiveMOVMuxing(streams=streams, filename=filename, outputs=outputs, id_=id_,
+                                                     custom_data=custom_data, name=name, description=description,
+                                                     ignored_by=ignored_by)
+
+        return progressive_ts_muxing

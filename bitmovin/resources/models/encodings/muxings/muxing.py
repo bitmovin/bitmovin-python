@@ -40,9 +40,11 @@ class Muxing(AbstractNameDescriptionResource, AbstractModel, Serializable):
         avg_bitrate = json_object.get('avgBitrate')
         max_bitrate = json_object.get('maxBitrate')
         min_bitrate = json_object.get('minBitrate')
+        ignored_by = json_object.get('ignoredBy')
+
         muxing = Muxing(id_=id_, custom_data=custom_data, streams=streams, outputs=outputs,
                         name=name, description=description, avg_bitrate=avg_bitrate, max_bitrate=max_bitrate,
-                        min_bitrate=min_bitrate)
+                        min_bitrate=min_bitrate, ignored_by=ignored_by)
         return muxing
 
     @property
