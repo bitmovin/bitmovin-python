@@ -14,6 +14,7 @@ class TSMuxing(Muxing):
     @classmethod
     def parse_from_json_object(cls, json_object):
         muxing = super().parse_from_json_object(json_object=json_object)
+
         id_ = muxing.id
         custom_data = muxing.customData
         streams = muxing.streams
@@ -23,9 +24,10 @@ class TSMuxing(Muxing):
         max_bitrate = muxing.maxBitrate
         min_bitrate = muxing.minBitrate
         avg_bitrate = muxing.avgBitrate
+        ignored_by = muxing.ignored_by
+
         segment_length = json_object['segmentLength']
         segment_naming = json_object.get('segmentNaming')
-        ignored_by = json_object.get('ignoredBy')
 
         ts_muxing = TSMuxing(streams=streams, segment_length=segment_length, segment_naming=segment_naming,
                              outputs=outputs, id_=id_, custom_data=custom_data, name=name, description=description,
