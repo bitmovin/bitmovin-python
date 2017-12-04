@@ -26,7 +26,9 @@ class MJPEGCodecConfigurationTests(BitmovinTestCase):
 
     def test_create_mjpeg_codec_configuration(self):
         sample_codec_configuration = self._get_sample_mjpeg_codec_configuration()
-        codec_configuration_resource_response = self.bitmovin.codecConfigurations.MJPEG.create(sample_codec_configuration)
+        codec_configuration_resource_response = self.bitmovin.codecConfigurations.MJPEG.create(
+            sample_codec_configuration
+        )
         self.assertIsNotNone(codec_configuration_resource_response)
         self.assertIsNotNone(codec_configuration_resource_response.resource)
         self.assertIsNotNone(codec_configuration_resource_response.resource.id)
@@ -35,11 +37,16 @@ class MJPEGCodecConfigurationTests(BitmovinTestCase):
 
     def test_retrieve_mjpeg_codec_configuration(self):
         sample_codec_configuration = self._get_sample_mjpeg_codec_configuration()
-        created_codec_configuration_response = self.bitmovin.codecConfigurations.MJPEG.create(sample_codec_configuration)
+        created_codec_configuration_response = self.bitmovin.codecConfigurations.MJPEG.create(
+            sample_codec_configuration
+        )
         self.assertIsNotNone(created_codec_configuration_response)
         self.assertIsNotNone(created_codec_configuration_response.resource)
         self.assertIsNotNone(created_codec_configuration_response.resource.id)
-        self._compare_mjpeg_codec_configurations(sample_codec_configuration, created_codec_configuration_response.resource)
+        self._compare_mjpeg_codec_configurations(
+            sample_codec_configuration,
+            created_codec_configuration_response.resource
+        )
 
         retrieved_codec_configuration_response = self.bitmovin.codecConfigurations.MJPEG.retrieve(
             created_codec_configuration_response.resource.id)
@@ -50,11 +57,16 @@ class MJPEGCodecConfigurationTests(BitmovinTestCase):
 
     def test_delete_mjpeg_codec_configuration(self):
         sample_codec_configuration = self._get_sample_mjpeg_codec_configuration()
-        created_codec_configuration_response = self.bitmovin.codecConfigurations.MJPEG.create(sample_codec_configuration)
+        created_codec_configuration_response = self.bitmovin.codecConfigurations.MJPEG.create(
+            sample_codec_configuration
+        )
         self.assertIsNotNone(created_codec_configuration_response)
         self.assertIsNotNone(created_codec_configuration_response.resource)
         self.assertIsNotNone(created_codec_configuration_response.resource.id)
-        self._compare_mjpeg_codec_configurations(sample_codec_configuration, created_codec_configuration_response.resource)
+        self._compare_mjpeg_codec_configurations(
+            sample_codec_configuration,
+            created_codec_configuration_response.resource
+        )
 
         deleted_minimal_resource = self.bitmovin.codecConfigurations.MJPEG.delete(
             created_codec_configuration_response.resource.id)
@@ -73,7 +85,9 @@ class MJPEGCodecConfigurationTests(BitmovinTestCase):
 
     def test_list_mjpeg_codec_configurations(self):
         sample_codec_configuration = self._get_sample_mjpeg_codec_configuration()
-        created_codec_configuration_response = self.bitmovin.codecConfigurations.MJPEG.create(sample_codec_configuration)
+        created_codec_configuration_response = self.bitmovin.codecConfigurations.MJPEG.create(
+            sample_codec_configuration
+        )
         self.assertIsNotNone(created_codec_configuration_response)
         self.assertIsNotNone(created_codec_configuration_response.resource)
         self.assertIsNotNone(created_codec_configuration_response.resource.id)
@@ -91,7 +105,9 @@ class MJPEGCodecConfigurationTests(BitmovinTestCase):
     def test_retrieve_mjpeg_codec_configuration_custom_data(self):
         sample_codec_configuration = self._get_sample_mjpeg_codec_configuration()
         sample_codec_configuration.customData = '<pre>my custom data</pre>'
-        created_codec_configuration_response = self.bitmovin.codecConfigurations.MJPEG.create(sample_codec_configuration)
+        created_codec_configuration_response = self.bitmovin.codecConfigurations.MJPEG.create(
+            sample_codec_configuration
+        )
         self.assertIsNotNone(created_codec_configuration_response)
         self.assertIsNotNone(created_codec_configuration_response.resource)
         self.assertIsNotNone(created_codec_configuration_response.resource.id)
