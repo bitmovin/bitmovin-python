@@ -9,7 +9,7 @@ class MJPEGCodecConfiguration(AbstractCodecConfiguration):
 
         self.width = width
         self.height = height
-        self.pixel_format = pixel_format
+        self.pixelFormat = pixel_format
         self.qScale = q_scale
         self.rate = rate
 
