@@ -22,7 +22,7 @@ OUTPUT_BASE_PATH = '/output/bitmovin_python/{}/'.format(date_component)
 def main():
     bitmovin = Bitmovin(api_key=API_KEY)
 
-    https_input = HTTPSInput(name='create_simple_encoding HTTPS input', host=HTTPS_INPUT_HOST)
+    https_input = HTTPSInput(name='keyframe_archive_encoding HTTPS input', host=HTTPS_INPUT_HOST)
     https_input = bitmovin.inputs.HTTPS.create(https_input).resource
 
     s3_output = S3Output(access_key=S3_OUTPUT_ACCESSKEY,
