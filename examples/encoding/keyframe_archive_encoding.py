@@ -1,7 +1,7 @@
 import datetime
 
 from bitmovin import Bitmovin, Encoding, HTTPSInput, S3Output, StreamInput, SelectionMode, Stream, EncodingOutput, \
-    ACLEntry, ACLPermission, MuxingStream, CloudRegion, ProgressiveMOVMuxing, MjpegCodecConfiguration
+    ACLEntry, ACLPermission, MuxingStream, CloudRegion, ProgressiveMOVMuxing, MJPEGCodecConfiguration
 from bitmovin.errors import BitmovinError
 
 
@@ -38,7 +38,7 @@ def main():
 
     encoding = bitmovin.encodings.Encoding.create(encoding).resource
 
-    mjpeg_codec_config = MjpegCodecConfiguration(name='mjpeg codec configuration',
+    mjpeg_codec_config = MJPEGCodecConfiguration(name='mjpeg codec configuration',
                                                  q_scale=2,
                                                  rate=1.0)
 

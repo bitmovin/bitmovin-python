@@ -1,7 +1,7 @@
 from .abstract_codec_configuration import AbstractCodecConfiguration
 
 
-class MjpegCodecConfiguration(AbstractCodecConfiguration):
+class MJPEGCodecConfiguration(AbstractCodecConfiguration):
     def __init__(self, name, id_=None, description=None, custom_data=None, rate=None, width=None, height=None,
                  pixel_format=None, q_scale=None):
 
@@ -28,7 +28,7 @@ class MjpegCodecConfiguration(AbstractCodecConfiguration):
         pixel_format = json_object.get('pixelFormat')
         q_scale = json_object.get('qScale')
 
-        mjpeg_codec_config = MjpegCodecConfiguration(name=name, id_=id_, description=description,
+        mjpeg_codec_config = MJPEGCodecConfiguration(name=name, id_=id_, description=description,
                                                      custom_data=custom_data, rate=rate, width=width, height=height,
                                                      pixel_format=pixel_format, q_scale=q_scale)
 
