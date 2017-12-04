@@ -12,14 +12,16 @@ class ProgressiveMOVMuxing(Muxing):
     @classmethod
     def parse_from_json_object(cls, json_object):
         muxing = super().parse_from_json_object(json_object=json_object)
+
         id_ = muxing.id
         custom_data = muxing.customData
         streams = muxing.streams
         outputs = muxing.outputs
         name = muxing.name
         description = muxing.description
+        ignored_by = muxing.ignored_by
+
         filename = json_object.get('filename')
-        ignored_by = json_object.get('ignoredBy')
 
         progressive_ts_muxing = ProgressiveMOVMuxing(streams=streams, filename=filename, outputs=outputs, id_=id_,
                                                      custom_data=custom_data, name=name, description=description,

@@ -17,6 +17,7 @@ class FMP4Muxing(Muxing):
     @classmethod
     def parse_from_json_object(cls, json_object):
         muxing = super().parse_from_json_object(json_object=json_object)
+
         id_ = muxing.id
         custom_data = muxing.customData
         streams = muxing.streams
@@ -26,10 +27,11 @@ class FMP4Muxing(Muxing):
         max_bitrate = muxing.maxBitrate
         min_bitrate = muxing.minBitrate
         avg_bitrate = muxing.avgBitrate
+        ignored_by = muxing.ignored_by
+
         segment_length = json_object['segmentLength']
         segment_naming = json_object.get('segmentNaming')
         init_segment_name = json_object.get('initSegmentName')
-        ignored_by = json_object.get('ignoredBy')
 
         fmp4_muxing = FMP4Muxing(streams=streams, segment_length=segment_length, segment_naming=segment_naming,
                                  init_segment_name=init_segment_name, outputs=outputs, id_=id_, custom_data=custom_data,
