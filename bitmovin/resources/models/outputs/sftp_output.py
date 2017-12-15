@@ -1,9 +1,10 @@
-from . import AbstractOutput
-from bitmovin.resources.enums import FTPTransferVersion
 from bitmovin.errors import InvalidTypeError
+from bitmovin.resources.enums import FTPTransferVersion
+from bitmovin.utils import Serializable
+from . import AbstractOutput
 
 
-class SFTPOutput(AbstractOutput):
+class SFTPOutput(AbstractOutput, Serializable):
 
     def __init__(self, host, username, password, port=None, id_=None, custom_data=None, name=None, description=None,
                  transfer_version=None, max_concurrent_connections=None):
@@ -54,3 +55,8 @@ class SFTPOutput(AbstractOutput):
             transfer_version=transfer_version, max_concurrent_connections=max_concurrent_connections
         )
         return sftp_output
+
+    def serialize(self):
+        serialized = super().serialize()
+        serialized['transferVersion'] = self.transferVersion
+        return serialized
