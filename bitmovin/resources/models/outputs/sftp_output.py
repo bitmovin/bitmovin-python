@@ -34,7 +34,9 @@ class SFTPOutput(AbstractOutput):
         else:
             raise InvalidTypeError(
                 'Invalid type {} for transferVersion: must be either str or FTPTransferVersion!'.format(
-                    type(new_transfer_version)))
+                    type(new_transfer_version)
+                )
+            )
 
     @classmethod
     def parse_from_json_object(cls, json_object):
