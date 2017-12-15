@@ -1,6 +1,6 @@
 import unittest
 import json
-from bitmovin import Bitmovin, Response, SFTPOutput
+from bitmovin import Bitmovin, Response, SFTPOutput, FTPTransferVersion
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
 
@@ -125,6 +125,8 @@ class SFTPOutputTests(BitmovinTestCase):
         self.assertEqual(first.host, second.host)
         self.assertEqual(first.name, second.name)
         self.assertEqual(first.description, second.description)
+        self.assertEqual(first.maxConcurrentConnections, second.maxConcurrentConnections)
+        self.assertEqual(first.transferVersion, second.transferVersion)
 
     def _get_sample_sftp_output(self):
         sftp_output_settings = self.settings.get('sampleObjects').get('outputs').get('sftp')\
@@ -133,7 +135,9 @@ class SFTPOutputTests(BitmovinTestCase):
             host=sftp_output_settings.get('host'),
             username=sftp_output_settings.get('username'),
             password=sftp_output_settings.get('password'),
-            name='Sample SFTP Output'
+            name='Sample SFTP Output',
+            max_concurrent_connections=35,
+            transfer_version=FTPTransferVersion.V1_1_0
         )
         self.assertIsNotNone(sftp_output.host)
         self.assertIsNotNone(sftp_output.username)
