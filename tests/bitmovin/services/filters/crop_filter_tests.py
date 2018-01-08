@@ -1,6 +1,7 @@
 import unittest
 import json
 from bitmovin import Bitmovin, Response, CropFilter
+from bitmovin.resources.enums.crop_filter_unit import CropFilterUnit
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
 
@@ -35,6 +36,15 @@ class CropFilterTests(BitmovinTestCase):
     def test_create_crop_filter_without_name(self):
         sample_filter = self._get_sample_crop_filter()
         sample_filter.name = None
+        filter_resource_response = self.bitmovin.filters.Crop.create(sample_filter)
+        self.assertIsNotNone(filter_resource_response)
+        self.assertIsNotNone(filter_resource_response.resource)
+        self.assertIsNotNone(filter_resource_response.resource.id)
+        self._compare_crop_filters(sample_filter, filter_resource_response.resource)
+
+    def test_create_crop_filter_with_percents_unit(self):
+        sample_filter = self._get_sample_crop_filter()
+        sample_filter.unit = CropFilterUnit.PERCENTS
         filter_resource_response = self.bitmovin.filters.Crop.create(sample_filter)
         self.assertIsNotNone(filter_resource_response)
         self.assertIsNotNone(filter_resource_response.resource)
