@@ -6,3 +6,4 @@ from .audio_mix_source_channel import AudioMixSourceChannel
 from .audio_mix_channel import AudioMixChannel
 from .audio_mix_filter import AudioMixFilter
 from .deinterlace_filter import DeinterlaceFilter
+from .denoise_hqdn3d_filter import DenoiseHqdn3dFilter
