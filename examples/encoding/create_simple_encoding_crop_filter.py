@@ -119,8 +119,8 @@ def main():
 
     acl_entry = ACLEntry(permission=ACLPermission.PUBLIC_READ)
 
-    # Create TS and FMP4 muxings which are later used for the HLS and DASH manifest. The current settings will set a segment length
-    # of 4 seconds.
+    # Create TS and FMP4 muxings which are later used for the HLS and DASH manifest. The current settings will set a
+    # segment length of 4 seconds.
     for encoding_config in encoding_configs:
         encoding_profile = encoding_config.get("profile_h264")
         video_muxing_stream_h264 = MuxingStream(encoding_config.get("h264_stream").id)
