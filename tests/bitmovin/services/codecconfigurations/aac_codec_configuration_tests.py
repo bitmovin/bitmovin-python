@@ -115,7 +115,6 @@ class AACCodecConfigurationTests(BitmovinTestCase):
         self.assertEqual(first.bitrate, second.bitrate)
         self.assertEqual(first.rate, second.rate)
         self.assertEqual(first.channelLayout, second.channelLayout)
-        self.assertEqual(first.normalize, second.normalize)
         return True
 
     def _get_sample_aac_codec_configuration(self):
@@ -124,14 +123,13 @@ class AACCodecConfigurationTests(BitmovinTestCase):
                                                         bitrate=1280000,
                                                         rate=48000,
                                                         volume_adjust=None,
-                                                        normalize=False)
+                                                        normalize=None)
 
         self.assertIsNotNone(aac_codec_configuration.name)
         self.assertIsNotNone(aac_codec_configuration.description)
         self.assertIsNotNone(aac_codec_configuration.bitrate)
         self.assertIsNotNone(aac_codec_configuration.rate)
         self.assertIsNotNone(aac_codec_configuration.channelLayout)
-        self.assertIsNotNone(aac_codec_configuration.normalize)
         return aac_codec_configuration
 
 
