@@ -14,8 +14,6 @@ class AACCodecConfiguration(AudioCodecConfiguration, Serializable):
 
         self._channelLayout = None
         self.channelLayout = channel_layout
-        self.volumeAdjust = volume_adjust
-        self.normalize = normalize
 
     @property
     def channelLayout(self):
@@ -47,13 +45,11 @@ class AACCodecConfiguration(AudioCodecConfiguration, Serializable):
         bitrate = audio_codec_configuration.bitrate
 
         channel_layout = json_object.get('channelLayout')
-        volume_adjust = json_object.get('volumeAdjust')
-        normalize = json_object.get('normalize')
 
         aac_codec_configuration = AACCodecConfiguration(id_=id_, name=name, description=description,
                                                         custom_data=custom_data, bitrate=bitrate, rate=rate,
-                                                        channel_layout=channel_layout, volume_adjust=volume_adjust,
-                                                        normalize=normalize)
+                                                        channel_layout=channel_layout, volume_adjust=None,
+                                                        normalize=None)
 
         return aac_codec_configuration
 

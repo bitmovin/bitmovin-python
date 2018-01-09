@@ -189,6 +189,7 @@ class PlainTextID3TagTests(BitmovinTestCase):
         self.assertIsInstance(plain_text_id3_tags.response, Response)
         self.assertGreater(plain_text_id3_tags.resource.__sizeof__(), 1)
 
+    @unittest.skip('GET customData route not available yet.')  # TODO: implement get customdata route in service
     def test_retrieve_id3_custom_data(self):
         ts_muxing = self._create_muxing()  # type: ProgressiveTSMuxing
         self.assertIsNotNone(ts_muxing.id)
