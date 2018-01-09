@@ -49,6 +49,7 @@ class CropFilterTests(BitmovinTestCase):
         self.assertIsNotNone(filter_resource_response)
         self.assertIsNotNone(filter_resource_response.resource)
         self.assertIsNotNone(filter_resource_response.resource.id)
+        self.assertEqual(first=sample_filter.unit, second=filter_resource_response.resource.unit)
         self._compare_crop_filters(sample_filter, filter_resource_response.resource)
 
     def test_retrieve_crop_filter(self):
