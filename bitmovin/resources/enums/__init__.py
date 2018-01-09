@@ -3,6 +3,7 @@ from .aac_channel_layout import AACChannelLayout
 from .aws_cloud_region import AWSCloudRegion
 from .badapt import BAdapt
 from .cloud_region import CloudRegion
+from .crop_filter_unit import CropFilterUnit
 from .google_cloud_region import GoogleCloudRegion
 from .h264_level import H264Level
 from .h264_profile import H264Profile
