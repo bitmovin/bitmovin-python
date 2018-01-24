@@ -283,6 +283,7 @@ class ContentProtectionTests(BitmovinTestCase):
                                                     muxing_id=muxing_id,
                                                     segment_path='/path/to/segments/',
                                                     start_segment_number=1,
+                                                    end_segment_number=2,
                                                     drm_id=drm_id)
 
         return fmp4_representation

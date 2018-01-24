@@ -7,7 +7,7 @@ from bitmovin.utils import Serializable
 class AbstractFMP4Representation(AbstractModel, Serializable):
 
     def __init__(self, type, encoding_id, muxing_id, segment_path, start_segment_number=None,
-                 id_=None, custom_data=None):
+                 end_segment_number=None, id_=None, custom_data=None):
         super().__init__(id_=id_, custom_data=custom_data)
         self._type = None
         self.type = type
@@ -15,6 +15,7 @@ class AbstractFMP4Representation(AbstractModel, Serializable):
         self.muxingId = muxing_id
         self.segmentPath = segment_path
         self.startSegmentNumber = start_segment_number
+        self.endSegmentNumber = end_segment_number
 
     @property
     def type(self):
@@ -44,9 +45,11 @@ class AbstractFMP4Representation(AbstractModel, Serializable):
         muxing_id = json_object['muxingId']
         segment_path = json_object['segmentPath']
         start_segment_number = json_object.get('startSegmentNumber')
+        end_segment_number = json_object.get('endSegmentNumber')
         abstract_fmp4_representation = AbstractFMP4Representation(
             id_=id_, custom_data=custom_data, type=type, encoding_id=encoding_id, muxing_id=muxing_id,
-            segment_path=segment_path, start_segment_number=start_segment_number)
+            segment_path=segment_path, start_segment_number=start_segment_number,
+            end_segment_number=end_segment_number)
         return abstract_fmp4_representation
 
     def serialize(self):

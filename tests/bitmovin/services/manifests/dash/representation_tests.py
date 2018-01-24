@@ -153,6 +153,7 @@ class RepresentationTests(BitmovinTestCase):
         self.assertEqual(first.muxingId, second.muxingId)
         self.assertEqual(first.segmentPath, second.segmentPath)
         self.assertEqual(first.startSegmentNumber, second.startSegmentNumber)
+        self.assertEqual(first.endSegmentNumber, second.endSegmentNumber)
         return True
 
     def _compare_drm_fmp4_representations(self, first: DRMFMP4Representation, second: DRMFMP4Representation):
@@ -234,7 +235,8 @@ class RepresentationTests(BitmovinTestCase):
                                                  encoding_id=encoding_id,
                                                  muxing_id=muxing_id,
                                                  segment_path='/path/to/segments/',
-                                                 start_segment_number=1)
+                                                 start_segment_number=1,
+                                                 end_segment_number=2)
 
         return fmp4_representation
 
@@ -247,6 +249,7 @@ class RepresentationTests(BitmovinTestCase):
                                                     muxing_id=muxing_id,
                                                     segment_path='/path/to/segments/',
                                                     start_segment_number=1,
+                                                    end_segment_number=2,
                                                     drm_id=drm_id)
 
         return fmp4_representation
