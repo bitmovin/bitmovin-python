@@ -116,6 +116,7 @@ class S3OutputTests(BitmovinTestCase):
         self.assertEqual(first.cloudRegion, second.cloudRegion)
         self.assertEqual(first.name, second.name)
         self.assertEqual(first.description, second.description)
+        self.assertEqual(first.md5MetaTag, second.md5MetaTag)
 
     def _get_sample_s3_output(self):
         s3_output_settings = self.settings.get('sampleObjects').get('outputs').get('s3')\
@@ -125,12 +126,14 @@ class S3OutputTests(BitmovinTestCase):
             secret_key=s3_output_settings.get('secretKey'),
             bucket_name=s3_output_settings.get('bucketName'),
             cloud_region=s3_output_settings.get('cloudRegion'),
-            name='Sample S3 Output'
+            name='Sample S3 Output',
+            md5_meta_tag=s3_output_settings.get('md5MetaTag')
         )
         self.assertIsNotNone(s3_output.accessKey)
         self.assertIsNotNone(s3_output.secretKey)
         self.assertIsNotNone(s3_output.bucketName)
         self.assertIsNotNone(s3_output.cloudRegion)
+        self.assertIsNotNone(s3_output.md5MetaTag)
         return s3_output
 
 
