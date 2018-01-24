@@ -28,7 +28,6 @@ SEGMENT_LENGTH = 4
 VIDEO_FRAME_RATE = 25.0
 AUDIO_SAMPLE_RATE = 48000
 
-
 bitmovin = Bitmovin(api_key=API_KEY)
 
 
@@ -41,9 +40,9 @@ def main():
     resource_response = bitmovin.inputs.RTMP.list()
 
     if not resource_response or \
-       not resource_response.resource or \
-       not isinstance(resource_response.resource, list) or \
-       len(resource_response.resource) < 1:
+            not resource_response.resource or \
+            not isinstance(resource_response.resource, list) or \
+            len(resource_response.resource) < 1:
         print('Could not find any RTMP inputs. Please contact support.')
         sys.exit(3)
 
@@ -79,7 +78,6 @@ def main():
         cloud_region=CloudRegion.AWS_EU_WEST_1
     )
     encoding = bitmovin.encodings.Encoding.create(encoding).resource
-    
 
     acl_entry = ACLEntry(permission=ACLPermission.PUBLIC_READ)
     manifest_output = EncodingOutput(
@@ -109,7 +107,6 @@ def main():
         period_id=period.id
     ).resource
 
-
     audio_adaptation_set = AudioAdaptationSet(lang='en')
     audio_adaptation_set = bitmovin.manifests.DASH.add_audio_adaptation_set(
         object_=audio_adaptation_set,
@@ -124,23 +121,31 @@ def main():
     )
     hls_manifest = bitmovin.manifests.HLS.create(object_=hls_manifest).resource
 
-    createH264Rendition(encoding, dash_manifest, period, video_adaptation_set, hls_manifest, 'audio', video_input_stream, s3_output,
-        'video/1080p', 4800000, VIDEO_FRAME_RATE, 1920, 1080, H264Profile.HIGH)
+    representations = dict()
 
-    createH264Rendition(encoding, dash_manifest, period, video_adaptation_set, hls_manifest, 'audio', video_input_stream, s3_output,
-        'video/720p', 2400000, VIDEO_FRAME_RATE, 1280, 720, H264Profile.HIGH)
+    representations['1080p'] = createH264Rendition(encoding, dash_manifest, period, video_adaptation_set, hls_manifest,
+                                                   'audio', video_input_stream, s3_output, 'video/1080p', 4800000,
+                                                   VIDEO_FRAME_RATE, 1920, 1080, H264Profile.HIGH)
 
-    createH264Rendition(encoding, dash_manifest, period, video_adaptation_set, hls_manifest, 'audio', video_input_stream, s3_output,
-        'video/480p', 1200000, VIDEO_FRAME_RATE, 854, 480, H264Profile.HIGH)
+    representations['720p'] = createH264Rendition(encoding, dash_manifest, period, video_adaptation_set, hls_manifest,
+                                                  'audio', video_input_stream, s3_output, 'video/720p', 2400000,
+                                                  VIDEO_FRAME_RATE, 1280, 720, H264Profile.HIGH)
 
-    createH264Rendition(encoding, dash_manifest, period, video_adaptation_set, hls_manifest, 'audio', video_input_stream, s3_output,
-        'video/360p', 800000, VIDEO_FRAME_RATE, 640, 360, H264Profile.HIGH)
+    representations['480p'] = createH264Rendition(encoding, dash_manifest, period, video_adaptation_set, hls_manifest,
+                                                  'audio', video_input_stream, s3_output, 'video/480p', 1200000,
+                                                  VIDEO_FRAME_RATE, 854, 480, H264Profile.HIGH)
 
-    createH264Rendition(encoding, dash_manifest, period, video_adaptation_set, hls_manifest, 'audio', video_input_stream, s3_output,
-        'video/240p', 400000, VIDEO_FRAME_RATE, 426, 240, H264Profile.HIGH)
+    representations['360p'] = createH264Rendition(encoding, dash_manifest, period, video_adaptation_set, hls_manifest,
+                                                  'audio', video_input_stream, s3_output, 'video/360p', 800000,
+                                                  VIDEO_FRAME_RATE, 640, 360, H264Profile.HIGH)
 
-    createAACRendition(encoding, dash_manifest, period, audio_adaptation_set, hls_manifest, 'audio', audio_input_stream, s3_output,
-        'audio/128kbps', 128000, AUDIO_SAMPLE_RATE)
+    representations['240p'] = createH264Rendition(encoding, dash_manifest, period, video_adaptation_set, hls_manifest,
+                                                  'audio', video_input_stream, s3_output, 'video/240p', 400000,
+                                                  VIDEO_FRAME_RATE, 426, 240, H264Profile.HIGH)
+
+    representations['audio'] = createAACRendition(encoding, dash_manifest, period, audio_adaptation_set, hls_manifest,
+                                                  'audio', audio_input_stream, s3_output, 'audio/128kbps', 128000,
+                                                  AUDIO_SAMPLE_RATE)
 
     live_dash_manifest = LiveDashManifest(
         manifest_id=dash_manifest.id,
@@ -183,12 +188,16 @@ def main():
             time.sleep(LIVE_STREAM_INFORMATION_FETCH_RETRY_INTERVAL)
 
     if live_details is not None:
-        print_live_stream_details(encoding_id=encoding.id, live_stream_details=live_details.resource)
+        print_live_stream_details(encoding_id=encoding.id,
+                                  live_stream_details=live_details.resource,
+                                  representations=representations)
     else:
         print('Unable to fetch live stream details!')
         sys.exit(1)
 
-def createH264Rendition(encoding, dash_manifest, period, adaptation_set, hls_manifest, audio_group_id, video_input_stream, output, output_path, bitrate, rate, width, height, profile):
+
+def createH264Rendition(encoding, dash_manifest, period, adaptation_set, hls_manifest, audio_group_id,
+                        video_input_stream, output, output_path, bitrate, rate, width, height, profile):
     dash_output_path = output_path + '/dash'
     hls_output_path = output_path + '/hls'
     stream_identifier = str(bitrate) + '_' + str(width) + 'x' + str(height)
@@ -202,7 +211,7 @@ def createH264Rendition(encoding, dash_manifest, period, adaptation_set, hls_man
         profile=profile
     )
     codec_configuration = bitmovin.codecConfigurations.H264.create(codec_configuration).resource
-    
+
     video_stream = Stream(
         name='stream_' + stream_identifier,
         codec_configuration_id=codec_configuration.id,
@@ -278,8 +287,16 @@ def createH264Rendition(encoding, dash_manifest, period, adaptation_set, hls_man
         object_=variant_stream,
         manifest_id=hls_manifest.id
     )
-    
-def createAACRendition(encoding, dash_manifest, period, adaptation_set, hls_manifest, audio_group_id, audio_input_stream, output, output_path, bitrate, rate):
+
+    return {
+        'stream_id': video_stream.id,
+        'fmp4_muxing_id': video_muxing_fmp4.id,
+        'ts_muxing_id': video_muxing_ts.id
+    }
+
+
+def createAACRendition(encoding, dash_manifest, period, adaptation_set, hls_manifest, audio_group_id,
+                       audio_input_stream, output, output_path, bitrate, rate):
     dash_output_path = output_path + '/dash'
     hls_output_path = output_path + '/hls'
     stream_identifier = str(bitrate)
@@ -290,7 +307,7 @@ def createAACRendition(encoding, dash_manifest, period, adaptation_set, hls_mani
         rate=rate
     )
     codec_configuration = bitmovin.codecConfigurations.AAC.create(codec_configuration).resource
-    
+
     audio_stream = Stream(
         name='stream_' + stream_identifier,
         codec_configuration_id=codec_configuration.id,
@@ -369,8 +386,14 @@ def createAACRendition(encoding, dash_manifest, period, adaptation_set, hls_mani
         manifest_id=hls_manifest.id
     ).resource
 
+    return {
+        'stream_id': audio_stream.id,
+        'fmp4_muxing_id': audio_muxing_fmp4.id,
+        'ts_muxing_id': audio_muxing_ts.id
+    }
 
-def print_live_stream_details(encoding_id, live_stream_details):
+
+def print_live_stream_details(encoding_id, live_stream_details, representations):
     print('\n-----------------------------------------------------')
     print('Live Stream set up successfully: \n')
     print('Encoding ID ... {}'.format(encoding_id))
@@ -378,6 +401,27 @@ def print_live_stream_details(encoding_id, live_stream_details):
     print('Stream Key .... {}'.format(live_stream_details.streamKey))
     print('')
     print('Stream URL: ... {}'.format('rtmp://{}/live'.format(live_stream_details.encoderIp)))
+    print('-----------------------------------------------------')
+    print('')
+    print('-----------------------------------------------------')
+    print('1080p Stream Id: {}'.format(representations['1080p']['stream_id']))
+    print('720p Stream Id: {}'.format(representations['720p']['stream_id']))
+    print('480p Stream Id: {}'.format(representations['480p']['stream_id']))
+    print('360p Stream Id: {}'.format(representations['360p']['stream_id']))
+    print('240p Stream Id: {}'.format(representations['240p']['stream_id']))
+    print('Audio Stream Id: {}'.format(representations['audio']['stream_id']))
+    print('FMP4 1080p Muxing Id: {}'.format(representations['1080p']['fmp4_muxing_id']))
+    print('FMP4 720p Muxing Id: {}'.format(representations['720p']['fmp4_muxing_id']))
+    print('FMP4 480p Muxing Id: {}'.format(representations['480p']['fmp4_muxing_id']))
+    print('FMP4 360p Muxing Id: {}'.format(representations['360p']['fmp4_muxing_id']))
+    print('FMP4 240p Muxing Id: {}'.format(representations['240p']['fmp4_muxing_id']))
+    print('FMP4 audio Muxing Id: {}'.format(representations['audio']['fmp4_muxing_id']))
+    print('TS 1080p Muxing Id: {}'.format(representations['1080p']['ts_muxing_id']))
+    print('TS 720p Muxing Id: {}'.format(representations['720p']['ts_muxing_id']))
+    print('TS 480p Muxing Id: {}'.format(representations['480p']['ts_muxing_id']))
+    print('TS 360p Muxing Id: {}'.format(representations['360p']['ts_muxing_id']))
+    print('TS 240p Muxing Id: {}'.format(representations['240p']['ts_muxing_id']))
+    print('TS audio Muxing Id: {}'.format(representations['audio']['ts_muxing_id']))
     print('-----------------------------------------------------')
     print('\n')
 
