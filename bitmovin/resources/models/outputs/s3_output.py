@@ -7,13 +7,14 @@ from . import AbstractOutput
 class S3Output(AbstractOutput, Serializable):
 
     def __init__(self, access_key, secret_key, bucket_name, cloud_region=None, id_=None, custom_data=None,
-                 name=None, description=None):
+                 name=None, description=None, md5_meta_tag=None):
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self.accessKey = access_key
         self.secretKey = secret_key
         self.bucketName = bucket_name
         self._cloudRegion = None
         self.cloudRegion = cloud_region
+        self.md5MetaTag = md5_meta_tag
 
     @property
     def cloudRegion(self):
@@ -40,9 +41,11 @@ class S3Output(AbstractOutput, Serializable):
         secret_key = json_object.get('secretKey')
         name = json_object.get('name')
         description = json_object.get('description')
+        md5_meta_tag = json_object.get('md5MetaTag')
+
         s3_output = S3Output(
             access_key=access_key, secret_key=secret_key, bucket_name=bucket_name, cloud_region=cloud_region, id_=id_,
-            name=name, description=description)
+            name=name, description=description, md5_meta_tag=md5_meta_tag)
         return s3_output
 
     def serialize(self):
