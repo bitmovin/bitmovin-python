@@ -9,4 +9,4 @@ class MVPredictionMode(enum.Enum):
 
     @staticmethod
     def default():
-        return MVPredictionMode.SPATIAL
+        return MVPredictionMode.AUTO
