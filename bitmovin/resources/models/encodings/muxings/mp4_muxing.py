@@ -23,7 +23,7 @@ class MP4Muxing(Muxing):
         ignored_by = muxing.ignored_by
 
         filename = json_object['filename']
-        fragment_duration = json_object['fragmentDuration']
+        fragment_duration = json_object.get('fragmentDuration')
 
         mp4_muxing = MP4Muxing(streams=streams, filename=filename, outputs=outputs, id_=id_, custom_data=custom_data,
                                name=name, description=description, ignored_by=ignored_by,
