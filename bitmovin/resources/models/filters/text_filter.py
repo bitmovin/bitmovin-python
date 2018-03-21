@@ -1,9 +1,10 @@
 from bitmovin.errors import InvalidTypeError
 from bitmovin.resources.enums.font import Font
+from bitmovin.utils import Serializable
 from . import AbstractFilter
 
 
-class TextFilter(AbstractFilter):
+class TextFilter(AbstractFilter, Serializable):
 
     def __init__(self, x, y, text=None, timecode=None, shadow_y=None, shadow_x=None, shadow_color=None, alpha=None,
                  font_size=None, font=None, font_color=None, fix_bounds=None, border_width=None, line_spacing=None,
@@ -45,6 +46,11 @@ class TextFilter(AbstractFilter):
         else:
             raise InvalidTypeError(
                 'Invalid type {} for font: must be either str or Font!'.format(type(new_value)))
+
+    def serialize(self):
+        serialized = super().serialize()
+        serialized['font'] = self.font
+        return serialized
 
     @classmethod
     def parse_from_json_object(cls, json_object):
