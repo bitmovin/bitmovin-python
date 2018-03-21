@@ -2,7 +2,7 @@ from bitmovin.resources.models import TextFilter
 from ..rest_service import RestService
 
 
-class Rotate(RestService):
+class Text(RestService):
     BASE_ENDPOINT_URL = 'encoding/filters/text'
 
     def __init__(self, http_client):

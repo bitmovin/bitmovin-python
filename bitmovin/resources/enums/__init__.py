@@ -30,3 +30,4 @@ from .audio_mix_filter_channel_type import AudioMixFilterChannelType
 from .ftp_transfer_version import FTPTransferVersion
 from .thumbnail_unit import ThumbnailUnit
 from .pixel_format import PixelFormat
+from .font import Font
