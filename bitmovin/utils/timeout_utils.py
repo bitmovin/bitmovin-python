@@ -20,4 +20,4 @@ class TimeoutUtils:
         timeout_reached = now > max_time
 
         if timeout_reached:
-            raise TimeoutError('Timeout of {} reached.'.format(timeout_in_seconds))
+            raise TimeoutError('Timeout of {} seconds reached.'.format(timeout_in_seconds))
