@@ -120,7 +120,7 @@ class AACCodecConfigurationTests(BitmovinTestCase):
     def _get_sample_aac_codec_configuration(self):
         aac_codec_configuration = AACCodecConfiguration(name='Python - Sample AAC Codec Configuration',
                                                         description='More declarative description for CodecConfig',
-                                                        bitrate=1280000,
+                                                        bitrate=128000,
                                                         rate=48000,
                                                         volume_adjust=None,
                                                         normalize=None)
