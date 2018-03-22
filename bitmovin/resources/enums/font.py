@@ -1,0 +1,7 @@
+import enum
+
+
+class Font(enum.Enum):
+    DEJAVUSANS = 'DEJAVUSANS'
+    DEJAVUSERIF = 'DEJAVUSERIF'
+    DEJAVUSANSMONO = 'DEJAVUSANSMONO'
