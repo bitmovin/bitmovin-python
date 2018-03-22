@@ -22,7 +22,7 @@ class AC3CodecConfiguration(AudioCodecConfiguration, Serializable):
     def channelLayout(self, new_layout):
         if new_layout is None:
             self._channelLayout = None
-        if isinstance(new_layout, str):
+        elif isinstance(new_layout, str):
             self._channelLayout = new_layout
         elif isinstance(new_layout, AC3ChannelLayout):
             self._channelLayout = new_layout.value
