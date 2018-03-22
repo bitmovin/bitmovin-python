@@ -6,7 +6,7 @@ from bitmovin.resources.models.encodings.start import StartEncodingRequest
 from bitmovin.rest import BitmovinHttpClient
 from bitmovin.resources import ResourceResponse, Status, EncodingStatus, LiveStreamConfiguration
 from bitmovin.services.parsing_utils import ParsingUtils
-from bitmovin.utils import BitmovinJSONEncoder
+from bitmovin.utils import BitmovinJSONEncoder, TimeoutUtils
 
 
 class EncodingControlService(BitmovinObject):
@@ -84,11 +84,14 @@ class EncodingControlService(BitmovinObject):
             return ResourceResponse(response=response, resource=created_resource)
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
 
-    def wait_until_finished(self, encoding_id, check_interval=5):
+    def wait_until_finished(self, encoding_id, check_interval=5, timeout=-1):
         status_response = None
         encoding_status = EncodingStatus(None)
 
+        start_time = time.time()
+
         while encoding_status.status != 'FINISHED' and encoding_status.status != 'ERROR':
+            TimeoutUtils.raise_error_if_timeout_reached(start_time_in_seconds=start_time, timeout_in_seconds=timeout)
             status_response = self.status(encoding_id=encoding_id)
             encoding_status = status_response.resource  # type: EncodingStatus
             self.logger.info("Encoding status: {}".format(encoding_status.status))
@@ -103,11 +106,14 @@ class EncodingControlService(BitmovinObject):
         raise BitmovinApiError("Encoding with ID '{}' was not successfull! Status: {}".format(
             encoding_id, encoding_status.status), status_response)
 
-    def wait_until_running(self, encoding_id, check_interval=5):
+    def wait_until_running(self, encoding_id, check_interval=5, timeout=-1):
         status_response = None
         encoding_status = EncodingStatus(None)
 
+        start_time = time.time()
+
         while encoding_status.status != 'RUNNING' and encoding_status.status != 'ERROR':
+            TimeoutUtils.raise_error_if_timeout_reached(start_time_in_seconds=start_time, timeout_in_seconds=timeout)
             status_response = self.status(encoding_id=encoding_id)
             encoding_status = status_response.resource  # type: EncodingStatus
             self.logger.info("Encoding status: {}".format(encoding_status.status))
