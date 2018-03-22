@@ -90,8 +90,8 @@ def main():
     # Configure text filter here
     text_filter = TextFilter(name="Text Filter",
                              text="Bitmovin is great!",
-                             x=10,
-                             y=10,
+                             x='main_w/2-text_w/2',
+                             y='10',
                              font_color="#FFFFFF",
                              font_size=48,
                              box=True,

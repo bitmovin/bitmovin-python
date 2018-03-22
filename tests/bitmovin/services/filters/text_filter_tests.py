@@ -137,8 +137,8 @@ class TextFilterTests(BitmovinTestCase):
 
     def _get_sample_text_filter(self):
         text_filter = TextFilter(name='Sample Text Filter',
-                                 x=10,
-                                 y=10,
+                                 x='10',
+                                 y='10',
                                  text='ThisIsATest',
                                  font=Font.DEJAVUSANS)
 
