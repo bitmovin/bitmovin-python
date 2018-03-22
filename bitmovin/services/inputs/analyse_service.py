@@ -7,7 +7,7 @@ from bitmovin.resources import ResourceResponse, Status, Response
 from bitmovin.resources.models import CustomData
 from bitmovin.resources.models.inputs.analysis import Analysis, AnalysisDetails, AnalysisStreamDetails, AnalysisStatus
 from bitmovin.services.parsing_utils import ParsingUtils
-from bitmovin.utils import BitmovinJSONEncoder
+from bitmovin.utils import BitmovinJSONEncoder, TimeoutUtils
 
 
 class AnalyzeService(BitmovinObject):
@@ -113,11 +113,14 @@ class AnalyzeService(BitmovinObject):
 
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
 
-    def wait_until_analysis_finished(self, input_id, analysis_id, check_interval=5):
+    def wait_until_analysis_finished(self, input_id, analysis_id, check_interval=5, timeout=-1):
         status_response = None
         analysis_status = AnalysisStatus(None)
 
+        start_time = time.time()
+
         while analysis_status.status != 'FINISHED' and analysis_status.status != 'ERROR':
+            TimeoutUtils.raise_error_if_timeout_reached(start_time_in_seconds=start_time, timeout_in_seconds=timeout)
             status_response = self.retrieve_analysis_status(input_id=input_id, analysis_id=analysis_id)
             analysis_status = status_response.resource  # type: AnalysisStatus
             self.logger.info("Analysis status: {}".format(analysis_status.status))

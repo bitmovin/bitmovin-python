@@ -1,5 +1,6 @@
 from .status import Status
 from .aac_channel_layout import AACChannelLayout
+from .ac3_channel_layout import AC3ChannelLayout
 from .aws_cloud_region import AWSCloudRegion
 from .badapt import BAdapt
 from .cloud_region import CloudRegion
@@ -30,3 +31,4 @@ from .audio_mix_filter_channel_type import AudioMixFilterChannelType
 from .ftp_transfer_version import FTPTransferVersion
 from .thumbnail_unit import ThumbnailUnit
 from .pixel_format import PixelFormat
+from .font import Font
