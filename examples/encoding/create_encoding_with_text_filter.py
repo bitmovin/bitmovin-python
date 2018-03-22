@@ -67,7 +67,7 @@ def main():
             bitrate=profile_h264.get('bitrate') * 1000,
             height=profile_h264.get('height'),
             profile=profile_h264.get('profile'),
-            rate=profile_h264.get("fps"))
+            rate=profile_h264.get('fps'))
         encoding_config['h264_codec'] = bitmovin.codecConfigurations.H264.create(h264_codec).resource
         encoding_configs.append(encoding_config)
 
@@ -88,15 +88,15 @@ def main():
                                      position=0)
 
     # Configure text filter here
-    text_filter = TextFilter(name="Text Filter",
-                             text="Bitmovin is great!",
+    text_filter = TextFilter(name='Text Filter',
+                             text='Bitmovin is great!',
                              x='main_w/2-text_w/2',
                              y='10',
-                             font_color="#FFFFFF",
+                             font_color='#FFFFFF',
                              font_size=48,
                              box=True,
-                             box_color="#32A9E1",
-                             shadow_color="#218ECD",
+                             box_color='#32A9E1',
+                             shadow_color='#218ECD',
                              shadow_x=5,
                              shadow_y=5,
                              font=Font.DEJAVUSANS)
@@ -107,9 +107,9 @@ def main():
 
     # With the configurations and the input file streams are now created and muxed later on.
     for encoding_config in encoding_configs:
-        encoding_profile = encoding_config.get("profile_h264")
+        encoding_profile = encoding_config.get('profile_h264')
 
-        video_stream_h264 = Stream(codec_configuration_id=encoding_config.get("h264_codec").id,
+        video_stream_h264 = Stream(codec_configuration_id=encoding_config.get('h264_codec').id,
                                    input_streams=[video_input_stream],
                                    name='Stream H264 {}p_{}k'.format(encoding_profile.get('height'),
                                                                      encoding_profile.get('bitrate')))
@@ -130,8 +130,8 @@ def main():
     # Create TS and FMP4 muxings which are later used for the HLS and DASH manifest. The current settings will set a
     # segment length of 4 seconds.
     for encoding_config in encoding_configs:
-        encoding_profile = encoding_config.get("profile_h264")
-        video_muxing_stream_h264 = MuxingStream(encoding_config.get("h264_stream").id)
+        encoding_profile = encoding_config.get('profile_h264')
+        video_muxing_stream_h264 = MuxingStream(encoding_config.get('h264_stream').id)
         video_muxing_output_h264 = EncodingOutput(output_id=s3_output.id,
                                                   output_path=OUTPUT_BASE_PATH + 'video/h264/dash/{}p_{}k/'.format(
                                                       encoding_profile.get('height'),
@@ -165,7 +165,7 @@ def main():
 
     # mp4 audio muxing
     audio_muxing_output = EncodingOutput(output_id=s3_output.id,
-                                         output_path=OUTPUT_BASE_PATH + "audio/dash/",
+                                         output_path=OUTPUT_BASE_PATH + 'audio/dash/',
                                          acl=[acl_entry])
     audio_muxing = FMP4Muxing(segment_length=4,
                               segment_naming='seg_%number%.m4s',
@@ -178,7 +178,7 @@ def main():
 
     # TS audio muxing
     hls_audio_muxing_output = EncodingOutput(output_id=s3_output.id,
-                                             output_path=OUTPUT_BASE_PATH + "audio/hls/",
+                                             output_path=OUTPUT_BASE_PATH + 'audio/hls/',
                                              acl=[acl_entry])
     hls_audio_muxing = TSMuxing(segment_length=4,
                                 segment_naming='seg_%number%.ts',
@@ -193,7 +193,7 @@ def main():
     try:
         bitmovin.encodings.Encoding.wait_until_finished(encoding_id=encoding.id)
     except BitmovinError as bitmovin_error:
-        print("Exception occurred while waiting for encoding to finish:")
+        print('Exception occurred while waiting for encoding to finish:')
         pprint(bitmovin_error)
         exit(-1)
 
@@ -222,7 +222,7 @@ def main():
     fmp4_representation_audio = FMP4Representation(FMP4RepresentationType.TEMPLATE,
                                                    encoding_id=encoding.id,
                                                    muxing_id=audio_muxing.id,
-                                                   segment_path="audio/dash/")
+                                                   segment_path='audio/dash/')
 
     bitmovin.manifests.DASH.add_fmp4_representation(object_=fmp4_representation_audio,
                                                     manifest_id=dash_manifest_h264.id,
@@ -231,7 +231,7 @@ def main():
 
     # Add all representation to the video adaption set
     for encoding_config in encoding_configs:
-        encoding_profile = encoding_config.get("profile_h264")
+        encoding_profile = encoding_config.get('profile_h264')
         muxing = encoding_config.get('h264_muxing')
         fmp4_representation = FMP4Representation(FMP4RepresentationType.TEMPLATE,
                                                  encoding_id=encoding.id,
@@ -255,24 +255,24 @@ def main():
     hls_manifest = bitmovin.manifests.HLS.create(object_=hls_manifest).resource
 
     hls_audio_media = AudioMedia(name='en', group_id='audio_group',
-                                 segment_path="audio/hls/",
+                                 segment_path='audio/hls/',
                                  encoding_id=encoding.id,
                                  stream_id=audio_stream.id,
                                  muxing_id=hls_audio_muxing.id,
                                  language='en',
-                                 uri="audio.m3u8")
+                                 uri='audio.m3u8')
 
     bitmovin.manifests.HLS.AudioMedia.create(manifest_id=hls_manifest.id,
                                              object_=hls_audio_media)
 
     # Add all representation to the video adaption set
     for encoding_config in encoding_configs:
-        encoding_profile = encoding_config.get("profile_h264")
-        video_muxing_stream_h264 = encoding_config.get("h264_stream")
+        encoding_profile = encoding_config.get('profile_h264')
+        video_muxing_stream_h264 = encoding_config.get('h264_stream')
         ts_muxing = encoding_config.get('h264_ts_muxing')
 
         # append another variant stream for this video quality to our hls renditions.
-        hls_variant_stream = VariantStream(audio="audio_group",
+        hls_variant_stream = VariantStream(audio='audio_group',
                                            segment_path='video/h264/hls/{}p_{}k/'.format(
                                                encoding_profile.get('height'),
                                                encoding_profile.get('bitrate')),
@@ -291,13 +291,13 @@ def main():
     try:
         bitmovin.manifests.DASH.wait_until_finished(manifest_id=dash_manifest_h264.id)
     except BitmovinError as bitmovin_error:
-        print("Exception occurred while waiting for manifest creation to finish: {}".format(bitmovin_error))
+        print('Exception occurred while waiting for manifest creation to finish: {}'.format(bitmovin_error))
         exit(-1)
 
     try:
         bitmovin.manifests.HLS.wait_until_finished(manifest_id=hls_manifest.id)
     except BitmovinError as bitmovin_error:
-        print("Exception occurred while waiting for manifest creation to finish: {}".format(bitmovin_error))
+        print('Exception occurred while waiting for manifest creation to finish: {}'.format(bitmovin_error))
         exit(-1)
 
 
