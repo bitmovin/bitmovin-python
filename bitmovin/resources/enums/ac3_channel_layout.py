@@ -29,7 +29,3 @@ class AC3ChannelLayout(enum.Enum):
     CL_7_1_WIDE_BACK = '7.1_WIDE_BACK'
     CL_OCTAGONAL = 'OCTAGONAL'
     CL_STEREO_DOWNMIX = 'STEREO_DOWNMIX'
-
-    @staticmethod
-    def default():
-        return AC3ChannelLayout.NONE

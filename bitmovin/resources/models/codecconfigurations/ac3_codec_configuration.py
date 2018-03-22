@@ -6,8 +6,7 @@ from .audio_codec_configuration import AudioCodecConfiguration
 
 class AC3CodecConfiguration(AudioCodecConfiguration, Serializable):
 
-    def __init__(self, name, bitrate, rate, id_=None, description=None, custom_data=None, channel_layout=None,
-                 volume_adjust=None, normalize=None):
+    def __init__(self, name, bitrate, rate=None, id_=None, description=None, custom_data=None, channel_layout=None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description, bitrate=bitrate,
                          rate=rate)
@@ -17,15 +16,12 @@ class AC3CodecConfiguration(AudioCodecConfiguration, Serializable):
 
     @property
     def channelLayout(self):
-        if self._channelLayout is not None:
-            return self._channelLayout
-        else:
-            return AC3ChannelLayout.default().value
+        return self._channelLayout
 
     @channelLayout.setter
     def channelLayout(self, new_layout):
         if new_layout is None:
-            return
+            self._channelLayout = None
         if isinstance(new_layout, str):
             self._channelLayout = new_layout
         elif isinstance(new_layout, AC3ChannelLayout):
@@ -46,10 +42,13 @@ class AC3CodecConfiguration(AudioCodecConfiguration, Serializable):
 
         channel_layout = json_object.get('channelLayout')
 
-        ac3_codec_configuration = AC3CodecConfiguration(id_=id_, name=name, description=description,
-                                                        custom_data=custom_data, bitrate=bitrate, rate=rate,
-                                                        channel_layout=channel_layout, volume_adjust=None,
-                                                        normalize=None)
+        ac3_codec_configuration = AC3CodecConfiguration(id_=id_,
+                                                        name=name,
+                                                        description=description,
+                                                        custom_data=custom_data,
+                                                        bitrate=bitrate,
+                                                        rate=rate,
+                                                        channel_layout=channel_layout)
 
         return ac3_codec_configuration
 
