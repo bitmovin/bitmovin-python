@@ -5,7 +5,7 @@ from bitmovin.errors import BitmovinApiError, InvalidStatusError
 from bitmovin.rest import BitmovinHttpClient
 from bitmovin.resources import ResourceResponse, Status, ManifestStatus
 from bitmovin.services.parsing_utils import ParsingUtils
-from bitmovin.utils import BitmovinJSONEncoder
+from bitmovin.utils import BitmovinJSONEncoder, TimeoutUtils
 
 
 class ManifestControlService(BitmovinObject):
@@ -53,11 +53,14 @@ class ManifestControlService(BitmovinObject):
             return ResourceResponse(response=response, resource=created_resource)
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
 
-    def wait_until_finished(self, manifest_id, check_interval=5):
+    def wait_until_finished(self, manifest_id, check_interval=5, timeout=-1):
         status_response = None
         manifest_status = ManifestStatus()
 
+        start_time=time.time()
+
         while manifest_status.status != 'FINISHED' and manifest_status.status != 'ERROR':
+            TimeoutUtils.raise_error_if_timeout_reached(start_time_in_seconds=start_time, timeout_in_seconds=timeout)
             status_response = self.status(manifest_id=manifest_id)
             manifest_status = status_response.resource  # type: ManifestStatus
             self.logger.info("Manifest status: {}".format(manifest_status.status))

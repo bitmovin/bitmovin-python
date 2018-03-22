@@ -1,5 +1,6 @@
 from .status import Status
 from .aac_channel_layout import AACChannelLayout
+from .ac3_channel_layout import AC3ChannelLayout
 from .aws_cloud_region import AWSCloudRegion
 from .badapt import BAdapt
 from .cloud_region import CloudRegion
