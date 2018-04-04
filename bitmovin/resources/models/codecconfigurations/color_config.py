@@ -39,7 +39,7 @@ class ColorConfig(Serializable):
     @chromaLocation.setter
     def chromaLocation(self, new_chroma_location):
         if new_chroma_location is None:
-            return
+            self._chromaLocation = None
         elif isinstance(new_chroma_location, str):
             self._chromaLocation = new_chroma_location
         elif isinstance(new_chroma_location, ChromaLocation):
@@ -57,7 +57,7 @@ class ColorConfig(Serializable):
     @colorSpace.setter
     def colorSpace(self, new_color_space):
         if new_color_space is None:
-            return
+            self._colorSpace = None
         elif isinstance(new_color_space, str):
             self._colorSpace = new_color_space
         elif isinstance(new_color_space, ColorSpace):
@@ -76,7 +76,7 @@ class ColorConfig(Serializable):
     @colorPrimaries.setter
     def colorPrimaries(self, new_color_primaries):
         if new_color_primaries is None:
-            return
+            self._colorPrimaries = None
         elif isinstance(new_color_primaries, str):
             self._colorPrimaries = new_color_primaries
         elif isinstance(new_color_primaries, ColorPrimaries):
@@ -94,7 +94,7 @@ class ColorConfig(Serializable):
     @colorRange.setter
     def colorRange(self, new_color_range):
         if new_color_range is None:
-            return
+            self._colorRange = None
         elif isinstance(new_color_range, str):
             self._colorRange = new_color_range
         elif isinstance(new_color_range, ColorRange):
@@ -112,7 +112,7 @@ class ColorConfig(Serializable):
     @colorTransfer.setter
     def colorTransfer(self, new_color_transfer):
         if new_color_transfer is None:
-            return
+            self._colorTransfer = None
         elif isinstance(new_color_transfer, str):
             self._colorTransfer = new_color_transfer
         elif isinstance(new_color_transfer, ColorTransfer):
@@ -130,7 +130,7 @@ class ColorConfig(Serializable):
     @inputColorSpace.setter
     def inputColorSpace(self, new_input_color_space):
         if new_input_color_space is None:
-            return
+            self._inputColorSpace = None
         elif isinstance(new_input_color_space, str):
             self._inputColorSpace = new_input_color_space
         elif isinstance(new_input_color_space, InputColorSpace):
@@ -148,7 +148,7 @@ class ColorConfig(Serializable):
     @inputColorRange.setter
     def inputColorRange(self, new_input_color_range):
         if new_input_color_range is None:
-            return
+            self._inputColorRange = None
         elif isinstance(new_input_color_range, str):
             self._inputColorRange = new_input_color_range
         elif isinstance(new_input_color_range, InputColorRange):
