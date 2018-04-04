@@ -75,8 +75,8 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
     @colorConfig.setter
     def colorConfig(self, new_color_config):
         if new_color_config is None:
-            return
-        if isinstance(new_color_config, ColorConfig):
+            self._colorConfig = None
+        elif isinstance(new_color_config, ColorConfig):
             self._colorConfig = new_color_config
         else:
             raise InvalidTypeError('colorConfig has to be of type ColorConfig')

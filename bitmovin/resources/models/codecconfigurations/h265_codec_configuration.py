@@ -1,6 +1,7 @@
 from bitmovin.errors import InvalidTypeError
 from bitmovin.resources.enums import H265Profile, H265Level, BAdapt, MaxCTUSize, TUInterDepth, TUIntraDepth, \
     MotionSearch
+from bitmovin.resources.models.codecconfigurations.color_config import ColorConfig
 from bitmovin.utils import Serializable
 from .video_codec_configuration import VideoCodecConfiguration
 
@@ -12,7 +13,8 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
                  min_gop=None, max_gop=None, level=None, rc_lookahead=None, b_adapt=None, max_ctu_size=None,
                  tu_intra_depth=None, tu_inter_depth=None, motion_search=None, sub_me=None, motion_search_range=None,
                  weight_prediction_on_p_slice=None, weight_prediction_on_b_slice=None, sao=None, crf=None,
-                 pixel_format=None):
+                 pixel_format=None, color_config=None, max_keyframe_interval=None, min_keyframe_interval=None,
+                 scene_cut_threshold=None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description, bitrate=bitrate,
                          rate=rate, width=width, height=height, pixel_format=pixel_format)
@@ -47,6 +49,24 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         self.sao = sao
         self._crf = None
         self.crf = crf
+        self._colorConfig = None
+        self.colorConfig = color_config
+        self.maxKeyframeInterval = max_keyframe_interval
+        self.minKeyframeInterval = min_keyframe_interval
+        self.sceneCutThreshold = scene_cut_threshold
+
+    @property
+    def colorConfig(self):
+        return self._colorConfig
+
+    @colorConfig.setter
+    def colorConfig(self, new_color_config):
+        if new_color_config is None:
+            self._colorConfig = None
+        elif isinstance(new_color_config, ColorConfig):
+            self._colorConfig = new_color_config
+        else:
+            raise InvalidTypeError('colorConfig has to be of type ColorConfig')
 
     @property
     def profile(self):
@@ -226,6 +246,35 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         weight_prediction_on_b_slice = json_object.get('weightPredictionOnBSlice')
         sao = json_object.get('sao')
         crf = json_object.get('crf')
+        max_keyframe_interval = json_object.get('maxKeyframeInterval')
+        min_keyframe_interval = json_object.get('minKeyframeInterval')
+        scene_cut_threshold = json_object.get('sceneCutThreshold')
+
+        color_config_json = json_object.get('colorConfig')
+        if color_config_json is not None:
+            copy_chroma_location_flag = color_config_json.get('copyChromaLocationFlag')
+            copy_color_space_flag = color_config_json.get('copyColorSpaceFlag')
+            copy_color_primaries_flag = color_config_json.get('copyColorPrimariesFlag')
+            copy_color_range_flag = color_config_json.get('copyColorRangeFlag')
+            copy_color_transfer_flag = color_config_json.get('copyColorTransferFlag')
+            chroma_location = color_config_json.get('chromaLocation')
+            color_space = color_config_json.get('colorSpace')
+            color_primaries = color_config_json.get('colorPrimaries')
+            color_range = color_config_json.get('colorRange')
+            color_transfer = color_config_json.get('colorTransfer')
+            input_color_space = color_config_json.get('inputColorSpace')
+            input_color_range = color_config_json.get('inputColorRange')
+            color_config = ColorConfig(copy_chroma_location_flag=copy_chroma_location_flag,
+                                       copy_color_space_flag=copy_color_space_flag,
+                                       copy_color_primaries_flag=copy_color_primaries_flag,
+                                       copy_color_range_flag=copy_color_range_flag,
+                                       copy_color_transfer_flag=copy_color_transfer_flag,
+                                       chroma_location=chroma_location, color_space=color_space,
+                                       color_primaries=color_primaries, color_range=color_range,
+                                       color_transfer=color_transfer, input_color_space=input_color_space,
+                                       input_color_range=input_color_range)
+        else:
+            color_config = None
 
         h265_codec_configuration = H265CodecConfiguration(name=name, bitrate=bitrate, rate=rate, profile=profile,
                                                           id_=id_, description=description, custom_data=custom_data,
@@ -239,7 +288,11 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
                                                           motion_search_range=motion_search_range,
                                                           weight_prediction_on_p_slice=weight_prediction_on_p_slice,
                                                           weight_prediction_on_b_slice=weight_prediction_on_b_slice,
-                                                          sao=sao, crf=crf, pixel_format=pixel_format)
+                                                          sao=sao, crf=crf, pixel_format=pixel_format,
+                                                          color_config=color_config,
+                                                          max_keyframe_interval=max_keyframe_interval,
+                                                          min_keyframe_interval=min_keyframe_interval,
+                                                          scene_cut_threshold=scene_cut_threshold)
 
         return h265_codec_configuration
 
@@ -253,4 +306,5 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         serialized['tuInterDepth'] = self.tuInterDepth
         serialized['motionSearch'] = self.motionSearch
         serialized['crf'] = self.crf
+        serialized['colorConfig'] = self.colorConfig.serialize()
         return serialized
