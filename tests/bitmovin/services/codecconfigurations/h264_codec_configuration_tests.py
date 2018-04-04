@@ -1,5 +1,6 @@
 import unittest
-from bitmovin import Bitmovin, Response, H264CodecConfiguration, H264Profile, MVPredictionMode, H264Level, BAdapt
+from bitmovin import Bitmovin, Response, H264CodecConfiguration, H264Profile, MVPredictionMode, H264Level, BAdapt, \
+    ChromaLocation, ColorSpace, ColorPrimaries, ColorRange, ColorTransfer, InputColorSpace, InputColorRange
 from bitmovin.errors import BitmovinApiError
 from bitmovin.resources.enums.h264_interlace_mode import H264InterlaceMode
 from bitmovin.resources.enums.h264_motion_estimation_method import H264MotionEstimationMethod
@@ -7,6 +8,7 @@ from bitmovin.resources.enums.h264_partition import H264Partition
 from bitmovin.resources.enums.h264_sub_me import H264SubMe
 from bitmovin.resources.enums.h264_trellis import H264Trellis
 from bitmovin.resources.enums.pixel_format import PixelFormat
+from bitmovin.resources.models.codecconfigurations.color_config import ColorConfig
 from tests.bitmovin import BitmovinTestCase
 
 
@@ -223,6 +225,30 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         self.assertEqual(first.minKeyframeInterval, second.minKeyframeInterval)
         self.assertEqual(first.maxKeyframeInterval, second.maxKeyframeInterval)
         self.assertEqual(first.pixelFormat, second.pixelFormat)
+        self.assertEqual(first.sampleAspectRatioNumerator, second.sampleAspectRatioNumerator)
+        self.assertEqual(first.sampleAspectRatioDenominator, second.sampleAspectRatioDenominator)
+        self.assertEqual(first.sceneCutThreshold, second.sceneCutThreshold)
+        self.assertTrue(self._compare_color_configs(first.colorConfig, second.colorConfig))
+        return True
+
+    def _compare_color_configs(self, first: ColorConfig, second: ColorConfig):
+        """
+
+        :param first: ColorConfig
+        :param second: ColorConfig
+        :return: bool
+        """
+        self.assertEqual(first.inputColorSpace, second.inputColorSpace)
+        self.assertEqual(first.colorTransfer, second.colorTransfer)
+        self.assertEqual(first.colorRange, second.colorRange)
+        self.assertEqual(first.colorPrimaries, second.colorPrimaries)
+        self.assertEqual(first.colorSpace, second.colorSpace)
+        self.assertEqual(first.chromaLocation, second.chromaLocation)
+        self.assertEqual(first.copyChromaLocationFlag, second.copyChromaLocationFlag)
+        self.assertEqual(first.copyColorPrimariesFlag, second.copyColorPrimariesFlag)
+        self.assertEqual(first.copyColorRangeFlag, second.copyColorRangeFlag)
+        self.assertEqual(first.copyColorSpaceFlag, second.copyColorSpaceFlag)
+        self.assertEqual(first.copyColorTransferFlag, second.copyColorTransferFlag)
         return True
 
     def _get_sample_h264_codec_configuration(self):
@@ -256,7 +282,24 @@ class H264CodecConfigurationTests(BitmovinTestCase):
                                                           interlaceMode=H264InterlaceMode.BOTTOM_FIELD_FIRST,
                                                           min_keyframe_interval=10.23,
                                                           max_keyframe_interval=20.91,
-                                                          pixel_format=PixelFormat.YUV440P10BE)
+                                                          pixel_format=PixelFormat.YUV440P10BE,
+                                                          sample_aspect_ratio_numerator=2.0,
+                                                          sample_aspect_ratio_denominator=3.0,
+                                                          scene_cut_threshold=30,
+                                                          color_config=ColorConfig(
+                                                              copy_chroma_location_flag=True,
+                                                              copy_color_space_flag=True,
+                                                              copy_color_primaries_flag=True,
+                                                              copy_color_range_flag=True,
+                                                              copy_color_transfer_flag=True,
+                                                              chroma_location=ChromaLocation.BOTTOM,
+                                                              color_space=ColorSpace.BT2020_CL,
+                                                              color_primaries=ColorPrimaries.BT709,
+                                                              color_range=ColorRange.MPEG,
+                                                              color_transfer=ColorTransfer.BT2020_10,
+                                                              input_color_space=InputColorSpace.BT470BG,
+                                                              input_color_range=InputColorRange.JPEG
+                                                          ))
 
         self.assertIsNotNone(h264_codec_configuration.name)
         self.assertIsNotNone(h264_codec_configuration.description)
@@ -286,6 +329,7 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         self.assertIsNotNone(h264_codec_configuration.minKeyframeInterval)
         self.assertIsNotNone(h264_codec_configuration.maxKeyframeInterval)
         self.assertIsNotNone(h264_codec_configuration.pixelFormat)
+        self.assertIsNotNone(h264_codec_configuration.colorConfig)
 
         return h264_codec_configuration
 
