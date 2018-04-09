@@ -14,7 +14,3 @@ class ColorSpace(enum.Enum):
     BT2020_NCL = 'BT2020_NCL'
     BT2020_CL = 'BT2020_CL'
     SMPTE2085 = 'SMPTE2085'
-
-    @staticmethod
-    def default():
-        return ColorSpace.UNSPECIFIED

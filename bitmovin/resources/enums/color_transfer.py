@@ -19,7 +19,3 @@ class ColorTransfer(enum.Enum):
     SMPTE2084 = 'SMPTE2084'
     SMPTE428 = 'SMPTE428'
     ARIB_STD_B67 = 'ARIB_STD_B67'
-
-    @staticmethod
-    def default():
-        return ColorTransfer.UNSPECIFIED

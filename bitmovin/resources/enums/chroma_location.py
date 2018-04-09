@@ -10,6 +10,3 @@ class ChromaLocation(enum.Enum):
     BOTTOMLEFT = 'BOTTOMLEFT'
     BOTTOM = 'BOTTOM'
 
-    @staticmethod
-    def default():
-        return ChromaLocation.UNSPECIFIED

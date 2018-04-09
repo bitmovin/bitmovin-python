@@ -15,7 +15,3 @@ class ColorPrimaries(enum.Enum):
     SMPTE431 = 'SMPTE431'
     SMPTE432 = 'SMPTE432'
     JEDEC_P22 = 'JEDEC_P22'
-
-    @staticmethod
-    def default():
-        return ColorPrimaries.UNSPECIFIED
