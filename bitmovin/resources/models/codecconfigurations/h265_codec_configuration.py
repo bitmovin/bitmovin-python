@@ -250,6 +250,7 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         min_keyframe_interval = json_object.get('minKeyframeInterval')
         scene_cut_threshold = json_object.get('sceneCutThreshold')
 
+        color_config = None
         color_config_json = json_object.get('colorConfig')
         if color_config_json is not None:
             copy_chroma_location_flag = color_config_json.get('copyChromaLocationFlag')
@@ -273,8 +274,6 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
                                        color_primaries=color_primaries, color_range=color_range,
                                        color_transfer=color_transfer, input_color_space=input_color_space,
                                        input_color_range=input_color_range)
-        else:
-            color_config = None
 
         h265_codec_configuration = H265CodecConfiguration(name=name, bitrate=bitrate, rate=rate, profile=profile,
                                                           id_=id_, description=description, custom_data=custom_data,

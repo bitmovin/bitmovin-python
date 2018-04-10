@@ -289,6 +289,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         aspect_ratio_denominator = json_object.get('sampleAspectRatioDenominator')
         scene_cut_threshold = json_object.get('sceneCutThreshold')
 
+        color_config = None
         color_config_json = json_object.get('colorConfig')
         if color_config_json is not None:
             copy_chroma_location_flag = color_config_json.get('copyChromaLocationFlag')
@@ -312,8 +313,6 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
                                        color_primaries=color_primaries, color_range=color_range,
                                        color_transfer=color_transfer, input_color_space=input_color_space,
                                        input_color_range=input_color_range)
-        else:
-            color_config = None
 
         h264_codec_configuration = H264CodecConfiguration(name=name, bitrate=bitrate, rate=rate, profile=profile,
                                                           id_=id_, description=description, custom_data=custom_data,
