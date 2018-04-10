@@ -1,9 +1,10 @@
 from bitmovin.errors import InvalidTypeError
 from bitmovin.resources.enums import H265Profile, H265Level, BAdapt, MaxCTUSize, TUInterDepth, TUIntraDepth, \
     MotionSearch
-from bitmovin.resources.models.codecconfigurations.color_config import ColorConfig
 from bitmovin.utils import Serializable
+
 from .video_codec_configuration import VideoCodecConfiguration
+from .color_config import ColorConfig
 
 
 class H265CodecConfiguration(VideoCodecConfiguration, Serializable):

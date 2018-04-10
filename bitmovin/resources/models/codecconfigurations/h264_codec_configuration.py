@@ -6,10 +6,10 @@ from bitmovin.resources.enums.h264_partition import H264Partition
 from bitmovin.resources.enums.h264_sub_me import H264SubMe
 from bitmovin.resources.enums.badapt import BAdapt
 from bitmovin.resources.enums.h264_trellis import H264Trellis
-from bitmovin.resources.models.codecconfigurations.color_config import ColorConfig
-
 from bitmovin.utils import Serializable
+
 from .video_codec_configuration import VideoCodecConfiguration
+from .color_config import ColorConfig
 
 
 class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
