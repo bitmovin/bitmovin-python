@@ -1,6 +1,6 @@
 import unittest
 from bitmovin import Bitmovin, Response, H264CodecConfiguration, H264Profile, MVPredictionMode, H264Level, BAdapt, \
-    ChromaLocation, ColorSpace, ColorPrimaries, ColorRange, ColorTransfer, InputColorSpace, InputColorRange
+    ChromaLocation, ColorSpace, ColorPrimaries, ColorRange, ColorTransfer, InputColorSpace, InputColorRange, ColorConfig
 from bitmovin.errors import BitmovinApiError
 from bitmovin.resources.enums.h264_interlace_mode import H264InterlaceMode
 from bitmovin.resources.enums.h264_motion_estimation_method import H264MotionEstimationMethod
@@ -8,7 +8,6 @@ from bitmovin.resources.enums.h264_partition import H264Partition
 from bitmovin.resources.enums.h264_sub_me import H264SubMe
 from bitmovin.resources.enums.h264_trellis import H264Trellis
 from bitmovin.resources.enums.pixel_format import PixelFormat
-from bitmovin.resources.models.codecconfigurations.color_config import ColorConfig
 from tests.bitmovin import BitmovinTestCase
 
 

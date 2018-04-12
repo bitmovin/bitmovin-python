@@ -2,9 +2,8 @@ import unittest
 import json
 from bitmovin import Bitmovin, Response, H265CodecConfiguration, H265Profile, H265Level, BAdapt, MaxCTUSize, \
     TUIntraDepth, TUInterDepth, MotionSearch, ChromaLocation, ColorSpace, ColorPrimaries, ColorRange, ColorTransfer, \
-    InputColorSpace, InputColorRange
+    InputColorSpace, InputColorRange, ColorConfig
 from bitmovin.errors import BitmovinApiError
-from bitmovin.resources.models.codecconfigurations.color_config import ColorConfig
 from tests.bitmovin import BitmovinTestCase
 
 
