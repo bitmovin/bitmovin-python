@@ -349,6 +349,8 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         serialized['subMe'] = self.sub_me
         serialized['trellis'] = self.trellis
         serialized['crf'] = self.crf
-        serialized['colorConfig'] = self.colorConfig.serialize()
+
+        if isinstance(self.colorConfig, ColorConfig):
+            serialized['colorConfig'] = self.colorConfig.serialize()
 
         return serialized

@@ -306,5 +306,8 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         serialized['tuInterDepth'] = self.tuInterDepth
         serialized['motionSearch'] = self.motionSearch
         serialized['crf'] = self.crf
-        serialized['colorConfig'] = self.colorConfig.serialize()
+
+        if isinstance(self.colorConfig, ColorConfig):
+            serialized['colorConfig'] = self.colorConfig.serialize()
+
         return serialized
