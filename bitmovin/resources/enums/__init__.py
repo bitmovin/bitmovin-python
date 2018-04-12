@@ -32,3 +32,10 @@ from .ftp_transfer_version import FTPTransferVersion
 from .thumbnail_unit import ThumbnailUnit
 from .pixel_format import PixelFormat
 from .font import Font
+from .chroma_location import ChromaLocation
+from .color_primaries import ColorPrimaries
+from .color_range import ColorRange
+from .color_space import ColorSpace
+from .color_transfer import ColorTransfer
+from .input_color_range import InputColorRange
+from .input_color_space import InputColorSpace

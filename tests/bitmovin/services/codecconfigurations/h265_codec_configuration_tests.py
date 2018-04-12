@@ -1,7 +1,8 @@
 import unittest
 import json
 from bitmovin import Bitmovin, Response, H265CodecConfiguration, H265Profile, H265Level, BAdapt, MaxCTUSize, \
-    TUIntraDepth, TUInterDepth, MotionSearch
+    TUIntraDepth, TUInterDepth, MotionSearch, ChromaLocation, ColorSpace, ColorPrimaries, ColorRange, ColorTransfer, \
+    InputColorSpace, InputColorRange, ColorConfig
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
 
@@ -169,6 +170,30 @@ class H265CodecConfigurationTests(BitmovinTestCase):
         self.assertEqual(first.weightPredictionOnPSlice, second.weightPredictionOnPSlice)
         self.assertEqual(first.sao, second.sao)
         self.assertEqual(first.crf, second.crf)
+        self.assertEqual(first.maxKeyframeInterval, second.maxKeyframeInterval)
+        self.assertEqual(first.minKeyframeInterval, second.minKeyframeInterval)
+        self.assertEqual(first.sceneCutThreshold, second.sceneCutThreshold)
+        self.assertTrue(self._compare_color_configs(first.colorConfig, second.colorConfig))
+        return True
+
+    def _compare_color_configs(self, first: ColorConfig, second: ColorConfig):
+        """
+
+        :param first: ColorConfig
+        :param second: ColorConfig
+        :return: bool
+        """
+        self.assertEqual(first.inputColorSpace, second.inputColorSpace)
+        self.assertEqual(first.colorTransfer, second.colorTransfer)
+        self.assertEqual(first.colorRange, second.colorRange)
+        self.assertEqual(first.colorPrimaries, second.colorPrimaries)
+        self.assertEqual(first.colorSpace, second.colorSpace)
+        self.assertEqual(first.chromaLocation, second.chromaLocation)
+        self.assertEqual(first.copyChromaLocationFlag, second.copyChromaLocationFlag)
+        self.assertEqual(first.copyColorPrimariesFlag, second.copyColorPrimariesFlag)
+        self.assertEqual(first.copyColorRangeFlag, second.copyColorRangeFlag)
+        self.assertEqual(first.copyColorSpaceFlag, second.copyColorSpaceFlag)
+        self.assertEqual(first.copyColorTransferFlag, second.copyColorTransferFlag)
         return True
 
     def _get_sample_h265_codec_configuration(self):
@@ -198,7 +223,26 @@ class H265CodecConfigurationTests(BitmovinTestCase):
                                                           motion_search_range=57,
                                                           weight_prediction_on_b_slice=False,
                                                           weight_prediction_on_p_slice=True,
-                                                          sao=True)
+                                                          sao=True,
+                                                          crf=None,
+                                                          pixel_format=None,
+                                                          scene_cut_threshold=30,
+                                                          max_keyframe_interval=5,
+                                                          min_keyframe_interval=3,
+                                                          color_config=ColorConfig(
+                                                              copy_chroma_location_flag=True,
+                                                              copy_color_space_flag=True,
+                                                              copy_color_primaries_flag=True,
+                                                              copy_color_range_flag=True,
+                                                              copy_color_transfer_flag=True,
+                                                              chroma_location=ChromaLocation.BOTTOM,
+                                                              color_space=ColorSpace.BT2020_CL,
+                                                              color_primaries=ColorPrimaries.BT709,
+                                                              color_range=ColorRange.MPEG,
+                                                              color_transfer=ColorTransfer.BT2020_10,
+                                                              input_color_space=InputColorSpace.BT470BG,
+                                                              input_color_range=InputColorRange.JPEG
+                                                          ))
 
         self.assertIsNotNone(h265_codec_configuration.name)
         self.assertIsNotNone(h265_codec_configuration.description)
