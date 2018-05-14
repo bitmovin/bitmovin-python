@@ -1,5 +1,7 @@
 from bitmovin.bitmovin_object import BitmovinObject
 from .aac_codec_configuration_service import AAC
+from .he_aac_v1_codec_configuration_service import HeAACv1
+from .he_aac_v2_codec_configuration_service import HeAACv2
 from .ac3_codec_configuration_service import AC3
 from .h264_codec_configuration_service import H264
 from .h265_codec_configuration_service import H265
@@ -17,3 +19,5 @@ class CodecConfigurationService(BitmovinObject):
         self.H265 = H265(http_client=self.http_client)
         self.VP9 = VP9(http_client=self.http_client)
         self.MJPEG = MJPEG(http_client=self.http_client)
+        self.HeAACv1 = HeAACv1(http_client=self.http_client)
+        self.HeAACv2 = HeAACv2(http_client=self.http_client)
