@@ -12,7 +12,6 @@ class HeAACv1CodecConfiguration(AudioCodecConfiguration, Serializable):
         super().__init__(id_=id_, name=name, bitrate=bitrate, rate=rate, description=description,
                          custom_data=custom_data)
 
-        self.channelLayout = channel_layout
         self.volumeAdjust = volume_adjust
         self.normalize = normalize
 
