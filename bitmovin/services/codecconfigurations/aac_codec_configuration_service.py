@@ -1,4 +1,4 @@
-from bitmovin.resources.models import AACCodecConfiguration, HeAACv2CodecConfiguration
+from bitmovin.resources.models import AACCodecConfiguration
 from ..rest_service import RestService
 
 
