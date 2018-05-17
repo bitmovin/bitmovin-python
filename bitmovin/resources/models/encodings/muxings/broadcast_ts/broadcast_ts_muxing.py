@@ -1,6 +1,6 @@
-from ..muxing import Muxing
-from .broadcast_ts_muxing_configuration import BroadcastTsMuxingConfiguration
 from bitmovin.errors import InvalidTypeError
+from .broadcast_ts_muxing_configuration import BroadcastTsMuxingConfiguration
+from ..muxing import Muxing
 
 
 class BroadcastTsMuxing(Muxing):
@@ -36,6 +36,11 @@ class BroadcastTsMuxing(Muxing):
                 )
             )
 
+    def serialize(self):
+        serialized = super().serialize()
+        serialized['configuration'] = self.configuration
+        return serialized
+
     @classmethod
     def parse_from_json_object(cls, json_object):
         muxing = super().parse_from_json_object(json_object)
@@ -47,7 +52,7 @@ class BroadcastTsMuxing(Muxing):
         configuration = BroadcastTsMuxingConfiguration.parse_from_json_object(configuration_json)
 
         return BroadcastTsMuxing(
-            filename=filename, configuration=configuration, segment_length=segment_length,outputs=muxing.outputs,
+            filename=filename, configuration=configuration, segment_length=segment_length, outputs=muxing.outputs,
             id_=muxing.id, custom_data=muxing.customData, streams=muxing.streams, name=muxing.name,
             description=muxing.description, avg_bitrate=muxing.avgBitrate, max_bitrate=muxing.maxBitrate,
             min_bitrate=muxing.minBitrate, ignored_by=muxing.ignored_by

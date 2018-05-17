@@ -1,10 +1,9 @@
 from bitmovin.errors import InvalidTypeError
-
 from bitmovin.utils import Serializable
-from .broadcast_ts_video_stream_configuration import BroadcastTsVideoStreamConfiguration
 from .broadcast_ts_audio_stream_configuration import BroadcastTsAudioStreamConfiguration
-from .broadcast_ts_transport_configuration import BroadcastTsTransportConfiguration
 from .broadcast_ts_program_configuration import BroadcastTsProgramConfiguration
+from .broadcast_ts_transport_configuration import BroadcastTsTransportConfiguration
+from .broadcast_ts_video_stream_configuration import BroadcastTsVideoStreamConfiguration
 
 
 class BroadcastTsMuxingConfiguration(Serializable):
@@ -55,7 +54,7 @@ class BroadcastTsMuxingConfiguration(Serializable):
         else:
             video_streams = []
             for json_object in new_video_streams:
-                video_stream = BroadcastTsVideoStreamConfiguration.parse_from_json_object(json_object)
+                video_stream = BroadcastTsVideoStreamConfiguration.parse_from_json_object(json_object=json_object)
                 video_streams.append(video_stream)
             self._video_streams = video_streams
 
@@ -82,6 +81,14 @@ class BroadcastTsMuxingConfiguration(Serializable):
                 audio_stream = BroadcastTsAudioStreamConfiguration.parse_from_json_object(json_object)
                 audio_streams.append(audio_stream)
             self._audio_streams = audio_streams
+
+    def serialize(self):
+        serialized = super().serialize()
+        serialized['transport'] = self.transport
+        serialized['program'] = self.program
+        serialized['videoStreams'] = self.videoStreams
+        serialized['audioStreams'] = self.audioStreams
+        return serialized
 
     @classmethod
     def parse_from_json_object(cls, json_object):

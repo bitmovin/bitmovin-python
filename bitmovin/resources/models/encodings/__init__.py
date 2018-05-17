@@ -1,6 +1,7 @@
 from .muxings import Muxing, FMP4Muxing, MP4Muxing, TSMuxing, WebMMuxing, ProgressiveTSMuxing, MuxingStream, \
     ByteRange, MuxingInformationAudioTrack, MuxingInformationVideoTrack, ProgressiveTSInformation, \
-    MP4MuxingInformation, ProgressiveMOVMuxing, BroadcastTsMuxing, BroadcastTsProgramConfiguration
+    MP4MuxingInformation, ProgressiveMOVMuxing
+from .muxings.broadcast_ts import *
 from .drms import DRM, DRMStatus, AESDRM, ClearKeyDRM, FairPlayDRM, MarlinDRM, PlayReadyDRM, PrimeTimeDRM, \
     WidevineDRM, CENCDRM, CENCPlayReadyEntry, CENCWidevineEntry
 from .acl_entry import ACLEntry

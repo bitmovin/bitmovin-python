@@ -20,17 +20,23 @@ class BroadcastTsInputStreamConfiguration(Serializable):
         return self._setRaiOnAu
 
     @setRaiOnAu.setter
-    def setRaiOnAu(self, set_rai_on_au):
-        if set_rai_on_au is None:
+    def setRaiOnAu(self, new_set_rai_on_au):
+        if new_set_rai_on_au is None:
+            self._setRaiOnAu = None
             return
-        if isinstance(set_rai_on_au, str):
-            self._setRaiOnAu = set_rai_on_au
-        elif isinstance(set_rai_on_au, SetRaiOnAu):
-            self._setRaiOnAu = set_rai_on_au.value
+        if isinstance(new_set_rai_on_au, str):
+            self._setRaiOnAu = new_set_rai_on_au
+        elif isinstance(new_set_rai_on_au, SetRaiOnAu):
+            self._setRaiOnAu = new_set_rai_on_au.value
         else:
             raise InvalidTypeError(
-                'Invalid type {} for setRaiOnAu: must be either str or SetRaiOnAu!'.format(type(set_rai_on_au))
+                'Invalid type {} for setRaiOnAu: must be either str or SetRaiOnAu!'.format(type(new_set_rai_on_au))
             )
+
+    def serialize(self):
+        serialized = super().serialize()
+        serialized['setRaiOnAu'] = self.setRaiOnAu
+        return serialized
 
     @classmethod
     def parse_from_json_object(cls, json_object):

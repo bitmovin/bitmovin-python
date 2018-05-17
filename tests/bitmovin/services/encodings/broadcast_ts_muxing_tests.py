@@ -3,7 +3,9 @@ import unittest
 import uuid
 
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, ACLPermission, Encoding, \
-    MuxingStream, SelectionMode, BroadcastTsMuxing
+    MuxingStream, SelectionMode, BroadcastTsMuxing, BroadcastTsMuxingConfiguration, BroadcastTsTransportConfiguration, \
+    BroadcastTsProgramConfiguration, BroadcastTsVideoStreamConfiguration, BroadcastTsAudioStreamConfiguration, \
+    SetRaiOnAu
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
 
@@ -129,8 +131,8 @@ class BroadcastTsMuxingTests(BitmovinTestCase):
     def _compare_muxings(self, first: BroadcastTsMuxing, second: BroadcastTsMuxing):
         """
 
-        :param first: Stream
-        :param second: Stream
+        :param first: BroadcastTsMuxing
+        :param second: BroadcastTsMuxing
         :return: bool
         """
 
@@ -139,27 +141,222 @@ class BroadcastTsMuxingTests(BitmovinTestCase):
         self.assertEqual(first.name, second.name)
         self.assertEqual(first.description, second.description)
         self.assertEqual(first.filename, second.filename)
+        self.assertEqual(True,
+                         self._compare_broadcast_ts_muxing_configuration(first.configuration, second.configuration))
+
+        return True
+
+    def _compare_broadcast_ts_muxing_configuration(self, first: BroadcastTsMuxingConfiguration,
+                                                   second: BroadcastTsMuxingConfiguration):
+        """
+
+        :param first: BroadcastTsMuxingConfiguration
+        :param second: BroadcastTsMuxingConfiguration
+        :return: bool
+        """
+
+        if first is None and second is None:
+            return True
+
+        self.assertEqual(True, self._compare_broadcast_ts_transport_configuration(
+            first.transport, second.transport
+        ))
+        self.assertEqual(True, self._compare_broadcast_ts_program_configuration(
+            first.program, second.program
+        ))
+        self.assertEqual(1, len(first.videoStreams))
+        self.assertEqual(1, len(second.videoStreams))
+        self.assertEqual(True, self._compare_broadcast_ts_video_stream_configuration(
+            first.videoStreams[0], second.videoStreams[0]
+        ))
+        self.assertEqual(1, len(first.audioStreams))
+        self.assertEqual(1, len(second.audioStreams))
+        self.assertEqual(True, self._compare_broadcast_ts_audio_stream_configuration(
+            first.audioStreams[0], second.audioStreams[0]
+        ))
+        return True
+
+    def _compare_broadcast_ts_transport_configuration(self, first: BroadcastTsTransportConfiguration,
+                                                      second: BroadcastTsTransportConfiguration):
+        """
+
+        :param first: BroadcastTsTransportConfiguration
+        :param second: BroadcastTsTransportConfiguration
+        :return: bool
+        """
+
+        if first is None and second is None:
+            return True
+
+        self.assertEqual(first.muxrate, second.muxrate)
+        self.assertEqual(first.patRepetitionRatePerSec, second.patRepetitionRatePerSec)
+        self.assertEqual(first.pmtRepetitionRatePerSec, second.pmtRepetitionRatePerSec)
+        self.assertEqual(first.preventEmptyAdaptionFieldsInVideo, second.preventEmptyAdaptionFieldsInVideo)
+        self.assertEqual(first.stopOnError, second.stopOnError)
+        return True
+
+    def _compare_broadcast_ts_program_configuration(self, first: BroadcastTsProgramConfiguration,
+                                                    second: BroadcastTsProgramConfiguration):
+        """
+
+        :param first: BroadcastTsProgramConfiguration
+        :param second: BroadcastTsProgramConfiguration
+        :return: bool
+        """
+
+        if first is None and second is None:
+            return True
+
+        self.assertEqual(first.insertProgramClockRefOnPes, second.insertProgramClockRefOnPes)
+        self.assertEqual(first.pidForPMT, second.pidForPMT)
+        self.assertEqual(first.programNumber, second.programNumber)
+        return True
+
+    def _compare_broadcast_ts_video_stream_configuration(self, first: BroadcastTsVideoStreamConfiguration,
+                                                         second: BroadcastTsVideoStreamConfiguration):
+        """
+
+        :param first: BroadcastTsVideoStreamConfiguration
+        :param second:  BroadcastTsVideoStreamConfiguration
+        :return: bool
+        """
+
+        if first is None and second is None:
+            return True
+
+        self.assertEqual(first.alignPes, second.alignPes)
+        self.assertEqual(first.startWithDiscontinuityIndicator, second.startWithDiscontinuityIndicator)
+        self.assertEqual(first.packetIdentifier, second.packetIdentifier)
+        self.assertEqual(first.streamId, second.streamId)
+        self.assertEqual(first.insertAccessUnitDelimiterinAvc, second.insertAccessUnitDelimiterinAvc)
+        self.assertEqual(first.maxDecodeDelay, second.maxDecodeDelay)
+        self.assertEqual(first.setRaiOnAu, second.setRaiOnAu)
+        return True
+
+    def _compare_broadcast_ts_audio_stream_configuration(self, first: BroadcastTsAudioStreamConfiguration,
+                                                         second: BroadcastTsAudioStreamConfiguration):
+        """
+
+        :param first: BroadcastTsAudioStreamConfiguration
+        :param second: BroadcastTsAudioStreamConfiguration
+        :return: bool
+        """
+
+        if first is None and second is None:
+            return True
+
+        self.assertEqual(first.streamId, second.streamId)
+        self.assertEqual(first.packetIdentifier, second.packetIdentifier)
+        self.assertEqual(first.startWithDiscontinuityIndicator, second.startWithDiscontinuityIndicator)
+        self.assertEqual(first.alignPes, second.alignPes)
+        self.assertEqual(first.language, second.language)
+        self.assertEqual(first.useATSCBufferModel, second.useATSCBufferModel)
+        self.assertEqual(first.setRaiOnAu, second.setRaiOnAu)
         return True
 
     def _get_sample_muxing(self):
-        stream = self._get_sample_stream()
+        video_stream = self._get_sample_video_stream()
 
-        create_stream_response = self.bitmovin.encodings.Stream.create(object_=stream,
-                                                                       encoding_id=self.sampleEncoding.id)
-        self.assertIsNotNone(create_stream_response)
-        self.assertIsNotNone(create_stream_response.resource)
-        self.assertIsNotNone(create_stream_response.resource.id)
+        video_stream_response = self.bitmovin.encodings.Stream.create(object_=video_stream,
+                                                                      encoding_id=self.sampleEncoding.id)
+        self.assertIsNotNone(video_stream_response)
+        self.assertIsNotNone(video_stream_response.resource)
+        self.assertIsNotNone(video_stream_response.resource.id)
 
-        muxing_stream = MuxingStream(stream_id=create_stream_response.resource.id)
+        audio_stream = self._get_sample_audio_stream()
+        audio_stream_response = self.bitmovin.encodings.Stream.create(object_=audio_stream,
+                                                                      encoding_id=self.sampleEncoding.id)
+        self.assertIsNotNone(audio_stream_response)
+        self.assertIsNotNone(audio_stream_response.resource)
+        self.assertIsNotNone(audio_stream_response.resource.id)
 
-        muxing = BroadcastTsMuxing(streams=[muxing_stream],
-                                   segment_length=4,
-                                   outputs=stream.outputs,
-                                   name='Sample BroadcastTS Muxing',
-                                   filename='pythontest.ts')
-        return muxing
+        muxing_video_stream = MuxingStream(stream_id=video_stream_response.resource.id)
+        muxing_audio_stream = MuxingStream(stream_id=audio_stream_response.resource.id)
 
-    def _get_sample_stream(self):
+        broadcast_ts_muxing_configuration = self._get_sample_broadcast_ts_muxing_configuration(
+            video_stream_id=video_stream_response.resource.id,
+            audio_stream_id=audio_stream_response.resource.id
+        )
+
+        return BroadcastTsMuxing(streams=[muxing_video_stream, muxing_audio_stream],
+                                 segment_length=4,
+                                 outputs=video_stream.outputs,
+                                 name='Sample BroadcastTS Muxing',
+                                 filename='pythontest.ts',
+                                 configuration=broadcast_ts_muxing_configuration)
+
+    def _get_sample_broadcast_ts_muxing_configuration(self, video_stream_id, audio_stream_id):
+        broadcast_ts_transport_configuration = BroadcastTsTransportConfiguration(
+            muxrate=0,
+            stop_on_error=True,
+            prevent_empty_adaptation_fields_in_video=True,
+            pat_repetition_rate_per_sec=10,
+            pmt_repetition_rate_per_sec=10
+        )
+
+        broadcast_ts_program_configuration = BroadcastTsProgramConfiguration(
+            program_number=32,
+            pid_for_pmt=64,
+            insert_program_clock_ref_on_pes=True
+        )
+
+        broadcast_ts_video_stream_configuration = BroadcastTsVideoStreamConfiguration(
+            stream_id=video_stream_id,
+            packet_identifier=32,
+            start_with_discontinuity_indicator=True,
+            align_pes=True,
+            set_rai_on_au=SetRaiOnAu.ACCORDING_TO_INPUT,
+            insert_access_unit_delimiter_in_avc=True,
+            max_decode_delay=500000
+        )
+
+        broadcast_ts_audio_stream_configuration = BroadcastTsAudioStreamConfiguration(
+            stream_id=audio_stream_id,
+            packet_identifier=32,
+            start_with_discontinuity_indicator=True,
+            align_pes=True,
+            set_rai_on_au=SetRaiOnAu.ACCORDING_TO_INPUT,
+            use_atsc_buffer_model=True,
+            language='de'
+        )
+
+        return BroadcastTsMuxingConfiguration(
+            transport=broadcast_ts_transport_configuration,
+            program=broadcast_ts_program_configuration,
+            video_streams=[broadcast_ts_video_stream_configuration],
+            audio_streams=[broadcast_ts_audio_stream_configuration]
+        )
+
+    def _get_sample_audio_stream(self):
+        aac_codec_configuration = self.utils.get_sample_aac_codec_configuration()
+        aac_codec_configuration = self.bitmovin.codecConfigurations.AAC.create(aac_codec_configuration)
+
+        (sample_input, sample_files) = self.utils.get_sample_s3_input()
+        s3_input = self.bitmovin.inputs.S3.create(sample_input)
+
+        stream_input = StreamInput(input_id=s3_input.resource.id,
+                                   input_path=sample_files.get('854b9c98-17b9-49ed-b75c-3b912730bfd1'),
+                                   selection_mode=SelectionMode.AUTO)
+
+        acl_entry = ACLEntry(scope='string', permission=ACLPermission.PUBLIC_READ)
+
+        sample_output = self.utils.get_sample_s3_output()
+        s3_output = self.bitmovin.outputs.S3.create(sample_output)
+        encoding_output = EncodingOutput(output_id=s3_output.resource.id,
+                                         output_path='/bitmovin-python/StreamTests/' + str(uuid.uuid4()),
+                                         acl=[acl_entry])
+
+        stream = Stream(codec_configuration_id=aac_codec_configuration.resource.id,
+                        input_streams=[stream_input],
+                        outputs=[encoding_output],
+                        name='Sample Audio Stream')
+
+        self.assertIsNotNone(stream.codecConfigId)
+        self.assertIsNotNone(stream.inputStreams)
+        self.assertIsNotNone(stream.outputs)
+        return stream
+
+    def _get_sample_video_stream(self):
         sample_codec_configuration = self.utils.get_sample_h264_codec_configuration()
         h264_codec_configuration = self.bitmovin.codecConfigurations.H264.create(sample_codec_configuration)
 

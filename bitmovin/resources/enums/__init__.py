@@ -39,3 +39,4 @@ from .color_space import ColorSpace
 from .color_transfer import ColorTransfer
 from .input_color_range import InputColorRange
 from .input_color_space import InputColorSpace
+from .set_rai_on_au import SetRaiOnAu

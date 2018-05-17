@@ -16,7 +16,7 @@ class BroadcastTsTransportConfiguration(Serializable):
     def parse_from_json_object(cls, json_object):
         muxrate = json_object.get('muxrate')
         stop_on_error = json_object.get('stopOnError')
-        prevent_empty_adaptation_fields_in_video = json_object.get('preventEmptyAdaptationFieldsInVideo')
+        prevent_empty_adaptation_fields_in_video = json_object.get('preventEmptyAdaptionFieldsInVideo')
         pat_repetition_rate_per_sec = json_object.get('patRepetitionRatePerSec')
         pmt_repetition_rate_per_sec = json_object.get('pmtRepetitionRatePerSec')
 

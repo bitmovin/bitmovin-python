@@ -12,8 +12,9 @@ class BroadcastTsVideoStreamConfiguration(BroadcastTsInputStreamConfiguration):
         self.insertAccessUnitDelimiterinAvc = insert_access_unit_delimiter_in_avc
         self.maxDecodeDelay = max_decode_delay
 
-    def parse_from_json_object(self, json_object):
-        input_stream_configuration = super().parse_from_json_object(json_object)
+    @classmethod
+    def parse_from_json_object(cls, json_object):
+        input_stream_configuration = super().parse_from_json_object(json_object=json_object)
 
         insert_access_unit_delimiter_in_avc = json_object.get('insertAccessUnitDelimiterInAvc')
         max_decode_delay = json_object.get('maxDecodeDelay')
