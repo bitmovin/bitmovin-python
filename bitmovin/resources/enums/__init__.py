@@ -40,3 +40,5 @@ from .color_transfer import ColorTransfer
 from .input_color_range import InputColorRange
 from .input_color_space import InputColorSpace
 from .set_rai_on_au import SetRaiOnAu
+from .h264_b_pyramid import H264BPyramid
+from .h264_nal_hrd import H264NalHrd

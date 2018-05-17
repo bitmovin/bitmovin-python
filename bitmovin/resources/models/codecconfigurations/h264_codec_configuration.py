@@ -6,6 +6,7 @@ from bitmovin.resources.enums.h264_partition import H264Partition
 from bitmovin.resources.enums.h264_sub_me import H264SubMe
 from bitmovin.resources.enums.badapt import BAdapt
 from bitmovin.resources.enums.h264_trellis import H264Trellis
+from bitmovin.resources.enums import H264BPyramid, H264NalHrd
 from bitmovin.utils import Serializable
 
 from .video_codec_configuration import VideoCodecConfiguration
@@ -21,7 +22,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
                  motion_estimation_method=None,partitions=None, trellis=None, slices=None, interlaceMode=None, crf=None,
                  pixel_format=None, min_keyframe_interval=None, max_keyframe_interval=None,
                  sample_aspect_ratio_numerator=None, sample_aspect_ratio_denominator=None, scene_cut_threshold=None,
-                 color_config=None):
+                 color_config=None, nal_hrd=None, b_pyramid=None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description, bitrate=bitrate,
                          rate=rate, width=width, height=height, pixel_format=pixel_format)
@@ -37,6 +38,8 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         self._interlaceMode = None
         self._crf = None
         self._colorConfig = None
+        self._nalHrd = None
+        self._bPyramid = None
 
         self.b_adapt = b_adapt
         self.bframes = bframes
@@ -67,6 +70,38 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         self.sampleAspectRatioDenominator = sample_aspect_ratio_denominator
         self.sceneCutThreshold = scene_cut_threshold
         self.colorConfig = color_config
+        self.bPyramid = b_pyramid
+        self.nalHrd = nal_hrd
+
+    @property
+    def bPyramid(self):
+        return self._bPyramid
+
+    @bPyramid.setter
+    def bPyramid(self, new_b_pyramid):
+        if new_b_pyramid is None:
+            self._bPyramid = None
+        elif isinstance(new_b_pyramid, H264BPyramid):
+            self._bPyramid = new_b_pyramid.value
+        elif isinstance(new_b_pyramid, str):
+            self._bPyramid = new_b_pyramid
+        else:
+            raise InvalidTypeError('bPyramid has to be of type H264BPyramid')
+
+    @property
+    def nalHrd(self):
+        return self.nalHrd
+
+    @nalHrd.setter
+    def nalHrd(self, new_nal_hrd):
+        if new_nal_hrd is None:
+            self._nalHrd = None
+        elif isinstance(new_nal_hrd, H264NalHrd):
+            self._nalHrd = new_nal_hrd.value
+        elif isinstance(new_nal_hrd, str):
+            self._nalHrd = new_nal_hrd
+        else:
+            raise InvalidTypeError('nalHrd has to be of type H264NalHrd')
 
     @property
     def colorConfig(self):
@@ -289,6 +324,9 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         aspect_ratio_denominator = json_object.get('sampleAspectRatioDenominator')
         scene_cut_threshold = json_object.get('sceneCutThreshold')
 
+        nal_hrd = json_object.get('nalHrd')
+        b_pyramid = json_object.get('bPyramid')
+
         color_config = None
         color_config_json = json_object.get('colorConfig')
         if color_config_json is not None:
@@ -332,7 +370,8 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
                                                           sample_aspect_ratio_numerator=aspect_ratio_numerator,
                                                           sample_aspect_ratio_denominator=aspect_ratio_denominator,
                                                           scene_cut_threshold=scene_cut_threshold,
-                                                          color_config=color_config)
+                                                          color_config=color_config, nal_hrd=nal_hrd,
+                                                          b_pyramid=b_pyramid)
 
         return h264_codec_configuration
 
