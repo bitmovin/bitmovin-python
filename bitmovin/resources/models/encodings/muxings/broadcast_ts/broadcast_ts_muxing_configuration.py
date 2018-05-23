@@ -10,11 +10,14 @@ class BroadcastTsMuxingConfiguration(Serializable):
 
     def __init__(self, transport=None, program=None, video_streams=None, audio_streams=None):
         super().__init__()
+        self.program = program
+
         self._transport = None
         self.transport = transport
-        self.program = program
+
         self._video_streams = None
         self.videoStreams = video_streams
+
         self._audio_streams = None
         self.audioStreams = audio_streams
 
@@ -26,6 +29,7 @@ class BroadcastTsMuxingConfiguration(Serializable):
     def transport(self, new_transport):
         if new_transport is None:
             self._transport = None
+            return
 
         if isinstance(new_transport, BroadcastTsTransportConfiguration):
             self._transport = new_transport
@@ -101,5 +105,7 @@ class BroadcastTsMuxingConfiguration(Serializable):
         video_streams = json_object.get('videoStreams')
         audio_streams = json_object.get('audioStreams')
 
-        return BroadcastTsMuxingConfiguration(transport=transport, program=program, video_streams=video_streams,
-                                              audio_streams=audio_streams)
+        broadcast_ts_muxing_configuration = BroadcastTsMuxingConfiguration(transport=transport, program=program,
+                                                                           video_streams=video_streams,
+                                                                           audio_streams=audio_streams)
+        return broadcast_ts_muxing_configuration

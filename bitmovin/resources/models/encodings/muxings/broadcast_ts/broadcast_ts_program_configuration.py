@@ -15,5 +15,9 @@ class BroadcastTsProgramConfiguration(Serializable):
         pid_for_pmt = json_object.get('pidForPMT')
         insert_program_clock_ref_on_pes = json_object.get('insertProgramClockRefOnPes')
 
-        return BroadcastTsProgramConfiguration(program_number=program_number, pid_for_pmt=pid_for_pmt,
-                                               insert_program_clock_ref_on_pes=insert_program_clock_ref_on_pes)
+        broadcast_ts_program_configuration = BroadcastTsProgramConfiguration(
+            program_number=program_number,
+            pid_for_pmt=pid_for_pmt,
+            insert_program_clock_ref_on_pes=insert_program_clock_ref_on_pes
+        )
+        return broadcast_ts_program_configuration

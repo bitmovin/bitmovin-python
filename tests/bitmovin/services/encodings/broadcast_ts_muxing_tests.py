@@ -65,7 +65,6 @@ class BroadcastTsMuxingTests(BitmovinTestCase):
         self.assertIsNotNone(retrieved_muxing_response.resource)
         self._compare_muxings(created_muxing_response.resource, retrieved_muxing_response.resource)
 
-    @unittest.skip('DELETE route not available yet.')
     def test_delete_muxing(self):
         sample_muxing = self._get_sample_muxing()
         created_muxing_response = self.bitmovin.encodings.Muxing.BroadcastTS.create(object_=sample_muxing,
@@ -85,7 +84,8 @@ class BroadcastTsMuxingTests(BitmovinTestCase):
         self.assertIsNotNone(deleted_minimal_resource.resource.id)
 
         try:
-            self.bitmovin.encodings.Muxing.BroadcastTS.retrieve(created_muxing_response.resource.id)
+            self.bitmovin.encodings.Muxing.BroadcastTS.retrieve(encoding_id=self.sampleEncoding.id,
+                                                                muxing_id=created_muxing_response.resource.id)
             self.fail(
                 'Previous statement should have thrown an exception. ' +
                 'Retrieving muxing after deleting it should not be possible.'

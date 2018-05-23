@@ -20,9 +20,10 @@ class BroadcastTsTransportConfiguration(Serializable):
         pat_repetition_rate_per_sec = json_object.get('patRepetitionRatePerSec')
         pmt_repetition_rate_per_sec = json_object.get('pmtRepetitionRatePerSec')
 
-        return BroadcastTsTransportConfiguration(
+        broadcast_ts_transport_configuration = BroadcastTsTransportConfiguration(
             muxrate=muxrate, stop_on_error=stop_on_error,
             prevent_empty_adaptation_fields_in_video=prevent_empty_adaptation_fields_in_video,
             pat_repetition_rate_per_sec=pat_repetition_rate_per_sec,
             pmt_repetition_rate_per_sec=pmt_repetition_rate_per_sec
         )
+        return broadcast_ts_transport_configuration

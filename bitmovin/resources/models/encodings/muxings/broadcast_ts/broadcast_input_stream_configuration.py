@@ -46,8 +46,9 @@ class BroadcastTsInputStreamConfiguration(Serializable):
         align_pes = json_object.get('alignPes')
         set_rai_on_au = json_object.get('setRaiOnAu')
 
-        return BroadcastTsInputStreamConfiguration(
+        broadcast_input_stream_configuration = BroadcastTsInputStreamConfiguration(
             stream_id=stream_id, packet_identifier=packet_identifier,
             start_with_discontinuity_indicator=start_with_discontinuity_indicator,
             align_pes=align_pes, set_rai_on_au=set_rai_on_au
         )
+        return broadcast_input_stream_configuration

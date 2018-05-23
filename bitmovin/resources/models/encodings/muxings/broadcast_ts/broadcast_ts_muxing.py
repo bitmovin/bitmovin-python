@@ -51,9 +51,10 @@ class BroadcastTsMuxing(Muxing):
         configuration_json = json_object.get('configuration')
         configuration = BroadcastTsMuxingConfiguration.parse_from_json_object(configuration_json)
 
-        return BroadcastTsMuxing(
+        broadcast_ts_muxing = BroadcastTsMuxing(
             filename=filename, configuration=configuration, segment_length=segment_length, outputs=muxing.outputs,
             id_=muxing.id, custom_data=muxing.customData, streams=muxing.streams, name=muxing.name,
             description=muxing.description, avg_bitrate=muxing.avgBitrate, max_bitrate=muxing.maxBitrate,
             min_bitrate=muxing.minBitrate, ignored_by=muxing.ignored_by
         )
+        return broadcast_ts_muxing
