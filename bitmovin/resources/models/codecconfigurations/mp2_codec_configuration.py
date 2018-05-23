@@ -1,5 +1,5 @@
-from bitmovin.resources.enums import MP2ChannelLayout
 from bitmovin.errors import InvalidTypeError
+from bitmovin.resources.enums import MP2ChannelLayout
 from bitmovin.utils import Serializable
 from .audio_codec_configuration import AudioCodecConfiguration
 
@@ -42,11 +42,9 @@ class MP2CodecConfiguration(AudioCodecConfiguration, Serializable):
 
         channel_layout = json_object.get('channelLayout')
 
-        aac_codec_configuration = MP2CodecConfiguration(id_=id_, name=name, description=description,
-                                                        custom_data=custom_data, bitrate=bitrate, rate=rate,
-                                                        channel_layout=channel_layout)
-
-        return aac_codec_configuration
+        return MP2CodecConfiguration(id_=id_, name=name, description=description,
+                                     custom_data=custom_data, bitrate=bitrate, rate=rate,
+                                     channel_layout=channel_layout)
 
     def serialize(self):
         serialized = super().serialize()
