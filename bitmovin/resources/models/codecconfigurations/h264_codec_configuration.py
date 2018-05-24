@@ -90,7 +90,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
 
     @property
     def nalHrd(self):
-        return self.nalHrd
+        return self._nalHrd
 
     @nalHrd.setter
     def nalHrd(self, new_nal_hrd):
