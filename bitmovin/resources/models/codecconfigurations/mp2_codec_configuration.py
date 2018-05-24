@@ -21,6 +21,7 @@ class MP2CodecConfiguration(AudioCodecConfiguration, Serializable):
     @channelLayout.setter
     def channelLayout(self, new_layout):
         if new_layout is None:
+            self._channelLayout = None
             return
         if isinstance(new_layout, str):
             self._channelLayout = new_layout

@@ -81,6 +81,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
     def bPyramid(self, new_b_pyramid):
         if new_b_pyramid is None:
             self._bPyramid = None
+            return
         elif isinstance(new_b_pyramid, H264BPyramid):
             self._bPyramid = new_b_pyramid.value
         elif isinstance(new_b_pyramid, str):
@@ -96,6 +97,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
     def nalHrd(self, new_nal_hrd):
         if new_nal_hrd is None:
             self._nalHrd = None
+            return
         elif isinstance(new_nal_hrd, H264NalHrd):
             self._nalHrd = new_nal_hrd.value
         elif isinstance(new_nal_hrd, str):
