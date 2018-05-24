@@ -1,6 +1,7 @@
 import unittest
 from bitmovin import Bitmovin, Response, H264CodecConfiguration, H264Profile, MVPredictionMode, H264Level, BAdapt, \
-    ChromaLocation, ColorSpace, ColorPrimaries, ColorRange, ColorTransfer, InputColorSpace, InputColorRange, ColorConfig
+    ChromaLocation, ColorSpace, ColorPrimaries, ColorRange, ColorTransfer, InputColorSpace, InputColorRange, \
+    ColorConfig, H264BPyramid, H264NalHrd
 from bitmovin.errors import BitmovinApiError
 from bitmovin.resources.enums.h264_interlace_mode import H264InterlaceMode
 from bitmovin.resources.enums.h264_motion_estimation_method import H264MotionEstimationMethod
@@ -227,6 +228,8 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         self.assertEqual(first.sampleAspectRatioNumerator, second.sampleAspectRatioNumerator)
         self.assertEqual(first.sampleAspectRatioDenominator, second.sampleAspectRatioDenominator)
         self.assertEqual(first.sceneCutThreshold, second.sceneCutThreshold)
+        self.assertEqual(first.bPyramid, second.bPyramid)
+        self.assertEqual(first.nalHrd, second.nalHrd)
         self.assertTrue(self._compare_color_configs(first.colorConfig, second.colorConfig))
         return True
 
@@ -298,7 +301,9 @@ class H264CodecConfigurationTests(BitmovinTestCase):
                                                               color_transfer=ColorTransfer.BT2020_10,
                                                               input_color_space=InputColorSpace.BT470BG,
                                                               input_color_range=InputColorRange.JPEG
-                                                          ))
+                                                          ),
+                                                          nal_hrd=H264NalHrd.VBR,
+                                                          b_pyramid=H264BPyramid.NONE)
 
         self.assertIsNotNone(h264_codec_configuration.name)
         self.assertIsNotNone(h264_codec_configuration.description)
@@ -329,7 +334,8 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         self.assertIsNotNone(h264_codec_configuration.maxKeyframeInterval)
         self.assertIsNotNone(h264_codec_configuration.pixelFormat)
         self.assertIsNotNone(h264_codec_configuration.colorConfig)
-
+        self.assertIsNotNone(h264_codec_configuration.nalHrd)
+        self.assertIsNotNone(h264_codec_configuration.bPyramid)
         return h264_codec_configuration
 
 

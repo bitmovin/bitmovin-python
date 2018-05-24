@@ -388,6 +388,8 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         serialized['subMe'] = self.sub_me
         serialized['trellis'] = self.trellis
         serialized['crf'] = self.crf
+        serialized['nalHrd'] = self.nalHrd
+        serialized['bPyramid'] = self.bPyramid
 
         if isinstance(self.colorConfig, ColorConfig):
             serialized['colorConfig'] = self.colorConfig.serialize()
