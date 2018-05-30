@@ -1,7 +1,7 @@
 import enum
 
 
-class HeAacCodecConfigSignaling(enum.Enum):
+class HeAacSignaling(enum.Enum):
     DEFAULT = 'DEFAULT'
     IMPLICIT = 'IMPLICIT'
     EXPLICIT_SBR = 'EXPLICIT_SBR'

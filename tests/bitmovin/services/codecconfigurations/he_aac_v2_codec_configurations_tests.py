@@ -1,7 +1,7 @@
 import json
 import unittest
 
-from bitmovin import Bitmovin, Response, HeAACv2CodecConfiguration, AACChannelLayout, HeAacCodecConfigSignaling
+from bitmovin import Bitmovin, Response, HeAACv2CodecConfiguration, AACChannelLayout, HeAacSignaling
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
 
@@ -139,7 +139,7 @@ class HeAACV2CodecConfigurationTests(BitmovinTestCase):
             volume_adjust=None,
             normalize=None,
             channel_layout=AACChannelLayout.CL_2_1,
-            signaling=HeAacCodecConfigSignaling.EXPLICIT_SBR)
+            signaling=HeAacSignaling.EXPLICIT_SBR)
 
         self.assertIsNotNone(he_aac_v2_codec_configuration.name)
         self.assertIsNotNone(he_aac_v2_codec_configuration.description)
