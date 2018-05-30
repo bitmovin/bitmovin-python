@@ -8,4 +8,4 @@ from .audio_mix_filter import AudioMixFilter
 from .deinterlace_filter import DeinterlaceFilter
 from .denoise_hqdn3d_filter import DenoiseHqdn3dFilter
 from .text_filter import TextFilter
-from .enhanced_watermark_filter import EnchancedWatermarkFilter
+from .enhanced_watermark_filter import EnhancedWatermarkFilter

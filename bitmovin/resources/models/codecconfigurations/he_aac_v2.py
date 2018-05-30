@@ -1,5 +1,5 @@
 from bitmovin.errors import InvalidTypeError
-from bitmovin.resources.enums import AACChannelLayout, HeAacSignaling
+from bitmovin.resources.enums import AACChannelLayout, HeAacCodecConfigSignaling
 from bitmovin.utils import Serializable
 from .audio_codec_configuration import AudioCodecConfiguration
 
@@ -32,11 +32,11 @@ class HeAACv2CodecConfiguration(AudioCodecConfiguration, Serializable):
             return
         if isinstance(new_signaling, str):
             self._signaling = new_signaling
-        elif isinstance(new_signaling, HeAacSignaling):
+        elif isinstance(new_signaling, HeAacCodecConfigSignaling):
             self._signaling = new_signaling.value
         else:
             raise InvalidTypeError(
-                'Invalid type {} for signalling: must be either str or HeAacCodecConfigSignalling'.format(
+                'Invalid type {} for signalling: must be either str or HeAacCodecConfigSignaling'.format(
                     type(new_signaling)))
 
     @property

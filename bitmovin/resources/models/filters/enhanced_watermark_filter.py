@@ -4,7 +4,7 @@ from bitmovin.utils import Serializable
 from .abstract_filter import AbstractFilter
 
 
-class EnchancedWatermarkFilter(AbstractFilter, Serializable):
+class EnhancedWatermarkFilter(AbstractFilter, Serializable):
 
     def __init__(self, image, id_, left=None, right=None, top=None, bottom=None, unit=None, name=None,
                  custom_data=None, description=None):
@@ -33,7 +33,7 @@ class EnchancedWatermarkFilter(AbstractFilter, Serializable):
             self._unit = new_unit.value
         else:
             raise InvalidTypeError(
-                'Invalid type {} for font: must be either str or WatermarkUnit!'.format(type(new_unit)))
+                'Invalid type {} for unit: must be either str or WatermarkUnit!'.format(type(new_unit)))
 
     def serialize(self):
         serialized = super().serialize()
@@ -51,7 +51,7 @@ class EnchancedWatermarkFilter(AbstractFilter, Serializable):
         name = json_object.get('name')
         description = json_object.get('description')
         unit = json_object.get('unit')
-        watermark_filter = EnchancedWatermarkFilter(
+        watermark_filter = EnhancedWatermarkFilter(
             image=image, left=left, right=right, top=top, bottom=bottom, id_=id_, name=name, description=description,
             unit=unit)
         return watermark_filter

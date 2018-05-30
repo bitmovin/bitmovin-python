@@ -33,7 +33,7 @@ class WatermarkFilter(AbstractFilter, Serializable):
             self._unit = new_unit.value
         else:
             raise InvalidTypeError(
-                'Invalid type {} for font: must be either str or WatermarkUnit!'.format(type(new_unit)))
+                'Invalid type {} for unit: must be either str or WatermarkUnit!'.format(type(new_unit)))
 
     def serialize(self):
         serialized = super().serialize()
