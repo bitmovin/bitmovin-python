@@ -26,18 +26,18 @@ class HeAACv2CodecConfiguration(AudioCodecConfiguration, Serializable):
         return self._signaling
 
     @signaling.setter
-    def signaling(self, new_signalling):
-        if new_signalling is None:
+    def signaling(self, new_signaling):
+        if new_signaling is None:
             self._signaling = None
             return
-        if isinstance(new_signalling, str):
-            self._signaling = new_signalling
-        elif isinstance(new_signalling, HeAacSignaling):
-            self._signaling = new_signalling.value
+        if isinstance(new_signaling, str):
+            self._signaling = new_signaling
+        elif isinstance(new_signaling, HeAacSignaling):
+            self._signaling = new_signaling.value
         else:
             raise InvalidTypeError(
                 'Invalid type {} for signalling: must be either str or HeAacCodecConfigSignalling'.format(
-                    type(new_signalling)))
+                    type(new_signaling)))
 
     @property
     def channelLayout(self):
