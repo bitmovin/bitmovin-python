@@ -45,3 +45,4 @@ from .h264_nal_hrd import H264NalHrd
 from .mp2_channel_layout import MP2ChannelLayout
 from .h264_partition import H264Partition
 from .h264_interlace_mode import H264InterlaceMode
+from .watermark_unit import WatermarkUnit

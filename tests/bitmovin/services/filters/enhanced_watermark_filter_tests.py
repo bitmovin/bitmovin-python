@@ -6,7 +6,7 @@ from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
 
 
-class WatermarkFilterTests(BitmovinTestCase):
+class EnhancedWatermarkFilterTests(BitmovinTestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -25,43 +25,43 @@ class WatermarkFilterTests(BitmovinTestCase):
     def tearDown(self):
         super().tearDown()
 
-    def test_create_watermark_filter(self):
-        sample_filter = self._get_sample_watermark_filter()
+    def test_create_enchanced_watermark_filter(self):
+        sample_filter = self._get_sample_enchanced_watermark_filter()
         filter_resource_response = self.bitmovin.filters.Watermark.create(sample_filter)
         self.assertIsNotNone(filter_resource_response)
         self.assertIsNotNone(filter_resource_response.resource)
         self.assertIsNotNone(filter_resource_response.resource.id)
-        self._compare_watermark_filters(sample_filter, filter_resource_response.resource)
+        self._compare_enchanced_watermark_filters(sample_filter, filter_resource_response.resource)
 
-    def test_create_watermark_filter_without_name(self):
-        sample_filter = self._get_sample_watermark_filter()
+    def test_create_enchanced_watermark_filter_without_name(self):
+        sample_filter = self._get_sample_enchanced_watermark_filter()
         sample_filter.name = None
         filter_resource_response = self.bitmovin.filters.Watermark.create(sample_filter)
         self.assertIsNotNone(filter_resource_response)
         self.assertIsNotNone(filter_resource_response.resource)
         self.assertIsNotNone(filter_resource_response.resource.id)
-        self._compare_watermark_filters(sample_filter, filter_resource_response.resource)
+        self._compare_enchanced_watermark_filters(sample_filter, filter_resource_response.resource)
 
-    def test_retrieve_watermark_filter(self):
-        sample_filter = self._get_sample_watermark_filter()
+    def test_retrieve_enchanced_watermark_filter(self):
+        sample_filter = self._get_sample_enchanced_watermark_filter()
         created_filter_response = self.bitmovin.filters.Watermark.create(sample_filter)
         self.assertIsNotNone(created_filter_response)
         self.assertIsNotNone(created_filter_response.resource)
         self.assertIsNotNone(created_filter_response.resource.id)
-        self._compare_watermark_filters(sample_filter, created_filter_response.resource)
+        self._compare_enchanced_watermark_filters(sample_filter, created_filter_response.resource)
 
         retrieved_filter_response = self.bitmovin.filters.Watermark.retrieve(created_filter_response.resource.id)
         self.assertIsNotNone(retrieved_filter_response)
         self.assertIsNotNone(retrieved_filter_response.resource)
-        self._compare_watermark_filters(created_filter_response.resource, retrieved_filter_response.resource)
+        self._compare_enchanced_watermark_filters(created_filter_response.resource, retrieved_filter_response.resource)
 
-    def test_delete_watermark_filter(self):
-        sample_filter = self._get_sample_watermark_filter()
+    def test_delete_enchanced_watermark_filter(self):
+        sample_filter = self._get_sample_enchanced_watermark_filter()
         created_filter_response = self.bitmovin.filters.Watermark.create(sample_filter)
         self.assertIsNotNone(created_filter_response)
         self.assertIsNotNone(created_filter_response.resource)
         self.assertIsNotNone(created_filter_response.resource.id)
-        self._compare_watermark_filters(sample_filter, created_filter_response.resource)
+        self._compare_enchanced_watermark_filters(sample_filter, created_filter_response.resource)
 
         deleted_minimal_resource = self.bitmovin.filters.Watermark.delete(created_filter_response.resource.id)
         self.assertIsNotNone(deleted_minimal_resource)
@@ -77,13 +77,13 @@ class WatermarkFilterTests(BitmovinTestCase):
         except BitmovinApiError:
             pass
 
-    def test_list_watermark_filters(self):
-        sample_filter = self._get_sample_watermark_filter()
+    def test_list_enchanced_watermark_filters(self):
+        sample_filter = self._get_sample_enchanced_watermark_filter()
         created_filter_response = self.bitmovin.filters.Watermark.create(sample_filter)
         self.assertIsNotNone(created_filter_response)
         self.assertIsNotNone(created_filter_response.resource)
         self.assertIsNotNone(created_filter_response.resource.id)
-        self._compare_watermark_filters(sample_filter, created_filter_response.resource)
+        self._compare_enchanced_watermark_filters(sample_filter, created_filter_response.resource)
 
         filters = self.bitmovin.filters.Watermark.list()
         self.assertIsNotNone(filters)
@@ -93,20 +93,20 @@ class WatermarkFilterTests(BitmovinTestCase):
         self.assertIsInstance(filters.response, Response)
         self.assertGreater(filters.resource.__sizeof__(), 1)
 
-    def test_retrieve_watermark_filter_custom_data(self):
-        sample_filter = self._get_sample_watermark_filter()
+    def test_retrieve_enchanced_watermark_filter_custom_data(self):
+        sample_filter = self._get_sample_enchanced_watermark_filter()
         sample_filter.customData = '<pre>my custom data</pre>'
         created_filter_response = self.bitmovin.filters.Watermark.create(sample_filter)
         self.assertIsNotNone(created_filter_response)
         self.assertIsNotNone(created_filter_response.resource)
         self.assertIsNotNone(created_filter_response.resource.id)
-        self._compare_watermark_filters(sample_filter, created_filter_response.resource)
+        self._compare_enchanced_watermark_filters(sample_filter, created_filter_response.resource)
 
         custom_data_response = self.bitmovin.filters.Watermark.retrieve_custom_data(created_filter_response.resource.id)
         custom_data = custom_data_response.resource
         self.assertEqual(sample_filter.customData, json.loads(custom_data.customData))
 
-    def _compare_watermark_filters(self, first: WatermarkFilter, second: WatermarkFilter):
+    def _compare_enchanced_watermark_filters(self, first: WatermarkFilter, second: WatermarkFilter):
         """
 
         :param first: WatermarkFilter
@@ -123,14 +123,15 @@ class WatermarkFilterTests(BitmovinTestCase):
         self.assertEqual(first.unit, second.unit)
         return True
 
-    def _get_sample_watermark_filter(self):
-        watermark_filter = WatermarkFilter(image='http://www.bitmovin.com/favicon.ico', right=10, top=10,
-                                           name='Sample Watermark Filter bitmovin icon', unit=WatermarkUnit.PERCENTS)
-        self.assertIsNotNone(watermark_filter.image)
-        self.assertIsNotNone(watermark_filter.right)
-        self.assertIsNotNone(watermark_filter.top)
-        self.assertIsNotNone(watermark_filter.unit)
-        return watermark_filter
+    def _get_sample_enchanced_watermark_filter(self):
+        enchanced_watermark_filter = WatermarkFilter(image='http://www.bitmovin.com/favicon.ico', right=10, top=10,
+                                                     name='Sample Watermark Filter bitmovin icon',
+                                                     unit=WatermarkUnit.PERCENTS)
+        self.assertIsNotNone(enchanced_watermark_filter.image)
+        self.assertIsNotNone(enchanced_watermark_filter.right)
+        self.assertIsNotNone(enchanced_watermark_filter.top)
+        self.assertIsNotNone(enchanced_watermark_filter.unit)
+        return enchanced_watermark_filter
 
 
 if __name__ == '__main__':
