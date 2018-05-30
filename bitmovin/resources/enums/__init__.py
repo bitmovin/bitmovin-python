@@ -46,3 +46,4 @@ from .mp2_channel_layout import MP2ChannelLayout
 from .h264_partition import H264Partition
 from .h264_interlace_mode import H264InterlaceMode
 from .watermark_unit import WatermarkUnit
+from .he_aac_codec_config_signaling import HeAacSignaling

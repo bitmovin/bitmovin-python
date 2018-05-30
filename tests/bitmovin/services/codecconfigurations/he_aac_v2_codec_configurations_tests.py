@@ -1,7 +1,7 @@
 import json
 import unittest
 
-from bitmovin import Bitmovin, Response, HeAACv2CodecConfiguration, AACChannelLayout
+from bitmovin import Bitmovin, Response, HeAACv2CodecConfiguration, AACChannelLayout, HeAacSignaling
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
 
@@ -127,22 +127,26 @@ class HeAACV2CodecConfigurationTests(BitmovinTestCase):
         self.assertEqual(first.channelLayout, second.channelLayout)
         self.assertEqual(first.volumeAdjust, second.volumeAdjust)
         self.assertEqual(first.normalize, second.normalize)
+        self.assertEqual(first.signaling, second.signaling)
         return True
 
     def _get_sample_he_v2_aac_codec_configuration(self):
-        he_aac_v2_codec_configuration = HeAACv2CodecConfiguration(name='Python - Sample AAC Codec Configuration',
-                                                                  description='More declarative description for CodecConfig',
-                                                                  bitrate=128000,
-                                                                  rate=48000,
-                                                                  volume_adjust=None,
-                                                                  normalize=None,
-                                                                  channel_layout=AACChannelLayout.CL_2_1)
+        he_aac_v2_codec_configuration = HeAACv2CodecConfiguration(
+            name='Python - Sample AAC Codec Configuration',
+            description='More declarative description for CodecConfig',
+            bitrate=128000,
+            rate=48000,
+            volume_adjust=None,
+            normalize=None,
+            channel_layout=AACChannelLayout.CL_2_1,
+            signaling=HeAacSignaling.EXPLICIT_SBR)
 
         self.assertIsNotNone(he_aac_v2_codec_configuration.name)
         self.assertIsNotNone(he_aac_v2_codec_configuration.description)
         self.assertIsNotNone(he_aac_v2_codec_configuration.bitrate)
         self.assertIsNotNone(he_aac_v2_codec_configuration.rate)
         self.assertIsNotNone(he_aac_v2_codec_configuration.channelLayout)
+        self.assertIsNotNone(he_aac_v2_codec_configuration.signaling)
         return he_aac_v2_codec_configuration
 
 
