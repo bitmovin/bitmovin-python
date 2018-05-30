@@ -6,9 +6,9 @@ from .abstract_filter import AbstractFilter
 
 class EnhancedWatermarkFilter(AbstractFilter, Serializable):
 
-    def __init__(self, image, id_, left=None, right=None, top=None, bottom=None, unit=None, name=None,
+    def __init__(self, image, id_=None, left=None, right=None, top=None, bottom=None, unit=None, name=None,
                  custom_data=None, description=None):
-        super().__init__(id_, name=name, custom_data=custom_data, description=description)
+        super().__init__(id_=id_, name=name, custom_data=custom_data, description=description)
         self.image = image
         self.left = left
         self.right = right
