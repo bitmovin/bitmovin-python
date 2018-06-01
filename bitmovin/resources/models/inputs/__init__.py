@@ -10,4 +10,5 @@ from .aspera_input import AsperaInput
 from .rtmp_input import RTMPInput
 from .generic_s3_input import GenericS3Input
 from .local_input import LocalInput
+from .zixi_input import ZixiInput
 from .analysis import *
