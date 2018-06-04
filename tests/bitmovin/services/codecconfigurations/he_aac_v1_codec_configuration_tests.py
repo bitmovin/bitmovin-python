@@ -1,7 +1,7 @@
 import json
 import unittest
 
-from bitmovin import Bitmovin, Response, HeAACv1CodecConfiguration, AACChannelLayout
+from bitmovin import Bitmovin, Response, HeAACv1CodecConfiguration, AACChannelLayout, HeAacSignaling
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
 
@@ -34,6 +34,18 @@ class AACCodecConfigurationTests(BitmovinTestCase):
         self.assertIsNotNone(codec_configuration_resource_response.resource.id)
         self._compare_he_aac_v1_codec_configurations(sample_codec_configuration,
                                                      codec_configuration_resource_response.resource)
+
+    def test_create_he_aac_v1_codec_configuration_without_signaling(self):
+            sample_codec_configuration = self._get_sample_he_aac_v1_codec_configuration()
+            sample_codec_configuration.signaling = None
+            self.assertIsNone(sample_codec_configuration.signaling)
+            codec_configuration_resource_response = self.bitmovin.codecConfigurations.HeAACv1.create(
+                sample_codec_configuration)
+            self.assertIsNotNone(codec_configuration_resource_response)
+            self.assertIsNotNone(codec_configuration_resource_response.resource)
+            self.assertIsNotNone(codec_configuration_resource_response.resource.id)
+            self._compare_he_aac_v1_codec_configurations(sample_codec_configuration,
+                                                         codec_configuration_resource_response.resource)
 
     def test_retrieve_he_aac_v1_codec_configuration(self):
         sample_codec_configuration = self._get_sample_he_aac_v1_codec_configuration()
@@ -127,22 +139,26 @@ class AACCodecConfigurationTests(BitmovinTestCase):
         self.assertEqual(first.channelLayout, second.channelLayout)
         self.assertEqual(first.volumeAdjust, second.volumeAdjust)
         self.assertEqual(first.normalize, second.normalize)
+        self.assertEqual(first.signaling, second.signaling)
         return True
 
     def _get_sample_he_aac_v1_codec_configuration(self):
-        he_aac_v1_codec_configuration = HeAACv1CodecConfiguration(name='Python - Sample HeAACv1 Codec Configuration',
-                                                                  description='More declarative description for CodecConfig',
-                                                                  bitrate=128000,
-                                                                  rate=48000,
-                                                                  volume_adjust=None,
-                                                                  normalize=None,
-                                                                  channel_layout=AACChannelLayout.CL_2_1)
+        he_aac_v1_codec_configuration = HeAACv1CodecConfiguration(
+            name='Python - Sample HeAACv1 Codec Configuration',
+            description='More declarative description for CodecConfig',
+            bitrate=128000,
+            rate=48000,
+            volume_adjust=None,
+            normalize=None,
+            channel_layout=AACChannelLayout.CL_2_1,
+            signaling=HeAacSignaling.EXPLICIT_SBR)
 
         self.assertIsNotNone(he_aac_v1_codec_configuration.name)
         self.assertIsNotNone(he_aac_v1_codec_configuration.description)
         self.assertIsNotNone(he_aac_v1_codec_configuration.bitrate)
         self.assertIsNotNone(he_aac_v1_codec_configuration.rate)
         self.assertIsNotNone(he_aac_v1_codec_configuration.channelLayout)
+        self.assertIsNotNone(he_aac_v1_codec_configuration.signaling)
         return he_aac_v1_codec_configuration
 
 
