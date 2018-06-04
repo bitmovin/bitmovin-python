@@ -1,6 +1,6 @@
 import unittest
 import json
-from bitmovin import Bitmovin, Response, Encoding, CloudRegion
+from bitmovin import Bitmovin, Response, Encoding, CloudRegion, Infrastructure
 from bitmovin.errors import BitmovinApiError
 from bitmovin.resources.enums.encoding_status_values import EncodingStatusValues
 from tests.bitmovin import BitmovinTestCase
@@ -27,6 +27,16 @@ class EncodingTests(BitmovinTestCase):
 
     def test_create_encoding(self):
         sample_encoding = self._get_sample_encoding()
+        encoding_resource_response = self.bitmovin.encodings.Encoding.create(sample_encoding)
+        self.assertIsNotNone(encoding_resource_response)
+        self.assertIsNotNone(encoding_resource_response.resource)
+        self.assertIsNotNone(encoding_resource_response.resource.id)
+        self._compare_encodings(sample_encoding, encoding_resource_response.resource)
+
+    def test_create_encoding_with_infrastructure(self):
+        infrastructure = self.utils.get_sample_infrastructure()
+
+        sample_encoding = self._get_sample_encoding(CloudRegion.EXTERNAL, infrastructure=infrastructure)
         encoding_resource_response = self.bitmovin.encodings.Encoding.create(sample_encoding)
         self.assertIsNotNone(encoding_resource_response)
         self.assertIsNotNone(encoding_resource_response.resource)
@@ -152,10 +162,11 @@ class EncodingTests(BitmovinTestCase):
         self.assertEqual(first.cloudRegion, second.cloudRegion)
         return True
 
-    def _get_sample_encoding(self):
+    def _get_sample_encoding(self, cloud_region=CloudRegion.GOOGLE_EUROPE_WEST_1, infrastructure=None):
         encoding = Encoding(name='Sample Encoding bitmovin-python',
                             description='Sample encoding used in bitmovin-python API client tests',
-                            cloud_region=CloudRegion.GOOGLE_EUROPE_WEST_1)
+                            cloud_region=cloud_region,
+                            infrastructure=infrastructure)
         self.assertIsNotNone(encoding.name)
         self.assertIsNotNone(encoding.description)
         self.assertIsNotNone(encoding.cloudRegion)

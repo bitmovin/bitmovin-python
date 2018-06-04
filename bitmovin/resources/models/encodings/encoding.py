@@ -8,13 +8,14 @@ from bitmovin.resources import AbstractNameDescriptionResource
 class Encoding(AbstractNameDescriptionResource, AbstractModel, Serializable):
 
     def __init__(self, name, description=None, encoder_version=None, cloud_region=None, id_=None, custom_data=None,
-                 infrastructure_id=None):
+                 infrastructure_id=None, infrastructure=None):
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self._encoderVersion = None
         self.encoderVersion = encoder_version
         self._cloudRegion = None
         self.cloudRegion = cloud_region
         self.infrastructureId = infrastructure_id
+        self.infrastructure = infrastructure
 
     @property
     def cloudRegion(self):
@@ -63,9 +64,11 @@ class Encoding(AbstractNameDescriptionResource, AbstractModel, Serializable):
         encoder_version = json_object.get('encoderVersion')
         cloud_region = json_object.get('cloudRegion')
         infrastructure_id = json_object.get('infrastructureId')
+        infrastructure = json_object.get('infrastructure')
         encoding = Encoding(id_=id_, custom_data=custom_data,
                             name=name, description=description, encoder_version=encoder_version,
-                            cloud_region=cloud_region, infrastructure_id=infrastructure_id)
+                            cloud_region=cloud_region, infrastructure_id=infrastructure_id,
+                            infrastructure=infrastructure)
         return encoding
 
     def serialize(self):

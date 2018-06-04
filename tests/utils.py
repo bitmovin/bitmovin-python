@@ -3,7 +3,9 @@ import os
 
 from bitmovin.errors import BitmovinError
 from bitmovin.resources.models import S3Output, S3Input, Encoding, H264CodecConfiguration, MJPEGCodecConfiguration, \
-    AACCodecConfiguration
+    AACCodecConfiguration, Infrastructure
+from bitmovin.resources.enums import CloudRegion
+
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -105,3 +107,15 @@ def get_sample_mjpeg_codec_config():
                                                         q_scale=2)
 
     return mjpeg_codec_configuration
+
+
+def get_sample_infrastructure():
+    settings = get_settings()
+
+    infrastructure_settings = settings.get('sampleObjects').get('infrastructures').get('aws') \
+        .get('e4da928b-0e8d-44b0-80ca-97d71c9800b1')
+
+    infrastructure = Infrastructure(infrastructure_id=infrastructure_settings['infrastructure_id'],
+                                    cloud_region=CloudRegion.AWS_EU_WEST_1)
+
+    return infrastructure
