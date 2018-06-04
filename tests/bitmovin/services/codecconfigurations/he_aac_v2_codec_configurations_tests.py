@@ -35,6 +35,18 @@ class HeAACV2CodecConfigurationTests(BitmovinTestCase):
         self._compare_he_v2_aac_codec_configurations(sample_codec_configuration,
                                                      codec_configuration_resource_response.resource)
 
+    def test_create_he_v2_aac_codec_configuration_without_signaling(self):
+        sample_codec_configuration = self._get_sample_he_v2_aac_codec_configuration()
+        sample_codec_configuration.signaling = None
+        self.assertIsNone(sample_codec_configuration.signaling)
+        codec_configuration_resource_response = self.bitmovin.codecConfigurations.HeAACv2.create(
+            sample_codec_configuration)
+        self.assertIsNotNone(codec_configuration_resource_response)
+        self.assertIsNotNone(codec_configuration_resource_response.resource)
+        self.assertIsNotNone(codec_configuration_resource_response.resource.id)
+        self._compare_he_v2_aac_codec_configurations(sample_codec_configuration,
+                                                     codec_configuration_resource_response.resource)
+
     def test_retrieve_he_v2_aac_codec_configuration(self):
         sample_codec_configuration = self._get_sample_he_v2_aac_codec_configuration()
         created_codec_configuration_response = self.bitmovin.codecConfigurations.HeAACv2.create(
