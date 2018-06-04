@@ -6,6 +6,7 @@ from .deinterlace_filter_service import Deinterlace
 from .denoise_hqdn3d_filter_service import DenoiseHqdn3d
 from .audiomix_filter_service import AudioMix
 from .text_filter_service import Text
+from .enhanced_watermark_filter_service import EnhancedWatermark
 
 
 class FilterService(BitmovinObject):
@@ -19,3 +20,4 @@ class FilterService(BitmovinObject):
         self.DenoiseHqdn3d = DenoiseHqdn3d(http_client=self.http_client)
         self.AudioMix = AudioMix(http_client=self.http_client)
         self.Text = Text(http_client=self.http_client)
+        self.EnhancedWatermark = EnhancedWatermark(http_client=self.http_client)

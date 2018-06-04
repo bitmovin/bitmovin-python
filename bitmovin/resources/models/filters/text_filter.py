@@ -9,7 +9,7 @@ class TextFilter(AbstractFilter, Serializable):
     def __init__(self, x, y, text=None, timecode=None, shadow_y=None, shadow_x=None, shadow_color=None, alpha=None,
                  font_size=None, font=None, font_color=None, fix_bounds=None, border_width=None, line_spacing=None,
                  box_color=None, box_border_width=None, box=None, id_=None, custom_data=None,
-                 name=None, description=None):
+                 name=None, description=None, font_size_expression=None):
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self._font = None
 
@@ -30,6 +30,7 @@ class TextFilter(AbstractFilter, Serializable):
         self.boxColor = box_color
         self.boxBorderWidth = box_border_width
         self.box = box
+        self.fontSizeExpression = font_size_expression
 
     @property
     def font(self):
@@ -72,10 +73,11 @@ class TextFilter(AbstractFilter, Serializable):
         line_spacing = json_object.get('lineSpacing')
         name = json_object.get('name')
         description = json_object.get('description')
+        font_size_expression = json_object.get('fontSizeExpression')
 
         text_filter = TextFilter(id_=id_, x=x, y=y, text=text, timecode=timecode, shadow_x=shadow_x,
                                  shadow_y=shadow_y, shadow_color=shadow_color, alpha=alpha, font_size=font_size,
                                  font=font, font_color=font_color, fix_bounds=fix_bounds,
                                  border_width=border_width, line_spacing=line_spacing, name=name,
-                                 description=description)
+                                 description=description, font_size_expression=font_size_expression)
         return text_filter
