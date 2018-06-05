@@ -1,13 +1,12 @@
 from bitmovin.errors import InvalidTypeError
 from bitmovin.resources.enums import CloudRegion
 from bitmovin.utils import Serializable
-from bitmovin.resources import AbstractIdResource
 
 
-class Infrastructure(AbstractIdResource, Serializable):
+class Infrastructure(Serializable):
 
-    def __init__(self, infrastructure_id, cloud_region, id_=None):
-        super().__init__(id_=id_)
+    def __init__(self, infrastructure_id, cloud_region):
+        super().__init__()
         self.infrastructureId = infrastructure_id
         self._cloudRegion = None
         self.cloudRegion = cloud_region
@@ -33,11 +32,10 @@ class Infrastructure(AbstractIdResource, Serializable):
 
     @classmethod
     def parse_from_json_object(cls, json_object):
-        id_ = json_object.get('id')
         cloud_region = json_object.get('cloudRegion')
         infrastructure_id = json_object.get('infrastructureId')
 
-        infrastructure = Infrastructure(cloud_region=cloud_region, infrastructure_id=infrastructure_id, id_=id_)
+        infrastructure = Infrastructure(cloud_region=cloud_region, infrastructure_id=infrastructure_id)
         return infrastructure
 
     def serialize(self):

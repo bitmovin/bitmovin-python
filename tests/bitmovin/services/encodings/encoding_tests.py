@@ -1,6 +1,6 @@
 import unittest
 import json
-from bitmovin import Bitmovin, Response, Encoding, CloudRegion, Infrastructure
+from bitmovin import Bitmovin, Response, Encoding, CloudRegion
 from bitmovin.errors import BitmovinApiError
 from bitmovin.resources.enums.encoding_status_values import EncodingStatusValues
 from tests.bitmovin import BitmovinTestCase
@@ -34,14 +34,23 @@ class EncodingTests(BitmovinTestCase):
         self._compare_encodings(sample_encoding, encoding_resource_response.resource)
 
     def test_create_encoding_with_infrastructure(self):
-        infrastructure = self.utils.get_sample_infrastructure()
+        sample_infrastructure = self.utils.get_sample_infrastructure()
+        self.assertIsNotNone(sample_infrastructure.cloudRegion)
+        self.assertIsNotNone(sample_infrastructure.infrastructureId)
 
-        sample_encoding = self._get_sample_encoding(CloudRegion.EXTERNAL, infrastructure=infrastructure)
+        sample_encoding = self._get_sample_encoding(CloudRegion.EXTERNAL, infrastructure=sample_infrastructure)
         encoding_resource_response = self.bitmovin.encodings.Encoding.create(sample_encoding)
         self.assertIsNotNone(encoding_resource_response)
         self.assertIsNotNone(encoding_resource_response.resource)
         self.assertIsNotNone(encoding_resource_response.resource.id)
         self._compare_encodings(sample_encoding, encoding_resource_response.resource)
+
+        infrastructure_response = encoding_resource_response.resource.infrastructure
+        self.assertIsNotNone(infrastructure_response)
+        self.assertIsNotNone(infrastructure_response.infrastructureId)
+        self.assertIsNotNone(infrastructure_response.cloudRegion)
+        self.assertEqual(sample_infrastructure.cloudRegion, infrastructure_response.cloudRegion)
+        self.assertEqual(sample_infrastructure.infrastructureId, infrastructure_response.infrastructureId)
 
     def test_retrieve_encoding(self):
         sample_encoding = self._get_sample_encoding()

@@ -4,6 +4,8 @@ from bitmovin.utils import Serializable
 from bitmovin.resources.models import AbstractModel
 from bitmovin.resources import AbstractNameDescriptionResource
 
+from .infrastructure import Infrastructure
+
 
 class Encoding(AbstractNameDescriptionResource, AbstractModel, Serializable):
 
@@ -15,6 +17,7 @@ class Encoding(AbstractNameDescriptionResource, AbstractModel, Serializable):
         self._cloudRegion = None
         self.cloudRegion = cloud_region
         self.infrastructureId = infrastructure_id
+        self._infrastructure = None
         self.infrastructure = infrastructure
 
     @property
@@ -43,6 +46,23 @@ class Encoding(AbstractNameDescriptionResource, AbstractModel, Serializable):
         else:
             return EncoderVersion.default().value
 
+    @property
+    def infrastructure(self):
+        return self._infrastructure
+
+    @infrastructure.setter
+    def infrastructure(self, new_infrastructure):
+        if new_infrastructure is None:
+            self._infrastructure = None
+            return
+        if isinstance(new_infrastructure, Infrastructure):
+            self._infrastructure = new_infrastructure
+        else:
+            raise InvalidTypeError(
+                'Invalid type {} for infrastructure: must be Infrastructure!'.format(
+                    type(new_infrastructure)
+                )
+            )
     @encoderVersion.setter
     def encoderVersion(self, new_version):
         if new_version is None:
@@ -64,7 +84,12 @@ class Encoding(AbstractNameDescriptionResource, AbstractModel, Serializable):
         encoder_version = json_object.get('encoderVersion')
         cloud_region = json_object.get('cloudRegion')
         infrastructure_id = json_object.get('infrastructureId')
-        infrastructure = json_object.get('infrastructure')
+
+        infrastructure_json = json_object.get('infrastructure')
+        infrastructure = None
+        if infrastructure_json is not None:
+            infrastructure = Infrastructure.parse_from_json_object(infrastructure_json)
+
         encoding = Encoding(id_=id_, custom_data=custom_data,
                             name=name, description=description, encoder_version=encoder_version,
                             cloud_region=cloud_region, infrastructure_id=infrastructure_id,
@@ -75,4 +100,5 @@ class Encoding(AbstractNameDescriptionResource, AbstractModel, Serializable):
         serialized = super().serialize()
         serialized['cloudRegion'] = self.cloudRegion
         serialized['encoderVersion'] = self.encoderVersion
+        serialized['infrastructure'] = self.infrastructure
         return serialized
