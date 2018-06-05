@@ -18,13 +18,18 @@ class ZixiInput(AbstractInput):
     @classmethod
     def parse_from_json_object(cls, json_object):
         id_ = json_object['id']
-
         host = json_object['host']
         port = json_object['port']
         stream = json_object['stream']
 
         name = json_object.get('name')
         description = json_object.get('description')
-        zixi_input = ZixiInput(
-            host=host, port=port, stream=stream, id_=id_, name=name, description=description)
+        latency = json_object.get('latency')
+        min_bitrate = json_object.get('minBitrate')
+        decryption_type=json_object.get('decryptionType')
+        decryption_key=json_object.get('decryptionKey')
+
+        zixi_input = ZixiInput(host=host, port=port, stream=stream, id_=id_, name=name, description=description,
+                               latency=latency, min_bitrate=min_bitrate, decryption_type=decryption_type,
+                               decryption_key=decryption_key)
         return zixi_input

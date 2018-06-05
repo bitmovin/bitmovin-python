@@ -117,6 +117,10 @@ class ZixiInputTests(BitmovinTestCase):
         self.assertEqual(first.stream, second.stream)
         self.assertEqual(first.name, second.name)
         self.assertEqual(first.description, second.description)
+        self.assertEqual(first.latency, second.latency)
+        self.assertEqual(first.minBitrate, second.minBitrate)
+        self.assertEqual(first.decryptionKey, second.decryptionKey)
+        self.assertEqual(first.decryptionType, second.decryptionType)
 
     def _get_sample_zixi_input(self):
         zixi_input_settings = self.settings.get('sampleObjects').get('inputs').get('zixi')\
@@ -131,7 +135,8 @@ class ZixiInputTests(BitmovinTestCase):
             min_bitrate=zixi_input_settings.get('minBitrate'),
             decryption_type=zixi_input_settings.get('decryptionType'),
             decryption_key=zixi_input_settings.get('decryptionKey'),
-            name='Sample Zixi input'
+            name='Sample Zixi input',
+            description='some description'
         )
         self.assertIsNotNone(zixi_input.host)
         self.assertIsNotNone(zixi_input.port)
