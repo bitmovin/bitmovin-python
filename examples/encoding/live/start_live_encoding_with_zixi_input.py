@@ -1,4 +1,4 @@
-import sys, uuid
+import uuid
 from bitmovin import Bitmovin, Encoding, S3Output, H264CodecConfiguration, \
     AACCodecConfiguration, H264Profile, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
     FMP4Muxing, MuxingStream, CloudRegion, LiveStreamConfiguration, ZixiInput
