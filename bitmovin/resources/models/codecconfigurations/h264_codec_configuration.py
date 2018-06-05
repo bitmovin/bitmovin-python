@@ -6,9 +6,11 @@ from bitmovin.resources.enums.h264_partition import H264Partition
 from bitmovin.resources.enums.h264_sub_me import H264SubMe
 from bitmovin.resources.enums.badapt import BAdapt
 from bitmovin.resources.enums.h264_trellis import H264Trellis
-
+from bitmovin.resources.enums import H264BPyramid, H264NalHrd
 from bitmovin.utils import Serializable
+
 from .video_codec_configuration import VideoCodecConfiguration
+from .color_config import ColorConfig
 
 
 class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
@@ -18,7 +20,9 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
                  mv_search_range_max=None, cabac=None, max_bitrate=None, min_bitrate=None, bufsize=None,
                  min_gop=None, max_gop=None, level=None, rc_lookahead=None, b_adapt=None, sub_me=None,
                  motion_estimation_method=None,partitions=None, trellis=None, slices=None, interlaceMode=None, crf=None,
-                 pixel_format=None, min_keyframe_interval=None, max_keyframe_interval=None):
+                 pixel_format=None, min_keyframe_interval=None, max_keyframe_interval=None,
+                 sample_aspect_ratio_numerator=None, sample_aspect_ratio_denominator=None, scene_cut_threshold=None,
+                 color_config=None, nal_hrd=None, b_pyramid=None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description, bitrate=bitrate,
                          rate=rate, width=width, height=height, pixel_format=pixel_format)
@@ -33,6 +37,9 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         self._trellis = None
         self._interlaceMode = None
         self._crf = None
+        self._colorConfig = None
+        self._nalHrd = None
+        self._bPyramid = None
 
         self.b_adapt = b_adapt
         self.bframes = bframes
@@ -59,6 +66,57 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         self.crf = crf
         self.minKeyframeInterval = min_keyframe_interval
         self.maxKeyframeInterval = max_keyframe_interval
+        self.sampleAspectRatioNumerator = sample_aspect_ratio_numerator
+        self.sampleAspectRatioDenominator = sample_aspect_ratio_denominator
+        self.sceneCutThreshold = scene_cut_threshold
+        self.colorConfig = color_config
+        self.bPyramid = b_pyramid
+        self.nalHrd = nal_hrd
+
+    @property
+    def bPyramid(self):
+        return self._bPyramid
+
+    @bPyramid.setter
+    def bPyramid(self, new_b_pyramid):
+        if new_b_pyramid is None:
+            self._bPyramid = None
+            return
+        elif isinstance(new_b_pyramid, H264BPyramid):
+            self._bPyramid = new_b_pyramid.value
+        elif isinstance(new_b_pyramid, str):
+            self._bPyramid = new_b_pyramid
+        else:
+            raise InvalidTypeError('bPyramid has to be of type H264BPyramid')
+
+    @property
+    def nalHrd(self):
+        return self._nalHrd
+
+    @nalHrd.setter
+    def nalHrd(self, new_nal_hrd):
+        if new_nal_hrd is None:
+            self._nalHrd = None
+            return
+        elif isinstance(new_nal_hrd, H264NalHrd):
+            self._nalHrd = new_nal_hrd.value
+        elif isinstance(new_nal_hrd, str):
+            self._nalHrd = new_nal_hrd
+        else:
+            raise InvalidTypeError('nalHrd has to be of type H264NalHrd')
+
+    @property
+    def colorConfig(self):
+        return self._colorConfig
+
+    @colorConfig.setter
+    def colorConfig(self, new_color_config):
+        if new_color_config is None:
+            self._colorConfig = None
+        elif isinstance(new_color_config, ColorConfig):
+            self._colorConfig = new_color_config
+        else:
+            raise InvalidTypeError('colorConfig has to be of type ColorConfig')
 
     @property
     def profile(self):
@@ -264,6 +322,38 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         min_keyframe_interval = json_object.get('minKeyframeInterval')
         max_keyframe_interval = json_object.get('maxKeyframeInterval')
 
+        aspect_ratio_numerator = json_object.get('sampleAspectRatioNumerator')
+        aspect_ratio_denominator = json_object.get('sampleAspectRatioDenominator')
+        scene_cut_threshold = json_object.get('sceneCutThreshold')
+
+        nal_hrd = json_object.get('nalHrd')
+        b_pyramid = json_object.get('bPyramid')
+
+        color_config = None
+        color_config_json = json_object.get('colorConfig')
+        if color_config_json is not None:
+            copy_chroma_location_flag = color_config_json.get('copyChromaLocationFlag')
+            copy_color_space_flag = color_config_json.get('copyColorSpaceFlag')
+            copy_color_primaries_flag = color_config_json.get('copyColorPrimariesFlag')
+            copy_color_range_flag = color_config_json.get('copyColorRangeFlag')
+            copy_color_transfer_flag = color_config_json.get('copyColorTransferFlag')
+            chroma_location = color_config_json.get('chromaLocation')
+            color_space = color_config_json.get('colorSpace')
+            color_primaries = color_config_json.get('colorPrimaries')
+            color_range = color_config_json.get('colorRange')
+            color_transfer = color_config_json.get('colorTransfer')
+            input_color_space = color_config_json.get('inputColorSpace')
+            input_color_range = color_config_json.get('inputColorRange')
+            color_config = ColorConfig(copy_chroma_location_flag=copy_chroma_location_flag,
+                                       copy_color_space_flag=copy_color_space_flag,
+                                       copy_color_primaries_flag=copy_color_primaries_flag,
+                                       copy_color_range_flag=copy_color_range_flag,
+                                       copy_color_transfer_flag=copy_color_transfer_flag,
+                                       chroma_location=chroma_location, color_space=color_space,
+                                       color_primaries=color_primaries, color_range=color_range,
+                                       color_transfer=color_transfer, input_color_space=input_color_space,
+                                       input_color_range=input_color_range)
+
         h264_codec_configuration = H264CodecConfiguration(name=name, bitrate=bitrate, rate=rate, profile=profile,
                                                           id_=id_, description=description, custom_data=custom_data,
                                                           width=width, height=height, bframes=bframes,
@@ -278,7 +368,12 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
                                                           slices=slices, interlaceMode=interlaceMode, crf=crf,
                                                           min_keyframe_interval=min_keyframe_interval,
                                                           max_keyframe_interval=max_keyframe_interval,
-                                                          pixel_format=pixel_format)
+                                                          pixel_format=pixel_format,
+                                                          sample_aspect_ratio_numerator=aspect_ratio_numerator,
+                                                          sample_aspect_ratio_denominator=aspect_ratio_denominator,
+                                                          scene_cut_threshold=scene_cut_threshold,
+                                                          color_config=color_config, nal_hrd=nal_hrd,
+                                                          b_pyramid=b_pyramid)
 
         return h264_codec_configuration
 
@@ -295,4 +390,10 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         serialized['subMe'] = self.sub_me
         serialized['trellis'] = self.trellis
         serialized['crf'] = self.crf
+        serialized['nalHrd'] = self.nalHrd
+        serialized['bPyramid'] = self.bPyramid
+
+        if isinstance(self.colorConfig, ColorConfig):
+            serialized['colorConfig'] = self.colorConfig.serialize()
+
         return serialized

@@ -1,6 +1,7 @@
-import unittest
 import json
-from bitmovin import Bitmovin, Response, WatermarkFilter
+import unittest
+
+from bitmovin import Bitmovin, Response, WatermarkFilter, WatermarkUnit
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
 
@@ -119,14 +120,16 @@ class WatermarkFilterTests(BitmovinTestCase):
         self.assertEqual(first.right, second.right)
         self.assertEqual(first.name, second.name)
         self.assertEqual(first.description, second.description)
+        self.assertEqual(first.unit, second.unit)
         return True
 
     def _get_sample_watermark_filter(self):
         watermark_filter = WatermarkFilter(image='http://www.bitmovin.com/favicon.ico', right=10, top=10,
-                                           name='Sample Watermark Filter bitmovin icon')
+                                           name='Sample Watermark Filter bitmovin icon', unit=WatermarkUnit.PERCENTS)
         self.assertIsNotNone(watermark_filter.image)
         self.assertIsNotNone(watermark_filter.right)
         self.assertIsNotNone(watermark_filter.top)
+        self.assertIsNotNone(watermark_filter.unit)
         return watermark_filter
 
 

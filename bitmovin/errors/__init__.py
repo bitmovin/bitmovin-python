@@ -5,3 +5,4 @@ from .invalid_type_error import InvalidTypeError
 from .unique_constraint_violation_error import UniqueConstraintViolationException
 from .missing_argument_error import MissingArgumentError
 from .functionality_not_available_error import FunctionalityNotAvailableError
+from .timeout_error import TimeoutError

@@ -33,6 +33,25 @@ class EncodingTests(BitmovinTestCase):
         self.assertIsNotNone(encoding_resource_response.resource.id)
         self._compare_encodings(sample_encoding, encoding_resource_response.resource)
 
+    def test_create_encoding_with_infrastructure(self):
+        sample_infrastructure = self.utils.get_sample_infrastructure()
+        self.assertIsNotNone(sample_infrastructure.cloudRegion)
+        self.assertIsNotNone(sample_infrastructure.infrastructureId)
+
+        sample_encoding = self._get_sample_encoding(CloudRegion.EXTERNAL, infrastructure=sample_infrastructure)
+        encoding_resource_response = self.bitmovin.encodings.Encoding.create(sample_encoding)
+        self.assertIsNotNone(encoding_resource_response)
+        self.assertIsNotNone(encoding_resource_response.resource)
+        self.assertIsNotNone(encoding_resource_response.resource.id)
+        self._compare_encodings(sample_encoding, encoding_resource_response.resource)
+
+        infrastructure_response = encoding_resource_response.resource.infrastructure
+        self.assertIsNotNone(infrastructure_response)
+        self.assertIsNotNone(infrastructure_response.infrastructureId)
+        self.assertIsNotNone(infrastructure_response.cloudRegion)
+        self.assertEqual(sample_infrastructure.cloudRegion, infrastructure_response.cloudRegion)
+        self.assertEqual(sample_infrastructure.infrastructureId, infrastructure_response.infrastructureId)
+
     def test_retrieve_encoding(self):
         sample_encoding = self._get_sample_encoding()
         created_encoding_response = self.bitmovin.encodings.Encoding.create(sample_encoding)
@@ -152,10 +171,11 @@ class EncodingTests(BitmovinTestCase):
         self.assertEqual(first.cloudRegion, second.cloudRegion)
         return True
 
-    def _get_sample_encoding(self):
+    def _get_sample_encoding(self, cloud_region=CloudRegion.GOOGLE_EUROPE_WEST_1, infrastructure=None):
         encoding = Encoding(name='Sample Encoding bitmovin-python',
                             description='Sample encoding used in bitmovin-python API client tests',
-                            cloud_region=CloudRegion.GOOGLE_EUROPE_WEST_1)
+                            cloud_region=cloud_region,
+                            infrastructure=infrastructure)
         self.assertIsNotNone(encoding.name)
         self.assertIsNotNone(encoding.description)
         self.assertIsNotNone(encoding.cloudRegion)

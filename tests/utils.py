@@ -1,7 +1,11 @@
-import os
 import json
+import os
+
 from bitmovin.errors import BitmovinError
-from bitmovin.resources.models import S3Output, S3Input, Encoding, H264CodecConfiguration, MJPEGCodecConfiguration
+from bitmovin.resources.models import S3Output, S3Input, Encoding, H264CodecConfiguration, MJPEGCodecConfiguration, \
+    AACCodecConfiguration, Infrastructure
+from bitmovin.resources.enums import CloudRegion
+
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -15,7 +19,7 @@ def get_settings():
 def get_sample_s3_output():
     settings = get_settings()
 
-    s3_output_settings = settings.get('sampleObjects').get('outputs').get('s3')\
+    s3_output_settings = settings.get('sampleObjects').get('outputs').get('s3') \
         .get('5eab19a4-f8bb-4729-b0ad-d8a25f9d1286')
     s3_output = S3Output(
         access_key=s3_output_settings.get('accessKey'),
@@ -38,7 +42,7 @@ def get_sample_s3_output():
 def get_sample_s3_input():
     settings = get_settings()
 
-    s3_input_settings = settings.get('sampleObjects').get('inputs').get('s3')\
+    s3_input_settings = settings.get('sampleObjects').get('inputs').get('s3') \
         .get('9acae039-226b-46a3-8bae-706ae50b33c2')
     files = s3_input_settings.get('files')
     s3_input = S3Input(
@@ -90,6 +94,12 @@ def get_sample_h264_codec_configuration():
     return h264_codec_configuration
 
 
+def get_sample_aac_codec_configuration():
+    return AACCodecConfiguration(name='AAC Sample Codec Config',
+                                 bitrate=128000,
+                                 rate=48000)
+
+
 def get_sample_mjpeg_codec_config():
     mjpeg_codec_configuration = MJPEGCodecConfiguration(name='MJPEG Sample Codec Config',
                                                         description='MJPEG Sample Codec Config Long description',
@@ -97,3 +107,15 @@ def get_sample_mjpeg_codec_config():
                                                         q_scale=2)
 
     return mjpeg_codec_configuration
+
+
+def get_sample_infrastructure():
+    settings = get_settings()
+
+    infrastructure_settings = settings.get('sampleObjects').get('infrastructures').get('aws') \
+        .get('e4da928b-0e8d-44b0-80ca-97d71c9800b1')
+
+    infrastructure = Infrastructure(infrastructure_id=infrastructure_settings['infrastructure_id'],
+                                    cloud_region=CloudRegion.AWS_EU_WEST_1)
+
+    return infrastructure
