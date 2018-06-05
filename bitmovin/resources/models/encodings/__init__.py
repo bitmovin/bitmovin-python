@@ -7,6 +7,7 @@ from .muxings.broadcast_ts import BroadcastTsMuxing, BroadcastTsAudioStreamConfi
 from .drms import DRM, DRMStatus, AESDRM, ClearKeyDRM, FairPlayDRM, MarlinDRM, PlayReadyDRM, PrimeTimeDRM, \
     WidevineDRM, CENCDRM, CENCPlayReadyEntry, CENCWidevineEntry
 from .acl_entry import ACLEntry
+from .infrastructure import Infrastructure
 from .encoding import Encoding
 from .encoding_output import EncodingOutput
 from .encoding_status import EncodingStatus
