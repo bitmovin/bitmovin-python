@@ -10,6 +10,7 @@ from .aspera_input_service import Aspera
 from .rtmp_input_service import RTMP
 from .generic_s3_input_service import GenericS3
 from .local_input_service import Local
+from .zixi_input_service import Zixi
 
 
 class InputService(BitmovinObject):
@@ -27,3 +28,4 @@ class InputService(BitmovinObject):
         self.RTMP = RTMP(http_client=self.http_client)
         self.GenericS3 = GenericS3(http_client=self.http_client)
         self.Local = Local(http_client=self.http_client)
+        self.Zixi = Zixi(http_client=self.http_client)

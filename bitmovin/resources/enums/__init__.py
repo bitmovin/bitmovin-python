@@ -46,3 +46,5 @@ from .mp2_channel_layout import MP2ChannelLayout
 from .h264_partition import H264Partition
 from .h264_interlace_mode import H264InterlaceMode
 from .s3_sig_version import S3SignatureVersion
+from .watermark_unit import WatermarkUnit
+from .he_aac_signaling import HeAacSignaling
