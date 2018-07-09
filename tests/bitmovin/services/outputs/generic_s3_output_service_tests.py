@@ -1,9 +1,8 @@
 import unittest
 import json
-from bitmovin import Bitmovin, Response, GenericS3Output
+from bitmovin import Bitmovin, Response, GenericS3Output, S3SignatureVersion
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
-
 
 class GenericS3OutputTests(BitmovinTestCase):
 
@@ -40,6 +39,42 @@ class GenericS3OutputTests(BitmovinTestCase):
         self.assertIsNotNone(output_resource_response.resource)
         self.assertIsNotNone(output_resource_response.resource.id)
         self._compare_generic_s3_outputs(sample_output, output_resource_response.resource)
+
+    def test_create_generic_s3_output_sigv2(self):
+        sample_output = self._get_sample_generic_s3_output()
+        sample_output.signatureVersion = S3SignatureVersion.S3_V2
+        output_resource_response = self.bitmovin.outputs.GenericS3.create(sample_output)
+        self.assertIsNotNone(output_resource_response)
+        self.assertIsNotNone(output_resource_response.resource)
+        self.assertIsNotNone(output_resource_response.resource.id)
+        self._compare_generic_s3_outputs(sample_output, output_resource_response.resource)
+
+    def test_create_generic_s3_output_sigv4(self):
+        sample_output = self._get_sample_generic_s3_output()
+        sample_output.signatureVersion = S3SignatureVersion.S3_V4
+        output_resource_response = self.bitmovin.outputs.GenericS3.create(sample_output)
+        self.assertIsNotNone(output_resource_response)
+        self.assertIsNotNone(output_resource_response.resource)
+        self.assertIsNotNone(output_resource_response.resource.id)
+        self._compare_generic_s3_outputs(sample_output, output_resource_response.resource)
+        
+    def test_create_generic_s3_output_sslTrue(self):
+        sample_output = self._get_sample_generic_s3_output()
+        sample_output.ssl = True
+        output_resource_response = self.bitmovin.outputs.GenericS3.create(sample_output)
+        self.assertIsNotNone(output_resource_response)
+        self.assertIsNotNone(output_resource_response.resource)
+        self.assertIsNotNone(output_resource_response.resource.id)
+        self._compare_generic_s3_outputs(sample_output, output_resource_response.resource)
+        
+    def test_create_generic_s3_output_sslFalse(self):
+        sample_output = self._get_sample_generic_s3_output()
+        sample_output.ssl = False
+        output_resource_response = self.bitmovin.outputs.GenericS3.create(sample_output)
+        self.assertIsNotNone(output_resource_response)
+        self.assertIsNotNone(output_resource_response.resource)
+        self.assertIsNotNone(output_resource_response.resource.id)
+        self._compare_generic_s3_outputs(sample_output, output_resource_response.resource)        
 
     def test_retrieve_generic_s3_output(self):
         sample_output = self._get_sample_generic_s3_output()
@@ -117,6 +152,8 @@ class GenericS3OutputTests(BitmovinTestCase):
         self.assertEqual(first.port, second.port)
         self.assertEqual(first.name, second.name)
         self.assertEqual(first.description, second.description)
+        self.assertEqual(first.signatureVersion, second.signatureVersion)
+        self.assertEqual(first.ssl, second.ssl)
 
     def _get_sample_generic_s3_output(self):
         generic_s3_output_settings = self.settings.get('sampleObjects').get('outputs').get('generic-s3')\
