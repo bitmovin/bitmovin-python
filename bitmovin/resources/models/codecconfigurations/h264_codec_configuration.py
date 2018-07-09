@@ -167,7 +167,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
             self._mvPredictionMode = new_mode.value
         else:
             raise InvalidTypeError(
-                'Invalid type {} for mvPredictionMode: must be either str or H264Level!'.format(type(new_mode)))
+                'Invalid type {} for mvPredictionMode: must be either str or MVPredictionMode!'.format(type(new_mode)))
 
     @property
     def b_adapt(self):
