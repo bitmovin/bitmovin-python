@@ -2,7 +2,7 @@ import datetime
 
 from bitmovin import Bitmovin, Encoding, HTTPSInput, H264CodecConfiguration, \
     AACCodecConfiguration, H264Profile, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
-    MuxingStream, CloudRegion, GCSOutput, MP4Muxing
+    MuxingStream, CloudRegion, MP4Muxing, S3Output
 from bitmovin.errors import BitmovinError
 from bitmovin.resources.models.encodings.muxings.time_code import TimeCode
 
@@ -25,19 +25,18 @@ encoding_profiles = [dict(height=240, bitrate=400000, fps=None),
                      dict(height=360, bitrate=800000, fps=None),
                      dict(height=480, bitrate=1200000, fps=None),
                      dict(height=720, bitrate=2400000, fps=None),
-                     dict(height=1080, bitrate=4800000, fps=None)
-                     ]
+                     dict(height=1080, bitrate=4800000, fps=None)]
 
 
 def main():
     https_input = HTTPSInput(name='create_simple_encoding HTTPS input', host=HTTPS_INPUT_HOST)
     https_input = bitmovin.inputs.HTTPS.create(https_input).resource
 
-    gcs_output = GCSOutput(access_key=S3_OUTPUT_ACCESSKEY,
+    s3_output = S3Output(access_key=S3_OUTPUT_ACCESSKEY,
                          secret_key=S3_OUTPUT_SECRETKEY,
                          bucket_name=S3_OUTPUT_BUCKETNAME,
                          name='Sample S3 Output')
-    gcs_output = bitmovin.outputs.GCS.create(gcs_output).resource
+    s3_output = bitmovin.outputs.S3.create(s3_output).resource
 
     encoding = Encoding(name='Python Example - Add Timecode to MP4Muxing',
                         cloud_region=CloudRegion.GOOGLE_EUROPE_WEST_1)
@@ -65,12 +64,12 @@ def main():
 
     for profile in encoding_profiles:
         video_codec_configuration = H264CodecConfiguration(
-                                            name='python_example_mp4muxing_with_timecode_{}p'.format(profile['height']),
-                                            bitrate=profile['bitrate'],
-                                            rate=profile['fps'],
-                                            width=None,
-                                            height=profile['height'],
-                                            profile=H264Profile.HIGH)
+            name='python_example_mp4muxing_with_timecode_{}p'.format(profile['height']),
+            bitrate=profile['bitrate'],
+            rate=profile['fps'],
+            width=None,
+            height=profile['height'],
+            profile=H264Profile.HIGH)
 
         video_codec_configuration = bitmovin.codecConfigurations.H264.create(video_codec_configuration).resource
 
@@ -81,7 +80,8 @@ def main():
         video_stream = bitmovin.encodings.Stream.create(object_=video_stream,
                                                         encoding_id=encoding.id).resource
 
-        create_muxing(encoding, gcs_output, video_stream, audio_stream, 'video_audio_{}p.mp4'.format(profile['height']), time_code)
+        create_muxing(encoding, s3_output, video_stream, audio_stream, 'video_audio_{}p.mp4'.format(profile['height']),
+                      time_code)
 
     bitmovin.encodings.Encoding.start(encoding_id=encoding.id)
 
@@ -103,9 +103,9 @@ def create_muxing(encoding, output, video_stream, audio_stream, filename, time_c
 
     muxing = MP4Muxing(streams=[video_muxing_stream, audio_muxing_stream],
                        outputs=[video_muxing_output],
-                       filename=filename)
+                       filename=filename,
+                       time_code=time_code)
 
-    muxing.timeCode = time_code
     muxing = bitmovin.encodings.Muxing.MP4.create(object_=muxing,
                                                   encoding_id=encoding.id).resource
 
