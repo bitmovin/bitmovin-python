@@ -11,3 +11,4 @@ from .information import ByteRange, MuxingInformationAudioTrack, MuxingInformati
 from .broadcast_ts import BroadcastTsInputStreamConfiguration, BroadcastTsMuxingConfiguration, \
     BroadcastTsTransportConfiguration, BroadcastTsProgramConfiguration, BroadcastTsVideoStreamConfiguration, \
     BroadcastTsAudioStreamConfiguration, BroadcastTsMuxing
+from .time_code import TimeCode
