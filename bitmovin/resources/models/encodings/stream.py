@@ -137,6 +137,7 @@ class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
     @metadata.setter
     def metadata(self, new_metadata):
         if new_metadata is None:
+            self._metadata = None
             return
 
         if isinstance(new_metadata, StreamMetadata):

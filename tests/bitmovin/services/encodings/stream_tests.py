@@ -47,6 +47,21 @@ class EncodingStreamTests(BitmovinTestCase):
         self.assertIsNotNone(stream_resource_response.resource.id)
         self._compare_streams(sample_stream, stream_resource_response.resource)
 
+    def test_create_stream_with_metadata(self):
+        sample_stream = self._get_sample_stream()
+        sample_stream.name = None
+        stream_metadata = StreamMetadata(language='eng')
+        sample_stream.metadata = stream_metadata
+
+        self.assertIsNotNone(sample_stream.metadata)
+
+        stream_resource_response = self.bitmovin.encodings.Stream.create(object_=sample_stream,
+                                                                         encoding_id=self.sampleEncoding.id)
+        self.assertIsNotNone(stream_resource_response)
+        self.assertIsNotNone(stream_resource_response.resource)
+        self.assertIsNotNone(stream_resource_response.resource.id)
+        self._compare_streams(sample_stream, stream_resource_response.resource)
+
     def test_retrieve_stream(self):
         sample_stream = self._get_sample_stream()
         created_stream_response = self.bitmovin.encodings.Stream.create(object_=sample_stream,
@@ -163,20 +178,16 @@ class EncodingStreamTests(BitmovinTestCase):
                                          output_path='/bitmovin-python/StreamTests/'+str(uuid.uuid4()),
                                          acl=[acl_entry])
 
-        stream_metadata = StreamMetadata(language='eng')
-
         stream = Stream(codec_configuration_id=h264_codec_configuration.resource.id,
                         input_streams=[stream_input],
                         outputs=[encoding_output],
                         name='Sample Stream',
-                        conditions=conditions,
-                        metadata=stream_metadata)
+                        conditions=conditions)
 
         self.assertIsNotNone(stream.codecConfigId)
         self.assertIsNotNone(stream.inputStreams)
         self.assertIsNotNone(stream.outputs)
         self.assertIsNotNone(stream.conditions)
-        self.assertIsNotNone(stream.metadata)
         return stream
 
     def _get_sample_conditions(self):
