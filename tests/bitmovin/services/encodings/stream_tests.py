@@ -1,8 +1,8 @@
 import unittest
 import uuid
 import json
-from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, ACLPermission, \
-    SelectionMode
+from bitmovin import Bitmovin, Response, Stream, StreamInput, StreamMetadata, EncodingOutput, ACLEntry, Encoding, \
+    ACLPermission, SelectionMode
 from bitmovin.errors import BitmovinApiError
 from bitmovin.resources.models.encodings.conditions import AndConjunction, OrConjunction, Condition
 from tests.bitmovin import BitmovinTestCase
@@ -140,6 +140,8 @@ class EncodingStreamTests(BitmovinTestCase):
             self.assertEqual(len(first.outputs), len(second.outputs))
         if first.conditions:
             self._assertEqualConditions(first.conditions, second.conditions)
+        if first.metadata:
+            self._assertEqualConditions(first.metadata, second.metadata)
         return True
 
     def _get_sample_stream(self):
@@ -161,16 +163,20 @@ class EncodingStreamTests(BitmovinTestCase):
                                          output_path='/bitmovin-python/StreamTests/'+str(uuid.uuid4()),
                                          acl=[acl_entry])
 
+        stream_metadata = StreamMetadata(language='eng')
+
         stream = Stream(codec_configuration_id=h264_codec_configuration.resource.id,
                         input_streams=[stream_input],
                         outputs=[encoding_output],
                         name='Sample Stream',
-                        conditions=conditions)
+                        conditions=conditions,
+                        metadata=stream_metadata)
 
         self.assertIsNotNone(stream.codecConfigId)
         self.assertIsNotNone(stream.inputStreams)
         self.assertIsNotNone(stream.outputs)
         self.assertIsNotNone(stream.conditions)
+        self.assertIsNotNone(stream.metadata)
         return stream
 
     def _get_sample_conditions(self):
@@ -218,6 +224,12 @@ class EncodingStreamTests(BitmovinTestCase):
         if isinstance(first, OrConjunction):
             if isinstance(second, OrConjunction):
                 self.assertEqual(len(first.conditions), len(second.conditions))
+            else:
+                raise self.failureException('first is {}, second is {}'.format(type(first), type(second)))
+
+        if isinstance(first, StreamMetadata):
+            if isinstance(second, StreamMetadata):
+                self.assertEqual(first.language, second.language)
             else:
                 raise self.failureException('first is {}, second is {}'.format(type(first), type(second)))
 
