@@ -24,3 +24,4 @@ from .ignored_by_type import IgnoredByType
 from .ignored_by import IgnoredBy
 from .start import StartEncodingRequest, StartEncodingTrimming
 from .conditions import ConditionType, Condition, AndConjunction, OrConjunction
+from .stream_metadata import StreamMetadata
