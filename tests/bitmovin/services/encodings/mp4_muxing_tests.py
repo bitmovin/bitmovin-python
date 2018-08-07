@@ -4,6 +4,7 @@ import json
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, EncodingStatus, \
     MP4Muxing, MuxingStream, ACLPermission, SelectionMode
 from bitmovin.errors import BitmovinApiError
+from bitmovin.resources.models.encodings.muxings.time_code import TimeCode
 from tests.bitmovin import BitmovinTestCase
 
 
@@ -124,11 +125,24 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
         custom_data = custom_data_response.resource
         self.assertEqual(sample_muxing.customData, json.loads(custom_data.customData))
 
+    def _compare_time_code(self, first: TimeCode, second: TimeCode):
+        """
+
+        :param first: TimeCode
+        :param second: TimeCode
+        :return: bool
+        """
+        if first is None and second is None:
+            return True
+
+        self.assertEqual(first.timeCodeStart, second.timeCodeStart)
+        return True
+
     def _compare_muxings(self, first: MP4Muxing, second: MP4Muxing):
         """
 
-        :param first: Stream
-        :param second: Stream
+        :param first: MP4Muxing
+        :param second: MP4Muxing
         :return: bool
         """
 
@@ -137,6 +151,7 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
         self.assertEqual(first.name, second.name)
         self.assertEqual(first.description, second.description)
         self.assertEqual(first.fragmentDuration, second.fragmentDuration)
+        self.assertTrue(self._compare_time_code(first.timeCode, second.timeCode))
         return True
 
     def _get_sample_muxing(self):
@@ -150,11 +165,14 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
 
         muxing_stream = MuxingStream(stream_id=create_stream_response.resource.id)
 
+        time_code = TimeCode(time_code_start='01:00:00:00')
+
         muxing = MP4Muxing(streams=[muxing_stream],
                            filename='myprogressive.mp4',
                            outputs=stream.outputs,
                            name='Sample MP4 Muxing',
-                           fragment_duration=5)
+                           fragment_duration=5,
+                           time_code=time_code)
         return muxing
 
     def _get_sample_stream(self):
