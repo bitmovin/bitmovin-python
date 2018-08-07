@@ -3,7 +3,7 @@ import datetime
 from bitmovin import Bitmovin, Encoding, HTTPSInput, S3Output, VP9CodecConfiguration, \
     AACCodecConfiguration, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
     FMP4Muxing, WebMMuxing, MuxingStream, CloudRegion, DashManifest, FMP4Representation, WebMRepresentation, Period, \
-    VideoAdaptationSet, AudioAdaptationSet, AWSCloudRegion, WebMRepresentationType
+    VideoAdaptationSet, AudioAdaptationSet, AWSCloudRegion, WebMRepresentationType, FMP4RepresentationType
 from bitmovin.errors import BitmovinError
 
 API_KEY = '<INSERT_YOUR_API_KEY>'
@@ -164,7 +164,7 @@ def main():
                                                                                adaptationset_id=video_adaptation_set.id
                                                                                ).resource
 
-    fmp4_representation_audio = FMP4Representation(type=WebMRepresentationType.TEMPLATE,
+    fmp4_representation_audio = FMP4Representation(type=FMP4RepresentationType.TEMPLATE,
                                                    encoding_id=encoding.id,
                                                    muxing_id=audio_muxing.id,
                                                    segment_path='audio/')
