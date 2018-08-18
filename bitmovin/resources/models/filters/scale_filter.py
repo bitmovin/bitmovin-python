@@ -14,14 +14,14 @@ class ScaleFilter(AbstractFilter, Serializable):
         self.width = width
         self.height = height
         self._scaling_algorithm = None
-        self.scaling_algorithm = scaling_algorithm
+        self.scalingAlgorithm = scaling_algorithm
 
     @property
-    def scaling_algorithm(self):
+    def scalingAlgorithm(self):
         return self._scaling_algorithm
 
-    @scaling_algorithm.setter
-    def scaling_algorithm(self, new_value):
+    @scalingAlgorithm.setter
+    def scalingAlgorithm(self, new_value):
         if new_value is None:
             self._scaling_algorithm = None
             return
@@ -31,12 +31,12 @@ class ScaleFilter(AbstractFilter, Serializable):
             self._scaling_algorithm = new_value.value
         else:
             raise InvalidTypeError(
-                'Invalid type {} for scaling_algorithm: ' +
+                'Invalid type {} for scalingAlgorithm: ' +
                 'must be either str or ScalingAlgorithm!'.format(type(new_value)))
 
     def serialize(self):
         serialized = super().serialize()
-        serialized['scalingAlgorithm'] = self.scaling_algorithm
+        serialized['scalingAlgorithm'] = self.scalingAlgorithm
         return serialized
 
     @classmethod

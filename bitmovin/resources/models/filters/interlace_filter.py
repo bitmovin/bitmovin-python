@@ -35,11 +35,11 @@ class InterlaceFilter(AbstractFilter, Serializable):
                 'Invalid type {} for mode: must be either str or InterlaceMode!'.format(type(new_value)))
 
     @property
-    def vertical_low_pass_filtering_mode(self):
+    def verticalLowPassFilteringMode(self):
         return self._vertical_low_pass_filtering_mode
 
-    @vertical_low_pass_filtering_mode.setter
-    def vertical_low_pass_filtering_mode(self, new_value):
+    @verticalLowPassFilteringMode.setter
+    def verticalLowPassFilteringMode(self, new_value):
         if new_value is None:
             self._vertical_low_pass_filtering_mode = None
             return
@@ -49,14 +49,14 @@ class InterlaceFilter(AbstractFilter, Serializable):
             self._vertical_low_pass_filtering_mode = new_value.value
         else:
             raise InvalidTypeError(
-                'Invalid type {} for vertical_low_pass_filtering_mode: ' +
+                'Invalid type {} for verticalLowPassFilteringMode: ' +
                 'must be either str or VerticalLowPassFilteringMode!'.format(type(new_value))
             )
 
     def serialize(self):
         serialized = super().serialize()
         serialized['mode'] = self.mode
-        serialized['verticalLowPassFilteringMode'] = self.vertical_low_pass_filtering_mode
+        serialized['verticalLowPassFilteringMode'] = self.verticalLowPassFilteringMode
         return serialized
 
     @classmethod
