@@ -50,3 +50,4 @@ from .watermark_unit import WatermarkUnit
 from .he_aac_signaling import HeAacSignaling
 from .interlace_mode import InterlaceMode
 from .vertical_low_pass_filtering_mode import VerticalLowPassFilteringMode
+from .scaling_algorithm import ScalingAlgorithm
