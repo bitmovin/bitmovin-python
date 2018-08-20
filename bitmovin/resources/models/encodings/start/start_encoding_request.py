@@ -4,17 +4,20 @@ from bitmovin.utils import Serializable
 
 from .start_encoding_trimming import StartEncodingTrimming
 from .scheduling import Scheduling
+from .start_encoding_per_title import StartEncodingPerTitle
 
 
 class StartEncodingRequest(Serializable):
-    def __init__(self, trimming=None, scheduling=None, encoding_mode=None):
+    def __init__(self, trimming=None, scheduling=None, encoding_mode=None, per_title=None):
         super().__init__()
         self._encoding_mode = None
         self._trimming = None
         self._scheduling = None
+        self._per_title = None
         self.trimming = trimming
         self.scheduling = scheduling
         self.encodingMode = encoding_mode
+        self.perTitle = per_title
 
     @property
     def trimming(self):
@@ -68,9 +71,26 @@ class StartEncodingRequest(Serializable):
             raise InvalidTypeError(
                 'Invalid type {} for encodingMode: must be either str or EncodingMode!'.format(type(new_encoding_mode)))
 
+    @property
+    def perTitle(self):
+        return self._per_title
+
+    @perTitle.setter
+    def perTitle(self, new_per_title):
+        if new_per_title is None:
+            self._per_title = None
+            return
+
+        if not isinstance(new_per_title, StartEncodingPerTitle):
+            raise InvalidTypeError(
+                'Invalid type {} for perTitle: must be StartEncodingPerTitle!'.format(type(new_per_title)))
+
+        self._per_title = new_per_title
+
     def serialize(self):
         serialized = super().serialize()
         serialized['trimming'] = self.trimming
         serialized['scheduling'] = self.scheduling
         serialized['encodingMode'] = self.encodingMode
+        serialized['perTitle'] = self.perTitle
         return serialized

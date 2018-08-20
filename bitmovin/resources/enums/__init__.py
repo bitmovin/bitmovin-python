@@ -52,3 +52,4 @@ from .interlace_mode import InterlaceMode
 from .vertical_low_pass_filtering_mode import VerticalLowPassFilteringMode
 from .scaling_algorithm import ScalingAlgorithm
 from .encoding_mode import EncodingMode
+from .stream_mode import StreamMode
