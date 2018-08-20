@@ -150,7 +150,7 @@ class AACCodecConfigurationTests(BitmovinTestCase):
             rate=48000,
             volume_adjust=None,
             normalize=None,
-            channel_layout=AACChannelLayout.CL_2_1,
+            channel_layout=AACChannelLayout.CL_STEREO,
             signaling=HeAacSignaling.EXPLICIT_SBR)
 
         self.assertIsNotNone(he_aac_v1_codec_configuration.name)
