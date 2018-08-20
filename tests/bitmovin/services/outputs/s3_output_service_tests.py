@@ -127,7 +127,7 @@ class S3OutputTests(BitmovinTestCase):
             bucket_name=s3_output_settings.get('bucketName'),
             cloud_region=s3_output_settings.get('cloudRegion'),
             name='Sample S3 Output',
-            md5_meta_tag=s3_output_settings.get('md5MetaTag')
+            md5_meta_tag='x-amz-my-md5'
         )
         self.assertIsNotNone(s3_output.accessKey)
         self.assertIsNotNone(s3_output.secretKey)
