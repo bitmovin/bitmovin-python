@@ -7,6 +7,7 @@ from .ftp_output_service import FTP
 from .sftp_output_service import SFTP
 from .generic_s3_output_service import GenericS3
 from .local_output_service import Local
+from .s3_role_based_output_service import S3RoleBased
 
 
 class OutputService(BitmovinObject):
@@ -21,3 +22,4 @@ class OutputService(BitmovinObject):
         self.SFTP = SFTP(http_client=self.http_client)
         self.GenericS3 = GenericS3(http_client=self.http_client)
         self.Local = Local(http_client=self.http_client)
+        self.S3RoleBased = S3RoleBased(http_client=self.http_client)
