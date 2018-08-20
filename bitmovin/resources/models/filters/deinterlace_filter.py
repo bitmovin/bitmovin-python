@@ -31,7 +31,7 @@ class DeinterlaceFilter(AbstractFilter, Serializable):
             self._parity = new_value.value
         else:
             raise InvalidTypeError(
-                'Invalid type {} for interlaceMode: must be either str or PictureFieldParity!'.format(type(new_value)))
+                'Invalid type {} for parity: must be either str or PictureFieldParity!'.format(type(new_value)))
 
     @property
     def mode(self):
@@ -47,7 +47,7 @@ class DeinterlaceFilter(AbstractFilter, Serializable):
             self._mode = new_value.value
         else:
             raise InvalidTypeError(
-                'Invalid type {} for interlaceMode: must be either str or DeinterlaceMode!'.format(type(new_value)))
+                'Invalid type {} for mode: must be either str or DeinterlaceMode!'.format(type(new_value)))
 
     def serialize(self):
         serialized = super().serialize()

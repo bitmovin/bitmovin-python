@@ -12,3 +12,4 @@ from .generic_s3_input import GenericS3Input
 from .local_input import LocalInput
 from .zixi_input import ZixiInput
 from .analysis import *
+from .s3_role_based_input import S3RoleBasedInput

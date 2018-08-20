@@ -122,7 +122,7 @@ class MP2CodecConfigurationTests(BitmovinTestCase):
                                                         description='More declarative description for CodecConfig',
                                                         bitrate=128000,
                                                         rate=48000,
-                                                        channel_layout=MP2ChannelLayout.CL_2_2)
+                                                        channel_layout=MP2ChannelLayout.CL_STEREO)
 
         self.assertIsNotNone(mp2_codec_configuration.name)
         self.assertIsNotNone(mp2_codec_configuration.description)

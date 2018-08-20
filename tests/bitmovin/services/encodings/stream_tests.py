@@ -1,8 +1,8 @@
 import unittest
 import uuid
 import json
-from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, ACLPermission, \
-    SelectionMode
+from bitmovin import Bitmovin, Response, Stream, StreamInput, StreamMetadata, EncodingOutput, ACLEntry, Encoding, \
+    ACLPermission, SelectionMode
 from bitmovin.errors import BitmovinApiError
 from bitmovin.resources.models.encodings.conditions import AndConjunction, OrConjunction, Condition
 from tests.bitmovin import BitmovinTestCase
@@ -40,6 +40,21 @@ class EncodingStreamTests(BitmovinTestCase):
     def test_create_stream_without_name(self):
         sample_stream = self._get_sample_stream()
         sample_stream.name = None
+        stream_resource_response = self.bitmovin.encodings.Stream.create(object_=sample_stream,
+                                                                         encoding_id=self.sampleEncoding.id)
+        self.assertIsNotNone(stream_resource_response)
+        self.assertIsNotNone(stream_resource_response.resource)
+        self.assertIsNotNone(stream_resource_response.resource.id)
+        self._compare_streams(sample_stream, stream_resource_response.resource)
+
+    def test_create_stream_with_metadata(self):
+        sample_stream = self._get_sample_stream()
+        sample_stream.name = None
+        stream_metadata = StreamMetadata(language='eng')
+        sample_stream.metadata = stream_metadata
+
+        self.assertIsNotNone(sample_stream.metadata)
+
         stream_resource_response = self.bitmovin.encodings.Stream.create(object_=sample_stream,
                                                                          encoding_id=self.sampleEncoding.id)
         self.assertIsNotNone(stream_resource_response)
@@ -140,6 +155,8 @@ class EncodingStreamTests(BitmovinTestCase):
             self.assertEqual(len(first.outputs), len(second.outputs))
         if first.conditions:
             self._assertEqualConditions(first.conditions, second.conditions)
+        if first.metadata:
+            self._assertEqualConditions(first.metadata, second.metadata)
         return True
 
     def _get_sample_stream(self):
@@ -218,6 +235,12 @@ class EncodingStreamTests(BitmovinTestCase):
         if isinstance(first, OrConjunction):
             if isinstance(second, OrConjunction):
                 self.assertEqual(len(first.conditions), len(second.conditions))
+            else:
+                raise self.failureException('first is {}, second is {}'.format(type(first), type(second)))
+
+        if isinstance(first, StreamMetadata):
+            if isinstance(second, StreamMetadata):
+                self.assertEqual(first.language, second.language)
             else:
                 raise self.failureException('first is {}, second is {}'.format(type(first), type(second)))
 
