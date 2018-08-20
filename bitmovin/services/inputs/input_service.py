@@ -11,6 +11,7 @@ from .rtmp_input_service import RTMP
 from .generic_s3_input_service import GenericS3
 from .local_input_service import Local
 from .zixi_input_service import Zixi
+from .s3_role_based_input_service import S3RoleBased
 
 
 class InputService(BitmovinObject):
@@ -29,3 +30,4 @@ class InputService(BitmovinObject):
         self.GenericS3 = GenericS3(http_client=self.http_client)
         self.Local = Local(http_client=self.http_client)
         self.Zixi = Zixi(http_client=self.http_client)
+        self.S3RoleBased = S3RoleBased(http_client=self.http_client)
