@@ -4,17 +4,20 @@ from bitmovin.utils import Serializable
 
 from .start_encoding_trimming import StartEncodingTrimming
 from .scheduling import Scheduling
+from .tweaks import Tweaks
 
 
 class StartEncodingRequest(Serializable):
-    def __init__(self, trimming=None, scheduling=None, encoding_mode=None):
+    def __init__(self, trimming=None, scheduling=None, encoding_mode=None, tweaks=None):
         super().__init__()
         self._encoding_mode = None
         self._trimming = None
         self._scheduling = None
+        self._tweaks = None
         self.trimming = trimming
         self.scheduling = scheduling
         self.encodingMode = encoding_mode
+        self.tweaks = tweaks
 
     @property
     def trimming(self):
@@ -68,9 +71,26 @@ class StartEncodingRequest(Serializable):
             raise InvalidTypeError(
                 'Invalid type {} for encodingMode: must be either str or EncodingMode!'.format(type(new_encoding_mode)))
 
+    @property
+    def tweaks(self):
+        return self._tweaks
+
+    @tweaks.setter
+    def tweaks(self, new_tweaks):
+        if new_tweaks is None:
+            self._tweaks = None
+            return
+
+        if not isinstance(new_tweaks, Tweaks):
+            raise InvalidTypeError(
+                'Invalid type {} for tweaks: must be an instance of Tweaks!'.format(type(new_tweaks)))
+
+        self._tweaks = new_tweaks
+
     def serialize(self):
         serialized = super().serialize()
         serialized['trimming'] = self.trimming
         serialized['scheduling'] = self.scheduling
         serialized['encodingMode'] = self.encodingMode
+        serialized['tweaks'] = self.tweaks
         return serialized
