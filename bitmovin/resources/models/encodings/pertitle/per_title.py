@@ -18,7 +18,7 @@ class PerTitle(Serializable):
     def h264_configuration(self, new_h264_configuration):
         if new_h264_configuration is None:
             self._h264_configuration = None
-
+            return
         if not isinstance(new_h264_configuration, H264PerTitleConfiguration):
             raise InvalidTypeError(
                 'Invalid type {} for h264_configuration: must be H264PerTitleConfiguration!'.format(
