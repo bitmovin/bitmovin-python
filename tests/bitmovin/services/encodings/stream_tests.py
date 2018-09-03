@@ -2,7 +2,7 @@ import unittest
 import uuid
 import json
 from bitmovin import Bitmovin, Response, Stream, StreamInput, StreamMetadata, EncodingOutput, ACLEntry, Encoding, \
-    ACLPermission, SelectionMode
+    ACLPermission, SelectionMode, StreamMode
 from bitmovin.errors import BitmovinApiError
 from bitmovin.resources.models.encodings.conditions import AndConjunction, OrConjunction, Condition
 from tests.bitmovin import BitmovinTestCase
@@ -149,6 +149,7 @@ class EncodingStreamTests(BitmovinTestCase):
         self.assertEqual(first.codecConfigId, second.codecConfigId)
         self.assertEqual(first.name, second.name)
         self.assertEqual(first.description, second.description)
+        self.assertEqual(first.mode, second.mode)
         if first.inputStreams:
             self.assertEqual(len(first.inputStreams), len(second.inputStreams))
         if first.outputs:
@@ -182,12 +183,14 @@ class EncodingStreamTests(BitmovinTestCase):
                         input_streams=[stream_input],
                         outputs=[encoding_output],
                         name='Sample Stream',
-                        conditions=conditions)
+                        conditions=conditions,
+                        mode=StreamMode.PER_TITLE_TEMPLATE)
 
         self.assertIsNotNone(stream.codecConfigId)
         self.assertIsNotNone(stream.inputStreams)
         self.assertIsNotNone(stream.outputs)
         self.assertIsNotNone(stream.conditions)
+        self.assertIsNotNone(stream.mode)
         return stream
 
     def _get_sample_conditions(self):
