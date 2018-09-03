@@ -2,7 +2,7 @@ from bitmovin import S3Input, S3Output, Encoding, StreamInput, AACCodecConfigura
     EncoderVersion, SelectionMode, H264CodecConfiguration, H264Profile, FMP4Muxing, EncodingOutput, \
     StartEncodingRequest, MuxingStream, DashManifest, Period, VideoAdaptationSet, FMP4Representation, \
     FMP4RepresentationType, AudioMedia, HlsManifest, AudioAdaptationSet, StreamMode, PerTitle, \
-    H264PerTitleConfiguration, AutoRepresentation, TSMuxing, VariantStream
+    H264PerTitleConfiguration, AutoRepresentation, TSMuxing, VariantStream, EncodingMode
 from bitmovin.errors import BitmovinError
 
 API_KEY = '<INSERT YOUR API KEY>'
@@ -115,10 +115,10 @@ def main():
     video_muxing_ts = bitmovin.encodings.Muxing.TS.create(object_=video_muxing_ts, encoding_id=encoding.id).resource
 
     auto_representations = AutoRepresentation()
-    h264_per_title_configuration = H264PerTitleConfiguration(auto_representations)
+    h264_per_title_configuration = H264PerTitleConfiguration(auto_representations=auto_representations)
     per_title = PerTitle(h264_configuration=h264_per_title_configuration)
 
-    start_encoding_request = StartEncodingRequest(per_title=per_title)
+    start_encoding_request = StartEncodingRequest(per_title=per_title, encoding_mode=EncodingMode.THREE_PASS)
     bitmovin.encodings.Encoding.start(encoding_id=encoding.id, start_encoding_request=start_encoding_request)
 
     try:
