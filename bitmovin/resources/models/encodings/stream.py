@@ -8,16 +8,18 @@ from .stream_input import StreamInput
 from .conditions.condition_json_converter import ConditionJsonConverter
 from .conditions import AbstractCondition
 from .ignored_by import IgnoredBy
+from .stream_metadata import StreamMetadata
 
 
 class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
     def __init__(self, codec_configuration_id, input_streams=None, outputs=None, id_=None, custom_data=None,
-                 name=None, description=None, conditions=None, ignored_by=None, mode=None):
+                 name=None, description=None, conditions=None, ignored_by=None, metadata=None, mode=None):
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self._inputStreams = None
         self._outputs = None
         self._conditions = None
         self._ignoredBy = None
+        self._metadata = None
         self.codecConfigId = codec_configuration_id
         self.conditions = conditions
         if input_streams is not None and not isinstance(input_streams, list):
@@ -29,6 +31,7 @@ class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
         if ignored_by is not None and not isinstance(ignored_by, list):
             raise InvalidTypeError('ignoredBy must be a list')
         self.ignored_by = ignored_by
+        self.metadata = metadata
         self._mode = None
         self.mode = mode
 
@@ -43,11 +46,13 @@ class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
         description = json_object.get('description')
         conditions = json_object.get('conditions')
         ignored_by = json_object.get('ignoredBy')
+        metadata = json_object.get('metadata')
         mode = json_object.get('mode')
 
         stream = Stream(id_=id_, custom_data=custom_data,
                         codec_configuration_id=codec_configuration_id, input_streams=input_streams, outputs=outputs,
-                        name=name, description=description, conditions=conditions, ignored_by=ignored_by, mode=mode)
+                        name=name, description=description, conditions=conditions, ignored_by=ignored_by,
+                        metadata=metadata, mode=mode)
         return stream
 
     @property
@@ -145,10 +150,26 @@ class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
                 ignored_by_array.append(ignored_by_obj)
             self._ignoredBy = ignored_by_array
 
+    @property
+    def metadata(self):
+        return self._metadata
+
+    @metadata.setter
+    def metadata(self, new_metadata):
+        if new_metadata is None:
+            self._metadata = None
+            return
+
+        if isinstance(new_metadata, StreamMetadata):
+            self._metadata = new_metadata
+        else:
+            self._metadata = StreamMetadata.parse_from_json_object(new_metadata)
+
     def serialize(self):
         serialized = super().serialize()
         serialized['inputStreams'] = self.inputStreams
         serialized['outputs'] = self.outputs
         serialized['conditions'] = self.conditions
         serialized['mode'] = self.mode
+        serialized['metadata'] = self.metadata
         return serialized

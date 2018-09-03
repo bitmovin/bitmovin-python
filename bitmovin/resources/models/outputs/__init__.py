@@ -7,3 +7,4 @@ from .ftp_output import FTPOutput
 from .sftp_output import SFTPOutput
 from .generic_s3_output import GenericS3Output
 from .local_output import LocalOutput
+from .s3_role_based_output import S3RoleBasedOutput

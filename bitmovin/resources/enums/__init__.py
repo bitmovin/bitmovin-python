@@ -48,4 +48,9 @@ from .h264_interlace_mode import H264InterlaceMode
 from .s3_sig_version import S3SignatureVersion
 from .watermark_unit import WatermarkUnit
 from .he_aac_signaling import HeAacSignaling
+from .interlace_mode import InterlaceMode
+from .vertical_low_pass_filtering_mode import VerticalLowPassFilteringMode
+from .scaling_algorithm import ScalingAlgorithm
+from .encoding_mode import EncodingMode
+from .audio_video_sync_mode import AudioVideoSyncMode
 from .stream_mode import StreamMode
