@@ -69,7 +69,7 @@ class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
             self._mode = new_mode.value
         else:
             raise InvalidTypeError(
-                'Invalid type {} for cloudRegion: must be either str or StreamMode!'.format(type(new_mode))
+                'Invalid type {} for stream_mode: must be either str or StreamMode!'.format(type(new_mode))
             )
 
     @property
