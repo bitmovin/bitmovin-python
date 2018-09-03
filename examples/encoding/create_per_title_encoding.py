@@ -52,7 +52,7 @@ def main():
     audio_codec_configuration = AACCodecConfiguration(name='example_audio_codec_configuration_english',
                                                       bitrate=128000,
                                                       rate=48000)
-    audio_codec_configuration = bitmovin.codecConfigurations.AAC.create(audio_codec_configuration).resource
+    audio_codec_configuration = bitmovin.codecConfigurations.AAC.create(object_=audio_codec_configuration).resource
 
     audio_stream = Stream(codec_configuration_id=audio_codec_configuration.id,
                           input_streams=[audio_input_stream],
@@ -72,7 +72,7 @@ def main():
                           name='Sample Stream Video',
                           mode=StreamMode.PER_TITLE_TEMPLATE)
 
-    video_stream = bitmovin.encodings.Stream.create(video_stream, encoding_id=encoding.id).resource
+    video_stream = bitmovin.encodings.Stream.create(object_=video_stream, encoding_id=encoding.id).resource
 
     audio_output_fmp4 = EncodingOutput(output_id=s3_output.id,
                                        output_path=OUTPUT_BASE_PATH + 'audio/fmp4')
@@ -81,7 +81,8 @@ def main():
                                    segment_length=4.0,
                                    outputs=[audio_output_fmp4])
 
-    audio_muxing_fmp4 = bitmovin.encodings.Muxing.FMP4.create(audio_muxing_fmp4, encoding_id=encoding.id).resource
+    audio_muxing_fmp4 = bitmovin.encodings.Muxing.FMP4.create(object_=audio_muxing_fmp4,
+                                                              encoding_id=encoding.id).resource
 
     audio_output_ts = EncodingOutput(output_id=s3_output.id,
                                      output_path=OUTPUT_BASE_PATH + 'audio/ts')
@@ -144,9 +145,9 @@ def create_dash_manifest(output_id, encoding_id, audio_representation_info):
     manifest = DashManifest(manifest_name='stream.mpd',
                             outputs=[EncodingOutput(output_id=output_id, output_path=OUTPUT_BASE_PATH)])
 
-    manifest = bitmovin.manifests.DASH.create(manifest).resource
+    manifest = bitmovin.manifests.DASH.create(object_=manifest).resource
     period = Period()
-    period = bitmovin.manifests.DASH.add_period(period, manifest.id).resource
+    period = bitmovin.manifests.DASH.add_period(object_=period, manifest_id=manifest.id).resource
 
     video_adaptation_set = VideoAdaptationSet()
     video_adaptation_set = bitmovin.manifests.DASH.add_video_adaptation_set(object_=video_adaptation_set,
@@ -159,7 +160,7 @@ def create_dash_manifest(output_id, encoding_id, audio_representation_info):
                                                                             period_id=period.id).resource
 
     segment_path = audio_representation_info.get('fmp4_muxing').outputs[0].outputPath
-    segment_path = remove_output_base_path(segment_path, )
+    segment_path = remove_output_base_path(segment_path)
 
     audio_representation = FMP4Representation(
         type=FMP4RepresentationType.TEMPLATE,
