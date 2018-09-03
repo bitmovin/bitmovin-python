@@ -24,3 +24,5 @@ from .ignored_by_type import IgnoredByType
 from .ignored_by import IgnoredBy
 from .start import StartEncodingRequest, StartEncodingTrimming
 from .conditions import ConditionType, Condition, AndConjunction, OrConjunction
+from .pertitle import PerTitle, PerTitleConfiguration, VP8PerTitleConfiguration, VP9PerTitleConfiguration, \
+    AV1PerTitleConfiguration, H265PerTitleConfiguration, H264PerTitleConfiguration, AutoRepresentation

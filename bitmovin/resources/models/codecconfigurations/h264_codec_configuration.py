@@ -15,7 +15,7 @@ from .color_config import ColorConfig
 
 class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
 
-    def __init__(self, name, bitrate, rate, profile, id_=None, description=None, custom_data=None, width=None,
+    def __init__(self, name, bitrate=None, rate=None, profile=None, id_=None, description=None, custom_data=None, width=None,
                  height=None, bframes=None, ref_frames=None, qp_min=None, qp_max=None, mv_prediction_mode=None,
                  mv_search_range_max=None, cabac=None, max_bitrate=None, min_bitrate=None, bufsize=None,
                  min_gop=None, max_gop=None, level=None, rc_lookahead=None, b_adapt=None, sub_me=None,
