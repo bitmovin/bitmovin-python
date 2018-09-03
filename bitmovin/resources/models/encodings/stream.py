@@ -2,6 +2,7 @@ from bitmovin.errors import InvalidTypeError
 from bitmovin.resources import AbstractNameDescriptionResource
 from bitmovin.resources.models import AbstractModel
 from bitmovin.utils import Serializable
+from bitmovin.resources.enums import StreamMode
 from .encoding_output import EncodingOutput
 from .stream_input import StreamInput
 from .conditions.condition_json_converter import ConditionJsonConverter
@@ -12,7 +13,7 @@ from .stream_metadata import StreamMetadata
 
 class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
     def __init__(self, codec_configuration_id, input_streams=None, outputs=None, id_=None, custom_data=None,
-                 name=None, description=None, conditions=None, ignored_by=None, metadata=None):
+                 name=None, description=None, conditions=None, ignored_by=None, metadata=None, mode=None):
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self._inputStreams = None
         self._outputs = None
@@ -31,6 +32,8 @@ class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
             raise InvalidTypeError('ignoredBy must be a list')
         self.ignored_by = ignored_by
         self.metadata = metadata
+        self._mode = None
+        self.mode = mode
 
     @classmethod
     def parse_from_json_object(cls, json_object):
@@ -44,12 +47,30 @@ class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
         conditions = json_object.get('conditions')
         ignored_by = json_object.get('ignoredBy')
         metadata = json_object.get('metadata')
+        mode = json_object.get('mode')
 
         stream = Stream(id_=id_, custom_data=custom_data,
                         codec_configuration_id=codec_configuration_id, input_streams=input_streams, outputs=outputs,
                         name=name, description=description, conditions=conditions, ignored_by=ignored_by,
-                        metadata=metadata)
+                        metadata=metadata, mode=mode)
         return stream
+
+    @property
+    def mode(self):
+        return self._mode
+
+    @mode.setter
+    def mode(self, new_mode):
+        if new_mode is None:
+            self._mode = None
+        elif isinstance(new_mode, str):
+            self._mode = new_mode
+        elif isinstance(new_mode, StreamMode):
+            self._mode = new_mode.value
+        else:
+            raise InvalidTypeError(
+                'Invalid type {} for stream_mode: must be either str or StreamMode!'.format(type(new_mode))
+            )
 
     @property
     def conditions(self):
@@ -150,5 +171,6 @@ class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
         serialized['inputStreams'] = self.inputStreams
         serialized['outputs'] = self.outputs
         serialized['conditions'] = self.conditions
+        serialized['mode'] = self.mode
         serialized['metadata'] = self.metadata
         return serialized
