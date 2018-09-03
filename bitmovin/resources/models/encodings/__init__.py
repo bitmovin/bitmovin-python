@@ -25,5 +25,3 @@ from .ignored_by import IgnoredBy
 from .start import StartEncodingRequest, StartEncodingTrimming, Scheduling, Tweaks
 from .conditions import ConditionType, Condition, AndConjunction, OrConjunction
 from .stream_metadata import StreamMetadata
-from .pertitle import PerTitle, PerTitleConfiguration, VP8PerTitleConfiguration, VP9PerTitleConfiguration, \
-    AV1PerTitleConfiguration, H265PerTitleConfiguration, H264PerTitleConfiguration, AutoRepresentation
