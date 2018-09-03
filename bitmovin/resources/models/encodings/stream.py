@@ -62,14 +62,15 @@ class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
     @mode.setter
     def mode(self, new_mode):
         if new_mode is None:
-            return
-        if isinstance(new_mode, str):
+            self._mode = None
+        elif isinstance(new_mode, str):
             self._mode = new_mode
         elif isinstance(new_mode, StreamMode):
             self._mode = new_mode.value
         else:
             raise InvalidTypeError(
-                'Invalid type {} for cloudRegion: must be either str or StreamMode!'.format(type(new_region)))
+                'Invalid type {} for cloudRegion: must be either str or StreamMode!'.format(type(new_mode))
+            )
 
     @property
     def conditions(self):
