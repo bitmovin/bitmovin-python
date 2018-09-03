@@ -97,10 +97,10 @@ def main():
     )
 
     video_output_fmp4 = EncodingOutput(output_id=s3_output.id,
-                                       output_path=OUTPUT_BASE_PATH + 'video/fmp4/{bitrate}')
+                                       output_path=OUTPUT_BASE_PATH + 'video/fmp4/{uuid}')
 
     video_output_ts = EncodingOutput(output_id=s3_output.id,
-                                     output_path=OUTPUT_BASE_PATH + 'video/ts/{bitrate}')
+                                     output_path=OUTPUT_BASE_PATH + 'video/ts/{uuid}')
 
     video_muxing_stream = MuxingStream(video_stream.id)
     video_muxing_fmp4 = FMP4Muxing(streams=[video_muxing_stream],
@@ -177,7 +177,7 @@ def create_dash_manifest(output_id, encoding_id, audio_representation_info):
         segment_path = muxing.outputs[0].outputPath
         if 'audio' in segment_path:
             continue
-        if '{bitrate}' in segment_path:
+        if '{uuid}' in segment_path:
             continue
         segment_path = remove_output_base_path(segment_path)
 
@@ -228,7 +228,7 @@ def create_hls_manifest(output_id, encoding_id, audio_representation_info):
         segment_path = muxing.outputs[0].outputPath
         if 'audio' in segment_path:
             continue
-        if '{bitrate}' in segment_path:
+        if '{uuid}' in segment_path:
             continue
         segment_path = remove_output_base_path(segment_path)
 
