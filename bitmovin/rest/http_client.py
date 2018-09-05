@@ -22,8 +22,9 @@ class BitmovinHttpClient(BitmovinObject):
     }
 
     API_KEY_HTTP_HEADER_NAME = 'X-Api-Key'
+    TENANT_ORG_ID_HTTP_HEADER_NAME = 'X-Tenant-Org-Id'
 
-    def __init__(self, api_key, base_url=None):
+    def __init__(self, api_key, base_url=None, tenant_org_id=None):
         super().__init__()
 
         if base_url:
@@ -36,6 +37,8 @@ class BitmovinHttpClient(BitmovinObject):
 
         self.http_headers = self.HTTP_HEADERS.copy()
         self.http_headers.update({self.API_KEY_HTTP_HEADER_NAME: api_key})
+        if tenant_org_id is not None:
+            self.http_headers.update({self.TENANT_ORG_ID_HTTP_HEADER_NAME: tenant_org_id})
 
     def post_empty_body(self, relative_url):
         self._log_request('POST', relative_url)
