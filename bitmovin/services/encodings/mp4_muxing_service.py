@@ -3,12 +3,14 @@ from bitmovin.errors import BitmovinApiError, InvalidStatusError
 from bitmovin.resources.models import MP4MuxingInformation
 from bitmovin.resources.models import MP4Muxing as MP4MuxingResource
 from .generic_muxing_service import GenericMuxingService
+from .mp4_drm_service import MP4DRMService
 
 
 class MP4Muxing(GenericMuxingService):
 
     def __init__(self, http_client):
         super().__init__(http_client=http_client, type_url='mp4', resource_class=MP4MuxingResource)
+        self.DRM = MP4DRMService(http_client=http_client)
 
     def retrieve_information(self, encoding_id, muxing_id):
         self.relative_url = self._get_endpoint_url(encoding_id=encoding_id)
