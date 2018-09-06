@@ -1,36 +1,3 @@
-# [![bitmovin](http://bitmovin-a.akamaihd.net/webpages/bitmovin-logo-github.png)](http://www.bitmovin.com)
-Python3-Client which enables you to seamlessly integrate the [Bitmovin API](https://bitmovin.com/video-infrastructure-service-bitmovin-api/) into your projects.
-Using this API client requires an active account. [Sign up for a Bitmovin API key](https://bitmovin.com/bitmovins-video-api/).
-
-The full [Bitmovin API reference](https://bitmovin.com/encoding-documentation/bitmovin-api/) can be found on our website.
-
-Installation
-------------
-
-### PIP ###
-
-To install the bitmovin client with pip, run the following command:
-
-```bash
-pip install git+https://github.com/bitmovin/bitmovin-python.git@v1.34.0
-```
-
-Depending on the platform which you are using your default python version may be python2.7.
-As this is a python3 client (Python 3.3+) you will need to install python3 and the corresponding pip tool
-to ensure that you can install and use this software.
-
-If you have a Ubuntu or Debian system, you can install the mentioned packages using the following commands:
-```bash
-sudo apt-get install python3 python3-pip
-```
-
-Depending on your distribution it could be that the pip tool uses the python2 interpreter so you maybe have one `pip3` executable instead.
-
-Example
------
-
-The following example creates a simple encoding job with a DASH manifest and transfers it to a S3 output location ([create_simple_encoding.py](https://github.com/bitmovin/bitmovin-python/blob/master/examples/encoding/create_simple_encoding.py)):
-```python
 import datetime
 from bitmovin import Bitmovin, Encoding, HTTPSInput, S3Output, H264CodecConfiguration, \
     AACCodecConfiguration, H264Profile, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
@@ -40,6 +7,7 @@ from bitmovin.errors import BitmovinError
 
 
 API_KEY = '<INSERT_YOUR_API_KEY>'
+ORG_ID = '<INSERT_YOUR_ORGANIZATION_ID>'
 
 # https://<INSERT_YOUR_HTTP_HOST>/<INSERT_YOUR_HTTP_PATH>
 HTTPS_INPUT_HOST = '<INSERT_YOUR_HTTPS_HOST>'
@@ -54,7 +22,7 @@ OUTPUT_BASE_PATH = '/your/output/base/path/{}/'.format(date_component)
 
 
 def main():
-    bitmovin = Bitmovin(api_key=API_KEY)
+    bitmovin = Bitmovin(api_key=API_KEY, api_base_url=None, tenant_org_id=ORG_ID)
 
     https_input = HTTPSInput(name='create_simple_encoding HTTPS input', host=HTTPS_INPUT_HOST)
     https_input = bitmovin.inputs.HTTPS.create(https_input).resource
@@ -218,6 +186,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-```
-
-For more examples go to our [example page](https://github.com/bitmovin/bitmovin-python/tree/master/examples).
