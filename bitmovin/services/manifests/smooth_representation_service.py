@@ -1,5 +1,5 @@
-from bitmovin.resources import MP4Representation
 from bitmovin.errors import MissingArgumentError, FunctionalityNotAvailableError
+from bitmovin.resources import MP4Representation
 from bitmovin.services.rest_service import RestService
 
 
@@ -34,4 +34,5 @@ class MP4RepresentationService(RestService):
         return super().list(offset, limit)
 
     def retrieve_custom_data(self, manifest_id, representation_id):
-        raise FunctionalityNotAvailableError('Retrieve Custom Data is not available for Smooth Manifest MP4 Representations')
+        raise FunctionalityNotAvailableError(
+            'Retrieve Custom Data is not available for Smooth Manifest MP4 Representations')
