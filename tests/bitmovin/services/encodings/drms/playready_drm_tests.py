@@ -5,6 +5,7 @@ from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, AC
     FMP4Muxing, MuxingStream, PlayReadyDRM, SelectionMode, ACLPermission
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
+from bitmovin.resources.enums import PlayReadyMethod
 
 
 class PlayReadyDRMTests(BitmovinTestCase):
@@ -31,6 +32,21 @@ class PlayReadyDRMTests(BitmovinTestCase):
         fmp4_muxing = self._create_muxing()  # type: FMP4Muxing
         self.assertIsNotNone(fmp4_muxing.id)
         sample_drm = self._get_sample_drm_playready()
+        sample_drm.outputs = fmp4_muxing.outputs
+
+        created_drm_response = self.bitmovin.encodings.Muxing.FMP4.DRM.PlayReady.create(
+            object_=sample_drm, encoding_id=self.sampleEncoding.id, muxing_id=fmp4_muxing.id)
+
+        self.assertIsNotNone(created_drm_response)
+        self.assertIsNotNone(created_drm_response.resource)
+        self.assertIsNotNone(created_drm_response.resource.id)
+        drm_resource = created_drm_response.resource  # type: PlayReadyDRM
+        self._compare_drms(sample_drm, drm_resource)
+
+    def test_create_playready_piff(self):
+        fmp4_muxing = self._create_muxing()  # type: FMP4Muxing
+        self.assertIsNotNone(fmp4_muxing.id)
+        sample_drm = self._get_sample_drm_playready_piff()
         sample_drm.outputs = fmp4_muxing.outputs
 
         created_drm_response = self.bitmovin.encodings.Muxing.FMP4.DRM.PlayReady.create(
@@ -211,6 +227,17 @@ class PlayReadyDRMTests(BitmovinTestCase):
                            method=playready_drm_settings[0].get('method'),
                            la_url=playready_drm_settings[0].get('laUrl'),
                            name='Sample Playready DRM')
+
+        return drm
+
+    def _get_sample_drm_playready_piff(self):
+        playready_drm_settings = self.settings.get('sampleObjects').get('drmConfigurations').get('PlayReady')
+
+        drm = PlayReadyDRM(key_seed=playready_drm_settings[0].get('keySeed'),
+                           kid=playready_drm_settings[0].get('kid'),
+                           method=PlayReadyMethod.PIFF_CTR,
+                           la_url=playready_drm_settings[0].get('laUrl'),
+                           name='Sample Playready PIFF DRM')
 
         return drm
 
