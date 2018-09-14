@@ -1,4 +1,5 @@
 from .drm import DRM
+from bitmovin.errors import InvalidTypeError
 from bitmovin.resources.enums import PlayReadyMethod
 from bitmovin.utils import Serializable
 
@@ -22,6 +23,7 @@ class PlayReadyDRM(DRM, Serializable):
     @method.setter
     def method(self, value):
         if value is None:
+            self._method = None
             return
         if isinstance(value, str):
             self._method = value
@@ -39,9 +41,9 @@ class PlayReadyDRM(DRM, Serializable):
         outputs = drm.outputs
         name = drm.name
         description = drm.description
-        method = json_object['method']
-        key_seed = json_object['keySeed']
-        kid = json_object['kid']
+        method = json_object.get('method')
+        key_seed = json_object.get('keySeed')
+        kid = json_object.get('kid')
         la_url = json_object.get('laUrl')
 
         playready_drm = PlayReadyDRM(key_seed=key_seed, kid=kid, method=method, la_url=la_url,
