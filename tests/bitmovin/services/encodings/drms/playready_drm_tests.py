@@ -3,7 +3,7 @@ import uuid
 import json
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, \
     FMP4Muxing, MuxingStream, PlayReadyDRM, SelectionMode, ACLPermission
-from bitmovin.errors import BitmovinApiError
+from bitmovin.errors import BitmovinApiError, InvalidTypeError
 from tests.bitmovin import BitmovinTestCase
 from bitmovin.resources.enums import PlayReadyMethod
 
@@ -57,6 +57,11 @@ class PlayReadyDRMTests(BitmovinTestCase):
         self.assertIsNotNone(created_drm_response.resource.id)
         drm_resource = created_drm_response.resource  # type: PlayReadyDRM
         self._compare_drms(sample_drm, drm_resource)
+
+    def test_assign_unsuitable_playready_method(self):
+        sample_drm = self._get_sample_drm_playready_piff()
+        with self.assertRaises(InvalidTypeError):
+            sample_drm.method = ACLPermission.PRIVATE
 
     def test_create_drm_without_name(self):
         fmp4_muxing = self._create_muxing()  # type: FMP4Muxing
