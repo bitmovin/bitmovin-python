@@ -2,7 +2,7 @@ import datetime
 from bitmovin import Bitmovin, Encoding, S3Input, S3Output, H264CodecConfiguration, \
     AACCodecConfiguration, H264Profile, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
     MP4Muxing, MuxingStream, CloudRegion, SmoothManifest, MP4Representation, PlayReadyDRM, PlayReadyMethod, \
-    SmoothContentProtection
+    SmoothContentProtection, Condition
 from bitmovin.errors import BitmovinError
 
 API_KEY = '<YOUR_API_KEY>'
@@ -23,6 +23,13 @@ PLAYREADY_LA_URL = '<YOUR_PLAYREADY_LA_URL>'
 date_component = str(datetime.datetime.now()).replace(' ', '_').replace(':', '-').split('.')[0].replace('_', '__')
 OUTPUT_BASE_PATH = 'output/python-smooth/{}/'.format(date_component)
 
+# Please set here the encoding profiles. You can modify height, bitrate and fps.
+encoding_profiles_h264 = [
+    dict(height=240, bitrate=400, fps=None, profile=H264Profile.HIGH),
+    dict(height=360, bitrate=800, fps=None, profile=H264Profile.HIGH),
+    dict(height=480, bitrate=1200, fps=None, profile=H264Profile.HIGH),
+    dict(height=720, bitrate=2400, fps=None, profile=H264Profile.HIGH),
+]
 
 def main():
     bitmovin = Bitmovin(api_key=API_KEY)
@@ -33,54 +40,39 @@ def main():
                        name='Sample S3 Output')
     s3_input = bitmovin.inputs.S3.create(s3_input).resource
 
-
     s3_output = S3Output(access_key=S3_OUTPUT_ACCESSKEY,
                          secret_key=S3_OUTPUT_SECRETKEY,
                          bucket_name=S3_OUTPUT_BUCKETNAME,
                          name='Sample S3 Output')
+
     s3_output = bitmovin.outputs.S3.create(s3_output).resource
 
     acl_entry = ACLEntry(permission=ACLPermission.PUBLIC_READ)
 
-    encoding = Encoding(name='example mp4 encoding for smooth',
+    encoding = Encoding(name='example mp4 encoding for smooth + playready',
                         cloud_region=CloudRegion.GOOGLE_EUROPE_WEST_1)
     encoding = bitmovin.encodings.Encoding.create(encoding).resource
 
-    video_codec_configuration_720p = H264CodecConfiguration(name='example_video_codec_configuration_720p',
-                                                            bitrate=2400000,
-                                                            rate=25.0,
-                                                            width=1280,
-                                                            height=720,
-                                                            profile=H264Profile.HIGH)
-    video_codec_configuration_720p = bitmovin.codecConfigurations.H264.create(video_codec_configuration_720p).resource
+    encoding_configs = []
 
-    video_codec_configuration_480p = H264CodecConfiguration(name='example_video_codec_configuration_480p',
-                                                            bitrate=1200000,
-                                                            rate=25.0,
-                                                            width=854,
-                                                            height=480,
-                                                            profile=H264Profile.HIGH)
-    video_codec_configuration_480p = bitmovin.codecConfigurations.H264.create(video_codec_configuration_480p).resource
-
-    video_codec_configuration_360p = H264CodecConfiguration(name='example_video_codec_configuration_360p',
-                                                            bitrate=800000,
-                                                            rate=25.0,
-                                                            width=640,
-                                                            height=360,
-                                                            profile=H264Profile.HIGH)
-    video_codec_configuration_360p = bitmovin.codecConfigurations.H264.create(video_codec_configuration_360p).resource
-
-    video_codec_configuration_240p = H264CodecConfiguration(name='example_video_codec_configuration_240p',
-                                                            bitrate=400000,
-                                                            rate=25.0,
-                                                            width=426,
-                                                            height=240,
-                                                            profile=H264Profile.HIGH)
-    video_codec_configuration_240p = bitmovin.codecConfigurations.H264.create(video_codec_configuration_240p).resource
+    # Iterate over all encoding profiles and create the H264 configuration with the defined height and bitrate.
+    for idx, _ in enumerate(encoding_profiles_h264):
+        profile_h264 = encoding_profiles_h264[idx]
+        encoding_config = dict(profile_h264=profile_h264)
+        h264_codec = H264CodecConfiguration(
+            name='H264 Codec {}p {}k Configuration'.format(profile_h264.get('height'),
+                                                           profile_h264.get('bitrate')),
+            bitrate=profile_h264.get('bitrate') * 1000,
+            height=profile_h264.get('height'),
+            profile=profile_h264.get('profile'),
+            rate=profile_h264.get("fps"))
+        encoding_config['h264_codec'] = bitmovin.codecConfigurations.H264.create(h264_codec).resource
+        encoding_configs.append(encoding_config)
 
     audio_codec_configuration = AACCodecConfiguration(name='example_audio_codec_configuration_english',
                                                       bitrate=128000,
                                                       rate=48000)
+
     audio_codec_configuration = bitmovin.codecConfigurations.AAC.create(audio_codec_configuration).resource
 
     video_input_stream = StreamInput(input_id=s3_input.id,
@@ -90,126 +82,68 @@ def main():
                                      input_path=S3_INPUT_PATH,
                                      selection_mode=SelectionMode.AUTO)
 
-    video_stream_720p = Stream(codec_configuration_id=video_codec_configuration_720p.id,
-                               input_streams=[video_input_stream], name='Sample Stream 720p')
-    video_stream_720p = bitmovin.encodings.Stream.create(object_=video_stream_720p,
-                                                         encoding_id=encoding.id).resource
+    # With the configurations and the input file streams are now created and muxed later on.
+    for encoding_config in encoding_configs:
+        encoding_profile = encoding_config.get("profile_h264")
+        video_stream_condition = Condition(attribute="HEIGHT", operator=">=", value=str(encoding_profile.get('height')))
+        video_stream_h264 = Stream(codec_configuration_id=encoding_config.get("h264_codec").id,
+                                   input_streams=[video_input_stream],
+                                   conditions=video_stream_condition,
+                                   name='Stream H264 {}p_{}k'.format(encoding_profile.get('height'),
+                                                                     encoding_profile.get('bitrate')))
 
-    video_stream_480p = Stream(codec_configuration_id=video_codec_configuration_480p.id,
-                               input_streams=[video_input_stream], name='Sample Stream 480p')
-    video_stream_480p = bitmovin.encodings.Stream.create(object_=video_stream_480p,
-                                                         encoding_id=encoding.id).resource
-
-    video_stream_360p = Stream(codec_configuration_id=video_codec_configuration_360p.id,
-                               input_streams=[video_input_stream], name='Sample Stream 360p')
-    video_stream_360p = bitmovin.encodings.Stream.create(object_=video_stream_360p,
-                                                         encoding_id=encoding.id).resource
-
-    video_stream_240p = Stream(codec_configuration_id=video_codec_configuration_240p.id,
-                               input_streams=[video_input_stream], name='Sample Stream 240p')
-    video_stream_240p = bitmovin.encodings.Stream.create(object_=video_stream_240p,
-                                                         encoding_id=encoding.id).resource                                                     
+        encoding_config['h264_stream'] = bitmovin.encodings.Stream.create(object_=video_stream_h264,
+                                                                          encoding_id=encoding.id).resource
 
     audio_stream = Stream(codec_configuration_id=audio_codec_configuration.id,
-                          input_streams=[audio_input_stream], name='Sample Stream AUDIO')
-    audio_stream = bitmovin.encodings.Stream.create(object_=audio_stream,
-                                                    encoding_id=encoding.id).resource
+                          input_streams=[audio_input_stream],
+                          name='Sample Stream AUDIO')
 
-    video_muxing_stream_720p = MuxingStream(video_stream_720p.id)
-    video_muxing_stream_480p = MuxingStream(video_stream_480p.id)
-    video_muxing_stream_360p = MuxingStream(video_stream_360p.id)
-    video_muxing_stream_240p = MuxingStream(video_stream_240p.id)
+    audio_stream = bitmovin.encodings.Stream.create(object_=audio_stream, encoding_id=encoding.id).resource
+
+    for encoding_config in encoding_configs:
+        encoding_profile = encoding_config.get("profile_h264")
+        video_muxing_stream_h264 = MuxingStream(encoding_config.get("h264_stream").id)
+        video_muxing_output_h264 = EncodingOutput(output_id=s3_output.id, output_path=OUTPUT_BASE_PATH, acl=[acl_entry])
+
+        video_muxing_h264 = MP4Muxing(filename='video_{}p.ismv'.format(encoding_profile.get('height')),
+                                      fragment_duration=4000,
+                                      streams=[video_muxing_stream_h264],
+                                      outputs=[video_muxing_output_h264],
+                                      name='Sample Muxing {}p'.format(encoding_profile.get('height')))
+
+        encoding_config['h264_muxing'] = bitmovin.encodings.Muxing.MP4.create(object_=video_muxing_h264,
+                                                                              encoding_id=encoding.id).resource
+
+        playready_drm = PlayReadyDRM(key_seed=PLAYREADY_KEYSEED,
+                                     kid=PLAYREADY_KID,
+                                     method=PlayReadyMethod.PIFF_CTR,
+                                     la_url=PLAYREADY_LA_URL,
+                                     outputs=[video_muxing_output_h264],
+                                     name="PlayReady")
+
+        encoding_config['playready_drm'] = bitmovin.encodings.Muxing.MP4.DRM.PlayReady.create(object_=playready_drm,
+                                                                                              encoding_id=encoding.id,
+                                                                                              muxing_id=encoding_config['h264_muxing'].id).resource
+
     audio_muxing_stream = MuxingStream(audio_stream.id)
+    audio_muxing_output = EncodingOutput(output_id=s3_output.id, output_path=OUTPUT_BASE_PATH, acl=[acl_entry])
 
-    video_muxing_720p_output = EncodingOutput(output_id=s3_output.id,
-                                              output_path=OUTPUT_BASE_PATH,
-                                              acl=[acl_entry])
-    video_muxing_720p = MP4Muxing(filename='video_720p.ismv',
-                                  fragment_duration=4000,
-                                  streams=[video_muxing_stream_720p],
-                                  outputs=[video_muxing_720p_output],
-                                  name='Sample Muxing 720p')
-    video_muxing_720p = bitmovin.encodings.Muxing.MP4.create(object_=video_muxing_720p,
-                                                             encoding_id=encoding.id).resource
-    playready_720p = PlayReadyDRM(key_seed=PLAYREADY_KEYSEED,
-                                  kid=PLAYREADY_KID,
-                                  method=PlayReadyMethod.PIFF_CTR,
-                                  la_url=PLAYREADY_LA_URL)
-    playready_720p = bitmovin.encodings.Muxing.MP4.DRM.PlayReady.create(object_=playready_720p,
-                                                                        encoding_id=encoding.id,
-                                                                        muxing_id=video_muxing_720p.id).resource
-
-    video_muxing_480p_output = EncodingOutput(output_id=s3_output.id,
-                                              output_path=OUTPUT_BASE_PATH,
-                                              acl=[acl_entry])
-    video_muxing_480p = MP4Muxing(filename='video_480p.ismv',
-                                  fragment_duration=4000,
-                                  streams=[video_muxing_stream_480p],
-                                  outputs=[video_muxing_480p_output],
-                                  name='Sample Muxing 480p')
-    video_muxing_480p = bitmovin.encodings.Muxing.MP4.create(object_=video_muxing_480p,
-                                                             encoding_id=encoding.id).resource
-    playready_480p = PlayReadyDRM(key_seed=PLAYREADY_KEYSEED,
-                                  kid=PLAYREADY_KID,
-                                  method=PlayReadyMethod.PIFF_CTR,
-                                  la_url=PLAYREADY_LA_URL)
-    playready_480p = bitmovin.encodings.Muxing.MP4.DRM.PlayReady.create(object_=playready_480p,
-                                                                        encoding_id=encoding.id,
-                                                                        muxing_id=video_muxing_480p.id).resource
-
-    video_muxing_360p_output = EncodingOutput(output_id=s3_output.id,
-                                              output_path=OUTPUT_BASE_PATH,
-                                              acl=[acl_entry])
-    video_muxing_360p = MP4Muxing(filename='video_360p.ismv',
-                                  fragment_duration=4000,
-                                  streams=[video_muxing_stream_360p],
-                                  outputs=[video_muxing_360p_output],
-                                  name='Sample Muxing 360p')
-    video_muxing_360p = bitmovin.encodings.Muxing.MP4.create(object_=video_muxing_360p,
-                                                             encoding_id=encoding.id).resource
-    playready_360p = PlayReadyDRM(key_seed=PLAYREADY_KEYSEED,
-                                  kid=PLAYREADY_KID,
-                                  method=PlayReadyMethod.PIFF_CTR,
-                                  la_url=PLAYREADY_LA_URL,
-                                  name='PlayReady')
-    playready_360p = bitmovin.encodings.Muxing.MP4.DRM.PlayReady.create(object_=playready_360p,
-                                                                        encoding_id=encoding.id,
-                                                                        muxing_id=video_muxing_360p.id).resource
-
-    video_muxing_240p_output = EncodingOutput(output_id=s3_output.id,
-                                              output_path=OUTPUT_BASE_PATH,
-                                              acl=[acl_entry])
-    video_muxing_240p = MP4Muxing(filename='video_240p.ismv',
-                                  fragment_duration=4000,
-                                  streams=[video_muxing_stream_240p],
-                                  outputs=[video_muxing_240p_output],
-                                  name='Sample Muxing 240p')
-    video_muxing_240p = bitmovin.encodings.Muxing.MP4.create(object_=video_muxing_240p,
-                                                             encoding_id=encoding.id).resource
-    playready_240p = PlayReadyDRM(key_seed=PLAYREADY_KEYSEED,
-                                  kid=PLAYREADY_KID,
-                                  method=PlayReadyMethod.PIFF_CTR,
-                                  la_url=PLAYREADY_LA_URL,
-                                  name='PlayReady')
-    playready_240p = bitmovin.encodings.Muxing.MP4.DRM.PlayReady.create(object_=playready_240p,
-                                                                        encoding_id=encoding.id,
-                                                                        muxing_id=video_muxing_240p.id).resource
-
-    audio_muxing_output = EncodingOutput(output_id=s3_output.id,
-                                              output_path=OUTPUT_BASE_PATH,
-                                              acl=[acl_entry])
     audio_muxing = MP4Muxing(filename='audio.isma',
                              fragment_duration=4000,
                              streams=[audio_muxing_stream],
                              outputs=[audio_muxing_output],
                              name='Sample Muxing AUDIO')
-    audio_muxing = bitmovin.encodings.Muxing.MP4.create(object_=audio_muxing,
-                                                        encoding_id=encoding.id).resource
+
+    audio_muxing = bitmovin.encodings.Muxing.MP4.create(object_=audio_muxing, encoding_id=encoding.id).resource
+
     playready_audio = PlayReadyDRM(key_seed=PLAYREADY_KEYSEED,
                                    kid=PLAYREADY_KID,
                                    method=PlayReadyMethod.PIFF_CTR,
                                    la_url=PLAYREADY_LA_URL,
+                                   outputs=[audio_muxing_output],
                                    name='PlayReady')
+
     playready_audio = bitmovin.encodings.Muxing.MP4.DRM.PlayReady.create(object_=playready_audio,
                                                                         encoding_id=encoding.id,
                                                                         muxing_id=audio_muxing.id).resource
@@ -231,41 +165,27 @@ def main():
                                      name='Sample SmoothStreaming Manifest')
     smooth_manifest = bitmovin.manifests.Smooth.create(object_=smooth_manifest).resource
 
+    for encoding_config in encoding_configs:
+        encoding_profile = encoding_config.get("profile_h264")
+        muxing = encoding_config.get('h264_muxing')
+        mp4_representation = MP4Representation(encoding_id=encoding.id,
+                                               muxing_id=muxing.id,
+                                               media_file='video_{}p.ismv'.format(encoding_profile.get('height')))
+
+        encoding_config['h264_smooth'] = bitmovin.manifests.Smooth.MP4Representation.create(manifest_id=smooth_manifest.id,
+                                                                                            object_=mp4_representation)
+
     mp4_representation_audio = MP4Representation(encoding_id=encoding.id,
                                                  muxing_id=audio_muxing.id,
                                                  media_file='audio.isma')
-    mp4_representation_audio = bitmovin.manifests.Smooth.MP4Representation.create(manifest_id=smooth_manifest.id,
-                                                                                  object_=mp4_representation_audio)
 
-    mp4_representation_720p = MP4Representation(encoding_id=encoding.id,
-                                                muxing_id=video_muxing_720p.id,
-                                                media_file='video_720p.ismv')
-    mp4_representation_720p = bitmovin.manifests.Smooth.MP4Representation.create(manifest_id=smooth_manifest.id,
-                                                                                 object_=mp4_representation_720p)
-
-    mp4_representation_480p = MP4Representation(encoding_id=encoding.id,
-                                                muxing_id=video_muxing_480p.id,
-                                                media_file='video_480p.ismv')
-    mp4_representation_480p = bitmovin.manifests.Smooth.MP4Representation.create(manifest_id=smooth_manifest.id,
-                                                                                 object_=mp4_representation_480p)
-
-    mp4_representation_360p = MP4Representation(encoding_id=encoding.id,
-                                                muxing_id=video_muxing_360p.id,
-                                                media_file='video_360p.ismv')
-    mp4_representation_360p = bitmovin.manifests.Smooth.MP4Representation.create(manifest_id=smooth_manifest.id,
-                                                                                 object_=mp4_representation_360p)
-
-    mp4_representation_240p = MP4Representation(encoding_id=encoding.id,
-                                                muxing_id=video_muxing_240p.id,
-                                                media_file='video_240p.ismv')
-    mp4_representation_240p = bitmovin.manifests.Smooth.MP4Representation.create(manifest_id=smooth_manifest.id,
-                                                                                 object_=mp4_representation_240p)
+    bitmovin.manifests.Smooth.MP4Representation.create(manifest_id=smooth_manifest.id, object_=mp4_representation_audio)
 
     content_protection = SmoothContentProtection(encoding_id=encoding.id,
-                                                 muxing_id=video_muxing_720p.id,
-                                                 drm_id=playready_720p.id)
-    content_protection_audio = bitmovin.manifests.Smooth.ContentProtection.create(object_=content_protection,
-                                                                                  manifest_id=smooth_manifest.id)
+                                                 muxing_id=audio_muxing.id,
+                                                 drm_id=playready_audio.id)
+
+    bitmovin.manifests.Smooth.ContentProtection.create(object_=content_protection, manifest_id=smooth_manifest.id)
 
     bitmovin.manifests.Smooth.start(manifest_id=smooth_manifest.id)
 
