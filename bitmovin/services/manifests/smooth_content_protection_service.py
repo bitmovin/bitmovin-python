@@ -13,8 +13,9 @@ class SmoothContentProtectionService(RestService):
     def _get_endpoint_url(self, manifest_id):
         if not manifest_id:
             raise MissingArgumentError('manifest_id must be given')
-        endpoint_url = self.BASE_ENDPOINT_URL \
-            .replace('{manifest_id}', manifest_id)
+
+        endpoint_url = self.BASE_ENDPOINT_URL.replace('{manifest_id}', manifest_id)
+
         return endpoint_url
 
     def create(self, object_, manifest_id):
@@ -34,4 +35,5 @@ class SmoothContentProtectionService(RestService):
         return super().list(offset, limit)
 
     def retrieve_custom_data(self, manifest_id, protection_id):
-        raise FunctionalityNotAvailableError('Retrieve Custom Data is not available for Smooth Manifest Content Protection')
+        raise FunctionalityNotAvailableError('Retrieve Custom Data is not available for Smooth Manifest ' +
+                                             'Content Protection')
