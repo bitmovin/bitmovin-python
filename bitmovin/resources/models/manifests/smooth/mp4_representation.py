@@ -18,7 +18,11 @@ class MP4Representation(AbstractMP4Representation):
         language = representation.language
         track_name = representation.trackName
 
-        mp4_representation = MP4Representation(id_=id_, custom_data=custom_data, encoding_id=encoding_id,
-                                                 muxing_id=muxing_id, media_file=media_file,
-                                                 language=language, track_name=track_name)
+        mp4_representation = MP4Representation(id_=id_,
+                                               custom_data=custom_data,
+                                               encoding_id=encoding_id,
+                                               muxing_id=muxing_id,
+                                               media_file=media_file,
+                                               language=language,
+                                               track_name=track_name)
         return mp4_representation
