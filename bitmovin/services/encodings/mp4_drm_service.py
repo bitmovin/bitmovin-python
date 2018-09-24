@@ -7,6 +7,7 @@ from .cenc_drm_service import CENCDRM
 
 
 class MP4DRMService(DRMService):
+
     MUXING_TYPE_URL = 'mp4'
 
     def __init__(self, http_client):
