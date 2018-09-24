@@ -1,8 +1,7 @@
 import unittest
 import uuid
 from bitmovin import Bitmovin, ACLEntry, ACLPermission, EncodingOutput, Encoding, \
-    Stream, StreamInput, MuxingStream, MP4Muxing, AbstractMP4Representation, SmoothManifest, MP4Representation, \
-    SmoothContentProtection, PlayReadyDRM
+    Stream, StreamInput, MuxingStream, MP4Muxing, SmoothManifest, SmoothContentProtection, PlayReadyDRM
 from tests.bitmovin import BitmovinTestCase
 
 
@@ -61,7 +60,9 @@ class SmoothContentProtectionTests(BitmovinTestCase):
         self.assertIsNotNone(content_protection_response.resource.id)
         self._compare_content_protections(sample_content_protection, content_protection_response.resource)
 
-        list_content_protection_resource_response = self.bitmovin.manifests.Smooth.ContentProtection.list(manifest_id=manifest_resource_response.resource.id, limit=1)
+        list_content_protection_resource_response = self.bitmovin.manifests.Smooth.ContentProtection.list(
+            manifest_id=manifest_resource_response.resource.id, limit=1)
+
         self.assertIsNotNone(list_content_protection_resource_response)
         self.assertTrue(isinstance(list_content_protection_resource_response.resource, list))
         self.assertEqual(1, len(list_content_protection_resource_response.resource))
@@ -88,7 +89,11 @@ class SmoothContentProtectionTests(BitmovinTestCase):
 
         self.assertIsNotNone(retrieve_content_protection_resource_response)
         self.assertTrue(isinstance(retrieve_content_protection_resource_response.resource, SmoothContentProtection))
-        self._compare_content_protections(sample_content_protection, retrieve_content_protection_resource_response.resource)
+
+        self._compare_content_protections(
+            sample_content_protection,
+            retrieve_content_protection_resource_response.resource
+        )
 
     def test_delete_content_protection(self):
         sample_manifest = self._get_sample_manifest()
@@ -113,8 +118,7 @@ class SmoothContentProtectionTests(BitmovinTestCase):
         self.assertIsNotNone(delete_content_protection_resource_response)
         self.assertIsNotNone(delete_content_protection_resource_response.resource)
         self.assertIsNotNone(delete_content_protection_resource_response.resource.id)
-        self.assertEqual(sample_content_protection.resource.id,
-                         delete_content_protection_resource_response.resource.id)
+        self.assertEqual(content_protection_response.resource.id, delete_content_protection_resource_response.resource.id)
 
     def _compare_manifests(self, first: SmoothManifest, second: SmoothManifest):
         self.assertEqual(first.serverManifestName, second.serverManifestName)
@@ -205,7 +209,8 @@ class SmoothContentProtectionTests(BitmovinTestCase):
                            fragment_duration=4000,
                            outputs=stream.outputs,
                            name='Sample MP4 Muxing')
-        return (muxing, create_stream_response.resource)
+
+        return muxing, create_stream_response.resource
 
     def _get_sample_stream(self):
         sample_codec_configuration = self.utils.get_sample_h264_codec_configuration()
@@ -213,7 +218,9 @@ class SmoothContentProtectionTests(BitmovinTestCase):
 
         (sample_input, sample_files) = self.utils.get_sample_s3_input()
         s3_input = self.bitmovin.inputs.S3.create(sample_input)
-        stream_input = StreamInput(input_id=s3_input.resource.id, input_path=sample_files.get('854b9c98-17b9-49ed-b75c-3b912730bfd1'), selection_mode='AUTO')
+        stream_input = StreamInput(input_id=s3_input.resource.id,
+                                   input_path=sample_files.get('854b9c98-17b9-49ed-b75c-3b912730bfd1'),
+                                   selection_mode='AUTO')
 
         acl_entry = ACLEntry(scope='string', permission=ACLPermission.PUBLIC_READ)
 
@@ -231,6 +238,7 @@ class SmoothContentProtectionTests(BitmovinTestCase):
         self.assertIsNotNone(stream.codecConfigId)
         self.assertIsNotNone(stream.inputStreams)
         self.assertIsNotNone(stream.outputs)
+
         return stream
 
     def _create_sample_encoding(self):
@@ -245,12 +253,12 @@ class SmoothContentProtectionTests(BitmovinTestCase):
     def _create_sample_muxing(self):
         (sample_muxing, created_stream) = self._get_sample_muxing()
         muxing_resource_response = self.bitmovin.encodings.Muxing.MP4.create(object_=sample_muxing,
-                                                                              encoding_id=self.sampleEncoding.id)
+                                                                             encoding_id=self.sampleEncoding.id)
         self.assertIsNotNone(muxing_resource_response)
         self.assertIsNotNone(muxing_resource_response.resource)
         self.assertIsNotNone(muxing_resource_response.resource.id)
         self._compare_muxings(sample_muxing, muxing_resource_response.resource)
-        return (muxing_resource_response.resource, created_stream)
+        return muxing_resource_response.resource, created_stream
 
     def _create_sample_drm(self):
         sample_drm = self._get_sample_drm_playready()
@@ -265,12 +273,15 @@ class SmoothContentProtectionTests(BitmovinTestCase):
     def _get_sample_drm_playready(self):
         sample_output = self._get_sample_encoding_output()
         sample_output.outputPath += '/drm'
+
         playready_drm_settings = self.settings.get('sampleObjects').get('drmConfigurations').get('PlayReady')
+
         drm = PlayReadyDRM(key_seed=playready_drm_settings[0].get('keySeed'),
                            kid=playready_drm_settings[0].get('kid'),
                            method=playready_drm_settings[0].get('method'),
                            la_url=playready_drm_settings[0].get('laUrl'),
-                           name='Sample PlayReady DRM')
+                           name='Sample PlayReady DRM',
+                           outputs=[sample_output])
         return drm
 
 
