@@ -1,7 +1,6 @@
 from bitmovin.resources.models import AbstractModel
 
 
-# having to call it to avoid clash with DASH version
 class SmoothContentProtection(AbstractModel):
 
     def __init__(self, encoding_id, muxing_id, drm_id, id_=None, custom_data=None):
@@ -12,11 +11,14 @@ class SmoothContentProtection(AbstractModel):
 
     @classmethod
     def parse_from_json_object(cls, json_object):
-        id_ = json_object['id']
+        id_ = json_object.get('id')
         custom_data = json_object.get('customData')
-        encoding_id = json_object['encodingId']
-        muxing_id = json_object['muxingId']
-        drm_id = json_object['drmId']
-        content_protection = SmoothContentProtection(id_=id_, custom_data=custom_data,
-                                               encoding_id=encoding_id, muxing_id=muxing_id, drm_id=drm_id)
+        encoding_id = json_object.get('encodingId')
+        muxing_id = json_object.get('muxingId')
+        drm_id = json_object.get('drmId')
+        content_protection = SmoothContentProtection(id_=id_,
+                                                     custom_data=custom_data,
+                                                     encoding_id=encoding_id,
+                                                     muxing_id=muxing_id,
+                                                     drm_id=drm_id)
         return content_protection
