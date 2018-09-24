@@ -17,7 +17,7 @@ class AbstractManifest(AbstractNameDescriptionResource, AbstractModel, Serializa
     @classmethod
     def parse_from_json_object(cls, json_object):
         id_ = json_object['id']
-        manifest_name = json_object['manifestName']
+        manifest_name = json_object.get('manifestName')
         outputs = json_object.get('outputs')
         name = json_object.get('name')
         description = json_object.get('description')
