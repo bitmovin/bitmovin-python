@@ -54,4 +54,5 @@ from .scaling_algorithm import ScalingAlgorithm
 from .encoding_mode import EncodingMode
 from .audio_video_sync_mode import AudioVideoSyncMode
 from .stream_mode import StreamMode
+from .stream_decoding_error_mode import StreamDecodingErrorMode
 from .playready_method import PlayReadyMethod
