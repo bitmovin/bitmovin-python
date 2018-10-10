@@ -187,12 +187,13 @@ class EncodingStreamTests(BitmovinTestCase):
                         mode=StreamMode.PER_TITLE_TEMPLATE,
                         decoding_error_mode=StreamDecodingErrorMode.FAIL_ON_ERROR)
 
-        self.assertIsNotNone(stream.codecConfigId)
-        self.assertIsNotNone(stream.inputStreams)
-        self.assertIsNotNone(stream.outputs)
-        self.assertIsNotNone(stream.conditions)
-        self.assertIsNotNone(stream.mode)
-        self.assertIsNotNone(stream.decodingErrorMode)
+        self.assertEqual(stream.codecConfigId, h264_codec_configuration.resource.id)
+        self.assertEqual(stream.inputStreams, [stream_input])
+        self.assertEqual(stream.outputs, [encoding_output])
+        self.assertEqual(stream.conditions, conditions)
+        self.assertEqual(stream.mode, StreamMode.PER_TITLE_TEMPLATE.value)
+        self.assertEqual(stream.decodingErrorMode, StreamDecodingErrorMode.FAIL_ON_ERROR.value)
+
         return stream
 
     def _get_sample_conditions(self):
