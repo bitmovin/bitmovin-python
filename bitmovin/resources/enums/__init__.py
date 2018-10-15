@@ -60,3 +60,4 @@ from .h264_trellis import H264Trellis
 from .h264_sub_me import H264SubMe
 from .h264_motion_estimation_method import H264MotionEstimationMethod
 from .dash_manifest_profile import DashManifestProfile
+from .mp4_muxing_manifest_type import MP4MuxingManifestType
