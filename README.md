@@ -12,7 +12,7 @@ Installation
 To install the bitmovin client with pip, run the following command:
 
 ```bash
-pip install git+https://github.com/bitmovin/bitmovin-python.git@v1.36.0
+pip install git+https://github.com/bitmovin/bitmovin-python.git@v1.37.0
 ```
 
 Depending on the platform which you are using your default python version may be python2.7.
@@ -26,7 +26,9 @@ sudo apt-get install python3 python3-pip
 
 Depending on your distribution it could be that the pip tool uses the python2 interpreter so you maybe have one `pip3` executable instead.
 
-Example
+
+Exam
+ple
 -----
 
 The following example creates a simple encoding job with a DASH manifest and transfers it to a S3 output location ([create_simple_encoding.py](https://github.com/bitmovin/bitmovin-python/blob/master/examples/encoding/create_simple_encoding.py)):
