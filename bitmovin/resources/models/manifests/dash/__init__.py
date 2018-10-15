@@ -11,3 +11,5 @@ from .webm_representation import WebMRepresentation
 from .content_protection import ContentProtection
 from .abstract_dash_mp4_representation import AbstractDashMP4Representation
 from .dash_mp4_representation import DashMP4Representation
+from .dash_name_space import DASHNamespace
+from .custom_xml_element import CustomXMLElement

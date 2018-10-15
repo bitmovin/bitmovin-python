@@ -1,7 +1,7 @@
 from urllib.parse import urljoin
 from bitmovin.errors import FunctionalityNotAvailableError, InvalidTypeError, BitmovinApiError, InvalidStatusError
 from bitmovin.resources import DashManifest, Period, ResourceResponse, Status, Response, AudioAdaptationSet, \
-    VideoAdaptationSet, SubtitleAdaptationSet, FMP4Representation, DRMFMP4Representation, WebMRepresentation, ContentProtection, DashMP4Representation
+    VideoAdaptationSet, SubtitleAdaptationSet, FMP4Representation, DRMFMP4Representation, WebMRepresentation, ContentProtection, DashMP4Representation, CustomXMLElement
 from .manifest_control_service import ManifestControlService
 from ..rest_service import RestService
 
@@ -258,6 +258,29 @@ class DASH(RestService, ManifestControlService):
         if response.status == Status.SUCCESS.value:
             created_resource = self.parsing_utils.parse_bitmovin_resource_from_response(
                 response=response, class_=DashMP4Representation)
+            return ResourceResponse(response=response, resource=created_resource)
+
+        raise InvalidStatusError('Unknown status {} received'.format(response.status))
+
+    def add_custom_xml_element_to_period(self, object_, manifest_id, period_id):
+        if not isinstance(object_, CustomXMLElement):
+            raise InvalidTypeError('object_ has to be an instance of {}'.format(CustomXMLElement.__name__))
+
+        url = self.relative_url
+        if not url.endswith('/'):
+            url += '/'
+
+        url = urljoin(url, '{}/periods/{}/custom-xml-elements'.format(
+            manifest_id, period_id))
+
+        response = self.http_client.post(url, object_)  # type: Response
+
+        if response.status == Status.ERROR.value:
+            raise BitmovinApiError('Response was not successful: {}'.format(response.raw_response), response)
+
+        if response.status == Status.SUCCESS.value:
+            created_resource = self.parsing_utils.parse_bitmovin_resource_from_response(
+                response=response, class_=CustomXMLElement)
             return ResourceResponse(response=response, resource=created_resource)
 
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
