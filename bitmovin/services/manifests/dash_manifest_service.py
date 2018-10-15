@@ -1,7 +1,7 @@
 from urllib.parse import urljoin
 from bitmovin.errors import FunctionalityNotAvailableError, InvalidTypeError, BitmovinApiError, InvalidStatusError
 from bitmovin.resources import DashManifest, Period, ResourceResponse, Status, Response, AudioAdaptationSet, \
-    VideoAdaptationSet, SubtitleAdaptationSet, FMP4Representation, DRMFMP4Representation, WebMRepresentation, ContentProtection
+    VideoAdaptationSet, SubtitleAdaptationSet, FMP4Representation, DRMFMP4Representation, WebMRepresentation, ContentProtection, DashMP4Representation
 from .manifest_control_service import ManifestControlService
 from ..rest_service import RestService
 
@@ -235,6 +235,29 @@ class DASH(RestService, ManifestControlService):
         if response.status == Status.SUCCESS.value:
             created_resource = self.parsing_utils.parse_bitmovin_resource_from_response(
                 response=response, class_=ContentProtection)
+            return ResourceResponse(response=response, resource=created_resource)
+
+        raise InvalidStatusError('Unknown status {} received'.format(response.status))
+    
+    def add_mp4_representation(self, object_, manifest_id, period_id, adaptationset_id):
+        if not isinstance(object_, DashMP4Representation):
+            raise InvalidTypeError('object_ has to be an instance of {}'.format(DashMP4Representation.__name__))
+
+        url = self.relative_url
+        if not url.endswith('/'):
+            url += '/'
+
+        url = urljoin(url, '{}/periods/{}/adaptationsets/{}/representations/mp4'.format(
+            manifest_id, period_id, adaptationset_id))
+
+        response = self.http_client.post(url, object_)  # type: Response
+
+        if response.status == Status.ERROR.value:
+            raise BitmovinApiError('Response was not successful: {}'.format(response.raw_response), response)
+
+        if response.status == Status.SUCCESS.value:
+            created_resource = self.parsing_utils.parse_bitmovin_resource_from_response(
+                response=response, class_=DashMP4Representation)
             return ResourceResponse(response=response, resource=created_resource)
 
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
