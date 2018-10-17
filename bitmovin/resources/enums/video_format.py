@@ -8,7 +8,3 @@ class VideoFormat(enum.Enum):
     SECAM = 'SECAM'
     MAC = 'MAC'
     UNDEFINED = 'UNDEFINED'
-
-    @staticmethod
-    def default():
-        return VideoFormat.UNDEFINED
