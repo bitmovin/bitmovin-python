@@ -1,6 +1,6 @@
 from bitmovin.errors import InvalidTypeError
 from bitmovin.resources.enums import H265Profile, H265Level, BAdapt, MaxCTUSize, TUInterDepth, TUIntraDepth, \
-    MotionSearch
+    MotionSearch, VideoFormat
 from bitmovin.utils import Serializable
 
 from .video_codec_configuration import VideoCodecConfiguration
@@ -15,7 +15,7 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
                  tu_intra_depth=None, tu_inter_depth=None, motion_search=None, sub_me=None, motion_search_range=None,
                  weight_prediction_on_p_slice=None, weight_prediction_on_b_slice=None, sao=None, crf=None,
                  pixel_format=None, color_config=None, max_keyframe_interval=None, min_keyframe_interval=None,
-                 scene_cut_threshold=None):
+                 scene_cut_threshold=None, enable_hlg_signaling=None, video_format=None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description, bitrate=bitrate,
                          rate=rate, width=width, height=height, pixel_format=pixel_format)
@@ -55,6 +55,9 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         self.maxKeyframeInterval = max_keyframe_interval
         self.minKeyframeInterval = min_keyframe_interval
         self.sceneCutThreshold = scene_cut_threshold
+        self.enableHlgSignaling = enable_hlg_signaling
+        self._videoFormat = None
+        self.videoFormat = video_format
 
     @property
     def colorConfig(self):
@@ -211,6 +214,25 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
 
         self._crf = new_value
 
+    @property
+    def videoFormat(self):
+        if self._videoFormat is not None:
+            return self._videoFormat
+        else:
+            return VideoFormat.default().value
+
+    @videoFormat.setter
+    def videoFormat(self, new_video_format):
+        if new_video_format is None:
+            return
+        if isinstance(new_video_format, str):
+            self._videoFormat = new_video_format
+        elif isinstance(new_video_format, VideoFormat):
+            self._videoFormat = new_video_format.value
+        else:
+            raise InvalidTypeError(
+                'Invalid type {} for videoFormat: must be either str or VideoFormat!'.format(type(new_video_format)))
+
     @classmethod
     def parse_from_json_object(cls, json_object):
         video_codec_configuration = VideoCodecConfiguration.parse_from_json_object(json_object=json_object)
@@ -250,6 +272,8 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         max_keyframe_interval = json_object.get('maxKeyframeInterval')
         min_keyframe_interval = json_object.get('minKeyframeInterval')
         scene_cut_threshold = json_object.get('sceneCutThreshold')
+        enable_hlg_signaling = json_object.get('enableHlgSignaling')
+        video_format = json_object.get('videoFormat')
 
         color_config = None
         color_config_json = json_object.get('colorConfig')
@@ -292,7 +316,9 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
                                                           color_config=color_config,
                                                           max_keyframe_interval=max_keyframe_interval,
                                                           min_keyframe_interval=min_keyframe_interval,
-                                                          scene_cut_threshold=scene_cut_threshold)
+                                                          scene_cut_threshold=scene_cut_threshold,
+                                                          enable_hlg_signaling=enable_hlg_signaling,
+                                                          video_format=video_format)
 
         return h265_codec_configuration
 
@@ -306,6 +332,7 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         serialized['tuInterDepth'] = self.tuInterDepth
         serialized['motionSearch'] = self.motionSearch
         serialized['crf'] = self.crf
+        serialized['videoFormat'] = self.videoFormat
 
         if isinstance(self.colorConfig, ColorConfig):
             serialized['colorConfig'] = self.colorConfig.serialize()
