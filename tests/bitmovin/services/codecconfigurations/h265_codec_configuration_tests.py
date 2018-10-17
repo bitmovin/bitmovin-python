@@ -2,7 +2,7 @@ import unittest
 import json
 from bitmovin import Bitmovin, Response, H265CodecConfiguration, H265Profile, H265Level, BAdapt, MaxCTUSize, \
     TUIntraDepth, TUInterDepth, MotionSearch, ChromaLocation, ColorSpace, ColorPrimaries, ColorRange, ColorTransfer, \
-    InputColorSpace, InputColorRange, ColorConfig
+    InputColorSpace, InputColorRange, ColorConfig, VideoFormat
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
 
@@ -135,6 +135,45 @@ class H265CodecConfigurationTests(BitmovinTestCase):
             self._compare_h265_codec_configurations(sample_codec_configuration,
                                                     codec_configuration_resource_response.resource)
 
+    def test_create_h265_codec_configuration_with_hlg_signaling_activated(self):
+            sample_codec_configuration = self._get_sample_h265_codec_configuration()
+            sample_codec_configuration.enableHlgSignaling = True
+
+            codec_configuration_resource_response = self.bitmovin.codecConfigurations.H265.create(
+                sample_codec_configuration)
+
+            self.assertIsNotNone(codec_configuration_resource_response)
+            self.assertIsNotNone(codec_configuration_resource_response.resource)
+            self.assertIsNotNone(codec_configuration_resource_response.resource.id)
+            self._compare_h265_codec_configurations(sample_codec_configuration,
+                                                    codec_configuration_resource_response.resource)
+
+    def test_create_h265_codec_configuration_with_hlg_signaling_disabled(self):
+            sample_codec_configuration = self._get_sample_h265_codec_configuration()
+            sample_codec_configuration.enableHlgSignaling = False
+
+            codec_configuration_resource_response = self.bitmovin.codecConfigurations.H265.create(
+                sample_codec_configuration)
+
+            self.assertIsNotNone(codec_configuration_resource_response)
+            self.assertIsNotNone(codec_configuration_resource_response.resource)
+            self.assertIsNotNone(codec_configuration_resource_response.resource.id)
+            self._compare_h265_codec_configurations(sample_codec_configuration,
+                                                    codec_configuration_resource_response.resource)
+
+    def test_create_h265_codec_configuration_with_video_format_secam(self):
+        sample_codec_configuration = self._get_sample_h265_codec_configuration()
+        sample_codec_configuration.videoFormat = VideoFormat.SECAM
+
+        codec_configuration_resource_response = self.bitmovin.codecConfigurations.H265.create(
+            sample_codec_configuration)
+
+        self.assertIsNotNone(codec_configuration_resource_response)
+        self.assertIsNotNone(codec_configuration_resource_response.resource)
+        self.assertIsNotNone(codec_configuration_resource_response.resource.id)
+        self._compare_h265_codec_configurations(sample_codec_configuration,
+                                                codec_configuration_resource_response.resource)
+
     def _compare_h265_codec_configurations(self, first: H265CodecConfiguration, second: H265CodecConfiguration):
         """
 
@@ -173,6 +212,8 @@ class H265CodecConfigurationTests(BitmovinTestCase):
         self.assertEqual(first.maxKeyframeInterval, second.maxKeyframeInterval)
         self.assertEqual(first.minKeyframeInterval, second.minKeyframeInterval)
         self.assertEqual(first.sceneCutThreshold, second.sceneCutThreshold)
+        self.assertEqual(first.enableHlgSignaling, second.enableHlgSignaling)
+        self.assertEqual(first.videoFormat, second.videoFormat)
         self.assertTrue(self._compare_color_configs(first.colorConfig, second.colorConfig))
         return True
 
