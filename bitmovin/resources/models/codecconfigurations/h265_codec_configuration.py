@@ -216,22 +216,20 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
 
     @property
     def videoFormat(self):
-        if self._videoFormat is not None:
-            return self._videoFormat
-        else:
-            return VideoFormat.default().value
+        return self._videoFormat
 
     @videoFormat.setter
-    def videoFormat(self, new_video_format):
-        if new_video_format is None:
+    def videoFormat(self, new_value):
+        if new_value is None:
+            self._videoFormat = None
             return
-        if isinstance(new_video_format, str):
-            self._videoFormat = new_video_format
-        elif isinstance(new_video_format, VideoFormat):
-            self._videoFormat = new_video_format.value
+        if isinstance(new_value, str):
+            self._videoFormat = new_value
+        elif isinstance(new_value, VideoFormat):
+            self._videoFormat = new_value.value
         else:
             raise InvalidTypeError(
-                'Invalid type {} for videoFormat: must be either str or VideoFormat!'.format(type(new_video_format)))
+                'Invalid type {} for videoFormat: must be either str or VideoFormat!'.format(type(new_value)))
 
     @classmethod
     def parse_from_json_object(cls, json_object):
