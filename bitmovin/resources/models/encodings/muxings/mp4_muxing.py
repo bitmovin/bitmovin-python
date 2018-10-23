@@ -16,7 +16,7 @@ class MP4Muxing(Muxing):
         self.timeCode = time_code
         self._fragmentedMP4MuxingManifestType= None
         self.fragmentedMP4MuxingManifestType = fragmented_mp4_muxing_manifest_type
-        print(type(fragmented_mp4_muxing_manifest_type))
+
     @property
     def timeCode(self):
         return self._timeCode

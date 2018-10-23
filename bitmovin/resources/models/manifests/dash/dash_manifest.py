@@ -77,3 +77,4 @@ class DashManifest(AbstractManifest):
         serialized['namespaces'] = self.dash_namespaces
 
         return serialized
+    
