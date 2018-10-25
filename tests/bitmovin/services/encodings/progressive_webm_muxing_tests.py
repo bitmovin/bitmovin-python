@@ -92,7 +92,7 @@ class ProgressiveWebMMuxingTests(BitmovinTestCase):
 
         try:
             self.bitmovin.encodings.Muxing.ProgressiveWebM.retrieve(self.sampleEncoding.id,
-                                                                   created_muxing_response.resource.id)
+                                                                    created_muxing_response.resource.id)
             self.fail(
                 'Previous statement should have thrown an exception. ' +
                 'Retrieving muxing after deleting it should not be possible.'
@@ -165,9 +165,9 @@ class ProgressiveWebMMuxingTests(BitmovinTestCase):
         muxing_stream = MuxingStream(stream_id=create_stream_response.resource.id)
 
         muxing = ProgressiveWebMMuxing(streams=[muxing_stream],
-                                      filename='keyframeArchiveTest.mov',
-                                      outputs=stream.outputs,
-                                      name='Sample ProgressiveWebMMuxing')
+                                       filename='keyframeArchiveTest.mov',
+                                       outputs=stream.outputs,
+                                       name='Sample ProgressiveWebMMuxing')
         return muxing
 
     def _get_sample_stream(self):
