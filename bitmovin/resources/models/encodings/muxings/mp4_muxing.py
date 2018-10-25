@@ -14,7 +14,7 @@ class MP4Muxing(Muxing):
         self.fragmentDuration = fragment_duration
         self._timeCode = None
         self.timeCode = time_code
-        self._fragmentedMP4MuxingManifestType= None
+        self._fragmentedMP4MuxingManifestType = None
         self.fragmentedMP4MuxingManifestType = fragmented_mp4_muxing_manifest_type
 
     @property
@@ -42,13 +42,12 @@ class MP4Muxing(Muxing):
     def fragmentedMP4MuxingManifestType(self, new_fragmented_mp4_muxing_manifest_type):
         if new_fragmented_mp4_muxing_manifest_type is None:
             self._fragmentedMP4MuxingManifestType = None
-            return
         elif isinstance(new_fragmented_mp4_muxing_manifest_type, MP4MuxingManifestType):
             self._fragmentedMP4MuxingManifestType = new_fragmented_mp4_muxing_manifest_type.value
         elif isinstance(new_fragmented_mp4_muxing_manifest_type, str):
             self._fragmentedMP4MuxingManifestType = new_fragmented_mp4_muxing_manifest_type
         else:
-            raise InvalidTypeError('fragmentedMP4MuxingManifestType has to be of type MP4MuxingManifestType')
+            raise InvalidTypeError('fragmentedMP4MuxingManifestType has to be of type MP4MuxingManifestType or str')
 
     @classmethod
     def parse_from_json_object(cls, json_object):
@@ -74,7 +73,8 @@ class MP4Muxing(Muxing):
         
         mp4_muxing = MP4Muxing(streams=streams, filename=filename, outputs=outputs, id_=id_, custom_data=custom_data,
                                name=name, description=description, ignored_by=ignored_by,
-                               fragment_duration=fragment_duration, time_code=time_code, fragmented_mp4_muxing_manifest_type=fragmented_mp4_muxing_manifest_type)
+                               fragment_duration=fragment_duration, time_code=time_code,
+                               fragmented_mp4_muxing_manifest_type=fragmented_mp4_muxing_manifest_type)
         return mp4_muxing
 
     def serialize(self):

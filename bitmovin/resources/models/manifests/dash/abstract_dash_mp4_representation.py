@@ -12,12 +12,11 @@ class AbstractDashMP4Representation(AbstractModel, Serializable):
 
     @classmethod
     def parse_from_json_object(cls, json_object):
-        id_ = json_object['id']
+        id_ = json_object.get('id')
         custom_data = json_object.get('customData')
-        encoding_id = json_object['encodingId']
-        muxing_id = json_object['muxingId']
-        file_path = json_object['filePath']
+        encoding_id = json_object.get('encodingId')
+        muxing_id = json_object.get('muxingId')
+        file_path = json_object.get('filePath')
         abstract_mp4_representation = AbstractDashMP4Representation(
-            id_=id_, custom_data=custom_data, encoding_id=encoding_id, muxing_id=muxing_id,
-            file_path=file_path)
+            id_=id_, custom_data=custom_data, encoding_id=encoding_id, muxing_id=muxing_id, file_path=file_path)
         return abstract_mp4_representation

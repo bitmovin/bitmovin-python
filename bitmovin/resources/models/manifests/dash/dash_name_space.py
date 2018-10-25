@@ -14,9 +14,3 @@ class DASHNamespace(Serializable):
         uri = json_object.get('uri')
         namespace = DASHNamespace(prefix=prefix, uri=uri)
         return namespace
-
-    def serialize(self):
-        serialized = super().serialize()
-        serialized['prefix'] = self.prefix
-        serialized['uri'] = self.uri
-        return serialized
