@@ -38,7 +38,9 @@ class DashManifest(AbstractManifest):
     def namespaces(self, new_dash_namespaces):
         if new_dash_namespaces is None:
             self._namespaces = None
-        elif not isinstance(new_dash_namespaces, list):
+            return
+            
+        if not isinstance(new_dash_namespaces, list):
             raise InvalidTypeError('new_dash_namespaces has to be a list of DASHNamespace objects')
 
         if all(isinstance(dash_namespace, DASHNamespace) for dash_namespace in new_dash_namespaces):
