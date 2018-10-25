@@ -23,8 +23,13 @@ class ProgressiveWebMMuxing(Muxing):
 
         filename = json_object.get('filename')
 
-        progressive_webm_muxing = ProgressiveWebMMuxing(streams=streams, filename=filename,
-                                                    outputs=outputs, id_=id_, custom_data=custom_data,
-                                                    name=name, description=description, ignored_by=ignored_by)
+        progressive_webm_muxing = ProgressiveWebMMuxing(streams=streams,
+                                                        filename=filename,
+                                                        outputs=outputs,
+                                                        id_=id_,
+                                                        custom_data=custom_data,
+                                                        name=name,
+                                                        description=description,
+                                                        ignored_by=ignored_by)
 
         return progressive_webm_muxing
