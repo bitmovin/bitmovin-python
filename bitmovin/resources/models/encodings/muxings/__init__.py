@@ -12,3 +12,4 @@ from .broadcast_ts import BroadcastTsInputStreamConfiguration, BroadcastTsMuxing
     BroadcastTsTransportConfiguration, BroadcastTsProgramConfiguration, BroadcastTsVideoStreamConfiguration, \
     BroadcastTsAudioStreamConfiguration, BroadcastTsMuxing
 from .time_code import TimeCode
+from .progressive_webm_muxing import ProgressiveWebMMuxing
