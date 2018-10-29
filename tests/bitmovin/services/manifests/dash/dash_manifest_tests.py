@@ -1,6 +1,6 @@
 import unittest
 import uuid
-from bitmovin import Bitmovin, Response, CloudRegion, DashManifest, ACLEntry, ACLPermission, EncodingOutput, \
+from bitmovin import Bitmovin, Response, DashManifest, ACLEntry, ACLPermission, EncodingOutput, \
     DashManifestProfile, DASHNamespace
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
