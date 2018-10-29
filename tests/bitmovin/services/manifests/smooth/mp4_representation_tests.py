@@ -59,7 +59,10 @@ class MP4RepresentationTests(BitmovinTestCase):
         self.assertIsNotNone(mp4_representation_response.resource.id)
         self._compare_mp4_representations(sample_mp4_representation, mp4_representation_response.resource)
 
-        list_representation_resource_response = self.bitmovin.manifests.Smooth.MP4Representation.list(manifest_id=manifest_resource_response.resource.id, limit=1)
+        list_representation_resource_response = self.bitmovin.manifests.Smooth.MP4Representation.list(
+            manifest_id=manifest_resource_response.resource.id,
+            limit=1
+        )
         self.assertIsNotNone(list_representation_resource_response)
         self.assertTrue(isinstance(list_representation_resource_response.resource, list))
         self.assertEqual(1, len(list_representation_resource_response.resource))
@@ -240,6 +243,7 @@ class MP4RepresentationTests(BitmovinTestCase):
         self.assertIsNotNone(muxing_resource_response.resource.id)
         self._compare_muxings(sample_muxing, muxing_resource_response.resource)
         return (muxing_resource_response.resource, created_stream)
+
 
 if __name__ == '__main__':
     unittest.main()
