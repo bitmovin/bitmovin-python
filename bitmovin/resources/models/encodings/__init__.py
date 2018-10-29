@@ -1,6 +1,6 @@
 from .muxings import Muxing, FMP4Muxing, MP4Muxing, TSMuxing, WebMMuxing, ProgressiveTSMuxing, MuxingStream, \
     ByteRange, MuxingInformationAudioTrack, MuxingInformationVideoTrack, ProgressiveTSInformation, \
-    MP4MuxingInformation, ProgressiveMOVMuxing, TimeCode
+    MP4MuxingInformation, ProgressiveMOVMuxing, TimeCode, ProgressiveWebMMuxing
 from .muxings.broadcast_ts import BroadcastTsMuxing, BroadcastTsAudioStreamConfiguration, \
     BroadcastTsVideoStreamConfiguration, BroadcastTsProgramConfiguration, BroadcastTsTransportConfiguration, \
     BroadcastTsMuxingConfiguration, BroadcastTsInputStreamConfiguration

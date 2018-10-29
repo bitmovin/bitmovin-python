@@ -1,6 +1,7 @@
 import unittest
 import uuid
-from bitmovin import Bitmovin, Response, CloudRegion, DashManifest, ACLEntry, ACLPermission, EncodingOutput
+from bitmovin import Bitmovin, Response, DashManifest, ACLEntry, ACLPermission, EncodingOutput, \
+    DashManifestProfile, DASHNamespace
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
 
@@ -40,6 +41,38 @@ class DashManifestTests(BitmovinTestCase):
         self.assertIsNotNone(manifest_resource_response.resource)
         self.assertIsNotNone(manifest_resource_response.resource.id)
         self._compare_manifests(sample_manifest, manifest_resource_response.resource)
+
+    def test_create_manifest_live(self):
+        sample_manifest = self._get_sample_manifest()
+        sample_manifest.profile = DashManifestProfile.LIVE
+        manifest_resource_response = self.bitmovin.manifests.DASH.create(sample_manifest)
+        self.assertIsNotNone(manifest_resource_response)
+        self.assertIsNotNone(manifest_resource_response.resource)
+        self.assertIsNotNone(manifest_resource_response.resource.id)
+        self._compare_manifests(sample_manifest, manifest_resource_response.resource)
+        self.assertEqual(sample_manifest.profile, manifest_resource_response.resource.profile)
+        
+    def test_create_manifest_ondemand(self):
+        sample_manifest = self._get_sample_manifest()
+        sample_manifest.profile = DashManifestProfile.ON_DEMAND
+        manifest_resource_response = self.bitmovin.manifests.DASH.create(sample_manifest)
+        self.assertIsNotNone(manifest_resource_response)
+        self.assertIsNotNone(manifest_resource_response.resource)
+        self.assertIsNotNone(manifest_resource_response.resource.id)
+        self._compare_manifests(sample_manifest, manifest_resource_response.resource)
+        self.assertEqual(sample_manifest.profile, manifest_resource_response.resource.profile)
+        
+    def test_create_manifest_custom_namespace(self):
+        sample_manifest = self._get_sample_manifest()
+        custom_namespace = DASHNamespace(prefix='scte35', uri='urn:scte:scte35:2014:xml+bin')
+        sample_manifest.namespaces = [custom_namespace]
+        manifest_resource_response = self.bitmovin.manifests.DASH.create(sample_manifest)
+        self.assertIsNotNone(manifest_resource_response)
+        self.assertIsNotNone(manifest_resource_response.resource)
+        self.assertIsNotNone(manifest_resource_response.resource.id)
+        self._compare_manifests(sample_manifest, manifest_resource_response.resource)
+        self.assertEqual(len(sample_manifest.namespaces), len(manifest_resource_response.resource.namespaces))
+        self._compare_namespaces(first=custom_namespace, second=manifest_resource_response.resource.namespaces[0])
 
     def test_retrieve_manifest(self):
         sample_manifest = self._get_sample_manifest()
@@ -104,7 +137,21 @@ class DashManifestTests(BitmovinTestCase):
         self.assertEqual(len(first.outputs), len(second.outputs))
         self.assertEqual(first.name, second.name)
         self.assertEqual(first.description, second.description)
+
+        if first.profile is not None:
+            self.assertEqual(first.profile, second.profile)
+
         return True
+
+    def _compare_namespaces(self, first: DASHNamespace, second: DASHNamespace):
+        """
+
+        :param first: DASHNamespace
+        :param second: DASHNamespace
+        :return: bool
+        """
+        self.assertEqual(first.prefix, second.prefix)
+        self.assertEqual(first.uri, second.uri)
 
     def _get_sample_manifest(self):
 

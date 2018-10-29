@@ -3,7 +3,7 @@ import uuid
 from bitmovin import Bitmovin, DashManifest, ACLEntry, ACLPermission, EncodingOutput, Period, VideoAdaptationSet, \
     AbstractAdaptationSet, FMP4Representation, FMP4RepresentationType, DRMFMP4Representation, Encoding, \
     Stream, StreamInput, MuxingStream, FMP4Muxing, MarlinDRM, AbstractFMP4Representation, WebMRepresentation, \
-    WebMRepresentationType
+    WebMRepresentationType, DashMP4Representation
 from tests.bitmovin import BitmovinTestCase
 
 
@@ -127,6 +127,39 @@ class RepresentationTests(BitmovinTestCase):
         self.assertIsNotNone(representation_resource_response.resource.id)
         self._compare_webm_representations(sample_representation, representation_resource_response.resource)
 
+    def test_add_mp4_representation(self):
+        sample_manifest = self._get_sample_manifest()
+        manifest_resource_response = self.bitmovin.manifests.DASH.create(sample_manifest)
+        self.assertIsNotNone(manifest_resource_response)
+        self.assertIsNotNone(manifest_resource_response.resource)
+        self.assertIsNotNone(manifest_resource_response.resource.id)
+        self._compare_manifests(sample_manifest, manifest_resource_response.resource)
+        sample_period = self._get_sample_period_default()
+        period_resource_response = self.bitmovin.manifests.DASH.add_period(
+            object_=sample_period, manifest_id=manifest_resource_response.resource.id)
+        self.assertIsNotNone(period_resource_response)
+        self.assertIsNotNone(period_resource_response.resource)
+        self.assertIsNotNone(period_resource_response.resource.id)
+        self._compare_periods(sample_period, period_resource_response.resource)
+        sample_adaptationset = self._get_sample_adaptationset()
+        adaptationset_resource_response = self.bitmovin.manifests.DASH.add_video_adaptation_set(
+            object_=sample_adaptationset, manifest_id=manifest_resource_response.resource.id,
+            period_id=period_resource_response.resource.id
+        )
+        self.assertIsNotNone(adaptationset_resource_response)
+        self.assertIsNotNone(adaptationset_resource_response.resource)
+        self.assertIsNotNone(adaptationset_resource_response.resource.id)
+        self._compare_video_adaptationsets(sample_adaptationset, adaptationset_resource_response.resource)
+        sample_representation = self._get_sample_mp4_representation()
+        representation_resource_response = self.bitmovin.manifests.DASH.add_mp4_representation(
+            object_=sample_representation, manifest_id=manifest_resource_response.resource.id,
+            period_id=period_resource_response.resource.id, adaptationset_id=adaptationset_resource_response.resource.id
+        )
+        self.assertIsNotNone(representation_resource_response)
+        self.assertIsNotNone(representation_resource_response.resource)
+        self.assertIsNotNone(representation_resource_response.resource.id)
+        self._compare_mp4_representations(sample_representation, representation_resource_response.resource)
+
     def _compare_manifests(self, first: DashManifest, second: DashManifest):
         self.assertEqual(first.manifestName, second.manifestName)
         self.assertEqual(first.description, second.description)
@@ -167,6 +200,12 @@ class RepresentationTests(BitmovinTestCase):
         self.assertEqual(first.muxingId, second.muxingId)
         self.assertEqual(first.segmentPath, second.segmentPath)
         self.assertEqual(first.startSegmentNumber, second.startSegmentNumber)
+        return True
+    
+    def _compare_mp4_representations(self, first: DashMP4Representation, second: DashMP4Representation):
+        self.assertEqual(first.encodingId, second.encodingId)
+        self.assertEqual(first.muxingId, second.muxingId)
+        self.assertEqual(first.filePath, second.filePath)
         return True
 
     def _compare_encodings(self, first: Encoding, second: Encoding):
@@ -264,6 +303,15 @@ class RepresentationTests(BitmovinTestCase):
                                                  start_segment_number=1)
 
         return webm_representation
+    
+    def _get_sample_mp4_representation(self):
+        encoding_id = self.sampleEncoding.id
+        muxing_id = self.sampleMuxing.id
+        mp4_representation = DashMP4Representation(encoding_id=encoding_id,
+                                                   muxing_id=muxing_id,
+                                                   file_path='/path/to/file.mp4')
+
+        return mp4_representation
 
     def _get_sample_muxing(self):
         stream = self._get_sample_stream()
