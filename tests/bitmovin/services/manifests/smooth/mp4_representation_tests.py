@@ -85,7 +85,9 @@ class MP4RepresentationTests(BitmovinTestCase):
         self._compare_mp4_representations(sample_mp4_representation, mp4_representation_response.resource)
 
         retrieve_representation_resource_response = self.bitmovin.manifests.Smooth.MP4Representation.retrieve(
-            manifest_id=manifest_resource_response.resource.id, representation_id=mp4_representation_response.resource.id)
+            manifest_id=manifest_resource_response.resource.id,
+            representation_id=mp4_representation_response.resource.id
+        )
 
         self.assertIsNotNone(retrieve_representation_resource_response)
         self.assertTrue(isinstance(retrieve_representation_resource_response.resource, MP4Representation))
@@ -109,7 +111,9 @@ class MP4RepresentationTests(BitmovinTestCase):
         self._compare_mp4_representations(sample_mp4_representation, mp4_representation_response.resource)
 
         delete_sample_mp4_representation_resource_response = self.bitmovin.manifests.Smooth.MP4Representation.delete(
-            manifest_id=manifest_resource_response.resource.id, representation_id=mp4_representation_response.resource.id)
+            manifest_id=manifest_resource_response.resource.id,
+            representation_id=mp4_representation_response.resource.id
+        )
 
         self.assertIsNotNone(delete_sample_mp4_representation_resource_response)
         self.assertIsNotNone(delete_sample_mp4_representation_resource_response.resource)
