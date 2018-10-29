@@ -72,6 +72,7 @@ class DashManifestTests(BitmovinTestCase):
         self.assertIsNotNone(manifest_resource_response.resource.id)
         self._compare_manifests(sample_manifest, manifest_resource_response.resource)
         self.assertEqual(len(sample_manifest.namespaces), len(manifest_resource_response.resource.namespaces))
+        self._compare_namespaces(first=custom_namespace, second=manifest_resource_response.response.namespaces[0])
 
     def test_retrieve_manifest(self):
         sample_manifest = self._get_sample_manifest()
@@ -136,7 +137,19 @@ class DashManifestTests(BitmovinTestCase):
         self.assertEqual(len(first.outputs), len(second.outputs))
         self.assertEqual(first.name, second.name)
         self.assertEqual(first.description, second.description)
+        self.assertEqual(first.profile, second.profile)
+
         return True
+
+    def _compare_namespaces(self, first: DASHNamespace, second: DASHNamespace):
+        """
+
+        :param first: DASHNamespace
+        :param second: DASHNamespace
+        :return: bool
+        """
+        self.assertEqual(first.prefix, second.prefix)
+        self.assertEqual(first.uri, second.uri)
 
     def _get_sample_manifest(self):
 

@@ -30,7 +30,7 @@ class PeriodTests(BitmovinTestCase):
         self.assertIsNotNone(manifest_resource_response.resource)
         self.assertIsNotNone(manifest_resource_response.resource.id)
         self._compare_manifests(sample_manifest, manifest_resource_response.resource)
-        sample_period = self._get_sample_period_default()
+        sample_period = Period()
         period_resource_response = self.bitmovin.manifests.DASH.add_period(
             object_=sample_period, manifest_id=manifest_resource_response.resource.id)
         self.assertIsNotNone(period_resource_response)
@@ -45,16 +45,19 @@ class PeriodTests(BitmovinTestCase):
         self.assertIsNotNone(manifest_resource_response.resource)
         self.assertIsNotNone(manifest_resource_response.resource.id)
         self._compare_manifests(sample_manifest, manifest_resource_response.resource)
-        sample_period = self._get_sample_period_default()
+        sample_period = Period()
         period_resource_response = self.bitmovin.manifests.DASH.add_period(
             object_=sample_period, manifest_id=manifest_resource_response.resource.id)
         self.assertIsNotNone(period_resource_response)
         self.assertIsNotNone(period_resource_response.resource)
         self.assertIsNotNone(period_resource_response.resource.id)
         self._compare_periods(sample_period, period_resource_response.resource)
-        custom_xml_element = self._custom_xml_element()
-        self.bitmovin.manifests.DASH.add_custom_xml_element_to_period(period_id=period_resource_response.resource.id, 
-            object_=custom_xml_element, manifest_id=manifest_resource_response.resource.id)
+        custom_xml_element = CustomXMLElement(data='<xml>content goes here</xml>')
+        self.bitmovin.manifests.DASH.add_custom_xml_element_to_period(
+            period_id=period_resource_response.resource.id,
+            object_=custom_xml_element,
+            manifest_id=manifest_resource_response.resource.id
+        )
 
     def _compare_manifests(self, first: DashManifest, second: DashManifest):
         self.assertEqual(first.manifestName, second.manifestName)
@@ -91,19 +94,6 @@ class PeriodTests(BitmovinTestCase):
 
         return encoding_output
 
-    def _get_sample_period_default(self):
-        period = Period()
-        return period
-
-    def _get_special_period(self):
-        period = self._get_sample_period_default()
-        period.start = 1.33
-        period.duration = 67.3
-        return period
-    
-    def _custom_xml_element(self):
-        custom_xml_element = CustomXMLElement(data='<xml>content goes here</xml>')
-        return custom_xml_element
 
 if __name__ == '__main__':
     unittest.main()
