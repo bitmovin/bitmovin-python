@@ -64,14 +64,14 @@ class DashManifestTests(BitmovinTestCase):
         
     def test_create_manifest_custom_namespace(self):
         sample_manifest = self._get_sample_manifest()
-        sample_manifest.namespaces = [self._get_sample_custom_namespace()]
+        custom_namespace = DASHNamespace(prefix='scte35', uri='urn:scte:scte35:2014:xml+bin')
+        sample_manifest.namespaces = [custom_namespace]
         manifest_resource_response = self.bitmovin.manifests.DASH.create(sample_manifest)
         self.assertIsNotNone(manifest_resource_response)
         self.assertIsNotNone(manifest_resource_response.resource)
         self.assertIsNotNone(manifest_resource_response.resource.id)
         self._compare_manifests(sample_manifest, manifest_resource_response.resource)
         self.assertEqual(len(sample_manifest.namespaces), len(manifest_resource_response.resource.namespaces))
-
 
     def test_retrieve_manifest(self):
         sample_manifest = self._get_sample_manifest()
@@ -159,11 +159,6 @@ class DashManifestTests(BitmovinTestCase):
                                          acl=[acl_entry])
 
         return encoding_output
-    
-    def _get_sample_custom_namespace(self):
-        custom_namespace = DASHNamespace(prefix='scte35', uri='urn:scte:scte35:2014:xml+bin')
-        
-        return custom_namespace
 
 
 if __name__ == '__main__':
