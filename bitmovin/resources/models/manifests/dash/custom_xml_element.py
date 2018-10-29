@@ -10,4 +10,4 @@ class CustomXMLElement(Serializable):
     @classmethod
     def parse_from_json_object(cls, json_object):
         data = json_object.get('data')
-        return CustomXMLElement(data)
+        return CustomXMLElement(data=data)
