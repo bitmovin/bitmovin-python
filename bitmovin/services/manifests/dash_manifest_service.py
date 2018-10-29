@@ -1,7 +1,8 @@
 from urllib.parse import urljoin
 from bitmovin.errors import FunctionalityNotAvailableError, InvalidTypeError, BitmovinApiError, InvalidStatusError
 from bitmovin.resources import DashManifest, Period, ResourceResponse, Status, Response, AudioAdaptationSet, \
-    VideoAdaptationSet, SubtitleAdaptationSet, FMP4Representation, DRMFMP4Representation, WebMRepresentation, ContentProtection, DashMP4Representation, CustomXMLElement
+    VideoAdaptationSet, SubtitleAdaptationSet, FMP4Representation, DRMFMP4Representation, WebMRepresentation, \
+    ContentProtection, DashMP4Representation, CustomXMLElement
 from .manifest_control_service import ManifestControlService
 from ..rest_service import RestService
 
