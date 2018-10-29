@@ -169,9 +169,15 @@ class MP4RepresentationTests(BitmovinTestCase):
         encoding_id = self.sampleEncoding.id
         muxing_id = self.sampleMuxing.id
 
+        media_file = 'myrendition.ismv'
+        language = 'some_language'
+        track_name = 'some_track'
+
         mp4_representation = MP4Representation(encoding_id=encoding_id,
                                                muxing_id=muxing_id,
-                                               media_file='myrendition.ismv')
+                                               media_file=media_file,
+                                               language=language,
+                                               track_name=track_name)
         return mp4_representation
 
     def _get_sample_encoding_output(self):
