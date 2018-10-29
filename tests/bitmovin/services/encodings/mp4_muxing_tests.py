@@ -2,7 +2,7 @@ import unittest
 import uuid
 import json
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, EncodingStatus, \
-    MP4Muxing, MuxingStream, ACLPermission, SelectionMode
+    MP4Muxing, MuxingStream, ACLPermission, SelectionMode, MP4MuxingManifestType
 from bitmovin.errors import BitmovinApiError
 from bitmovin.resources.models.encodings.muxings.time_code import TimeCode
 from tests.bitmovin import BitmovinTestCase
@@ -40,6 +40,26 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
     def test_create_muxing_without_name(self):
         sample_muxing = self._get_sample_muxing()
         sample_muxing.name = None
+        muxing_resource_response = self.bitmovin.encodings.Muxing.MP4.create(object_=sample_muxing,
+                                                                             encoding_id=self.sampleEncoding.id)
+        self.assertIsNotNone(muxing_resource_response)
+        self.assertIsNotNone(muxing_resource_response.resource)
+        self.assertIsNotNone(muxing_resource_response.resource.id)
+        self._compare_muxings(sample_muxing, muxing_resource_response.resource)
+        
+    def test_create_muxing_fragmented_smooth(self):
+        sample_muxing = self._get_sample_muxing()
+        sample_muxing.fragmentedMP4MuxingManifestType = MP4MuxingManifestType.SMOOTH
+        muxing_resource_response = self.bitmovin.encodings.Muxing.MP4.create(object_=sample_muxing,
+                                                                             encoding_id=self.sampleEncoding.id)
+        self.assertIsNotNone(muxing_resource_response)
+        self.assertIsNotNone(muxing_resource_response.resource)
+        self.assertIsNotNone(muxing_resource_response.resource.id)
+        self._compare_muxings(sample_muxing, muxing_resource_response.resource)
+        
+    def test_create_muxing_fragmented_dash_on_demand(self):
+        sample_muxing = self._get_sample_muxing()
+        sample_muxing.fragmentedMP4MuxingManifestType = MP4MuxingManifestType.DASH_ON_DEMAND
         muxing_resource_response = self.bitmovin.encodings.Muxing.MP4.create(object_=sample_muxing,
                                                                              encoding_id=self.sampleEncoding.id)
         self.assertIsNotNone(muxing_resource_response)
@@ -152,6 +172,7 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
         self.assertEqual(first.description, second.description)
         self.assertEqual(first.fragmentDuration, second.fragmentDuration)
         self.assertTrue(self._compare_time_code(first.timeCode, second.timeCode))
+        self.assertEqual(first.fragmentedMP4MuxingManifestType, second.fragmentedMP4MuxingManifestType)
         return True
 
     def _get_sample_muxing(self):

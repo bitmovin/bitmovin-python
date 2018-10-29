@@ -15,14 +15,16 @@ class AbstractMP4Representation(AbstractModel, Serializable):
 
     @classmethod
     def parse_from_json_object(cls, json_object):
-        id_ = json_object['id']
+        id_ = json_object.get('id')
         custom_data = json_object.get('customData')
-        encoding_id = json_object['encodingId']
-        muxing_id = json_object['muxingId']
-        media_file = json_object['mediaFile']
+        encoding_id = json_object.get('encodingId')
+        muxing_id = json_object.get('muxingId')
+        media_file = json_object.get('mediaFile')
         language = json_object.get('language')
         track_name = json_object.get('trackName')
+
         abstract_mp4_representation = AbstractMP4Representation(
             id_=id_, custom_data=custom_data, encoding_id=encoding_id, muxing_id=muxing_id,
             media_file=media_file, language=language, track_name=track_name)
+
         return abstract_mp4_representation

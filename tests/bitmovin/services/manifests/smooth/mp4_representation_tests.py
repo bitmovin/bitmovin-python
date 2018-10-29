@@ -59,7 +59,10 @@ class MP4RepresentationTests(BitmovinTestCase):
         self.assertIsNotNone(mp4_representation_response.resource.id)
         self._compare_mp4_representations(sample_mp4_representation, mp4_representation_response.resource)
 
-        list_representation_resource_response = self.bitmovin.manifests.Smooth.MP4Representation.list(manifest_id=manifest_resource_response.resource.id, limit=1)
+        list_representation_resource_response = self.bitmovin.manifests.Smooth.MP4Representation.list(
+            manifest_id=manifest_resource_response.resource.id,
+            limit=1
+        )
         self.assertIsNotNone(list_representation_resource_response)
         self.assertTrue(isinstance(list_representation_resource_response.resource, list))
         self.assertEqual(1, len(list_representation_resource_response.resource))
@@ -82,7 +85,9 @@ class MP4RepresentationTests(BitmovinTestCase):
         self._compare_mp4_representations(sample_mp4_representation, mp4_representation_response.resource)
 
         retrieve_representation_resource_response = self.bitmovin.manifests.Smooth.MP4Representation.retrieve(
-            manifest_id=manifest_resource_response.resource.id, representation_id=mp4_representation_response.resource.id)
+            manifest_id=manifest_resource_response.resource.id,
+            representation_id=mp4_representation_response.resource.id
+        )
 
         self.assertIsNotNone(retrieve_representation_resource_response)
         self.assertTrue(isinstance(retrieve_representation_resource_response.resource, MP4Representation))
@@ -106,7 +111,9 @@ class MP4RepresentationTests(BitmovinTestCase):
         self._compare_mp4_representations(sample_mp4_representation, mp4_representation_response.resource)
 
         delete_sample_mp4_representation_resource_response = self.bitmovin.manifests.Smooth.MP4Representation.delete(
-            manifest_id=manifest_resource_response.resource.id, representation_id=mp4_representation_response.resource.id)
+            manifest_id=manifest_resource_response.resource.id,
+            representation_id=mp4_representation_response.resource.id
+        )
 
         self.assertIsNotNone(delete_sample_mp4_representation_resource_response)
         self.assertIsNotNone(delete_sample_mp4_representation_resource_response.resource)
@@ -162,9 +169,15 @@ class MP4RepresentationTests(BitmovinTestCase):
         encoding_id = self.sampleEncoding.id
         muxing_id = self.sampleMuxing.id
 
+        media_file = 'myrendition.ismv'
+        language = 'some_language'
+        track_name = 'some_track'
+
         mp4_representation = MP4Representation(encoding_id=encoding_id,
                                                muxing_id=muxing_id,
-                                               media_file='myrendition.ismv')
+                                               media_file=media_file,
+                                               language=language,
+                                               track_name=track_name)
         return mp4_representation
 
     def _get_sample_encoding_output(self):
@@ -194,7 +207,7 @@ class MP4RepresentationTests(BitmovinTestCase):
                            fragment_duration=4000,
                            outputs=stream.outputs,
                            name='Sample MP4 Muxing')
-        return (muxing, create_stream_response.resource)
+        return muxing, create_stream_response.resource
 
     def _get_sample_stream(self):
         sample_codec_configuration = self.utils.get_sample_h264_codec_configuration()
@@ -202,7 +215,9 @@ class MP4RepresentationTests(BitmovinTestCase):
 
         (sample_input, sample_files) = self.utils.get_sample_s3_input()
         s3_input = self.bitmovin.inputs.S3.create(sample_input)
-        stream_input = StreamInput(input_id=s3_input.resource.id, input_path=sample_files.get('854b9c98-17b9-49ed-b75c-3b912730bfd1'), selection_mode='AUTO')
+        stream_input = StreamInput(input_id=s3_input.resource.id,
+                                   input_path=sample_files.get('854b9c98-17b9-49ed-b75c-3b912730bfd1'),
+                                   selection_mode='AUTO')
 
         acl_entry = ACLEntry(scope='string', permission=ACLPermission.PUBLIC_READ)
 
@@ -234,12 +249,14 @@ class MP4RepresentationTests(BitmovinTestCase):
     def _create_sample_muxing(self):
         (sample_muxing, created_stream) = self._get_sample_muxing()
         muxing_resource_response = self.bitmovin.encodings.Muxing.MP4.create(object_=sample_muxing,
-                                                                              encoding_id=self.sampleEncoding.id)
+                                                                             encoding_id=self.sampleEncoding.id)
         self.assertIsNotNone(muxing_resource_response)
         self.assertIsNotNone(muxing_resource_response.resource)
         self.assertIsNotNone(muxing_resource_response.resource.id)
         self._compare_muxings(sample_muxing, muxing_resource_response.resource)
-        return (muxing_resource_response.resource, created_stream)
+
+        return muxing_resource_response.resource, created_stream
+
 
 if __name__ == '__main__':
     unittest.main()
