@@ -15,7 +15,8 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
                  tu_intra_depth=None, tu_inter_depth=None, motion_search=None, sub_me=None, motion_search_range=None,
                  weight_prediction_on_p_slice=None, weight_prediction_on_b_slice=None, sao=None, crf=None,
                  pixel_format=None, color_config=None, max_keyframe_interval=None, min_keyframe_interval=None,
-                 scene_cut_threshold=None, enable_hlg_signaling=None, video_format=None):
+                 scene_cut_threshold=None, enable_hlg_signaling=None, video_format=None, hdr=None, master_display=None,
+                 max_content_light_level=None, max_picture_average_light_level=None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description, bitrate=bitrate,
                          rate=rate, width=width, height=height, pixel_format=pixel_format)
@@ -58,6 +59,11 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         self.enableHlgSignaling = enable_hlg_signaling
         self._videoFormat = None
         self.videoFormat = video_format
+        self.hdr = hdr
+        self.masterDisplay = master_display
+        self.maxContentLightLevel = max_content_light_level
+        self.maxPictureAverageLightLevel = max_picture_average_light_level
+
 
     @property
     def colorConfig(self):
@@ -272,6 +278,10 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         scene_cut_threshold = json_object.get('sceneCutThreshold')
         enable_hlg_signaling = json_object.get('enableHlgSignaling')
         video_format = json_object.get('videoFormat')
+        hdr = json_object.get('hdr')
+        master_display = json_object.get('masterDisplay')
+        max_content_light_level = json_object.get('maxContentLightLevel')
+        max_picture_average_light_level = json_object.get('maxPictureAverageLightLevel')
 
         color_config = None
         color_config_json = json_object.get('colorConfig')
@@ -316,7 +326,12 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
                                                           min_keyframe_interval=min_keyframe_interval,
                                                           scene_cut_threshold=scene_cut_threshold,
                                                           enable_hlg_signaling=enable_hlg_signaling,
-                                                          video_format=video_format)
+                                                          video_format=video_format,
+                                                          hdr=hdr,
+                                                          master_display=master_display,
+                                                          max_content_light_level=max_content_light_level,
+                                                          max_picture_average_light_level=
+                                                          max_picture_average_light_level)
 
         return h265_codec_configuration
 

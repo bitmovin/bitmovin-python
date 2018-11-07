@@ -214,6 +214,11 @@ class H265CodecConfigurationTests(BitmovinTestCase):
         self.assertEqual(first.sceneCutThreshold, second.sceneCutThreshold)
         self.assertEqual(first.enableHlgSignaling, second.enableHlgSignaling)
         self.assertEqual(first.videoFormat, second.videoFormat)
+        self.assertEqual(first.hdr, second.hdr)
+        self.assertEqual(first.masterDisplay, second.masterDisplay)
+        self.assertEqual(first.maxContentLightLevel, second.maxContentLightLevel)
+        self.assertEqual(first.maxPictureAverageLightLevel, second.maxPictureAverageLightLevel)
+
         self.assertTrue(self._compare_color_configs(first.colorConfig, second.colorConfig))
         return True
 
@@ -238,6 +243,8 @@ class H265CodecConfigurationTests(BitmovinTestCase):
         return True
 
     def _get_sample_h265_codec_configuration(self):
+        master_display_sample = 'G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16450)L(10000000,10)'
+
         h265_codec_configuration = H265CodecConfiguration(name='H265 Sample Codec Config',
                                                           description='Long description for H265 Codec Config',
                                                           bitrate=10000000,
@@ -270,6 +277,10 @@ class H265CodecConfigurationTests(BitmovinTestCase):
                                                           scene_cut_threshold=30,
                                                           max_keyframe_interval=5,
                                                           min_keyframe_interval=3,
+                                                          hdr=True,
+                                                          master_display=master_display_sample,
+                                                          max_content_light_level= 800,
+                                                          max_picture_average_light_level=400,
                                                           color_config=ColorConfig(
                                                               copy_chroma_location_flag=True,
                                                               copy_color_space_flag=True,
@@ -310,6 +321,10 @@ class H265CodecConfigurationTests(BitmovinTestCase):
         self.assertIsNotNone(h265_codec_configuration.weightPredictionOnPSlice)
         self.assertIsNotNone(h265_codec_configuration.weightPredictionOnBSlice)
         self.assertIsNotNone(h265_codec_configuration.sao)
+        self.assertIsNotNone(h265_codec_configuration.hdr)
+        self.assertIsNotNone(h265_codec_configuration.masterDisplay)
+        self.assertIsNotNone(h265_codec_configuration.maxContentLightLevel)
+        self.assertIsNotNone(h265_codec_configuration.maxPictureAverageLightLevel)
 
         return h265_codec_configuration
 
