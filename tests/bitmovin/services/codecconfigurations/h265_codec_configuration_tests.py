@@ -218,8 +218,10 @@ class H265CodecConfigurationTests(BitmovinTestCase):
         self.assertEqual(first.masterDisplay, second.masterDisplay)
         self.assertEqual(first.maxContentLightLevel, second.maxContentLightLevel)
         self.assertEqual(first.maxPictureAverageLightLevel, second.maxPictureAverageLightLevel)
-
+        self.assertEqual(first.sampleAspectRatioNumerator, second.sampleAspectRatioNumerator)
+        self.assertEqual(first.sampleAspectRatioDenominator, second.sampleAspectRatioDenominator)
         self.assertTrue(self._compare_color_configs(first.colorConfig, second.colorConfig))
+
         return True
 
     def _compare_color_configs(self, first: ColorConfig, second: ColorConfig):
@@ -281,6 +283,8 @@ class H265CodecConfigurationTests(BitmovinTestCase):
                                                           master_display=master_display_sample,
                                                           max_content_light_level= 800,
                                                           max_picture_average_light_level=400,
+                                                          sample_aspect_ratio_numerator=2.0,
+                                                          sample_aspect_ratio_denominator=3.0,
                                                           color_config=ColorConfig(
                                                               copy_chroma_location_flag=True,
                                                               copy_color_space_flag=True,
@@ -325,6 +329,8 @@ class H265CodecConfigurationTests(BitmovinTestCase):
         self.assertIsNotNone(h265_codec_configuration.masterDisplay)
         self.assertIsNotNone(h265_codec_configuration.maxContentLightLevel)
         self.assertIsNotNone(h265_codec_configuration.maxPictureAverageLightLevel)
+        self.assertIsNotNone(h265_codec_configuration.sampleAspectRatioNumerator)
+        self.assertIsNotNone(h265_codec_configuration.sampleAspectRatioDenominator)
 
         return h265_codec_configuration
 
