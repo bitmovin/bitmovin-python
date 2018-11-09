@@ -22,7 +22,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
                  motion_estimation_method=None,partitions=None, trellis=None, slices=None, interlaceMode=None, crf=None,
                  pixel_format=None, min_keyframe_interval=None, max_keyframe_interval=None,
                  sample_aspect_ratio_numerator=None, sample_aspect_ratio_denominator=None, scene_cut_threshold=None,
-                 color_config=None, nal_hrd=None, b_pyramid=None):
+                 color_config=None, nal_hrd=None, b_pyramid=None, open_gop=None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description, bitrate=bitrate,
                          rate=rate, width=width, height=height, pixel_format=pixel_format)
@@ -40,6 +40,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         self._colorConfig = None
         self._nalHrd = None
         self._bPyramid = None
+        self._openGop = open_gop
 
         self.b_adapt = b_adapt
         self.bframes = bframes
@@ -281,6 +282,19 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
             raise InvalidTypeError('crf has to be a float value')
 
         self._crf = new_value
+
+    @property
+    def openGop(self):
+        return self._openGop
+    
+    @openGop.setter
+    def openGop(self, new_value):
+        if new_value is None:
+            self._openGop = None
+        elif isinstance(new_value, bool):
+            self._openGop = new_value
+        else:
+            raise InvalidTypeError('openGop is a boolean variable')
 
     @classmethod
     def parse_from_json_object(cls, json_object):
