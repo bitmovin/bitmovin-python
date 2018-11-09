@@ -16,7 +16,8 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
                  weight_prediction_on_p_slice=None, weight_prediction_on_b_slice=None, sao=None, crf=None,
                  pixel_format=None, color_config=None, max_keyframe_interval=None, min_keyframe_interval=None,
                  scene_cut_threshold=None, enable_hlg_signaling=None, video_format=None, hdr=None, master_display=None,
-                 max_content_light_level=None, max_picture_average_light_level=None):
+                 max_content_light_level=None, max_picture_average_light_level=None, sample_aspect_ratio_numerator=None,
+                 sample_aspect_ratio_denominator=None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description, bitrate=bitrate,
                          rate=rate, width=width, height=height, pixel_format=pixel_format)
@@ -63,7 +64,8 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         self.masterDisplay = master_display
         self.maxContentLightLevel = max_content_light_level
         self.maxPictureAverageLightLevel = max_picture_average_light_level
-
+        self.sampleAspectRatioNumerator = sample_aspect_ratio_numerator
+        self.sampleAspectRatioDenominator = sample_aspect_ratio_denominator
 
     @property
     def colorConfig(self):
@@ -282,6 +284,8 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         master_display = json_object.get('masterDisplay')
         max_content_light_level = json_object.get('maxContentLightLevel')
         max_picture_average_light_level = json_object.get('maxPictureAverageLightLevel')
+        aspect_ratio_numerator = json_object.get('sampleAspectRatioNumerator')
+        aspect_ratio_denominator = json_object.get('sampleAspectRatioDenominator')
 
         color_config = None
         color_config_json = json_object.get('colorConfig')
@@ -330,8 +334,9 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
                                                           hdr=hdr,
                                                           master_display=master_display,
                                                           max_content_light_level=max_content_light_level,
-                                                          max_picture_average_light_level=
-                                                          max_picture_average_light_level)
+                                                          max_picture_average_light_level=max_picture_average_light_level,
+                                                          sample_aspect_ratio_numerator=aspect_ratio_numerator,
+                                                          sample_aspect_ratio_denominator=aspect_ratio_denominator)
 
         return h265_codec_configuration
 
