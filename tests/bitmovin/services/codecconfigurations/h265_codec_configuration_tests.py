@@ -218,8 +218,10 @@ class H265CodecConfigurationTests(BitmovinTestCase):
         self.assertEqual(first.masterDisplay, second.masterDisplay)
         self.assertEqual(first.maxContentLightLevel, second.maxContentLightLevel)
         self.assertEqual(first.maxPictureAverageLightLevel, second.maxPictureAverageLightLevel)
-
+        self.assertEqual(first.sampleAspectRatioNumerator, second.sampleAspectRatioNumerator)
+        self.assertEqual(first.sampleAspectRatioDenominator, second.sampleAspectRatioDenominator)
         self.assertTrue(self._compare_color_configs(first.colorConfig, second.colorConfig))
+
         return True
 
     def _compare_color_configs(self, first: ColorConfig, second: ColorConfig):
