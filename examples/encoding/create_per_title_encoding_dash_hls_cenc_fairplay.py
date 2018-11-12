@@ -141,7 +141,7 @@ def main():
                                   name="Video FMP4 Muxing {}p".format(encoding_profile.get('height')))
 
         encoding_config['fmp4_muxing'] = bitmovin.encodings.Muxing.FMP4.create(object_=video_muxing,
-                                                                              encoding_id=encoding.id).resource
+                                                                               encoding_id=encoding.id).resource
         video_cenc = CENCDRM(key=CENC_KEY,
                              kid=CENC_KID,
                              widevine=widevine_drm,
