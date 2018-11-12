@@ -126,7 +126,6 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         custom_data = custom_data_response.resource
         self.assertEqual(sample_codec_configuration.customData['data'], custom_data.customData['data'])
 
-
     def test_retrieve_h264_codec_configuration_custom_data_object(self):
         myobject_1 = MyAwesomeClass('mystring', 12, 34, True, None)
         myobject_2 = MyAwesomeClass('mystring', 1234, 1234.0, myobject_1, "@@@漢漢%$%$")
@@ -230,6 +229,7 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         self.assertEqual(first.sceneCutThreshold, second.sceneCutThreshold)
         self.assertEqual(first.bPyramid, second.bPyramid)
         self.assertEqual(first.nalHrd, second.nalHrd)
+        self.assertEqual(first.openGop, second.openGop)
         self.assertTrue(self._compare_color_configs(first.colorConfig, second.colorConfig))
         return True
 
@@ -303,7 +303,8 @@ class H264CodecConfigurationTests(BitmovinTestCase):
                                                               input_color_range=InputColorRange.JPEG
                                                           ),
                                                           nal_hrd=H264NalHrd.VBR,
-                                                          b_pyramid=H264BPyramid.NONE)
+                                                          b_pyramid=H264BPyramid.NONE,
+                                                          open_gop=True)
 
         self.assertIsNotNone(h264_codec_configuration.name)
         self.assertIsNotNone(h264_codec_configuration.description)
@@ -336,6 +337,8 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         self.assertIsNotNone(h264_codec_configuration.colorConfig)
         self.assertIsNotNone(h264_codec_configuration.nalHrd)
         self.assertIsNotNone(h264_codec_configuration.bPyramid)
+        self.assertIsNotNone(h264_codec_configuration.openGop)
+
         return h264_codec_configuration
 
 

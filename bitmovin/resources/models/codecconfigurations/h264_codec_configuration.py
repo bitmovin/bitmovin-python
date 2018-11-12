@@ -336,13 +336,12 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         crf = json_object.get('crf')
         min_keyframe_interval = json_object.get('minKeyframeInterval')
         max_keyframe_interval = json_object.get('maxKeyframeInterval')
-
         aspect_ratio_numerator = json_object.get('sampleAspectRatioNumerator')
         aspect_ratio_denominator = json_object.get('sampleAspectRatioDenominator')
         scene_cut_threshold = json_object.get('sceneCutThreshold')
-
         nal_hrd = json_object.get('nalHrd')
         b_pyramid = json_object.get('bPyramid')
+        open_gop = json_object.get('openGop')
 
         color_config = None
         color_config_json = json_object.get('colorConfig')
@@ -388,7 +387,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
                                                           sample_aspect_ratio_denominator=aspect_ratio_denominator,
                                                           scene_cut_threshold=scene_cut_threshold,
                                                           color_config=color_config, nal_hrd=nal_hrd,
-                                                          b_pyramid=b_pyramid)
+                                                          b_pyramid=b_pyramid, open_gop=open_gop)
 
         return h264_codec_configuration
 
