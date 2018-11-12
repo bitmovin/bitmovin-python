@@ -15,10 +15,10 @@ from .color_config import ColorConfig
 
 class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
 
-    def __init__(self, name, bitrate=None, rate=None, profile=None, id_=None, description=None, custom_data=None, width=None,
-                 height=None, bframes=None, ref_frames=None, qp_min=None, qp_max=None, mv_prediction_mode=None,
-                 mv_search_range_max=None, cabac=None, max_bitrate=None, min_bitrate=None, bufsize=None,
-                 min_gop=None, max_gop=None, level=None, rc_lookahead=None, b_adapt=None, sub_me=None,
+    def __init__(self, name, bitrate=None, rate=None, profile=None, id_=None, description=None, custom_data=None,
+                 width=None, height=None, bframes=None, ref_frames=None, qp_min=None, qp_max=None,
+                 mv_prediction_mode=None, mv_search_range_max=None, cabac=None, max_bitrate=None, min_bitrate=None,
+                 bufsize=None, min_gop=None, max_gop=None, level=None, rc_lookahead=None, b_adapt=None, sub_me=None,
                  motion_estimation_method=None,partitions=None, trellis=None, slices=None, interlaceMode=None, crf=None,
                  pixel_format=None, min_keyframe_interval=None, max_keyframe_interval=None,
                  sample_aspect_ratio_numerator=None, sample_aspect_ratio_denominator=None, scene_cut_threshold=None,
@@ -40,7 +40,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         self._colorConfig = None
         self._nalHrd = None
         self._bPyramid = None
-        self._openGop = open_gop
+        self._openGop = None
 
         self.b_adapt = b_adapt
         self.bframes = bframes
@@ -73,6 +73,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         self.colorConfig = color_config
         self.bPyramid = b_pyramid
         self.nalHrd = nal_hrd
+        self.openGop = open_gop
 
     @property
     def bPyramid(self):
@@ -331,7 +332,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         partitions = json_object.get('partitions')
         trellis = json_object.get('trellis')
         slices = json_object.get('slices')
-        interlaceMode = json_object.get('interlaceMode')
+        interlace_mode = json_object.get('interlaceMode')
         crf = json_object.get('crf')
         min_keyframe_interval = json_object.get('minKeyframeInterval')
         max_keyframe_interval = json_object.get('maxKeyframeInterval')
@@ -379,7 +380,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
                                                           level=level, rc_lookahead=rc_lookahead, sub_me=sub_me,
                                                           motion_estimation_method=motion_estimation_method,
                                                           b_adapt=b_adapt, partitions=partitions, trellis=trellis,
-                                                          slices=slices, interlaceMode=interlaceMode, crf=crf,
+                                                          slices=slices, interlaceMode=interlace_mode, crf=crf,
                                                           min_keyframe_interval=min_keyframe_interval,
                                                           max_keyframe_interval=max_keyframe_interval,
                                                           pixel_format=pixel_format,
@@ -406,6 +407,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         serialized['crf'] = self.crf
         serialized['nalHrd'] = self.nalHrd
         serialized['bPyramid'] = self.bPyramid
+        serialized['openGop'] = self.openGop
 
         if isinstance(self.colorConfig, ColorConfig):
             serialized['colorConfig'] = self.colorConfig.serialize()
