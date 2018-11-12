@@ -1,8 +1,8 @@
 from bitmovin import S3Input, S3Output, Encoding, StreamInput, AACCodecConfiguration, Stream, Bitmovin, CloudRegion, \
-    EncoderVersion, SelectionMode, MP4MuxingInformation, H264Profile, FMP4Muxing, TSMuxing, EncodingOutput, \
+    EncoderVersion, SelectionMode, H264Profile, FMP4Muxing, TSMuxing, EncodingOutput, \
     MuxingStream, H264Level, EncodingMode, StartEncodingRequest, Condition, H264CodecConfiguration, StreamMode, \
     H264PerTitleConfiguration, AutoRepresentation, PerTitle, ACLEntry, ACLPermission, \
-    DashManifest, Period, FMP4Representation, FMP4RepresentationType, VideoAdaptationSet, AudioAdaptationSet, \
+    DashManifest, Period, FMP4RepresentationType, VideoAdaptationSet, AudioAdaptationSet, \
     HlsManifest, AudioMedia, VariantStream, \
     DRMFMP4Representation, FairPlayDRM, CENCDRM, CENCWidevineEntry, CENCPlayReadyEntry, ContentProtection
 from bitmovin.errors import BitmovinError
@@ -43,6 +43,7 @@ encoding_profiles_h264 = [
     dict(width=1280, height=720, max_bitrate=2400, bufsize=2400, profile=H264Profile.HIGH, level=H264Level.L3_1),
     dict(width=1920, height=1080, max_bitrate=4800, bufsize=4800, profile=H264Profile.HIGH, level=H264Level.L4),
 ]
+
 
 def main():
     # Create an S3 input. This resource is then used as base to acquire input files.
@@ -302,11 +303,12 @@ def main():
             segment_path=segment_path,
             drm_id=drm[0].id
         )
-        fmp4_representation = bitmovin.manifests.DASH.add_drm_fmp4_representation(
+
+        bitmovin.manifests.DASH.add_drm_fmp4_representation(
             object_=fmp4_representation,
             manifest_id=dash_manifest.id,
             period_id=period.id,
-            adaptationset_id=video_adaptation_set.id).resource
+            adaptationset_id=video_adaptation_set.id)
 
     # add content protection to the adaptation set
     video_content_protection = ContentProtection(encoding_id=encoding.id,
@@ -363,8 +365,8 @@ def main():
                                        muxing_id=muxing.id,
                                        drm_id=drm[0].id)
 
-        variant_stream = bitmovin.manifests.HLS.VariantStream.create(manifest_id=hls_manifest.id,
-                                                                     object_=variant_stream).resource
+        bitmovin.manifests.HLS.VariantStream.create(manifest_id=hls_manifest.id,
+                                                    object_=variant_stream)
 
     bitmovin.manifests.HLS.start(manifest_id=hls_manifest.id)
 
@@ -381,12 +383,9 @@ def main():
 
 
 def remove_output_base_path(text):
-#    if not text.startswith('/'):
-#        text = '/{}'.format(text)
     if text.startswith(OUTPUT_BASE_PATH):
         return text[len(OUTPUT_BASE_PATH):]
     return text
-
 
 
 if __name__ == '__main__':
