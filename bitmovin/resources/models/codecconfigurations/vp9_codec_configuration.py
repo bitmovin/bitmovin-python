@@ -43,8 +43,6 @@ class VP9CodecConfiguration(VideoCodecConfiguration, Serializable):
         self.arnrType = arnr_type
         self.minGop = min_gop
         self.maxGop = max_gop
-        
-        
 
     @property
     def quality(self):
@@ -129,7 +127,6 @@ class VP9CodecConfiguration(VideoCodecConfiguration, Serializable):
         arnr_type = json_object.get('arnrType')
         min_gop = json_object.get('minGop')
         max_gop = json_object.get('maxGop')
-        
 
         vp9_codec_configuration = VP9CodecConfiguration(name=name, bitrate=bitrate, rate=rate, id_=id_, 
                                                         description=description, custom_data=custom_data, width=width, 
