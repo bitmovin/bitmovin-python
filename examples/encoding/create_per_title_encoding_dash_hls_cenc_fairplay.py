@@ -148,9 +148,11 @@ def main():
                              playReady=playready_drm,
                              outputs=[video_muxing_output],
                              name="Video FMP4 CENC")
-        encoding_config['fmp4_cenc'] = bitmovin.encodings.Muxing.FMP4.DRM.CENC.create(object_=video_cenc,
-                                                                                      encoding_id=encoding.id,
-                                                                                      muxing_id=encoding_config['fmp4_muxing'].id).resource
+
+        encoding_config['fmp4_cenc'] = bitmovin.encodings.Muxing.FMP4.DRM.CENC.create(
+            object_=video_cenc,
+            encoding_id=encoding.id,
+            muxing_id=encoding_config['fmp4_muxing'].id).resource
 
     audio_muxing_stream = MuxingStream(audio_stream.id)
     audio_muxing_output = EncodingOutput(output_id=s3_output.id,
@@ -193,9 +195,11 @@ def main():
                                      uri=FAIRPLAY_URI,
                                      outputs=[video_muxing_output],
                                      name='Video TS FairPlay')
-        encoding_config['ts_fairplay'] = bitmovin.encodings.Muxing.TS.DRM.FairPlay.create(object_=video_fairplay,
-                                                                                          encoding_id=encoding.id,
-                                                                                          muxing_id=encoding_config['ts_muxing'].id).resource
+
+        encoding_config['ts_fairplay'] = bitmovin.encodings.Muxing.TS.DRM.FairPlay.create(
+            object_=video_fairplay,
+            encoding_id=encoding.id,
+            muxing_id=encoding_config['ts_muxing'].id).resource
 
     audio_muxing_stream = MuxingStream(audio_stream.id)
     audio_muxing_output = EncodingOutput(output_id=s3_output.id,
