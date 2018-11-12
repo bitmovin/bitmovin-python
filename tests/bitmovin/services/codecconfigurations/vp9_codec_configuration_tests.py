@@ -138,7 +138,9 @@ class VP9CodecConfigurationTests(BitmovinTestCase):
         self.assertEqual(first.arnrMaxFrames, second.arnrMaxFrames)
         self.assertEqual(first.arnrStrength, second.arnrStrength)
         self.assertEqual(first.arnrType, second.arnrType)
-        
+        self.assertEqual(first.minGop, second.minGop)
+        self.assertEqual(first.maxGop, second.maxGop)
+
         return True
 
     def _get_sample_vp9_codec_configuration(self):
@@ -165,7 +167,9 @@ class VP9CodecConfigurationTests(BitmovinTestCase):
                                                         aq_mode=VP9AQMode.NONE,
                                                         arnr_max_frames=0,
                                                         arnr_strength=3,
-                                                        arnr_type=VP9ARNRType.CENTERED)
+                                                        arnr_type=VP9ARNRType.CENTERED,
+                                                        min_gop=30,
+                                                        max_gop=120)
 
         self.assertIsNotNone(vp9_codec_configuration.name)
         self.assertIsNotNone(vp9_codec_configuration.description)
@@ -191,6 +195,8 @@ class VP9CodecConfigurationTests(BitmovinTestCase):
         self.assertIsNotNone(vp9_codec_configuration.arnrMaxFrames)
         self.assertIsNotNone(vp9_codec_configuration.arnrStrength)
         self.assertIsNotNone(vp9_codec_configuration.arnrType)
+        self.assertIsNotNone(vp9_codec_configuration.minGop)
+        self.assertIsNotNone(vp9_codec_configuration.maxGop)
 
         return vp9_codec_configuration
 
