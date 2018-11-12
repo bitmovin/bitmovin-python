@@ -99,7 +99,7 @@ class Muxing(AbstractNameDescriptionResource, AbstractModel, Serializable):
             return
 
         if not isinstance(new_ignored_by, list):
-            raise InvalidTypeError('new_outputs has to be a list of IgnoredBy objects')
+            raise InvalidTypeError('ignored_by has to be a list of IgnoredBy objects')
 
         if all(isinstance(ignored_by, IgnoredBy) for ignored_by in new_ignored_by):
             self._ignoredBy = new_ignored_by
