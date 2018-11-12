@@ -14,7 +14,7 @@ class VP9CodecConfiguration(VideoCodecConfiguration, Serializable):
                  max_intra_rate=None, qp_min=None, qp_max=None, crf=None, rate_undershoot_pct=None,
                  rate_overshoot_pct=None, cpu_used=None, noise_sensitivity=None, quality=None,
                  lossless=None, static_thresh=None, aq_mode=None, arnr_max_frames=None, 
-                 arnr_strength=None, arnr_type=None, pixel_format=None):
+                 arnr_strength=None, arnr_type=None, pixel_format=None, min_gop=None, max_gop=None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description, bitrate=bitrate,
                          rate=rate, width=width, height=height, pixel_format=pixel_format)
@@ -41,8 +41,8 @@ class VP9CodecConfiguration(VideoCodecConfiguration, Serializable):
         self.arnrStrength = arnr_strength
         self._arnrType = None
         self.arnrType = arnr_type
-        
-        
+        self.minGop = min_gop
+        self.maxGop = max_gop
 
     @property
     def quality(self):
@@ -125,8 +125,8 @@ class VP9CodecConfiguration(VideoCodecConfiguration, Serializable):
         arnr_max_frames = json_object.get('arnrMaxFrames')
         arnr_strength = json_object.get('arnrStrength')
         arnr_type = json_object.get('arnrType')
-
-        
+        min_gop = json_object.get('minGop')
+        max_gop = json_object.get('maxGop')
 
         vp9_codec_configuration = VP9CodecConfiguration(name=name, bitrate=bitrate, rate=rate, id_=id_, 
                                                         description=description, custom_data=custom_data, width=width, 
@@ -140,7 +140,7 @@ class VP9CodecConfiguration(VideoCodecConfiguration, Serializable):
                                                         lossless=lossless, static_thresh=static_thresh, 
                                                         aq_mode=aq_mode, arnr_max_frames=arnr_max_frames, 
                                                         arnr_strength=arnr_strength, arnr_type=arnr_type,
-                                                        pixel_format=pixel_format)
+                                                        pixel_format=pixel_format, min_gop=min_gop, max_gop=max_gop)
 
         return vp9_codec_configuration
 
