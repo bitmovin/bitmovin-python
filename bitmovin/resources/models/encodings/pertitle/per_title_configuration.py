@@ -12,17 +12,17 @@ class PerTitleConfiguration(Serializable):
         self.minBitrateStepSize = min_bitrate_step_size
         self.maxBitrateStepSize = max_bitrate_step_size
 
-        self._autoRepresentations = None
+        self._auto_representations = None
         self.autoRepresentations = auto_representations
 
     @property
     def autoRepresentations(self):
-        return self._autoRepresentations
+        return self._auto_representations
 
     @autoRepresentations.setter
     def autoRepresentations(self, new_auto_representations):
         if new_auto_representations is None:
-            self._autoRepresentations = None
+            self._auto_representations = None
             return
 
         if not isinstance(new_auto_representations, AutoRepresentation):
@@ -30,7 +30,7 @@ class PerTitleConfiguration(Serializable):
                 'Invalid type {} for auto_representations: must be AutoRepresentation!'.format(
                     type(new_auto_representations)))
 
-        self._autoRepresentations = new_auto_representations
+        self._auto_representations = new_auto_representations
 
     def serialize(self):
         serialized = super().serialize()
