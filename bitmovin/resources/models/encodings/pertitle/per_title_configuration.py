@@ -7,20 +7,20 @@ class PerTitleConfiguration(Serializable):
     def __init__(self, min_bitrate=None, max_bitrate=None, min_bitrate_step_size=None, max_bitrate_step_size=None,
                  auto_representations=None):
         super().__init__()
-        self.min_bitrate = min_bitrate
-        self.max_bitrate = max_bitrate
-        self.min_bitrate_step_size = min_bitrate_step_size
-        self.max_bitrate_step_size = max_bitrate_step_size
+        self.minBitrate = min_bitrate
+        self.maxBitrate = max_bitrate
+        self.minBitrateStepSize = min_bitrate_step_size
+        self.maxBitrateStepSize = max_bitrate_step_size
 
         self._auto_representations = None
-        self.auto_representations = auto_representations
+        self.autoRepresentations = auto_representations
 
     @property
-    def auto_representations(self):
+    def autoRepresentations(self):
         return self._auto_representations
 
-    @auto_representations.setter
-    def auto_representations(self, new_auto_representations):
+    @autoRepresentations.setter
+    def autoRepresentations(self, new_auto_representations):
         if new_auto_representations is None:
             self._auto_representations = None
             return
@@ -34,5 +34,5 @@ class PerTitleConfiguration(Serializable):
 
     def serialize(self):
         serialized = super().serialize()
-        serialized['autoRepresentations'] = self.auto_representations
+        serialized['autoRepresentations'] = self.autoRepresentations
         return serialized
