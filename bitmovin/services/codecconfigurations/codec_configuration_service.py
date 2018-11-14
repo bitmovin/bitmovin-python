@@ -8,6 +8,8 @@ from .h265_codec_configuration_service import H265
 from .vp9_codec_configuration_service import VP9
 from .mjpeg_codec_configuration_service import MJPEG
 from .mp2_codec_configuration_service import MP2
+from .av1_codec_configuration_service import AV1
+from .opus_codec_configuration_service import OPUS
 
 
 class CodecConfigurationService(BitmovinObject):
@@ -23,3 +25,5 @@ class CodecConfigurationService(BitmovinObject):
         self.MJPEG = MJPEG(http_client=self.http_client)
         self.HeAACv1 = HeAACv1(http_client=self.http_client)
         self.HeAACv2 = HeAACv2(http_client=self.http_client)
+        self.AV1 = AV1(http_client=self.http_client)
+        self.OPUS = OPUS(http_client=self.http_client)
