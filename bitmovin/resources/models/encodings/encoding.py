@@ -65,6 +65,7 @@ class Encoding(AbstractNameDescriptionResource, AbstractModel, Serializable):
                     type(new_infrastructure)
                 )
             )
+
     @encoderVersion.setter
     def encoderVersion(self, new_version):
         if new_version is None:
@@ -93,7 +94,6 @@ class Encoding(AbstractNameDescriptionResource, AbstractModel, Serializable):
             self._labels = new_labels
         else:
             raise InvalidTypeError('new_labels has to be a list of strings')
-
 
     @classmethod
     def parse_from_json_object(cls, json_object):

@@ -169,16 +169,21 @@ class EncodingTests(BitmovinTestCase):
         self.assertEqual(first.description, second.description)
         self.assertEqual(first.encoderVersion, second.encoderVersion)
         self.assertEqual(first.cloudRegion, second.cloudRegion)
+        self.assertCountEqual(first.labels, second.labels)
         return True
 
     def _get_sample_encoding(self, cloud_region=CloudRegion.GOOGLE_EUROPE_WEST_1, infrastructure=None):
         encoding = Encoding(name='Sample Encoding bitmovin-python',
                             description='Sample encoding used in bitmovin-python API client tests',
                             cloud_region=cloud_region,
-                            infrastructure=infrastructure)
+                            infrastructure=infrastructure,
+                            labels=['label1', 'label2'])
         self.assertIsNotNone(encoding.name)
         self.assertIsNotNone(encoding.description)
         self.assertIsNotNone(encoding.cloudRegion)
+        self.assertIsNotNone(encoding.labels)
+        self.assertIsInstance(encoding.labels, list)
+        self.assertIs(len(encoding.labels), 2)
         return encoding
 
 
