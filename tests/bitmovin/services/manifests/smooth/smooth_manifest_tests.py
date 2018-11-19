@@ -115,7 +115,7 @@ class SmoothManifestTests(BitmovinTestCase):
         self.assertIsInstance(manifests.resource, list)
         self.assertIsInstance(manifests.response, Response)
         self.assertEqual(manifests.resource[0].id, manifest_resource_response.resource.id)
-        self.assertGreater(manifests.resource.__sizeof__(), 1)
+        self.assertEqual(len(manifests.resource), 1)
 
     def _compare_manifests(self, first: SmoothManifest, second: SmoothManifest):
         self.assertEqual(first.serverManifestName, second.serverManifestName)
