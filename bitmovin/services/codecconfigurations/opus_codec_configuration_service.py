@@ -2,7 +2,7 @@ from bitmovin.resources.models import OpusCodecConfiguration
 from ..rest_service import RestService
 
 
-class OPUS(RestService):
+class Opus(RestService):
     BASE_ENDPOINT_URL = 'encoding/configurations/audio/opus'
 
     def __init__(self, http_client):

@@ -4,7 +4,7 @@ from bitmovin.utils import Serializable
 from .audio_codec_configuration import AudioCodecConfiguration
 
 
-class OpusCodecConfiguration(AudioCodecConfiguration, Serializable):
+class MP3CodecConfiguration(AudioCodecConfiguration, Serializable):
 
     def __init__(self, name, bitrate, rate=None, id_=None, description=None, custom_data=None, channel_layout=None):
 
@@ -42,15 +42,15 @@ class OpusCodecConfiguration(AudioCodecConfiguration, Serializable):
 
         channel_layout = json_object.get('channelLayout')
 
-        opus_codec_configuration = OpusCodecConfiguration(id_=id_,
-                                                          name=name,
-                                                          description=description,
-                                                          custom_data=custom_data,
-                                                          bitrate=bitrate,
-                                                          rate=rate,
-                                                          channel_layout=channel_layout)
+        mp3_codec_configuration = MP3CodecConfiguration(id_=id_,
+                                                        name=name,
+                                                        description=description,
+                                                        custom_data=custom_data,
+                                                        bitrate=bitrate,
+                                                        rate=rate,
+                                                        channel_layout=channel_layout)
 
-        return opus_codec_configuration
+        return mp3_codec_configuration
 
     def serialize(self):
         serialized = super().serialize()

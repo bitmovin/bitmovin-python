@@ -1,11 +1,11 @@
 import unittest
 import json
-from bitmovin import Bitmovin, Response, OpusCodecConfiguration, ChannelLayout
+from bitmovin import Bitmovin, Response, EAC3CodecConfiguration, ChannelLayout
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
 
 
-class OpusCodecConfigurationTests(BitmovinTestCase):
+class EAC3CodecConfigurationTests(BitmovinTestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -26,7 +26,8 @@ class OpusCodecConfigurationTests(BitmovinTestCase):
 
     def test_create_codec_configuration(self):
         sample_codec_configuration = self._get_sample_codec_configuration()
-        codec_configuration_resource_response = self.bitmovin.codecConfigurations.Opus.create(sample_codec_configuration)
+        codec_configuration_resource_response = self.bitmovin.codecConfigurations.EAC3.create(
+            sample_codec_configuration)
         self.assertIsNotNone(codec_configuration_resource_response)
         self.assertIsNotNone(codec_configuration_resource_response.resource)
         self.assertIsNotNone(codec_configuration_resource_response.resource.id)
@@ -35,13 +36,13 @@ class OpusCodecConfigurationTests(BitmovinTestCase):
 
     def test_retrieve_codec_configuration(self):
         sample_codec_configuration = self._get_sample_codec_configuration()
-        created_codec_configuration_response = self.bitmovin.codecConfigurations.Opus.create(sample_codec_configuration)
+        created_codec_configuration_response = self.bitmovin.codecConfigurations.EAC3.create(sample_codec_configuration)
         self.assertIsNotNone(created_codec_configuration_response)
         self.assertIsNotNone(created_codec_configuration_response.resource)
         self.assertIsNotNone(created_codec_configuration_response.resource.id)
         self._compare_codec_configurations(sample_codec_configuration, created_codec_configuration_response.resource)
 
-        retrieved_codec_configuration_response = self.bitmovin.codecConfigurations.Opus.retrieve(
+        retrieved_codec_configuration_response = self.bitmovin.codecConfigurations.EAC3.retrieve(
             created_codec_configuration_response.resource.id)
         self.assertIsNotNone(retrieved_codec_configuration_response)
         self.assertIsNotNone(retrieved_codec_configuration_response.resource)
@@ -51,7 +52,7 @@ class OpusCodecConfigurationTests(BitmovinTestCase):
     def test_retrieve_codec_configuration_channel_layout_none(self):
         sample_codec_configuration = self._get_sample_codec_configuration()
         sample_codec_configuration.channelLayout = None
-        created_codec_configuration_response = self.bitmovin.codecConfigurations.Opus.create(
+        created_codec_configuration_response = self.bitmovin.codecConfigurations.EAC3.create(
             sample_codec_configuration)
         self.assertIsNotNone(created_codec_configuration_response)
         self.assertIsNotNone(created_codec_configuration_response.resource)
@@ -61,7 +62,7 @@ class OpusCodecConfigurationTests(BitmovinTestCase):
         self._compare_codec_configurations(sample_codec_configuration,
                                            created_codec_configuration_response.resource)
 
-        retrieved_codec_configuration_response = self.bitmovin.codecConfigurations.Opus.retrieve(
+        retrieved_codec_configuration_response = self.bitmovin.codecConfigurations.EAC3.retrieve(
             created_codec_configuration_response.resource.id)
         self.assertIsNotNone(retrieved_codec_configuration_response)
         self.assertIsNotNone(retrieved_codec_configuration_response.resource)
@@ -70,20 +71,20 @@ class OpusCodecConfigurationTests(BitmovinTestCase):
 
     def test_delete_codec_configuration(self):
         sample_codec_configuration = self._get_sample_codec_configuration()
-        created_codec_configuration_response = self.bitmovin.codecConfigurations.Opus.create(sample_codec_configuration)
+        created_codec_configuration_response = self.bitmovin.codecConfigurations.EAC3.create(sample_codec_configuration)
         self.assertIsNotNone(created_codec_configuration_response)
         self.assertIsNotNone(created_codec_configuration_response.resource)
         self.assertIsNotNone(created_codec_configuration_response.resource.id)
         self._compare_codec_configurations(sample_codec_configuration, created_codec_configuration_response.resource)
 
-        deleted_minimal_resource = self.bitmovin.codecConfigurations.Opus.delete(
+        deleted_minimal_resource = self.bitmovin.codecConfigurations.EAC3.delete(
             created_codec_configuration_response.resource.id)
         self.assertIsNotNone(deleted_minimal_resource)
         self.assertIsNotNone(deleted_minimal_resource.resource)
         self.assertIsNotNone(deleted_minimal_resource.resource.id)
 
         try:
-            self.bitmovin.codecConfigurations.Opus.retrieve(created_codec_configuration_response.resource.id)
+            self.bitmovin.codecConfigurations.EAC3.retrieve(created_codec_configuration_response.resource.id)
             self.fail(
                 'Previous statement should have thrown an exception. ' +
                 'Retrieving codec_configuration after deleting it shouldn\'t be possible.'
@@ -93,14 +94,14 @@ class OpusCodecConfigurationTests(BitmovinTestCase):
 
     def test_list_codec_configurations(self):
         sample_codec_configuration = self._get_sample_codec_configuration()
-        created_codec_configuration_response = self.bitmovin.codecConfigurations.Opus.create(sample_codec_configuration)
+        created_codec_configuration_response = self.bitmovin.codecConfigurations.EAC3.create(sample_codec_configuration)
         self.assertIsNotNone(created_codec_configuration_response)
         self.assertIsNotNone(created_codec_configuration_response.resource)
         self.assertIsNotNone(created_codec_configuration_response.resource.id)
         self._compare_codec_configurations(sample_codec_configuration,
                                            created_codec_configuration_response.resource)
 
-        codec_configurations = self.bitmovin.codecConfigurations.Opus.list()
+        codec_configurations = self.bitmovin.codecConfigurations.EAC3.list()
         self.assertIsNotNone(codec_configurations)
         self.assertIsNotNone(codec_configurations.resource)
         self.assertIsNotNone(codec_configurations.response)
@@ -111,23 +112,23 @@ class OpusCodecConfigurationTests(BitmovinTestCase):
     def test_retrieve_codec_configuration_custom_data(self):
         sample_codec_configuration = self._get_sample_codec_configuration()
         sample_codec_configuration.customData = '<pre>my custom data</pre>'
-        created_codec_configuration_response = self.bitmovin.codecConfigurations.Opus.create(sample_codec_configuration)
+        created_codec_configuration_response = self.bitmovin.codecConfigurations.EAC3.create(sample_codec_configuration)
         self.assertIsNotNone(created_codec_configuration_response)
         self.assertIsNotNone(created_codec_configuration_response.resource)
         self.assertIsNotNone(created_codec_configuration_response.resource.id)
         self._compare_codec_configurations(sample_codec_configuration, created_codec_configuration_response.resource)
 
-        custom_data_response = self.bitmovin.codecConfigurations.Opus.retrieve_custom_data(
+        custom_data_response = self.bitmovin.codecConfigurations.EAC3.retrieve_custom_data(
             created_codec_configuration_response.resource.id)
         custom_data = custom_data_response.resource
 
         self.assertEqual(sample_codec_configuration.customData, json.loads(custom_data.customData))
 
-    def _compare_codec_configurations(self, first: OpusCodecConfiguration, second: OpusCodecConfiguration):
+    def _compare_codec_configurations(self, first: EAC3CodecConfiguration, second: EAC3CodecConfiguration):
         """
 
-        :param first: OpusCodecConfiguration
-        :param second: OpusCodecConfiguration
+        :param first: AACCodecConfiguration
+        :param second: AACCodecConfiguration
         :return: bool
         """
         self.assertEqual(first.name, second.name)
@@ -138,7 +139,7 @@ class OpusCodecConfigurationTests(BitmovinTestCase):
         return True
 
     def _get_sample_codec_configuration(self):
-        codec_configuration = OpusCodecConfiguration(name='Python - Test Opus Codec Configuration',
+        codec_configuration = EAC3CodecConfiguration(name='Python - Sample E-AC3 Codec Configuration',
                                                      description='More declarative description for CodecConfig',
                                                      bitrate=128000,
                                                      rate=48000,
