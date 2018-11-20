@@ -1,16 +1,17 @@
 from .drm import DRM
 from bitmovin.resources.enums import IvSize
 
+
 class CENCDRM(DRM):
 
     def __init__(self, key, kid, widevine=None, playReady=None, play_ready=None, marlin=None, outputs=None, id_=None,
                  custom_data=None, name=None, description=None, iv_size=None, enable_piff_compatibility=None):
 
         super().__init__(id_=id_, custom_data=custom_data, outputs=outputs, name=name, description=description)
-        
+
         self._ivSize = None
         self._enablePiffCompatibility = None
-        
+
         self.key = key
         self.kid = kid
         self.widevine = widevine
@@ -20,7 +21,7 @@ class CENCDRM(DRM):
         self.marlin = marlin
         self.ivSize = iv_size
         self.enablePiffCompatibility = enable_piff_compatibility
-        
+
     @property
     def ivSize(self):
         return self._ivSize
@@ -74,7 +75,7 @@ class CENCDRM(DRM):
                            enable_piff_compatibility=enable_piff_compatibility)
 
         return cenc_drm
-    
+
     def serialize(self):
         serialized = super().serialize()
         serialized['ivSize'] = self.ivSize
