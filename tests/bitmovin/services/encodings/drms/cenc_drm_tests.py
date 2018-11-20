@@ -7,8 +7,6 @@ from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, AC
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
 from bitmovin.resources.enums import iv_size
-from pprint import pprint
-
 
 class CENCDRMTests(BitmovinTestCase):
 
@@ -59,12 +57,13 @@ class CENCDRMTests(BitmovinTestCase):
         self.assertIsNotNone(created_drm_response.resource.id)
         drm_resource = created_drm_response.resource  # type: CENCDRM
         self._compare_drms(sample_drm, drm_resource)
-    
+
     def test_create_drm_with_8Byte_IV(self):
         fmp4_muxing = self._create_muxing()  # type: FMP4Muxing
         self.assertIsNotNone(fmp4_muxing.id)
-        sample_drm = self._get_sample_drm_cenc_8ByteIV()
+        sample_drm = self._get_sample_drm_cenc()
         sample_drm.outputs = fmp4_muxing.outputs
+        sample_drm.ivSize = IvSize.EIGHT_BYTES
 
         created_drm_response = self.bitmovin.encodings.Muxing.FMP4.DRM.CENC.create(
             object_=sample_drm, encoding_id=self.sampleEncoding.id, muxing_id=fmp4_muxing.id)
@@ -73,10 +72,39 @@ class CENCDRMTests(BitmovinTestCase):
         self.assertIsNotNone(created_drm_response.resource)
         self.assertIsNotNone(created_drm_response.resource.id)
         drm_resource = created_drm_response.resource  # type: CENCDRM
-        pprint(vars(drm_resource))
-        print(sample_drm.ivSize)
         self._compare_drms(sample_drm, drm_resource)
 
+    def test_create_drm_with_16Byte_IV(self):
+        fmp4_muxing = self._create_muxing()  # type: FMP4Muxing
+        self.assertIsNotNone(fmp4_muxing.id)
+        sample_drm = self._get_sample_drm_cenc()
+        sample_drm.outputs = fmp4_muxing.outputs
+        sample_drm.ivSize = IvSize.SIXTEEN_BYTES
+
+        created_drm_response = self.bitmovin.encodings.Muxing.FMP4.DRM.CENC.create(
+            object_=sample_drm, encoding_id=self.sampleEncoding.id, muxing_id=fmp4_muxing.id)
+
+        self.assertIsNotNone(created_drm_response)
+        self.assertIsNotNone(created_drm_response.resource)
+        self.assertIsNotNone(created_drm_response.resource.id)
+        drm_resource = created_drm_response.resource  # type: CENCDRM
+        self._compare_drms(sample_drm, drm_resource)
+
+    def test_create_drm_with_piff_compatibility(self):
+        fmp4_muxing = self._create_muxing()  # type: FMP4Muxing
+        self.assertIsNotNone(fmp4_muxing.id)
+        sample_drm = self._get_sample_drm_cenc()
+        sample_drm.outputs = fmp4_muxing.outputs
+        sample_drm.enablePiffCompatibility = True
+
+        created_drm_response = self.bitmovin.encodings.Muxing.FMP4.DRM.CENC.create(
+            object_=sample_drm, encoding_id=self.sampleEncoding.id, muxing_id=fmp4_muxing.id)
+
+        self.assertIsNotNone(created_drm_response)
+        self.assertIsNotNone(created_drm_response.resource)
+        self.assertIsNotNone(created_drm_response.resource.id)
+        drm_resource = created_drm_response.resource  # type: CENCDRM
+        self._compare_drms(sample_drm, drm_resource)
 
     def test_create_drm_without_name(self):
         fmp4_muxing = self._create_muxing()  # type: FMP4Muxing
@@ -254,21 +282,6 @@ class CENCDRMTests(BitmovinTestCase):
 
         return drm
     
-    def _get_sample_drm_cenc_8ByteIV(self):
-        cenc_drm_settings = self.settings.get('sampleObjects').get('drmConfigurations').get('Cenc')
-        widevine = CENCWidevineEntry(pssh=cenc_drm_settings[0].get('widevine').get('pssh'))
-        playReady = CENCPlayReadyEntry(la_url=cenc_drm_settings[0].get('playReady').get('laUrl'))
-
-        drm = CENCDRM(key=cenc_drm_settings[0].get('key'),
-                      kid=cenc_drm_settings[0].get('kid'),
-                      widevine=widevine,
-                      playReady=playReady,
-                      name='Sample CENC DRM',
-                      iv_size=IvSize.EIGHT_BYTES,
-                      enable_piff_compatibility = True)
-
-        return drm
-
     def _get_sample_drm_cenc_with_marlin(self):
         cenc_drm_settings = self.settings.get('sampleObjects').get('drmConfigurations').get('Cenc')
         widevine = CENCWidevineEntry(pssh=cenc_drm_settings[0].get('widevine').get('pssh'))
