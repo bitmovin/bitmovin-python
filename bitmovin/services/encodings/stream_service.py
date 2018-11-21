@@ -1,5 +1,6 @@
 from bitmovin.errors import MissingArgumentError
 from bitmovin.resources.models import Stream as StreamResource
+from .burn_in_srt_subtitle_service import BurnInSrtSubtitleService
 from .thumbnail_service import ThumbnailService
 from .sprite_service import SpriteService
 from .stream_filter_service import StreamFilterService
@@ -14,6 +15,7 @@ class Stream(RestService):
         self.Sprite = SpriteService(http_client=http_client)
         self.Thumbnail = ThumbnailService(http_client=http_client)
         self.Filter = StreamFilterService(http_client=http_client)
+        self.BurnInSrtSubtitle = BurnInSrtSubtitleService(http_client=http_client)
 
     def _get_endpoint_url(self, encoding_id):
         if not encoding_id:
