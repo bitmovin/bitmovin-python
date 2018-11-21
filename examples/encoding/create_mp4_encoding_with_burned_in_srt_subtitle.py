@@ -19,8 +19,6 @@ S3_OUTPUT_BUCKETNAME = '<INSERT_YOUR_BUCKET_NAME>'
 date_component = datetime.datetime.now().strftime('%Y-%m-%dT%H-%M-%S')
 OUTPUT_BASE_PATH = 'your/output/base/path/{}/'.format(date_component)
 
-# Burn-in subtitles are only available from version 2.4.0 of the encoder
-ENCODER_VERSION = "2.4.0"
 bitmovin = Bitmovin(api_key=API_KEY)
 
 encoding_profiles = [dict(height=240, bitrate=400000, fps=None),
@@ -42,8 +40,7 @@ def main():
     s3_output = bitmovin.outputs.S3.create(s3_output).resource
 
     encoding = Encoding(name='Python Example - Burn in SRT subtitle',
-                        cloud_region=CloudRegion.GOOGLE_EUROPE_WEST_1,
-                        encoder_version=ENCODER_VERSION)
+                        cloud_region=CloudRegion.GOOGLE_EUROPE_WEST_1)
 
     encoding = bitmovin.encodings.Encoding.create(encoding).resource
 
