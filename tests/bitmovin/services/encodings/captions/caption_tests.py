@@ -73,7 +73,7 @@ class EncodingCaptionTests(BitmovinTestCase):
         self.assertIsNotNone(burnin_subtitles.response)
         self.assertIsInstance(burnin_subtitles.resource, list)
         self.assertIsInstance(burnin_subtitles.response, Response)
-        self.assertGreater(burnin_subtitles.resource.__sizeof__(), 1)
+        self.assertEqual(len(burnin_subtitles.resource), 1)
 
     def _compare_subtitles(self, first: BurnInSrtSubtitle, second: BurnInSrtSubtitle):
         self.assertEqual(first.name, second.name)
