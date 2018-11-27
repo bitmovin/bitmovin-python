@@ -3,15 +3,15 @@ from bitmovin.errors import FunctionalityNotAvailableError, InvalidTypeError, Bi
 from bitmovin.resources import DashManifest, Period, ResourceResponse, Status, Response, AudioAdaptationSet, \
     VideoAdaptationSet, SubtitleAdaptationSet, FMP4Representation, DRMFMP4Representation, WebMRepresentation, \
     ContentProtection, DashMP4Representation, CustomXMLElement
+from bitmovin.services.manifests.generic_manifest_service import GenericManifestService
 from .manifest_control_service import ManifestControlService
-from ..rest_service import RestService
 
 
-class DASH(RestService, ManifestControlService):
-    BASE_ENDPOINT_URL = 'encoding/manifests/dash'
+class DASH(GenericManifestService, ManifestControlService):
+    manifest_type = 'dash'
 
     def __init__(self, http_client):
-        super().__init__(http_client=http_client, relative_url=self.BASE_ENDPOINT_URL, class_=DashManifest)
+        super().__init__(http_client=http_client, manifest_type=self.manifest_type, resource_class=DashManifest)
 
     def retrieve_custom_data(self, id_):
         raise FunctionalityNotAvailableError('Retrieve Custom Data is not available for DASH Manifests')
