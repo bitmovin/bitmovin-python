@@ -26,3 +26,5 @@ from .start import StartEncodingRequest, StartEncodingTrimming, Scheduling, Twea
 from .conditions import ConditionType, Condition, AndConjunction, OrConjunction
 from .stream_metadata import StreamMetadata
 from .pertitle import PerTitle, PerTitleConfiguration, H264PerTitleConfiguration, AutoRepresentation
+from .captions import BurnInSrtSubtitle
+from .encoding_input import EncodingInput
