@@ -3,6 +3,7 @@ from .aac_channel_layout import AACChannelLayout
 from .ac3_channel_layout import AC3ChannelLayout
 from .aws_cloud_region import AWSCloudRegion
 from .badapt import BAdapt
+from .channel_layout import ChannelLayout
 from .cloud_region import CloudRegion
 from .crop_filter_unit import CropFilterUnit
 from .google_cloud_region import GoogleCloudRegion
@@ -63,4 +64,7 @@ from .video_format import VideoFormat
 from .dash_manifest_profile import DashManifestProfile
 from .mp4_muxing_manifest_type import MP4MuxingManifestType
 from .live_encoding_mode import LiveEncodingMode
+from .av1_key_placement_mode import AV1KeyPlacementMode
+from .av1_rate_control_mode import AV1RateControlMode
+from .av1_adaptive_quant_mode import AV1AdaptiveQuantMode
 from .iv_size import IvSize
