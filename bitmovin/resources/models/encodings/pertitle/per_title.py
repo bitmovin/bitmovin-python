@@ -4,6 +4,7 @@ from .h264_per_title_configuration import H264PerTitleConfiguration
 from .h265_per_title_configuration import H265PerTitleConfiguration
 from .vp9_per_title_configuration import VP9PerTitleConfiguration
 
+
 class PerTitle(Serializable):
     def __init__(self, h264_configuration=None, h265_configuration=None, vp9_configuration=None):
         super().__init__()
@@ -30,7 +31,7 @@ class PerTitle(Serializable):
                     type(new_h264_configuration)))
 
         self._h264_configuration = new_h264_configuration
-         
+
     @property
     def h265_configuration(self):
         return self._h265_configuration
@@ -46,7 +47,7 @@ class PerTitle(Serializable):
                     type(new_h265_configuration)))
 
         self._h265_configuration = new_h265_configuration
-        
+
     @property
     def vp9_configuration(self):
         return self._vp9_configuration
