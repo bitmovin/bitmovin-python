@@ -85,6 +85,7 @@ class Encoding(AbstractNameDescriptionResource, AbstractModel, Serializable):
     @labels.setter
     def labels(self, new_labels):
         if new_labels is None:
+            self._labels = None
             return
 
         if not isinstance(new_labels, list):
