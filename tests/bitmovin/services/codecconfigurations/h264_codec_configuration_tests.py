@@ -1,7 +1,7 @@
 import unittest
 from bitmovin import Bitmovin, Response, H264CodecConfiguration, H264Profile, MVPredictionMode, H264Level, BAdapt, \
     ChromaLocation, ColorSpace, ColorPrimaries, ColorRange, ColorTransfer, InputColorSpace, InputColorRange, \
-    ColorConfig, H264BPyramid, H264NalHrd
+    ColorConfig, H264BPyramid, H264NalHrd, Cea608708SubtitleConfig
 from bitmovin.errors import BitmovinApiError
 from bitmovin.resources.enums.h264_interlace_mode import H264InterlaceMode
 from bitmovin.resources.enums.h264_motion_estimation_method import H264MotionEstimationMethod
@@ -231,6 +231,8 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         self.assertEqual(first.nalHrd, second.nalHrd)
         self.assertEqual(first.openGop, second.openGop)
         self.assertTrue(self._compare_color_configs(first.colorConfig, second.colorConfig))
+        self.assertTrue(self._compare_cea_608_708_subtitle_configs(first.cea608708SubtitleConfig,
+                                                                   second.cea608708SubtitleConfig))
         return True
 
     def _compare_color_configs(self, first: ColorConfig, second: ColorConfig):
@@ -251,6 +253,16 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         self.assertEqual(first.copyColorRangeFlag, second.copyColorRangeFlag)
         self.assertEqual(first.copyColorSpaceFlag, second.copyColorSpaceFlag)
         self.assertEqual(first.copyColorTransferFlag, second.copyColorTransferFlag)
+        return True
+
+    def _compare_cea_608_708_subtitle_configs(self, first: Cea608708SubtitleConfig, second: Cea608708SubtitleConfig):
+        """
+
+        :param first: Cea608708SubtitleConfig
+        :param second: Cea608708SubtitleConfig
+        :return: bool
+        """
+        self.assertEqual(first.passthroughActivated, second.passthroughActivated)
         return True
 
     def _get_sample_h264_codec_configuration(self):
@@ -304,7 +316,10 @@ class H264CodecConfigurationTests(BitmovinTestCase):
                                                           ),
                                                           nal_hrd=H264NalHrd.VBR,
                                                           b_pyramid=H264BPyramid.NONE,
-                                                          open_gop=True)
+                                                          open_gop=True,
+                                                          cea_608_708_subtitle_config=Cea608708SubtitleConfig(
+                                                              passthrough_activated=True
+                                                          ))
 
         self.assertIsNotNone(h264_codec_configuration.name)
         self.assertIsNotNone(h264_codec_configuration.description)
@@ -338,6 +353,7 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         self.assertIsNotNone(h264_codec_configuration.nalHrd)
         self.assertIsNotNone(h264_codec_configuration.bPyramid)
         self.assertIsNotNone(h264_codec_configuration.openGop)
+        self.assertIsNotNone(h264_codec_configuration.cea608708SubtitleConfig)
 
         return h264_codec_configuration
 

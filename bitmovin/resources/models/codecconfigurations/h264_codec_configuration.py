@@ -11,6 +11,7 @@ from bitmovin.utils import Serializable
 
 from .video_codec_configuration import VideoCodecConfiguration
 from .color_config import ColorConfig
+from .cea_608_708_subtitle_config import Cea608708SubtitleConfig
 
 
 class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
@@ -22,7 +23,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
                  motion_estimation_method=None,partitions=None, trellis=None, slices=None, interlaceMode=None, crf=None,
                  pixel_format=None, min_keyframe_interval=None, max_keyframe_interval=None,
                  sample_aspect_ratio_numerator=None, sample_aspect_ratio_denominator=None, scene_cut_threshold=None,
-                 color_config=None, nal_hrd=None, b_pyramid=None, open_gop=None):
+                 color_config=None, nal_hrd=None, b_pyramid=None, open_gop=None, cea_608_708_subtitle_config=None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description, bitrate=bitrate,
                          rate=rate, width=width, height=height, pixel_format=pixel_format)
@@ -41,6 +42,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         self._nalHrd = None
         self._bPyramid = None
         self._openGop = None
+        self._cea608708SubtitleConfig = None
 
         self.b_adapt = b_adapt
         self.bframes = bframes
@@ -74,6 +76,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         self.bPyramid = b_pyramid
         self.nalHrd = nal_hrd
         self.openGop = open_gop
+        self.cea608708SubtitleConfig = cea_608_708_subtitle_config
 
     @property
     def bPyramid(self):
@@ -297,6 +300,19 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         else:
             raise InvalidTypeError('openGop is a boolean variable')
 
+    @property
+    def cea608708SubtitleConfig(self):
+        return self._cea608708SubtitleConfig
+
+    @cea608708SubtitleConfig.setter
+    def cea608708SubtitleConfig(self, new_cea_608_708_subtitle_config):
+        if new_cea_608_708_subtitle_config is None:
+            self._cea608708SubtitleConfig = None
+        elif isinstance(new_cea_608_708_subtitle_config, Cea608708SubtitleConfig):
+            self._cea608708SubtitleConfig = new_cea_608_708_subtitle_config
+        else:
+            raise InvalidTypeError('cea608708SubtitleConfig has to be of type Cea608708SubtitleConfig')
+
     @classmethod
     def parse_from_json_object(cls, json_object):
         video_codec_configuration = VideoCodecConfiguration.parse_from_json_object(json_object=json_object)
@@ -368,6 +384,12 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
                                        color_transfer=color_transfer, input_color_space=input_color_space,
                                        input_color_range=input_color_range)
 
+        cea_608_708_subtitle_config = None
+        cea_608_708_subtitle_config_json = json_object.get('cea608708SubtitleConfig')
+        if cea_608_708_subtitle_config_json is not None:
+            passthrough_activated = cea_608_708_subtitle_config_json.get('passthroughActivated')
+            cea_608_708_subtitle_config = Cea608708SubtitleConfig(passthrough_activated=passthrough_activated)
+
         h264_codec_configuration = H264CodecConfiguration(name=name, bitrate=bitrate, rate=rate, profile=profile,
                                                           id_=id_, description=description, custom_data=custom_data,
                                                           width=width, height=height, bframes=bframes,
@@ -387,7 +409,8 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
                                                           sample_aspect_ratio_denominator=aspect_ratio_denominator,
                                                           scene_cut_threshold=scene_cut_threshold,
                                                           color_config=color_config, nal_hrd=nal_hrd,
-                                                          b_pyramid=b_pyramid, open_gop=open_gop)
+                                                          b_pyramid=b_pyramid, open_gop=open_gop,
+                                                          cea_608_708_subtitle_config=cea_608_708_subtitle_config)
 
         return h264_codec_configuration
 
@@ -410,5 +433,8 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
 
         if isinstance(self.colorConfig, ColorConfig):
             serialized['colorConfig'] = self.colorConfig.serialize()
+
+        if isinstance(self.cea608708SubtitleConfig, Cea608708SubtitleConfig):
+            serialized['cea608708SubtitleConfig'] = self.cea608708SubtitleConfig.serialize()
 
         return serialized
