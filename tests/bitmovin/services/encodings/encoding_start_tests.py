@@ -1,7 +1,7 @@
 import unittest
 import json
 from bitmovin import Bitmovin, StartEncodingRequest, Scheduling, Tweaks, AudioVideoSyncMode, PerTitle, \
-    H264PerTitleConfiguration, AutoRepresentation
+    H264PerTitleConfiguration, AutoRepresentation, H265PerTitleConfiguration, VP9PerTitleConfiguration
 from tests.bitmovin import BitmovinTestCase
 from bitmovin.utils import BitmovinJSONEncoder
 
@@ -46,7 +46,7 @@ class EncodingStartTests(BitmovinTestCase):
         start_encoding_request_serialized = json.dumps(obj=start_encoding_request, cls=BitmovinJSONEncoder)
         self.assertEqual(first=start_encoding_request_serialized, second='{"tweaks": {"audioVideoSyncMode": "RESYNC_AT_START"}}')
 
-    def test_encoding_start_request_with_per_title_configuration(self):
+    def test_encoding_start_request_with_h264_per_title_configuration(self):
         auto_representation = AutoRepresentation(adopt_configuration_threshold=1.5)
         h264_configuration = H264PerTitleConfiguration(auto_representations=auto_representation,
                                                        min_bitrate_step_size=15000, max_bitrate_step_size=20000,
@@ -62,6 +62,52 @@ class EncodingStartTests(BitmovinTestCase):
         start_encoding_request = StartEncodingRequest(per_title=per_title)
         start_encoding_request_serialized = json.dumps(obj=start_encoding_request, cls=BitmovinJSONEncoder)
         self.assertEqual(first=start_encoding_request_serialized, second='{"perTitle": {"h264Configuration": {'
+                                                                         '"minBitrate": 500000, "maxBitrate": '
+                                                                         '8000000, "minBitrateStepSize": 15000, '
+                                                                         '"maxBitrateStepSize": 20000, '
+                                                                         '"targetQualityCrf": 0.5, '
+                                                                         '"autoRepresentations": {'
+                                                                         '"adoptConfigurationThreshold": 1.5}}}}')
+
+    def test_encoding_start_request_with_h265_per_title_configuration(self):
+        auto_representation = AutoRepresentation(adopt_configuration_threshold=1.5)
+        h265_configuration = H265PerTitleConfiguration(auto_representations=auto_representation,
+                                                       min_bitrate_step_size=15000, max_bitrate_step_size=20000,
+                                                       min_bitrate=500000, max_bitrate=8000000, target_quality_crf=0.5)
+        per_title = PerTitle(h265_configuration=h265_configuration)
+        per_title_serialized = json.dumps(per_title, cls=BitmovinJSONEncoder)
+        self.assertEqual(first=per_title_serialized, second='{"h265Configuration": {"minBitrate": 500000, '
+                                                            '"maxBitrate": 8000000, "minBitrateStepSize": 15000, '
+                                                            '"maxBitrateStepSize": 20000, "targetQualityCrf": 0.5, '
+                                                            '"autoRepresentations": {"adoptConfigurationThreshold": '
+                                                            '1.5}}}')
+
+        start_encoding_request = StartEncodingRequest(per_title=per_title)
+        start_encoding_request_serialized = json.dumps(obj=start_encoding_request, cls=BitmovinJSONEncoder)
+        self.assertEqual(first=start_encoding_request_serialized, second='{"perTitle": {"h265Configuration": {'
+                                                                         '"minBitrate": 500000, "maxBitrate": '
+                                                                         '8000000, "minBitrateStepSize": 15000, '
+                                                                         '"maxBitrateStepSize": 20000, '
+                                                                         '"targetQualityCrf": 0.5, '
+                                                                         '"autoRepresentations": {'
+                                                                         '"adoptConfigurationThreshold": 1.5}}}}')
+
+    def test_encoding_start_request_with_vp9_per_title_configuration(self):
+        auto_representation = AutoRepresentation(adopt_configuration_threshold=1.5)
+        vp9_configuration = VP9PerTitleConfiguration(auto_representations=auto_representation,
+                                                     min_bitrate_step_size=15000, max_bitrate_step_size=20000,
+                                                     min_bitrate=500000, max_bitrate=8000000, target_quality_crf=0.5)
+        per_title = PerTitle(vp9_configuration=vp9_configuration)
+        per_title_serialized = json.dumps(per_title, cls=BitmovinJSONEncoder)
+        self.assertEqual(first=per_title_serialized, second='{"vp9Configuration": {"minBitrate": 500000, '
+                                                            '"maxBitrate": 8000000, "minBitrateStepSize": 15000, '
+                                                            '"maxBitrateStepSize": 20000, "targetQualityCrf": 0.5, '
+                                                            '"autoRepresentations": {"adoptConfigurationThreshold": '
+                                                            '1.5}}}')
+
+        start_encoding_request = StartEncodingRequest(per_title=per_title)
+        start_encoding_request_serialized = json.dumps(obj=start_encoding_request, cls=BitmovinJSONEncoder)
+        self.assertEqual(first=start_encoding_request_serialized, second='{"perTitle": {"vp9Configuration": {'
                                                                          '"minBitrate": 500000, "maxBitrate": '
                                                                          '8000000, "minBitrateStepSize": 15000, '
                                                                          '"maxBitrateStepSize": 20000, '
