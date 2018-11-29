@@ -10,7 +10,7 @@ from .infrastructure import Infrastructure
 class Encoding(AbstractNameDescriptionResource, AbstractModel, Serializable):
 
     def __init__(self, name, description=None, encoder_version=None, cloud_region=None, id_=None, custom_data=None,
-                 infrastructure_id=None, infrastructure=None):
+                 infrastructure_id=None, infrastructure=None, labels=None):
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self._encoderVersion = None
         self.encoderVersion = encoder_version
@@ -19,6 +19,8 @@ class Encoding(AbstractNameDescriptionResource, AbstractModel, Serializable):
         self.infrastructureId = infrastructure_id
         self._infrastructure = None
         self.infrastructure = infrastructure
+        self._labels = None
+        self.labels = labels
 
     @property
     def cloudRegion(self):
@@ -63,6 +65,7 @@ class Encoding(AbstractNameDescriptionResource, AbstractModel, Serializable):
                     type(new_infrastructure)
                 )
             )
+
     @encoderVersion.setter
     def encoderVersion(self, new_version):
         if new_version is None:
@@ -75,6 +78,24 @@ class Encoding(AbstractNameDescriptionResource, AbstractModel, Serializable):
             raise InvalidTypeError(
                 'Invalid type {} for encoderVersion: must be either str or EncoderVersion!'.format(type(new_version)))
 
+    @property
+    def labels(self):
+        return self._labels
+
+    @labels.setter
+    def labels(self, new_labels):
+        if new_labels is None:
+            self._labels = None
+            return
+
+        if not isinstance(new_labels, list):
+            raise InvalidTypeError('new_labels has to be a list of strings')
+
+        if all(isinstance(label, str) for label in new_labels):
+            self._labels = new_labels
+        else:
+            raise InvalidTypeError('new_labels has to be a list of strings')
+
     @classmethod
     def parse_from_json_object(cls, json_object):
         id_ = json_object['id']
@@ -84,6 +105,7 @@ class Encoding(AbstractNameDescriptionResource, AbstractModel, Serializable):
         encoder_version = json_object.get('encoderVersion')
         cloud_region = json_object.get('cloudRegion')
         infrastructure_id = json_object.get('infrastructureId')
+        labels = json_object.get('labels')
 
         infrastructure_json = json_object.get('infrastructure')
         infrastructure = None
@@ -93,7 +115,7 @@ class Encoding(AbstractNameDescriptionResource, AbstractModel, Serializable):
         encoding = Encoding(id_=id_, custom_data=custom_data,
                             name=name, description=description, encoder_version=encoder_version,
                             cloud_region=cloud_region, infrastructure_id=infrastructure_id,
-                            infrastructure=infrastructure)
+                            infrastructure=infrastructure, labels=labels)
         return encoding
 
     def serialize(self):
@@ -101,4 +123,5 @@ class Encoding(AbstractNameDescriptionResource, AbstractModel, Serializable):
         serialized['cloudRegion'] = self.cloudRegion
         serialized['encoderVersion'] = self.encoderVersion
         serialized['infrastructure'] = self.infrastructure
+        serialized['labels'] = self.labels
         return serialized
