@@ -13,3 +13,4 @@ from .mp2_codec_configuration import MP2CodecConfiguration
 from .mp3_codec_configuration import MP3CodecConfiguration
 from .opus_codec_configuration import OpusCodecConfiguration
 from .vorbis_codec_configuration import VorbisCodecConfiguration
+from .cea_608_708_subtitle_config import Cea608708SubtitleConfig
