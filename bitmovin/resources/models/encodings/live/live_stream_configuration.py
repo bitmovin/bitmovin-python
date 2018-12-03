@@ -4,6 +4,7 @@ from bitmovin.resources.enums import LiveEncodingMode
 from bitmovin.errors import InvalidTypeError
 from .live_dash_manifest import LiveDashManifest
 from .live_hls_manifest import LiveHlsManifest
+from .auto_restart_configuration import AutoRestartConfiguration
 
 
 class LiveStreamConfiguration(Serializable):
@@ -11,13 +12,15 @@ class LiveStreamConfiguration(Serializable):
                  stream_key: str,
                  live_dash_manifests: List[LiveDashManifest] = None,
                  live_hls_manifests: List[LiveHlsManifest] = None,
-                 live_encoding_mode=None):
+                 live_encoding_mode=None,
+                 auto_restart_configuration: AutoRestartConfiguration=None):
         super().__init__()
         self.streamKey = stream_key
         self.dashManifests = live_dash_manifests
         self.hlsManifests = live_hls_manifests
         self._live_encoding_mode = None
         self.liveEncodingMode = live_encoding_mode
+        self.autoRestartConfiguration = auto_restart_configuration
 
     @property
     def liveEncodingMode(self):
