@@ -61,6 +61,39 @@ class RepresentationTests(BitmovinTestCase):
         self.assertIsNotNone(representation_resource_response.resource.id)
         self._compare_fmp4_representations(sample_representation, representation_resource_response.resource)
 
+    def test_add_fmp4_representation_with_keyframes(self):
+        sample_manifest = self._get_sample_manifest()
+        manifest_resource_response = self.bitmovin.manifests.DASH.create(sample_manifest)
+        self.assertIsNotNone(manifest_resource_response)
+        self.assertIsNotNone(manifest_resource_response.resource)
+        self.assertIsNotNone(manifest_resource_response.resource.id)
+        self._compare_manifests(sample_manifest, manifest_resource_response.resource)
+        sample_period = self._get_sample_period_default()
+        period_resource_response = self.bitmovin.manifests.DASH.add_period(
+            object_=sample_period, manifest_id=manifest_resource_response.resource.id)
+        self.assertIsNotNone(period_resource_response)
+        self.assertIsNotNone(period_resource_response.resource)
+        self.assertIsNotNone(period_resource_response.resource.id)
+        self._compare_periods(sample_period, period_resource_response.resource)
+        sample_adaptationset = self._get_sample_adaptationset()
+        adaptationset_resource_response = self.bitmovin.manifests.DASH.add_video_adaptation_set(
+            object_=sample_adaptationset, manifest_id=manifest_resource_response.resource.id,
+            period_id=period_resource_response.resource.id
+        )
+        self.assertIsNotNone(adaptationset_resource_response)
+        self.assertIsNotNone(adaptationset_resource_response.resource)
+        self.assertIsNotNone(adaptationset_resource_response.resource.id)
+        self._compare_video_adaptationsets(sample_adaptationset, adaptationset_resource_response.resource)
+        sample_representation = self._get_sample_fmp4_representation_with_keyframes()
+        representation_resource_response = self.bitmovin.manifests.DASH.add_fmp4_representation(
+            object_=sample_representation, manifest_id=manifest_resource_response.resource.id,
+            period_id=period_resource_response.resource.id, adaptationset_id=adaptationset_resource_response.resource.id
+        )
+        self.assertIsNotNone(representation_resource_response)
+        self.assertIsNotNone(representation_resource_response.resource)
+        self.assertIsNotNone(representation_resource_response.resource.id)
+        self._compare_fmp4_representations(sample_representation, representation_resource_response.resource)
+
     def test_add_drm_fmp4_representation(self):
         sample_manifest = self._get_sample_manifest()
         manifest_resource_response = self.bitmovin.manifests.DASH.create(sample_manifest)
@@ -187,6 +220,8 @@ class RepresentationTests(BitmovinTestCase):
         self.assertEqual(first.segmentPath, second.segmentPath)
         self.assertEqual(first.startSegmentNumber, second.startSegmentNumber)
         self.assertEqual(first.endSegmentNumber, second.endSegmentNumber)
+        self.assertEqual(first.startKeyframeId, second.startKeyframeId)
+        self.assertEqual(first.endKeyframeId, second.endKeyframeId)
         return True
 
     def _compare_drm_fmp4_representations(self, first: DRMFMP4Representation, second: DRMFMP4Representation):
@@ -278,6 +313,19 @@ class RepresentationTests(BitmovinTestCase):
                                                  end_segment_number=2)
 
         return fmp4_representation
+
+    def _get_sample_fmp4_representation_with_keyframes(self):
+        encoding_id = self.sampleEncoding.id
+        muxing_id = self.sampleMuxing.id
+        fmp4_representation = FMP4Representation(type=FMP4RepresentationType.TEMPLATE,
+                                                 encoding_id=encoding_id,
+                                                 muxing_id=muxing_id,
+                                                 segment_path='/path/to/segments/',
+                                                 start_keyframe_id='345678987654345678',
+                                                 end_keyframe_id='3453453454')
+
+        return fmp4_representation
+
 
     def _get_sample_drm_fmp4_representation(self):
         encoding_id = self.sampleEncoding.id
