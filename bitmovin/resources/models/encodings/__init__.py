@@ -14,7 +14,7 @@ from .encoding_status import EncodingStatus
 from .stream import Stream
 from .stream_input import StreamInput
 from .encoding_live_details import EncodingLiveDetails
-from .live import LiveHlsManifest, LiveDashManifest, LiveStreamConfiguration
+from .live import LiveHlsManifest, LiveDashManifest, LiveStreamConfiguration, AutoRestartConfiguration
 from .thumbnail import Thumbnail
 from .sprite import Sprite
 from .stream_filter import StreamFilter
