@@ -9,7 +9,7 @@ from .video_codec_configuration import VideoCodecConfiguration
 
 class VP9CodecConfiguration(VideoCodecConfiguration, Serializable):
 
-    def __init__(self, name, bitrate, rate=None, id_=None, description=None, custom_data=None, width=None,
+    def __init__(self, name, bitrate=None, rate=None, id_=None, description=None, custom_data=None, width=None,
                  height=None, lag_in_frames=None, tile_columns=None, tile_rows=None, frame_parallel=None,
                  max_intra_rate=None, qp_min=None, qp_max=None, crf=None, rate_undershoot_pct=None,
                  rate_overshoot_pct=None, cpu_used=None, noise_sensitivity=None, quality=None,
