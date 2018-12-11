@@ -139,7 +139,8 @@ class VttMediaTests(BitmovinTestCase):
 
     def _get_sample_vtt_media(self):
         vtt_media = VttMedia(group_id='subs_group_1', language='en', assoc_language='en', name='Subs Media Test',
-                                 is_default=False, autoselect=False,vtt_url='https://host.com/mysubs.vtt')
+                             is_default=False, autoselect=False,
+                             vtt_url='https://host.com/mysubs.vtt', uri='subtitle_en.m3u8')
 
         return vtt_media
 
