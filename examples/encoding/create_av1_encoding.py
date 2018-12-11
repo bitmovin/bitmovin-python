@@ -20,20 +20,19 @@ OUTPUT_BASE_PATH = '/output/internal/av1/{}/'.format(date_component)
 
 bitmovin = Bitmovin(api_key=API_KEY)
 
-encoding_profiles = [
-                     dict(height=240, bitrate=400000, fps=None)
-                    ]
+encoding_profiles = [dict(height=240, bitrate=400000, fps=None)]
 
 audio_bitrate = 128000
 
+
 def main():
-    input = HTTPSInput(name='Demo HTTPS input', host=HTTPS_INPUT_HOST)
-    input = bitmovin.inputs.HTTPS.create(input).resource
+    input_ = HTTPSInput(name='Demo HTTPS input', host=HTTPS_INPUT_HOST)
+    input_ = bitmovin.inputs.HTTPS.create(input_).resource
 
     output = S3Output(access_key=S3_OUTPUT_ACCESSKEY,
-                         secret_key=S3_OUTPUT_SECRETKEY,
-                         bucket_name=S3_OUTPUT_BUCKETNAME,
-                         name='Demo S3 Output')
+                      secret_key=S3_OUTPUT_SECRETKEY,
+                      bucket_name=S3_OUTPUT_BUCKETNAME,
+                      name='Demo S3 Output')
     output = bitmovin.outputs.S3.create(output).resource
 
     encoding = Encoding(name='Python Example - Create AV1 Encoding',
@@ -41,16 +40,16 @@ def main():
 
     encoding = bitmovin.encodings.Encoding.create(encoding).resource
 
-    video_input_stream = StreamInput(input_id=input.id,
+    video_input_stream = StreamInput(input_id=input_.id,
                                      input_path=HTTPS_INPUT_PATH,
                                      selection_mode=SelectionMode.AUTO)
-    audio_input_stream = StreamInput(input_id=input.id,
+    audio_input_stream = StreamInput(input_id=input_.id,
                                      input_path=HTTPS_INPUT_PATH,
                                      selection_mode=SelectionMode.AUTO)
 
     audio_codec_configuration = OpusCodecConfiguration(name='Demo Opus Codec Configuration',
-                                                      bitrate=audio_bitrate,
-                                                      rate=48000)
+                                                       bitrate=audio_bitrate,
+                                                       rate=48000)
     audio_codec_configuration = bitmovin.codecConfigurations.Opus.create(audio_codec_configuration).resource
 
     audio_stream = Stream(codec_configuration_id=audio_codec_configuration.id,
@@ -65,9 +64,9 @@ def main():
             rate=profile['fps'],
             width=None,
             height=profile['height'],
-            key_placement_mode = 'AUTO',
-            rate_control_mode = '0',
-            adaptive_quant_mode = 'OFF'
+            key_placement_mode='AUTO',
+            rate_control_mode='0',
+            adaptive_quant_mode='OFF'
         )
 
         video_codec_configuration = bitmovin.codecConfigurations.AV1.create(video_codec_configuration).resource
