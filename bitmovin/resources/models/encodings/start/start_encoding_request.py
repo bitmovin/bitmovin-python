@@ -1,4 +1,5 @@
 from bitmovin.resources.models.encodings.pertitle import PerTitle
+from bitmovin.resources.models.manifests import HlsManifest, DashManifest
 from bitmovin.errors import InvalidTypeError
 from bitmovin.resources.enums import EncodingMode
 from bitmovin.utils import Serializable
@@ -9,7 +10,8 @@ from .tweaks import Tweaks
 
 
 class StartEncodingRequest(Serializable):
-    def __init__(self, trimming=None, scheduling=None, encoding_mode=None, tweaks=None, per_title=None):
+    def __init__(self, trimming=None, scheduling=None, encoding_mode=None, tweaks=None, per_title=None,
+                 vod_dash_manifests=None, vod_hls_manifests=None):
         super().__init__()
         self._encoding_mode = None
         self._trimming = None
@@ -19,7 +21,8 @@ class StartEncodingRequest(Serializable):
         self.scheduling = scheduling
         self.encodingMode = encoding_mode
         self.tweaks = tweaks
-
+        self.vod_dash_manifests = vod_dash_manifests
+        self.vod_hls_manifests = vod_hls_manifests
         self._per_title = None
         self.per_title = per_title
 
@@ -107,6 +110,51 @@ class StartEncodingRequest(Serializable):
                 'Invalid type {} for tweaks: must be an instance of Tweaks!'.format(type(new_tweaks)))
 
         self._tweaks = new_tweaks
+
+    @property
+    def vodHlsManifests(self):
+        return self._vod_hls_manifests
+
+    @vodHlsManifests.setter
+    def vodHlsManifests(self, vod_hls_manifests):
+        if vod_hls_manifests is None:
+            self._vod_hls_manifests = None
+            return
+
+        if not isinstance(vod_hls_manifests, (list, tuple)):
+            raise InvalidTypeError(
+                'Invalid type {} for vod_dash_manifests: must be an instance of list or tuple!'.format(type(vod_hls_manifests)))
+
+        for element in vod_hls_manifests:
+            if not isinstance(vod_hls_manifests, HlsManifest):
+                raise InvalidTypeError(
+                    'Invalid type {} for vod_dash_manifests: all elements must be of type HlsManifest!'.format(type(element)))
+
+        self._vod_hls_manifests = vod_hls_manifests
+
+    @property
+    def vodDashManifests(self):
+        return self._vod_dash_manifests
+
+    @vodDashManifests.setter
+    def vodDashManifests(self, vod_dash_manifests):
+        if vod_dash_manifests is None:
+            self._vod_dash_manifests = None
+            return
+
+        if not isinstance(vod_dash_manifests, (list, tuple)):
+            raise InvalidTypeError(
+                'Invalid type {} for vod_dash_manifests: must be an instance of list, tuple, or None!'.format(type(vod_dash_manifests)))
+
+        if len(vod_dash_manifests) == 0:
+            raise InvalidTypeError('Invalid type for vod_dash_manifests: must be non zero in length!')
+
+        for element in vod_dash_manifests:
+            if not isinstance(vod_dash_manifests, DashManifest):
+                raise InvalidTypeError(
+                    'Invalid type {} for vod_dash_manifests: all elements must be of type DashManifest!'
+                    .format(type(element)))
+        self._vod_dash_manifests = vod_dash_manifests
 
     def serialize(self):
         serialized = super().serialize()
