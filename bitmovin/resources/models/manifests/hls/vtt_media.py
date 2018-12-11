@@ -4,7 +4,7 @@ from .abstract_media import AbstractMedia
 class VttMedia(AbstractMedia):
 
     def __init__(self, name, group_id, vtt_url, language=None, assoc_language=None, is_default=None, autoselect=None,
-                 characteristics=None, uri=None, id_=None):
+                 characteristics=None, id_=None, uri=None):
         super().__init__(id_=id_, name=name, group_id=group_id, language=language, assoc_language=assoc_language,
                          is_default=is_default, autoselect=autoselect, characteristics=characteristics)
         self.vttUrl = vtt_url

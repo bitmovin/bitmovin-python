@@ -56,7 +56,11 @@ class VttMediaTests(BitmovinTestCase):
         self.assertIsNotNone(vtt_media_resource_response.resource.id)
         self._compare_vtt_medias(sample_vtt_media, vtt_media_resource_response.resource)
 
-        manifests_resource_response = self.bitmovin.manifests.HLS.VttMedia.list(manifest_id=manifest_resource_response.resource.id, limit=1)
+        manifests_resource_response = self.bitmovin.manifests.HLS.VttMedia.list(
+            manifest_id=manifest_resource_response.resource.id,
+            limit=1
+        )
+
         self.assertIsNotNone(manifests_resource_response)
         self.assertTrue(isinstance(manifests_resource_response.resource, list))
         self.assertEqual(1, len(manifests_resource_response.resource))
@@ -126,11 +130,12 @@ class VttMediaTests(BitmovinTestCase):
         self.assertEqual(first.autoselect, second.autoselect)
         self.assertEqual(first.characteristics, second.characteristics)
         self.assertEqual(first.vttUrl, second.vttUrl)
+        self.assertEqual(first.uri, second.uri)
 
     def _get_sample_manifest(self):
         encoding_output = self._get_sample_encoding_output()
         manifest = HlsManifest(manifest_name='bitmovin-python_Sample_HLS_Manifest.m3u8', outputs=[encoding_output],
-                                name='Sample HLS Manifest')
+                               name='Sample HLS Manifest')
 
         self.assertIsNotNone(manifest)
         self.assertIsNotNone(manifest.manifestName)
