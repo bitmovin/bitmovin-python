@@ -48,8 +48,8 @@ class S3Output(AbstractOutput, Serializable):
             self._signatureVersion = new_signature_version.value
         else:
             raise InvalidTypeError(
-                'Invalid type {} for signatureVersion: must be either str of S3SignatureVersion!'.
-                    format(type(new_signature_version))
+                'Invalid type {} for signatureVersion: must be either str or S3SignatureVersion!'.format(
+                    type(new_signature_version))
             )
 
     @classmethod
