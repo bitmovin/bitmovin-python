@@ -16,7 +16,7 @@ S3_OUTPUT_SECRETKEY = '<INSERT_YOUR_SECRET_KEY>'
 S3_OUTPUT_BUCKETNAME = '<INSERT_YOUR_BUCKET_NAME>'
 
 date_component = datetime.datetime.now().strftime('%Y-%m-%dT%H-%M-%S')
-OUTPUT_BASE_PATH = 'output/internal/av1/{}/'.format(date_component)
+OUTPUT_BASE_PATH = '/output/internal/av1/{}/'.format(date_component)
 
 bitmovin = Bitmovin(api_key=API_KEY)
 
@@ -51,7 +51,7 @@ def main():
     audio_codec_configuration = OpusCodecConfiguration(name='Demo Opus Codec Configuration',
                                                       bitrate=audio_bitrate,
                                                       rate=48000)
-    audio_codec_configuration = bitmovin.codecConfigurations.OPUS.create(audio_codec_configuration).resource
+    audio_codec_configuration = bitmovin.codecConfigurations.Opus.create(audio_codec_configuration).resource
 
     audio_stream = Stream(codec_configuration_id=audio_codec_configuration.id,
                           input_streams=[audio_input_stream], name='Demo Audio Stream')
@@ -64,7 +64,10 @@ def main():
             bitrate=profile['bitrate'],
             rate=profile['fps'],
             width=None,
-            height=profile['height']
+            height=profile['height'],
+            key_placement_mode = 'AUTO',
+            rate_control_mode = '0',
+            adaptive_quant_mode = 'OFF'
         )
 
         video_codec_configuration = bitmovin.codecConfigurations.AV1.create(video_codec_configuration).resource
@@ -90,7 +93,7 @@ def create_muxing(encoding, output, video_stream, audio_stream):
     acl_entry = ACLEntry(permission=ACLPermission.PUBLIC_READ)
 
     video_muxing_output = EncodingOutput(output_id=output.id,
-                                         output_path=OUTPUT_BASE_PATH,
+                                         output_path=S3_OUTPUT_BUCKETNAME+OUTPUT_BASE_PATH,
                                          acl=[acl_entry])
 
     video_muxing_stream = MuxingStream(video_stream.id)
