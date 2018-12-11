@@ -1,3 +1,4 @@
+import copy
 import datetime
 
 from bitmovin import Bitmovin, Encoding, HTTPSInput, H264CodecConfiguration, \
