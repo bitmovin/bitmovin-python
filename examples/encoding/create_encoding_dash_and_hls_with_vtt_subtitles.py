@@ -1,5 +1,4 @@
 import datetime
-from pprint import pprint
 
 from bitmovin import Bitmovin, Encoding, H264CodecConfiguration, \
     AACCodecConfiguration, H264Profile, StreamInput, SelectionMode, Stream, EncodingOutput, ACLEntry, ACLPermission, \
