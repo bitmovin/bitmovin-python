@@ -9,6 +9,7 @@ from bitmovin.resources.enums.h264_partition import H264Partition
 from bitmovin.resources.enums.h264_sub_me import H264SubMe
 from bitmovin.resources.enums.h264_trellis import H264Trellis
 from bitmovin.resources.enums.pixel_format import PixelFormat
+from bitmovin.resources.enums.h264_adaptive_quant_mode import H264AdaptiveQuantMode
 from tests.bitmovin import BitmovinTestCase
 
 
@@ -233,6 +234,13 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         self.assertTrue(self._compare_color_configs(first.colorConfig, second.colorConfig))
         self.assertTrue(self._compare_cea_608_708_subtitle_configs(first.cea608708SubtitleConfig,
                                                                    second.cea608708SubtitleConfig))
+        self.assertEqual(first.adaptiveQuantMode, second.adaptiveQuantMode)
+        self.assertEqual(first.adaptiveQuantizationStrength, second.adaptiveQuantizationStrength)
+        self.assertEqual(first.psyRateDistortionOptimization, second.psyRateDistortionOptimization)
+        self.assertEqual(first.psyTrellis, second.psyTrellis)
+        self.assertEqual(first.deblockAlpha, second.deblockAlpha)
+        self.assertEqual(first.deblockBeta, second.deblockBeta)        
+        
         return True
 
     def _compare_color_configs(self, first: ColorConfig, second: ColorConfig):
@@ -319,7 +327,13 @@ class H264CodecConfigurationTests(BitmovinTestCase):
                                                           open_gop=True,
                                                           cea_608_708_subtitle_config=Cea608708SubtitleConfig(
                                                               passthrough_activated=True
-                                                          ))
+                                                          ),
+                                                          adaptive_quantization_mode=H264AdaptiveQuantMode.AUTO_VARIANCE_DARK_SCENES,
+                                                          adaptive_quantization_strength=0.5,
+                                                          psy_rate_distortion_optimization=1.0,
+                                                          psy_trellis=0.25,
+                                                          deblock_alpha=1,
+                                                          deblock_beta=1)
 
         self.assertIsNotNone(h264_codec_configuration.name)
         self.assertIsNotNone(h264_codec_configuration.description)
@@ -354,6 +368,12 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         self.assertIsNotNone(h264_codec_configuration.bPyramid)
         self.assertIsNotNone(h264_codec_configuration.openGop)
         self.assertIsNotNone(h264_codec_configuration.cea608708SubtitleConfig)
+        self.assertIsNotNone(h264_codec_configuration.adaptiveQuantMode)
+        self.assertIsNotNone(h264_codec_configuration.adaptiveQuantizationStrength)
+        self.assertIsNotNone(h264_codec_configuration.psyRateDistortionOptimization)
+        self.assertIsNotNone(h264_codec_configuration.psyTrellis)
+        self.assertIsNotNone(h264_codec_configuration.deblockAlpha)
+        self.assertIsNotNone(h264_codec_configuration.deblockBeta)
 
         return h264_codec_configuration
 
