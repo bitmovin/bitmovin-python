@@ -7,7 +7,7 @@ from bitmovin.resources.enums.h264_sub_me import H264SubMe
 from bitmovin.resources.enums.badapt import BAdapt
 from bitmovin.resources.enums.h264_trellis import H264Trellis
 from bitmovin.resources.enums import H264BPyramid, H264NalHrd
-from bitmovin.resources.enums.h264_adaptive_quant_mode import H264AdaptiveQuantMode
+from bitmovin.resources.enums.h264_adaptive_quantization_mode import H264AdaptiveQuantizationMode
 from bitmovin.utils import Serializable
 
 from .video_codec_configuration import VideoCodecConfiguration
@@ -25,8 +25,8 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
                  pixel_format=None, min_keyframe_interval=None, max_keyframe_interval=None,
                  sample_aspect_ratio_numerator=None, sample_aspect_ratio_denominator=None, scene_cut_threshold=None,
                  color_config=None, nal_hrd=None, b_pyramid=None, open_gop=None, cea_608_708_subtitle_config=None,
-                 adaptive_quantization_mode=None, adaptive_quantization_strength=None, psy_rate_distortion_optimization = None,
-                 psy_trellis = None, deblock_alpha = None, deblock_beta = None):
+                 adaptive_quantization_mode=None, adaptive_quantization_strength=None,
+                 psy_rate_distortion_optimization=None, psy_trellis=None, deblock_alpha=None, deblock_beta=None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description, bitrate=bitrate,
                          rate=rate, width=width, height=height, pixel_format=pixel_format)
@@ -46,7 +46,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         self._bPyramid = None
         self._openGop = None
         self._cea608708SubtitleConfig = None
-        self._adaptiveQuantMode = None
+        self._adaptive_quantization_mode = None
 
         self.b_adapt = b_adapt
         self.bframes = bframes
@@ -81,7 +81,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         self.nalHrd = nal_hrd
         self.openGop = open_gop
         self.cea608708SubtitleConfig = cea_608_708_subtitle_config
-        self.adaptiveQuantMode = adaptive_quantization_mode
+        self.adaptiveQuantizationMode = adaptive_quantization_mode
         self.adaptiveQuantizationStrength = adaptive_quantization_strength
         self.psyRateDistortionOptimization = psy_rate_distortion_optimization
         self.psyTrellis = psy_trellis
@@ -324,20 +324,22 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
             raise InvalidTypeError('cea608708SubtitleConfig has to be of type Cea608708SubtitleConfig')
         
     @property
-    def adaptiveQuantMode(self):
-        return self._adaptiveQuantMode
+    def adaptiveQuantizationMode(self):
+        return self._adaptive_quantization_mode
 
-    @adaptiveQuantMode.setter
-    def adaptiveQuantMode(self, new_adaptive_quant_mode):
-        if new_adaptive_quant_mode is None:
-            self._adaptiveQuantMode = None
-        elif isinstance(new_adaptive_quant_mode, str):
-            self._adaptiveQuantMode = new_adaptive_quant_mode
-        elif isinstance(new_adaptive_quant_mode, H264AdaptiveQuantMode):
-            self._adaptiveQuantMode = new_adaptive_quant_mode.value
+    @adaptiveQuantizationMode.setter
+    def adaptiveQuantizationMode(self, new_adaptive_quantization_mode):
+        if new_adaptive_quantization_mode is None:
+            self._adaptive_quantization_mode = None
+        elif isinstance(new_adaptive_quantization_mode, str):
+            self._adaptive_quantization_mode = new_adaptive_quantization_mode
+        elif isinstance(new_adaptive_quantization_mode, H264AdaptiveQuantizationMode):
+            self._adaptive_quantization_mode = new_adaptive_quantization_mode.value
         else:
-            raise InvalidTypeError('Invalid type {} for adaptiveQuantMode: must be either str or H264AdaptiveQuantMode.'
-                                   .format(type(new_adaptive_quant_mode)))
+            raise InvalidTypeError(
+                'Invalid type {} for adaptiveQuantizationMode: '.format(type(new_adaptive_quantization_mode)) +
+                'must be either str or H264AdaptiveQuantizationMode.'
+            )
 
     @classmethod
     def parse_from_json_object(cls, json_object):
@@ -406,6 +408,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
             color_transfer = color_config_json.get('colorTransfer')
             input_color_space = color_config_json.get('inputColorSpace')
             input_color_range = color_config_json.get('inputColorRange')
+
             color_config = ColorConfig(copy_chroma_location_flag=copy_chroma_location_flag,
                                        copy_color_space_flag=copy_color_space_flag,
                                        copy_color_primaries_flag=copy_color_primaries_flag,
@@ -418,36 +421,61 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
 
         cea_608_708_subtitle_config = None
         cea_608_708_subtitle_config_json = json_object.get('cea608708SubtitleConfig')
+
         if cea_608_708_subtitle_config_json is not None:
             passthrough_activated = cea_608_708_subtitle_config_json.get('passthroughActivated')
             cea_608_708_subtitle_config = Cea608708SubtitleConfig(passthrough_activated=passthrough_activated)
 
-        h264_codec_configuration = H264CodecConfiguration(name=name, bitrate=bitrate, rate=rate, profile=profile,
-                                                          id_=id_, description=description, custom_data=custom_data,
-                                                          width=width, height=height, bframes=bframes,
-                                                          ref_frames=ref_frames, qp_min=qp_min, qp_max=qp_max,
-                                                          mv_prediction_mode=mv_prediction_mode,
-                                                          mv_search_range_max=mv_search_range_max,
-                                                          cabac=cabac, max_bitrate=max_bitrate, min_bitrate=min_bitrate,
-                                                          bufsize=bufsize, min_gop=min_gop, max_gop=max_gop,
-                                                          level=level, rc_lookahead=rc_lookahead, sub_me=sub_me,
-                                                          motion_estimation_method=motion_estimation_method,
-                                                          b_adapt=b_adapt, partitions=partitions, trellis=trellis,
-                                                          slices=slices, interlaceMode=interlace_mode, crf=crf,
-                                                          min_keyframe_interval=min_keyframe_interval,
-                                                          max_keyframe_interval=max_keyframe_interval,
-                                                          pixel_format=pixel_format,
-                                                          sample_aspect_ratio_numerator=aspect_ratio_numerator,
-                                                          sample_aspect_ratio_denominator=aspect_ratio_denominator,
-                                                          scene_cut_threshold=scene_cut_threshold,
-                                                          color_config=color_config, nal_hrd=nal_hrd,
-                                                          b_pyramid=b_pyramid, open_gop=open_gop,
-                                                          cea_608_708_subtitle_config=cea_608_708_subtitle_config,
-                                                          adaptive_quantization_mode=adaptive_quantization_mode,
-                                                          adaptive_quantization_strength=adaptive_quantization_strength,
-                                                          psy_rate_distortion_optimization=psy_rate_distortion_optimization,
-                                                          psy_trellis=psy_trellis, deblock_alpha=deblock_alpha,
-                                                          deblock_beta=deblock_beta )
+        h264_codec_configuration = H264CodecConfiguration(
+            name=name,
+            bitrate=bitrate,
+            rate=rate,
+            profile=profile,
+            id_=id_,
+            description=description,
+            custom_data=custom_data,
+            width=width,
+            height=height,
+            bframes=bframes,
+            ref_frames=ref_frames,
+            qp_min=qp_min,
+            qp_max=qp_max,
+            mv_prediction_mode=mv_prediction_mode,
+            mv_search_range_max=mv_search_range_max,
+            cabac=cabac,
+            max_bitrate=max_bitrate,
+            min_bitrate=min_bitrate,
+            bufsize=bufsize,
+            min_gop=min_gop,
+            max_gop=max_gop,
+            level=level,
+            rc_lookahead=rc_lookahead,
+            sub_me=sub_me,
+            motion_estimation_method=motion_estimation_method,
+            b_adapt=b_adapt,
+            partitions=partitions,
+            trellis=trellis,
+            slices=slices,
+            interlaceMode=interlace_mode,
+            crf=crf,
+            min_keyframe_interval=min_keyframe_interval,
+            max_keyframe_interval=max_keyframe_interval,
+            pixel_format=pixel_format,
+            sample_aspect_ratio_numerator=aspect_ratio_numerator,
+            sample_aspect_ratio_denominator=aspect_ratio_denominator,
+            scene_cut_threshold=scene_cut_threshold,
+            color_config=color_config,
+            nal_hrd=nal_hrd,
+            b_pyramid=b_pyramid,
+            open_gop=open_gop,
+            cea_608_708_subtitle_config=cea_608_708_subtitle_config,
+            adaptive_quantization_mode=adaptive_quantization_mode,
+            adaptive_quantization_strength=adaptive_quantization_strength,
+            psy_rate_distortion_optimization=psy_rate_distortion_optimization,
+            psy_trellis=psy_trellis,
+            deblock_alpha=deblock_alpha,
+            deblock_beta=deblock_beta
+        )
 
         return h264_codec_configuration
 
@@ -467,7 +495,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         serialized['nalHrd'] = self.nalHrd
         serialized['bPyramid'] = self.bPyramid
         serialized['openGop'] = self.openGop
-        serialized['adaptiveQuantizationMode'] = self.adaptiveQuantMode
+        serialized['adaptiveQuantizationMode'] = self.adaptiveQuantizationMode
 
         if isinstance(self.colorConfig, ColorConfig):
             serialized['colorConfig'] = self.colorConfig.serialize()

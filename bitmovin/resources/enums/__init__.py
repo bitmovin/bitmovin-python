@@ -68,4 +68,4 @@ from .av1_key_placement_mode import AV1KeyPlacementMode
 from .av1_rate_control_mode import AV1RateControlMode
 from .av1_adaptive_quant_mode import AV1AdaptiveQuantMode
 from .iv_size import IvSize
-from .h264_adaptive_quant_mode import H264AdaptiveQuantMode
+from .h264_adaptive_quantization_mode import H264AdaptiveQuantizationMode

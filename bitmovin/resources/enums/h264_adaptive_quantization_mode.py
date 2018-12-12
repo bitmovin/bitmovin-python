@@ -1,7 +1,7 @@
 import enum
 
 
-class H264AdaptiveQuantMode(enum.Enum):
+class H264AdaptiveQuantizationMode(enum.Enum):
     DISABLED = 'DISABLED'
     VARIANCE = 'VARIANCE'
     AUTO_VARIANCE = 'AUTO_VARIANCE'

@@ -9,7 +9,7 @@ from bitmovin.resources.enums.h264_partition import H264Partition
 from bitmovin.resources.enums.h264_sub_me import H264SubMe
 from bitmovin.resources.enums.h264_trellis import H264Trellis
 from bitmovin.resources.enums.pixel_format import PixelFormat
-from bitmovin.resources.enums.h264_adaptive_quant_mode import H264AdaptiveQuantMode
+from bitmovin.resources.enums.h264_adaptive_quantization_mode import H264AdaptiveQuantizationMode
 from tests.bitmovin import BitmovinTestCase
 
 
@@ -234,12 +234,12 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         self.assertTrue(self._compare_color_configs(first.colorConfig, second.colorConfig))
         self.assertTrue(self._compare_cea_608_708_subtitle_configs(first.cea608708SubtitleConfig,
                                                                    second.cea608708SubtitleConfig))
-        self.assertEqual(first.adaptiveQuantMode, second.adaptiveQuantMode)
+        self.assertEqual(first.adaptiveQuantizationMode, second.adaptiveQuantizationMode)
         self.assertEqual(first.adaptiveQuantizationStrength, second.adaptiveQuantizationStrength)
         self.assertEqual(first.psyRateDistortionOptimization, second.psyRateDistortionOptimization)
         self.assertEqual(first.psyTrellis, second.psyTrellis)
         self.assertEqual(first.deblockAlpha, second.deblockAlpha)
-        self.assertEqual(first.deblockBeta, second.deblockBeta)        
+        self.assertEqual(first.deblockBeta, second.deblockBeta)
         
         return True
 
@@ -274,66 +274,68 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         return True
 
     def _get_sample_h264_codec_configuration(self):
-        h264_codec_configuration = H264CodecConfiguration(name='Python - H264 Sample Codec Config',
-                                                          description='Long description for H264 Codec Config',
-                                                          bitrate=10000000,
-                                                          rate=23.97,
-                                                          profile=H264Profile.MAIN,
-                                                          width=1920,
-                                                          height=1080,
-                                                          bframes=3,
-                                                          ref_frames=5,
-                                                          qp_min=1,
-                                                          qp_max=69,
-                                                          mv_prediction_mode=MVPredictionMode.SPATIAL,
-                                                          mv_search_range_max=16,
-                                                          cabac=True,
-                                                          max_bitrate=10000000,
-                                                          min_bitrate=5000000,
-                                                          bufsize=10000000,
-                                                          min_gop=None,
-                                                          max_gop=None,
-                                                          level=H264Level.L5_1,
-                                                          rc_lookahead=30,
-                                                          sub_me=H264SubMe.RD_IP,
-                                                          motion_estimation_method=H264MotionEstimationMethod.HEX,
-                                                          b_adapt=BAdapt.FAST,
-                                                          partitions=[H264Partition.I4X4, H264Partition.I8X8, H264Partition.P8X8, H264Partition.B8X8],
-                                                          trellis=H264Trellis.ENABLED_FINAL_MB,
-                                                          slices=5,
-                                                          interlaceMode=H264InterlaceMode.BOTTOM_FIELD_FIRST,
-                                                          min_keyframe_interval=10.23,
-                                                          max_keyframe_interval=20.91,
-                                                          pixel_format=PixelFormat.YUV440P10BE,
-                                                          sample_aspect_ratio_numerator=2.0,
-                                                          sample_aspect_ratio_denominator=3.0,
-                                                          scene_cut_threshold=30,
-                                                          color_config=ColorConfig(
-                                                              copy_chroma_location_flag=True,
-                                                              copy_color_space_flag=True,
-                                                              copy_color_primaries_flag=True,
-                                                              copy_color_range_flag=True,
-                                                              copy_color_transfer_flag=True,
-                                                              chroma_location=ChromaLocation.BOTTOM,
-                                                              color_space=ColorSpace.BT2020_CL,
-                                                              color_primaries=ColorPrimaries.BT709,
-                                                              color_range=ColorRange.MPEG,
-                                                              color_transfer=ColorTransfer.BT2020_10,
-                                                              input_color_space=InputColorSpace.BT470BG,
-                                                              input_color_range=InputColorRange.JPEG
-                                                          ),
-                                                          nal_hrd=H264NalHrd.VBR,
-                                                          b_pyramid=H264BPyramid.NONE,
-                                                          open_gop=True,
-                                                          cea_608_708_subtitle_config=Cea608708SubtitleConfig(
-                                                              passthrough_activated=True
-                                                          ),
-                                                          adaptive_quantization_mode=H264AdaptiveQuantMode.AUTO_VARIANCE_DARK_SCENES,
-                                                          adaptive_quantization_strength=0.5,
-                                                          psy_rate_distortion_optimization=1.0,
-                                                          psy_trellis=0.25,
-                                                          deblock_alpha=1,
-                                                          deblock_beta=1)
+        h264_codec_configuration = H264CodecConfiguration(
+            name='Python - H264 Sample Codec Config',
+            description='Long description for H264 Codec Config',
+            bitrate=10000000,
+            rate=23.97,
+            profile=H264Profile.MAIN,
+            width=1920,
+            height=1080,
+            bframes=3,
+            ref_frames=5,
+            qp_min=1,
+            qp_max=69,
+            mv_prediction_mode=MVPredictionMode.SPATIAL,
+            mv_search_range_max=16,
+            cabac=True,
+            max_bitrate=10000000,
+            min_bitrate=5000000,
+            bufsize=10000000,
+            min_gop=None,
+            max_gop=None,
+            level=H264Level.L5_1,
+            rc_lookahead=30,
+            sub_me=H264SubMe.RD_IP,
+            motion_estimation_method=H264MotionEstimationMethod.HEX,
+            b_adapt=BAdapt.FAST,
+            partitions=[H264Partition.I4X4, H264Partition.I8X8, H264Partition.P8X8, H264Partition.B8X8],
+            trellis=H264Trellis.ENABLED_FINAL_MB,
+            slices=5,
+            interlaceMode=H264InterlaceMode.BOTTOM_FIELD_FIRST,
+            min_keyframe_interval=10.23,
+            max_keyframe_interval=20.91,
+            pixel_format=PixelFormat.YUV440P10BE,
+            sample_aspect_ratio_numerator=2.0,
+            sample_aspect_ratio_denominator=3.0,
+            scene_cut_threshold=30,
+            color_config=ColorConfig(
+                copy_chroma_location_flag=True,
+                copy_color_space_flag=True,
+                copy_color_primaries_flag=True,
+                copy_color_range_flag=True,
+                copy_color_transfer_flag=True,
+                chroma_location=ChromaLocation.BOTTOM,
+                color_space=ColorSpace.BT2020_CL,
+                color_primaries=ColorPrimaries.BT709,
+                color_range=ColorRange.MPEG,
+                color_transfer=ColorTransfer.BT2020_10,
+                input_color_space=InputColorSpace.BT470BG,
+                input_color_range=InputColorRange.JPEG
+            ),
+            nal_hrd=H264NalHrd.VBR,
+            b_pyramid=H264BPyramid.NONE,
+            open_gop=True,
+            cea_608_708_subtitle_config=Cea608708SubtitleConfig(
+                passthrough_activated=True
+            ),
+            adaptive_quantization_mode=H264AdaptiveQuantizationMode.AUTO_VARIANCE_DARK_SCENES,
+            adaptive_quantization_strength=0.5,
+            psy_rate_distortion_optimization=1.0,
+            psy_trellis=0.25,
+            deblock_alpha=1,
+            deblock_beta=1
+        )
 
         self.assertIsNotNone(h264_codec_configuration.name)
         self.assertIsNotNone(h264_codec_configuration.description)
@@ -368,7 +370,7 @@ class H264CodecConfigurationTests(BitmovinTestCase):
         self.assertIsNotNone(h264_codec_configuration.bPyramid)
         self.assertIsNotNone(h264_codec_configuration.openGop)
         self.assertIsNotNone(h264_codec_configuration.cea608708SubtitleConfig)
-        self.assertIsNotNone(h264_codec_configuration.adaptiveQuantMode)
+        self.assertIsNotNone(h264_codec_configuration.adaptiveQuantizationMode)
         self.assertIsNotNone(h264_codec_configuration.adaptiveQuantizationStrength)
         self.assertIsNotNone(h264_codec_configuration.psyRateDistortionOptimization)
         self.assertIsNotNone(h264_codec_configuration.psyTrellis)
