@@ -331,7 +331,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
     def adaptiveQuantMode(self, new_adaptive_quant_mode):
         if new_adaptive_quant_mode is None:
             self._adaptiveQuantMode = None
-        if isinstance(new_adaptive_quant_mode, str):
+        elif isinstance(new_adaptive_quant_mode, str):
             self._adaptiveQuantMode = new_adaptive_quant_mode
         elif isinstance(new_adaptive_quant_mode, H264AdaptiveQuantMode):
             self._adaptiveQuantMode = new_adaptive_quant_mode.value
