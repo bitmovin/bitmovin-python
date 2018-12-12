@@ -1,6 +1,5 @@
 from bitmovin.errors import InvalidTypeError
-from bitmovin.resources.models import AbstractModel
-from bitmovin.resources.models.encodings import EncodingOutput
+from bitmovin.resources.models import AbstractModel, EncodingOutput
 from bitmovin.resources import AbstractNameDescriptionResource
 from bitmovin.utils import Serializable
 
