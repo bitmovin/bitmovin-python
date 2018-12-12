@@ -2,7 +2,7 @@ from urllib.parse import urljoin
 from bitmovin.errors import FunctionalityNotAvailableError, InvalidTypeError, BitmovinApiError, InvalidStatusError
 from bitmovin.resources import DashManifest, Period, ResourceResponse, Status, Response, AudioAdaptationSet, \
     VideoAdaptationSet, SubtitleAdaptationSet, FMP4Representation, DRMFMP4Representation, WebMRepresentation, \
-    ContentProtection, DashMP4Representation, CustomXMLElement
+    ContentProtection, DashMP4Representation, CustomXMLElement, VttRepresentation
 from bitmovin.services.manifests.generic_manifest_service import GenericManifestService
 from .manifest_control_service import ManifestControlService
 
@@ -96,6 +96,29 @@ class DASH(GenericManifestService, ManifestControlService):
         if response.status == Status.SUCCESS.value:
             created_resource = self.parsing_utils.parse_bitmovin_resource_from_response(
                 response=response, class_=SubtitleAdaptationSet)
+            return ResourceResponse(response=response, resource=created_resource)
+
+        raise InvalidStatusError('Unknown status {} received'.format(response.status))
+
+    def add_vtt_representation(self, object_, manifest_id, period_id, adaptationset_id):
+        if not isinstance(object_, VttRepresentation):
+            raise InvalidTypeError('object_ has to be an instance of {}'.format(VttRepresentation.__name__))
+
+        url = self.relative_url
+        if not url.endswith('/'):
+            url += '/'
+
+        url = urljoin(url, '{}/periods/{}/adaptationsets/{}/representations/vtt'.format(
+            manifest_id, period_id, adaptationset_id))
+
+        response = self.http_client.post(url, object_)  # type: Response
+
+        if response.status == Status.ERROR.value:
+            raise BitmovinApiError('Response was not successful: {}'.format(response.raw_response), response)
+
+        if response.status == Status.SUCCESS.value:
+            created_resource = self.parsing_utils.parse_bitmovin_resource_from_response(
+                response=response, class_=VttRepresentation)
             return ResourceResponse(response=response, resource=created_resource)
 
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
