@@ -134,13 +134,6 @@ def main():
     audio_fmp4_muxing = bitmovin.encodings.Muxing.FMP4.create(object_=audio_fmp4_muxing,
                                                               encoding_id=encoding.id).resource
 
-    bitmovin.encodings.Encoding.start(encoding_id=encoding.id)
-
-    try:
-        bitmovin.encodings.Encoding.wait_until_finished(encoding_id=encoding.id, check_interval=5)
-    except BitmovinError as bitmovin_error:
-        print('Exception occurred while waiting for encoding to finish: {}'.format(bitmovin_error))
-
     # Specify the output for manifest which will be in the OUTPUT_BASE_PATH.
     manifest_output = EncodingOutput(output_id=s3_output.id,
                                      output_path=OUTPUT_BASE_PATH,
@@ -187,7 +180,7 @@ def main():
                                                     period_id=period.id,
                                                     adaptationset_id=audio_adaptation_set.id)
 
-    bitmovin.manifests.DASH.start(manifest_id=dash_manifest.id)
+
 
     # Create a HLS manifest and add one period with an adapation set for audio and video
     hls_manifest = HlsManifest(manifest_name='stream.m3u8',
@@ -220,7 +213,13 @@ def main():
         bitmovin.manifests.HLS.VariantStream.create(manifest_id=hls_manifest.id,
                                                     object_=variant_stream)
 
-    bitmovin.manifests.HLS.start(manifest_id=hls_manifest.id)
+    startRequest = StartEncodingRequest(vod_dash_manifests=[dash_manifest], vod_hls_manifests=[hls_manifest])
+    bitmovin.encodings.Encoding.start(encoding_id=encoding.id, start_encoding_request=startRequest)
+
+    try:
+        bitmovin.encodings.Encoding.wait_until_finished(encoding_id=encoding.id, check_interval=5)
+    except BitmovinError as bitmovin_error:
+        print('Exception occurred while waiting for encoding to finish: {}'.format(bitmovin_error))
 
     try:
         bitmovin.manifests.DASH.wait_until_finished(manifest_id=dash_manifest.id, check_interval=1)
