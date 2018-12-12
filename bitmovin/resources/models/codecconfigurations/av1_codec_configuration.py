@@ -83,7 +83,7 @@ class AV1CodecConfiguration(VideoCodecConfiguration, Serializable):
     def keyPlacementMode(self, new_key_placement_mode):
         if new_key_placement_mode is None:
             self._keyPlacementMode = None
-        if isinstance(new_key_placement_mode, str):
+        elif isinstance(new_key_placement_mode, str):
             self._keyPlacementMode = new_key_placement_mode
         elif isinstance(new_key_placement_mode, AV1KeyPlacementMode):
             self._keyPlacementMode = new_key_placement_mode.value
@@ -99,7 +99,7 @@ class AV1CodecConfiguration(VideoCodecConfiguration, Serializable):
     def rateControlMode(self, new_rate_control_mode):
         if new_rate_control_mode is None:
             self._rateControlMode = None
-        if isinstance(new_rate_control_mode, str):
+        elif isinstance(new_rate_control_mode, str):
             self._rateControlMode = new_rate_control_mode
         elif isinstance(new_rate_control_mode, AV1RateControlMode):
             self._rateControlMode = new_rate_control_mode.value
@@ -115,7 +115,7 @@ class AV1CodecConfiguration(VideoCodecConfiguration, Serializable):
     def adaptiveQuantMode(self, new_adaptive_quant_mode):
         if new_adaptive_quant_mode is None:
             self._adaptiveQuantMode = None
-        if isinstance(new_adaptive_quant_mode, str):
+        elif isinstance(new_adaptive_quant_mode, str):
             self._adaptiveQuantMode = new_adaptive_quant_mode
         elif isinstance(new_adaptive_quant_mode, AV1AdaptiveQuantMode):
             self._adaptiveQuantMode = new_adaptive_quant_mode.value
