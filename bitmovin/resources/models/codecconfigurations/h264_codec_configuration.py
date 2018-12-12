@@ -7,6 +7,7 @@ from bitmovin.resources.enums.h264_sub_me import H264SubMe
 from bitmovin.resources.enums.badapt import BAdapt
 from bitmovin.resources.enums.h264_trellis import H264Trellis
 from bitmovin.resources.enums import H264BPyramid, H264NalHrd
+from bitmovin.resources.enums.h264_adaptive_quant_mode import H264AdaptiveQuantMode
 from bitmovin.utils import Serializable
 
 from .video_codec_configuration import VideoCodecConfiguration
@@ -23,7 +24,9 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
                  motion_estimation_method=None,partitions=None, trellis=None, slices=None, interlaceMode=None, crf=None,
                  pixel_format=None, min_keyframe_interval=None, max_keyframe_interval=None,
                  sample_aspect_ratio_numerator=None, sample_aspect_ratio_denominator=None, scene_cut_threshold=None,
-                 color_config=None, nal_hrd=None, b_pyramid=None, open_gop=None, cea_608_708_subtitle_config=None):
+                 color_config=None, nal_hrd=None, b_pyramid=None, open_gop=None, cea_608_708_subtitle_config=None,
+                 adaptive_quantization_mode=None, adaptive_quantization_strength=None, psy_rate_distortion_optimization = None,
+                 psy_trellis = None, deblock_alpha = None, deblock_beta = None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description, bitrate=bitrate,
                          rate=rate, width=width, height=height, pixel_format=pixel_format)
@@ -43,6 +46,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         self._bPyramid = None
         self._openGop = None
         self._cea608708SubtitleConfig = None
+        self._adaptiveQuantMode = None
 
         self.b_adapt = b_adapt
         self.bframes = bframes
@@ -77,6 +81,12 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         self.nalHrd = nal_hrd
         self.openGop = open_gop
         self.cea608708SubtitleConfig = cea_608_708_subtitle_config
+        self.adaptiveQuantMode = adaptive_quantization_mode
+        self.adaptiveQuantizationStrength = adaptive_quantization_strength
+        self.psyRateDistortionOptimization = psy_rate_distortion_optimization
+        self.psyTrellis = psy_trellis
+        self.deblockAlpha = deblock_alpha
+        self.deblockBeta = deblock_beta
 
     @property
     def bPyramid(self):
@@ -312,6 +322,22 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
             self._cea608708SubtitleConfig = new_cea_608_708_subtitle_config
         else:
             raise InvalidTypeError('cea608708SubtitleConfig has to be of type Cea608708SubtitleConfig')
+        
+    @property
+    def adaptiveQuantMode(self):
+        return self._adaptiveQuantMode
+
+    @adaptiveQuantMode.setter
+    def adaptiveQuantMode(self, new_adaptive_quant_mode):
+        if new_adaptive_quant_mode is None:
+            self._adaptiveQuantMode = None
+        if isinstance(new_adaptive_quant_mode, str):
+            self._adaptiveQuantMode = new_adaptive_quant_mode
+        elif isinstance(new_adaptive_quant_mode, H264AdaptiveQuantMode):
+            self._adaptiveQuantMode = new_adaptive_quant_mode.value
+        else:
+            raise InvalidTypeError('Invalid type {} for adaptiveQuantMode: must be either str or H264AdaptiveQuantMode.'
+                                   .format(type(new_adaptive_quant_mode)))
 
     @classmethod
     def parse_from_json_object(cls, json_object):
@@ -358,6 +384,12 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         nal_hrd = json_object.get('nalHrd')
         b_pyramid = json_object.get('bPyramid')
         open_gop = json_object.get('openGop')
+        adaptive_quantization_mode = json_object.get('adaptiveQuantizationMode')
+        adaptive_quantization_strength = json_object.get('adaptiveQuantizationStrength')
+        psy_rate_distortion_optimization = json_object.get('psyRateDistortionOptimization')
+        psy_trellis = json_object.get('psyTrellis')
+        deblock_alpha = json_object.get('deblockAlpha')
+        deblock_beta = json_object.get('deblockBeta')         
 
         color_config = None
         color_config_json = json_object.get('colorConfig')
@@ -410,7 +442,12 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
                                                           scene_cut_threshold=scene_cut_threshold,
                                                           color_config=color_config, nal_hrd=nal_hrd,
                                                           b_pyramid=b_pyramid, open_gop=open_gop,
-                                                          cea_608_708_subtitle_config=cea_608_708_subtitle_config)
+                                                          cea_608_708_subtitle_config=cea_608_708_subtitle_config,
+                                                          adaptive_quantization_mode=adaptive_quantization_mode,
+                                                          adaptive_quantization_strength=adaptive_quantization_strength,
+                                                          psy_rate_distortion_optimization=psy_rate_distortion_optimization,
+                                                          psy_trellis=psy_trellis, deblock_alpha=deblock_alpha,
+                                                          deblock_beta=deblock_beta )
 
         return h264_codec_configuration
 
@@ -430,6 +467,7 @@ class H264CodecConfiguration(VideoCodecConfiguration, Serializable):
         serialized['nalHrd'] = self.nalHrd
         serialized['bPyramid'] = self.bPyramid
         serialized['openGop'] = self.openGop
+        serialized['adaptiveQuantizationMode'] = self.adaptiveQuantMode
 
         if isinstance(self.colorConfig, ColorConfig):
             serialized['colorConfig'] = self.colorConfig.serialize()
