@@ -4,7 +4,7 @@ from bitmovin.resources import AbstractNameDescriptionResource
 from bitmovin.resources.models import AbstractModel
 from bitmovin.utils import Serializable
 
-class TimeCodeTrackTrimmingInputStream(AbstractNameDescriptionResource, AbstractModel, Serializable):
+class TimecodeTrackTrimmingInputStream(AbstractNameDescriptionResource, AbstractModel, Serializable):
 
     def __init__(self, input_stream_id, start_time_code, end_time_code, id_=None, custom_data=None, name=None, description=None):
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
@@ -23,10 +23,10 @@ class TimeCodeTrackTrimmingInputStream(AbstractNameDescriptionResource, Abstract
         start_time_code = json_object['startTimeCode']
         end_time_code = json_object['endTimeCode']
 
-        time_code_track_trimming_input_stream = TimeCodeTrackTrimmingInputStream(input_stream_id=input_stream_id, start_time_code=start_time_code, end_time_code=end_time_code,
+        timecode_track_trimming_input_stream = TimecodeTrackTrimmingInputStream(input_stream_id=input_stream_id, start_time_code=start_time_code, end_time_code=end_time_code,
                         id_=id_, custom_data=custom_data, name=name, description=description)
 
-        return time_code_track_trimming_input_stream
+        return timecode_track_trimming_input_stream
 
     def serialize(self):
         serialized = super().serialize()
