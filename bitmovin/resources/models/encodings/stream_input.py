@@ -6,9 +6,10 @@ from bitmovin.resources import AbstractIdResource
 
 class StreamInput(AbstractIdResource, Serializable):
 
-    def __init__(self, input_id, input_path, selection_mode, id_=None, position=None):
+    def __init__(self, input_stream_id=None, input_id=None, input_path=None, selection_mode=None, id_=None, position=None):
         super().__init__(id_=id_)
 
+        self.inputStreamId = input_stream_id
         self.inputId = input_id
         self.inputPath = input_path
         self._selectionMode = None
@@ -34,12 +35,13 @@ class StreamInput(AbstractIdResource, Serializable):
     @classmethod
     def parse_from_json_object(cls, json_object):
         id_ = json_object.get('id')
+        input_stream_id = json_object['inputStreamId']
         input_id = json_object['inputId']
         input_path = json_object['inputPath']
         selection_mode = json_object['selectionMode']
         position = json_object.get('position')
 
-        stream_input = StreamInput(input_id=input_id, input_path=input_path, selection_mode=selection_mode, id_=id_,
+        stream_input = StreamInput(input_stream_id=input_stream_id, input_id=input_id, input_path=input_path, selection_mode=selection_mode, id_=id_,
                                    position=position)
 
         return stream_input

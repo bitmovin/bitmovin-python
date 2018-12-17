@@ -24,24 +24,24 @@ class ConcatenationInputStream(AbstractNameDescriptionResource, AbstractModel, S
         concatenation_input_stream = ConcatenationInputStream(concatenation=concatenation, 
                         id_=id_, custom_data=custom_data, name=name, description=description)
 
-        return concatenation
+        return concatenation_input_stream
 
-    @concatenation.setter
-    def concatenation(self, new_concatenations):
-        if new_concatenations is None:
-            return
+    # @concatenation.setter
+    # def concatenation(self, new_concatenations):
+    #     if new_concatenations is None:
+    #         return
 
-        if not isinstance(new_concatenations, list):
-            raise InvalidTypeError('new_concatenation has to be a list of ConcatenationInputStreamConfiguration objects')
+    #     if not isinstance(new_concatenations, list):
+    #         raise InvalidTypeError('new_concatenation has to be a list of ConcatenationInputStreamConfiguration objects')
 
-        if all(isinstance(concatenation, ConcatenationInputStreamConfiguration) for concatenation in new_concatenations):
-            self._concatenation = new_concatenations
-        else:
-            concatenations = []
-            for json_object in new_concatenations:
-                concatenation = ConcatenationInputStreamConfiguration.parse_from_json_object(json_object)
-                concatenations.append(concatenation)
-            self._concatenation = concatenations
+    #     if all(isinstance(concatenation, ConcatenationInputStreamConfiguration) for concatenation in new_concatenations):
+    #         self._concatenation = new_concatenations
+    #     else:
+    #         concatenations = []
+    #         for json_object in new_concatenations:
+    #             concatenation = ConcatenationInputStreamConfiguration.parse_from_json_object(json_object)
+    #             concatenations.append(concatenation)
+    #         self._concatenation = concatenations
 
     def serialize(self):
         serialized = super().serialize()
