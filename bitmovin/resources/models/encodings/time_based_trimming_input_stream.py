@@ -1,6 +1,4 @@
-# from bitmovin.errors import InvalidTypeError
 from bitmovin.resources import AbstractNameDescriptionResource
-# from bitmovin.resources.enums import SelectionMode
 from bitmovin.resources.models import AbstractModel
 from bitmovin.utils import Serializable
 
