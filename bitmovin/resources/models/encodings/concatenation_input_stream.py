@@ -26,22 +26,26 @@ class ConcatenationInputStream(AbstractNameDescriptionResource, AbstractModel, S
 
         return concatenation_input_stream
 
-    # @concatenation.setter
-    # def concatenation(self, new_concatenations):
-    #     if new_concatenations is None:
-    #         return
+    @property
+    def concatenation(self):
+        return self._concatenation
 
-    #     if not isinstance(new_concatenations, list):
-    #         raise InvalidTypeError('new_concatenation has to be a list of ConcatenationInputStreamConfiguration objects')
+    @concatenation.setter
+    def concatenation(self, new_concatenations):
+        if new_concatenations is None:
+            return
 
-    #     if all(isinstance(concatenation, ConcatenationInputStreamConfiguration) for concatenation in new_concatenations):
-    #         self._concatenation = new_concatenations
-    #     else:
-    #         concatenations = []
-    #         for json_object in new_concatenations:
-    #             concatenation = ConcatenationInputStreamConfiguration.parse_from_json_object(json_object)
-    #             concatenations.append(concatenation)
-    #         self._concatenation = concatenations
+        if not isinstance(new_concatenations, list):
+            raise InvalidTypeError('new_concatenation has to be a list of ConcatenationInputStreamConfiguration objects')
+
+        if all(isinstance(concatenation, ConcatenationInputStreamConfiguration) for concatenation in new_concatenations):
+            self._concatenation = new_concatenations
+        else:
+            concatenations = []
+            for json_object in new_concatenations:
+                concatenation_singleton = ConcatenationInputStreamConfiguration.parse_from_json_object(json_object)
+                concatenations.append(concatenation_singleton)
+            self._concatenation = concatenations
 
     def serialize(self):
         serialized = super().serialize()

@@ -35,10 +35,10 @@ class StreamInput(AbstractIdResource, Serializable):
     @classmethod
     def parse_from_json_object(cls, json_object):
         id_ = json_object.get('id')
-        input_stream_id = json_object['inputStreamId']
-        input_id = json_object['inputId']
-        input_path = json_object['inputPath']
-        selection_mode = json_object['selectionMode']
+        input_stream_id = json_object.get('inputStreamId')
+        input_id = json_object.get('inputId')
+        input_path = json_object.get('inputPath')
+        selection_mode = json_object.get('selectionMode')
         position = json_object.get('position')
 
         stream_input = StreamInput(input_stream_id=input_stream_id, input_id=input_id, input_path=input_path, selection_mode=selection_mode, id_=id_,
