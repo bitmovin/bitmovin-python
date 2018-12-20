@@ -220,9 +220,9 @@ class H265CodecConfigurationTests(BitmovinTestCase):
         self.assertEqual(first.maxPictureAverageLightLevel, second.maxPictureAverageLightLevel)
         self.assertEqual(first.sampleAspectRatioNumerator, second.sampleAspectRatioNumerator)
         self.assertEqual(first.sampleAspectRatioDenominator, second.sampleAspectRatioDenominator)
-        self.assertEqual(first.adaptiveQuantizationMode, second.adaptiveQuantizationMode)        
-        self.assertEqual(first.psyRateDistortionOptimization, second.psyRateDistortionOptimization)        
-        self.assertEqual(first.psyRateDistortionOptimizedQuantization, second.psyRateDistortionOptimizedQuantization)        
+        self.assertEqual(first.adaptiveQuantizationMode, second.adaptiveQuantizationMode)
+        self.assertEqual(first.psyRateDistortionOptimization, second.psyRateDistortionOptimization)
+        self.assertEqual(first.psyRateDistortionOptimizedQuantization, second.psyRateDistortionOptimizedQuantization)
         self.assertTrue(self._compare_color_configs(first.colorConfig, second.colorConfig))
 
         return True
@@ -284,7 +284,7 @@ class H265CodecConfigurationTests(BitmovinTestCase):
                                                           min_keyframe_interval=3,
                                                           hdr=True,
                                                           master_display=master_display_sample,
-                                                          max_content_light_level= 800,
+                                                          max_content_light_level=800,
                                                           max_picture_average_light_level=400,
                                                           sample_aspect_ratio_numerator=2.0,
                                                           sample_aspect_ratio_denominator=3.0,

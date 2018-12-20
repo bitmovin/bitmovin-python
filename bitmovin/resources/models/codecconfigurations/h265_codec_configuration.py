@@ -174,7 +174,7 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
             raise InvalidTypeError(
                 'Invalid type {} for tuIntraDepth: must be either str or TUIntraDepth!'.format(
                     type(new_tu_intra_depth)))
-        
+
     @property
     def tuInterDepth(self):
         if self._tuInterDepth is not None:
@@ -311,7 +311,7 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         aspect_ratio_denominator = json_object.get('sampleAspectRatioDenominator')
         adaptive_quantization_mode = json_object.get('adaptiveQuantizationMode')
         psy_rate_distortion_optimization = json_object.get('psyRateDistortionOptimization')
-        psy_rate_distortion_optimization_quantization = json_object.get('psyRateDistortionOptimizedQuantization')        
+        psy_rate_distortion_optimization_quantization = json_object.get('psyRateDistortionOptimizedQuantization')
 
         color_config = None
         color_config_json = json_object.get('colorConfig')
