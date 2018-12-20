@@ -69,3 +69,4 @@ from .av1_rate_control_mode import AV1RateControlMode
 from .av1_adaptive_quant_mode import AV1AdaptiveQuantMode
 from .iv_size import IvSize
 from .h264_adaptive_quantization_mode import H264AdaptiveQuantizationMode
+from .h265_adaptive_quantization_mode import H265AdaptiveQuantizationMode
