@@ -6,7 +6,7 @@ from bitmovin.utils import Serializable
 
 class PlayReadyDRM(DRM, Serializable):
 
-    def __init__(self, kid, method, key_seed=None, la_url=None, outputs=None, id_=None, custom_data=None,
+    def __init__(self, key_seed=None, kid=None, method=None, la_url=None, outputs=None, id_=None, custom_data=None,
                  name=None, description=None, key=None):
         super().__init__(id_=id_, custom_data=custom_data, outputs=outputs, name=name, description=description)
         self._method = None

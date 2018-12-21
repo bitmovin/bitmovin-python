@@ -217,6 +217,7 @@ class PlayReadyDRMTests(BitmovinTestCase):
 
         self.assertEqual(first.kid, second.kid)
         self.assertEqual(first.keySeed, second.keySeed)
+        self.assertEqual(first.key, second.key)
         self.assertEqual(first.method, second.method)
         self.assertEqual(first.laUrl, second.laUrl)
         self.assertEqual(len(first.outputs), len(second.outputs))
