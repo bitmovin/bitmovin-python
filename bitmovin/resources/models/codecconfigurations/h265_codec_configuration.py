@@ -1,6 +1,6 @@
 from bitmovin.errors import InvalidTypeError
 from bitmovin.resources.enums import H265Profile, H265Level, BAdapt, MaxCTUSize, TUInterDepth, TUIntraDepth, \
-    MotionSearch, VideoFormat
+    MotionSearch, VideoFormat, H265AdaptiveQuantizationMode
 from bitmovin.utils import Serializable
 
 from .video_codec_configuration import VideoCodecConfiguration
@@ -17,7 +17,8 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
                  pixel_format=None, color_config=None, max_keyframe_interval=None, min_keyframe_interval=None,
                  scene_cut_threshold=None, enable_hlg_signaling=None, video_format=None, hdr=None, master_display=None,
                  max_content_light_level=None, max_picture_average_light_level=None, sample_aspect_ratio_numerator=None,
-                 sample_aspect_ratio_denominator=None):
+                 sample_aspect_ratio_denominator=None, adaptive_quantization_mode=None, psy_rate_distortion_optimization=None,
+                 psy_rate_distortion_optimization_quantization=None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description, bitrate=bitrate,
                          rate=rate, width=width, height=height, pixel_format=pixel_format)
@@ -66,6 +67,10 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         self.maxPictureAverageLightLevel = max_picture_average_light_level
         self.sampleAspectRatioNumerator = sample_aspect_ratio_numerator
         self.sampleAspectRatioDenominator = sample_aspect_ratio_denominator
+        self._adaptive_quantization_mode = None
+        self.adaptiveQuantizationMode = adaptive_quantization_mode
+        self.psyRateDistortionOptimization = psy_rate_distortion_optimization
+        self.psyRateDistortionOptimizedQuantization = psy_rate_distortion_optimization_quantization
 
     @property
     def colorConfig(self):
@@ -169,7 +174,7 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
             raise InvalidTypeError(
                 'Invalid type {} for tuIntraDepth: must be either str or TUIntraDepth!'.format(
                     type(new_tu_intra_depth)))
-        
+
     @property
     def tuInterDepth(self):
         if self._tuInterDepth is not None:
@@ -239,6 +244,24 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
             raise InvalidTypeError(
                 'Invalid type {} for videoFormat: must be either str or VideoFormat!'.format(type(new_value)))
 
+    @property
+    def adaptiveQuantizationMode(self):
+        return self._adaptive_quantization_mode
+
+    @adaptiveQuantizationMode.setter
+    def adaptiveQuantizationMode(self, new_adaptive_quantization_mode):
+        if new_adaptive_quantization_mode is None:
+            self._adaptive_quantization_mode = None
+        elif isinstance(new_adaptive_quantization_mode, str):
+            self._adaptive_quantization_mode = new_adaptive_quantization_mode
+        elif isinstance(new_adaptive_quantization_mode, H265AdaptiveQuantizationMode):
+            self._adaptive_quantization_mode = new_adaptive_quantization_mode.value
+        else:
+            raise InvalidTypeError(
+                'Invalid type {} for adaptiveQuantizationMode: '.format(type(new_adaptive_quantization_mode)) +
+                'must be either str or H265AdaptiveQuantizationMode.'
+            )
+
     @classmethod
     def parse_from_json_object(cls, json_object):
         video_codec_configuration = VideoCodecConfiguration.parse_from_json_object(json_object=json_object)
@@ -286,6 +309,9 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         max_picture_average_light_level = json_object.get('maxPictureAverageLightLevel')
         aspect_ratio_numerator = json_object.get('sampleAspectRatioNumerator')
         aspect_ratio_denominator = json_object.get('sampleAspectRatioDenominator')
+        adaptive_quantization_mode = json_object.get('adaptiveQuantizationMode')
+        psy_rate_distortion_optimization = json_object.get('psyRateDistortionOptimization')
+        psy_rate_distortion_optimization_quantization = json_object.get('psyRateDistortionOptimizedQuantization')
 
         color_config = None
         color_config_json = json_object.get('colorConfig')
@@ -336,7 +362,10 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
                                                           max_content_light_level=max_content_light_level,
                                                           max_picture_average_light_level=max_picture_average_light_level,
                                                           sample_aspect_ratio_numerator=aspect_ratio_numerator,
-                                                          sample_aspect_ratio_denominator=aspect_ratio_denominator)
+                                                          sample_aspect_ratio_denominator=aspect_ratio_denominator,
+                                                          adaptive_quantization_mode=adaptive_quantization_mode,
+                                                          psy_rate_distortion_optimization=psy_rate_distortion_optimization,
+                                                          psy_rate_distortion_optimization_quantization=psy_rate_distortion_optimization_quantization)
 
         return h265_codec_configuration
 
@@ -351,6 +380,7 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         serialized['motionSearch'] = self.motionSearch
         serialized['crf'] = self.crf
         serialized['videoFormat'] = self.videoFormat
+        serialized['adaptiveQuantizationMode'] = self.adaptiveQuantizationMode
 
         if isinstance(self.colorConfig, ColorConfig):
             serialized['colorConfig'] = self.colorConfig.serialize()
