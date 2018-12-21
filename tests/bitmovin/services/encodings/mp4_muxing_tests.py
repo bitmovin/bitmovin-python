@@ -1,9 +1,8 @@
 import unittest
 import uuid
 import json
-from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, EncodingStatus, \
-    MP4Muxing, MuxingStream, ACLPermission, SelectionMode, MP4MuxingManifestType, stream_conditions_mode, \
-    StreamConditionsMode
+from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, \
+    MP4Muxing, MuxingStream, ACLPermission, SelectionMode, MP4MuxingManifestType, StreamConditionsMode
 from bitmovin.errors import BitmovinApiError
 from bitmovin.resources.models.encodings.muxings.time_code import TimeCode
 from tests.bitmovin import BitmovinTestCase
