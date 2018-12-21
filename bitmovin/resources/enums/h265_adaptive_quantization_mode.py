@@ -1,0 +1,8 @@
+import enum
+
+
+class H265AdaptiveQuantizationMode(enum.Enum):
+    DISABLED = 'DISABLED'
+    VARIANCE = 'VARIANCE'
+    AUTO_VARIANCE = 'AUTO_VARIANCE'
+    AUTO_VARIANCE_DARK_SCENES = 'AUTO_VARIANCE_DARK_SCENES'
