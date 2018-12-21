@@ -2,7 +2,8 @@ import unittest
 import uuid
 import json
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, EncodingStatus, \
-    MP4Muxing, MuxingStream, ACLPermission, SelectionMode, MP4MuxingManifestType
+    MP4Muxing, MuxingStream, ACLPermission, SelectionMode, MP4MuxingManifestType, stream_conditions_mode, \
+    StreamConditionsMode
 from bitmovin.errors import BitmovinApiError
 from bitmovin.resources.models.encodings.muxings.time_code import TimeCode
 from tests.bitmovin import BitmovinTestCase
@@ -173,6 +174,7 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
         self.assertEqual(first.fragmentDuration, second.fragmentDuration)
         self.assertTrue(self._compare_time_code(first.timeCode, second.timeCode))
         self.assertEqual(first.fragmentedMP4MuxingManifestType, second.fragmentedMP4MuxingManifestType)
+        self.assertEqual(first.stream_conditions_mode, second.stream_conditions_mode)
         return True
 
     def _get_sample_muxing(self):
@@ -193,7 +195,8 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
                            outputs=stream.outputs,
                            name='Sample MP4 Muxing',
                            fragment_duration=5,
-                           time_code=time_code)
+                           time_code=time_code,
+                           stream_conditions_mode=StreamConditionsMode.DROP_MUXING)
         return muxing
 
     def _get_sample_stream(self):
