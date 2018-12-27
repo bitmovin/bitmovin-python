@@ -7,7 +7,8 @@ class TimeBasedTrimmingInputStream(RestService):
     BASE_ENDPOINT_URL = 'encoding/encodings/{encoding_id}/input-streams/trimming/time-based'
 
     def __init__(self, http_client):
-        super().__init__(http_client=http_client, relative_url=self.BASE_ENDPOINT_URL, class_=TimeBasedTrimmingInputStreamResource)
+        super().__init__(http_client=http_client, relative_url=self.BASE_ENDPOINT_URL,
+                         class_=TimeBasedTrimmingInputStreamResource)
 
     def _get_endpoint_url(self, encoding_id):
         if not encoding_id:
@@ -33,4 +34,3 @@ class TimeBasedTrimmingInputStream(RestService):
     def retrieve_custom_data(self, encoding_id, stream_id):
         self.relative_url = self._get_endpoint_url(encoding_id=encoding_id)
         return super().retrieve_custom_data(id_=stream_id)
-

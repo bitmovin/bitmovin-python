@@ -33,4 +33,3 @@ class IngestInputStream(RestService):
     def retrieve_custom_data(self, encoding_id, stream_id):
         self.relative_url = self._get_endpoint_url(encoding_id=encoding_id)
         return super().retrieve_custom_data(id_=stream_id)
-

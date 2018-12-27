@@ -7,6 +7,8 @@ from .input_analysis_service import InputAnalysisService
 from .ingest_input_stream_service import IngestInputStream
 from .concatenation_input_stream_service import ConcatenationInputStream
 from .time_based_trimming_input_stream_service import TimeBasedTrimmingInputStream
+from .time_code_track_trimming_input_stream_service import TimeCodeTrackTrimmingInputStream
+from .h264_picture_timing_trimming_input_stream_service import H264PictureTimingTrimmingInputStream
 
 
 class EncodingService(BitmovinObject):
@@ -21,3 +23,5 @@ class EncodingService(BitmovinObject):
         self.IngestInputStream = IngestInputStream(http_client=self.http_client)
         self.ConcatenationInputStream = ConcatenationInputStream(http_client=self.http_client)
         self.TimeBasedTrimmingInputStream = TimeBasedTrimmingInputStream(http_client=self.http_client)
+        self.TimeCodeTrackTrimmingInputStream = TimeCodeTrackTrimmingInputStream(http_client=self.http_client)
+        self.H264PictureTimingTrimmingInputStream = H264PictureTimingTrimmingInputStream(http_client=self.http_client)

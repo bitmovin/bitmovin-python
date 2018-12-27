@@ -1,14 +1,14 @@
 from bitmovin.errors import MissingArgumentError
-from bitmovin.resources.models import ConcatenationInputStream as ConcatenationInputStreamResource
+from bitmovin.resources.models import TimeCodeTrackTrimmingInputStream as TimeCodeTrackTrimmingInputStreamResource
 from ..rest_service import RestService
 
 
-class ConcatenationInputStream(RestService):
-    BASE_ENDPOINT_URL = 'encoding/encodings/{encoding_id}/input-streams/concatenation'
+class TimeCodeTrackTrimmingInputStream(RestService):
+    BASE_ENDPOINT_URL = 'encoding/encodings/{encoding_id}/input-streams/trimming/timecode-track'
 
     def __init__(self, http_client):
         super().__init__(http_client=http_client, relative_url=self.BASE_ENDPOINT_URL,
-                         class_=ConcatenationInputStreamResource)
+                         class_=TimeCodeTrackTrimmingInputStreamResource)
 
     def _get_endpoint_url(self, encoding_id):
         if not encoding_id:
