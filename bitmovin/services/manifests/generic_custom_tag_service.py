@@ -1,5 +1,4 @@
 from bitmovin.errors import MissingArgumentError
-
 from bitmovin.resources.models.manifests.hls.custom_tag import CustomTag
 from bitmovin.services.rest_service import RestService
 
@@ -9,7 +8,7 @@ class GenericCustomTagService(RestService):
 
     def __init__(self, http_client, custom_tag_type):
         if not custom_tag_type:
-            raise MissingArgumentError('manifest_type must be given')
+            raise MissingArgumentError('custom_tag_type must be given')
 
         self.custom_tag_type = custom_tag_type
         self.relative_url = self.BASE_ENDPOINT_URL.replace('{type}', custom_tag_type)

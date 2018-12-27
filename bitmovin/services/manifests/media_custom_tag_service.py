@@ -1,5 +1,3 @@
-from bitmovin.errors import MissingArgumentError
-
 from bitmovin.services.manifests.generic_custom_tag_service import GenericCustomTagService
 
 
@@ -7,7 +5,6 @@ class MediaCustomTag(GenericCustomTagService):
     custom_tag_type = 'media'
 
     def __init__(self, http_client):
-
         super().__init__(http_client=http_client, custom_tag_type=self.custom_tag_type)
 
     def create(self, object_, manifest_id, media_id):
