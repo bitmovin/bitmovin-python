@@ -2,7 +2,7 @@ import unittest
 import json
 from bitmovin import Bitmovin, Response, H265CodecConfiguration, H265Profile, H265Level, BAdapt, MaxCTUSize, \
     TUIntraDepth, TUInterDepth, MotionSearch, ChromaLocation, ColorSpace, ColorPrimaries, ColorRange, ColorTransfer, \
-    InputColorSpace, InputColorRange, ColorConfig, VideoFormat
+    InputColorSpace, InputColorRange, ColorConfig, VideoFormat, H265AdaptiveQuantizationMode
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
 
@@ -220,6 +220,9 @@ class H265CodecConfigurationTests(BitmovinTestCase):
         self.assertEqual(first.maxPictureAverageLightLevel, second.maxPictureAverageLightLevel)
         self.assertEqual(first.sampleAspectRatioNumerator, second.sampleAspectRatioNumerator)
         self.assertEqual(first.sampleAspectRatioDenominator, second.sampleAspectRatioDenominator)
+        self.assertEqual(first.adaptiveQuantizationMode, second.adaptiveQuantizationMode)
+        self.assertEqual(first.psyRateDistortionOptimization, second.psyRateDistortionOptimization)
+        self.assertEqual(first.psyRateDistortionOptimizedQuantization, second.psyRateDistortionOptimizedQuantization)
         self.assertTrue(self._compare_color_configs(first.colorConfig, second.colorConfig))
 
         return True
@@ -281,10 +284,13 @@ class H265CodecConfigurationTests(BitmovinTestCase):
                                                           min_keyframe_interval=3,
                                                           hdr=True,
                                                           master_display=master_display_sample,
-                                                          max_content_light_level= 800,
+                                                          max_content_light_level=800,
                                                           max_picture_average_light_level=400,
                                                           sample_aspect_ratio_numerator=2.0,
                                                           sample_aspect_ratio_denominator=3.0,
+                                                          adaptive_quantization_mode=H265AdaptiveQuantizationMode.AUTO_VARIANCE,
+                                                          psy_rate_distortion_optimization=0,
+                                                          psy_rate_distortion_optimization_quantization=0,
                                                           color_config=ColorConfig(
                                                               copy_chroma_location_flag=True,
                                                               copy_color_space_flag=True,
@@ -331,6 +337,9 @@ class H265CodecConfigurationTests(BitmovinTestCase):
         self.assertIsNotNone(h265_codec_configuration.maxPictureAverageLightLevel)
         self.assertIsNotNone(h265_codec_configuration.sampleAspectRatioNumerator)
         self.assertIsNotNone(h265_codec_configuration.sampleAspectRatioDenominator)
+        self.assertIsNotNone(h265_codec_configuration.adaptiveQuantizationMode)
+        self.assertIsNotNone(h265_codec_configuration.psyRateDistortionOptimization)
+        self.assertIsNotNone(h265_codec_configuration.psyRateDistortionOptimizedQuantization)
 
         return h265_codec_configuration
 

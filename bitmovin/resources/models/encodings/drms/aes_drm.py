@@ -3,7 +3,7 @@ from .drm import DRM
 
 class AESDRM(DRM):
 
-    def __init__(self, method, key, key_file_uri, iv=None, outputs=None, id_=None, custom_data=None,
+    def __init__(self, method, key, key_file_uri=None, iv=None, outputs=None, id_=None, custom_data=None,
                  description=None, name=None):
 
         super().__init__(id_=id_, custom_data=custom_data, outputs=outputs, name=name, description=description)
@@ -22,7 +22,7 @@ class AESDRM(DRM):
         description = drm.description
         method = json_object['method']
         key = json_object['key']
-        key_file_uri = json_object['keyFileUri']
+        key_file_uri = json_object.get('keyFileUri')
         iv = json_object.get('iv')
 
         aes_drm = AESDRM(method=method, key=key, key_file_uri=key_file_uri, iv=iv, outputs=outputs, id_=id_,

@@ -57,6 +57,21 @@ class PlayReadyDRMTests(BitmovinTestCase):
         self.assertIsNotNone(created_drm_response.resource.id)
         drm_resource = created_drm_response.resource  # type: PlayReadyDRM
         self._compare_drms(sample_drm, drm_resource)
+        
+    def test_create_playready_key(self):
+        fmp4_muxing = self._create_muxing()  # type: FMP4Muxing
+        self.assertIsNotNone(fmp4_muxing.id)
+        sample_drm = self._get_sample_drm_playready_key()
+        sample_drm.outputs = fmp4_muxing.outputs
+
+        created_drm_response = self.bitmovin.encodings.Muxing.FMP4.DRM.PlayReady.create(
+            object_=sample_drm, encoding_id=self.sampleEncoding.id, muxing_id=fmp4_muxing.id)
+
+        self.assertIsNotNone(created_drm_response)
+        self.assertIsNotNone(created_drm_response.resource)
+        self.assertIsNotNone(created_drm_response.resource.id)
+        drm_resource = created_drm_response.resource  # type: PlayReadyDRM
+        self._compare_drms(sample_drm, drm_resource)
 
     def test_assign_unsuitable_playready_method(self):
         sample_drm = self._get_sample_drm_playready_piff()
@@ -202,6 +217,7 @@ class PlayReadyDRMTests(BitmovinTestCase):
 
         self.assertEqual(first.kid, second.kid)
         self.assertEqual(first.keySeed, second.keySeed)
+        self.assertEqual(first.key, second.key)
         self.assertEqual(first.method, second.method)
         self.assertEqual(first.laUrl, second.laUrl)
         self.assertEqual(len(first.outputs), len(second.outputs))
@@ -245,6 +261,17 @@ class PlayReadyDRMTests(BitmovinTestCase):
                            name='Sample Playready PIFF DRM')
 
         return drm
+    
+    def _get_sample_drm_playready_key(self):
+        playready_drm_settings = self.settings.get('sampleObjects').get('drmConfigurations').get('PlayReady')
+
+        drm = PlayReadyDRM(key=playready_drm_settings[0].get('key'),
+                           kid=playready_drm_settings[0].get('kid'),
+                           method=playready_drm_settings[0].get('method'),
+                           la_url=playready_drm_settings[0].get('laUrl'),
+                           name='Sample Playready DRM')
+
+        return drm    
 
     def _get_sample_muxing(self):
         stream = self._get_sample_stream()
