@@ -19,18 +19,18 @@ class TimeCodeTrackTrimmingInputStream(RestService):
         self.relative_url = self._get_endpoint_url(encoding_id=encoding_id)
         return super().create(object_)
 
-    def delete(self, encoding_id, stream_id):
+    def delete(self, encoding_id, input_stream_id):
         self.relative_url = self._get_endpoint_url(encoding_id=encoding_id)
-        return super().delete(id_=stream_id)
+        return super().delete(id_=input_stream_id)
 
-    def retrieve(self, encoding_id, stream_id):
+    def retrieve(self, encoding_id, input_stream_id):
         self.relative_url = self._get_endpoint_url(encoding_id=encoding_id)
-        return super().retrieve(id_=stream_id)
+        return super().retrieve(id_=input_stream_id)
 
     def list(self, encoding_id, offset=None, limit=None):
         self.relative_url = self._get_endpoint_url(encoding_id=encoding_id)
         return super().list(offset, limit)
 
-    def retrieve_custom_data(self, encoding_id, stream_id):
+    def retrieve_custom_data(self, encoding_id, input_stream_id):
         self.relative_url = self._get_endpoint_url(encoding_id=encoding_id)
-        return super().retrieve_custom_data(id_=stream_id)
+        return super().retrieve_custom_data(id_=input_stream_id)
