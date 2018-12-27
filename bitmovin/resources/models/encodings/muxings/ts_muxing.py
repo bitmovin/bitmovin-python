@@ -4,10 +4,11 @@ from .muxing import Muxing
 class TSMuxing(Muxing):
 
     def __init__(self, streams, segment_length, segment_naming=None, outputs=None, id_=None, custom_data=None,
-                 name=None, description=None, avg_bitrate=None, max_bitrate=None, min_bitrate=None, ignored_by=None):
+                 name=None, description=None, avg_bitrate=None, max_bitrate=None, min_bitrate=None, ignored_by=None,
+                 stream_conditions_mode=None):
         super().__init__(id_=id_, custom_data=custom_data, streams=streams, outputs=outputs,
                          name=name, description=description, avg_bitrate=avg_bitrate, max_bitrate=max_bitrate,
-                         min_bitrate=min_bitrate, ignored_by=ignored_by)
+                         min_bitrate=min_bitrate, ignored_by=ignored_by, stream_conditions_mode=stream_conditions_mode)
         self.segmentLength = segment_length
         self.segmentNaming = segment_naming
 
@@ -15,23 +16,21 @@ class TSMuxing(Muxing):
     def parse_from_json_object(cls, json_object):
         muxing = super().parse_from_json_object(json_object=json_object)
 
-        id_ = muxing.id
-        custom_data = muxing.customData
-        streams = muxing.streams
-        outputs = muxing.outputs
-        name = muxing.name
-        description = muxing.description
-        max_bitrate = muxing.maxBitrate
-        min_bitrate = muxing.minBitrate
-        avg_bitrate = muxing.avgBitrate
-        ignored_by = muxing.ignored_by
-
         segment_length = json_object['segmentLength']
         segment_naming = json_object.get('segmentNaming')
 
-        ts_muxing = TSMuxing(streams=streams, segment_length=segment_length, segment_naming=segment_naming,
-                             outputs=outputs, id_=id_, custom_data=custom_data, name=name, description=description,
-                             max_bitrate=max_bitrate, avg_bitrate=avg_bitrate, min_bitrate=min_bitrate,
-                             ignored_by=ignored_by)
+        ts_muxing = TSMuxing(segment_length=segment_length,
+                             segment_naming=segment_naming,
+                             id_=muxing.id,
+                             streams=muxing.streams,
+                             outputs=muxing.outputs,
+                             custom_data=muxing.customData,
+                             name=muxing.name,
+                             description=muxing.description,
+                             ignored_by=muxing.ignored_by,
+                             stream_conditions_mode=muxing.stream_conditions_mode,
+                             max_bitrate=muxing.maxBitrate,
+                             avg_bitrate=muxing.avgBitrate,
+                             min_bitrate=muxing.minBitrate)
 
         return ts_muxing
