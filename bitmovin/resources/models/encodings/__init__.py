@@ -29,7 +29,5 @@ from .pertitle import PerTitle, PerTitleConfiguration, H264PerTitleConfiguration
     VP9PerTitleConfiguration, AutoRepresentation
 from .captions import BurnInSrtSubtitle
 from .encoding_input import EncodingInput
-from .ingest_input_stream import IngestInputStream
-from .concatenation_input_stream_configuration import ConcatenationInputStreamConfiguration
-from .concatenation_input_stream import ConcatenationInputStream
-from .time_based_trimming_input_stream import TimeBasedTrimmingInputStream
+from .inputstreams import IngestInputStream, ConcatenationInputStreamConfiguration, ConcatenationInputStream, \
+    TimeBasedTrimmingInputStream, TimeCodeTrackTrimmingInputStream, H264PictureTimingTrimmingInputStream
