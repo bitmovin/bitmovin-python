@@ -70,6 +70,7 @@ class AESDRMTests(BitmovinTestCase):
         self.assertIsNotNone(created_drm_response.resource.id)
         drm_resource = created_drm_response.resource  # type: AESDRM
         self._compare_drms(sample_drm, drm_resource)
+        self.assertIsNone(created_drm_response.resource.keyFileUri)
 
     def test_create_drm_sample_aes(self):
         ts_muxing = self._create_muxing()
