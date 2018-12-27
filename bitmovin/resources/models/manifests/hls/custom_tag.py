@@ -1,7 +1,5 @@
 from bitmovin.utils import Serializable
-
 from bitmovin.errors import InvalidTypeError
-
 from bitmovin.resources import AbstractIdResource
 from bitmovin.resources.enums.position_mode import PositionMode
 
@@ -27,7 +25,6 @@ class CustomTag(AbstractIdResource, Serializable):
     def positionMode(self, new_position_mode):
         if new_position_mode is None:
             self._positionMode = None
-            return
         elif isinstance(new_position_mode, str):
             self._positionMode = new_position_mode
         elif isinstance(new_position_mode, PositionMode):
