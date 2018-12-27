@@ -27,14 +27,14 @@ encoding_profiles = [dict(height=240, bitrate=500, fps=None),
                      dict(height=480, bitrate=1500, fps=None),
                      dict(height=720, bitrate=2000, fps=None)]
 
-# Ad insertion points in second
-ad_insertion_points = [30.00, 90.00, 180.00]
-
 # Set the following to True if you want to insert an encoded video at the keyframes.
 # If set to False, multi-period will still be created at the keyframes but no additional Period will be inserted for ads
 INSERT_PRE_ROLL = False
 INSERT_MID_ROLLS = True
 INSERT_POST_ROLL = False
+
+# Ad insertion points in second
+midroll_ad_insertion_points = [30.00, 90.00, 180.00]
 
 AD_HTTPS_INPUT_HOST = '<INSERT_THE_HTTP_HOST_FOR_THE_AD>'
 AD_HTTPS_INPUT_PATH = '<INSERT_THE_HTTP_PATH_FOR_THE_AD>'
@@ -80,13 +80,13 @@ def main():
     https_input = bitmovin.inputs.HTTPS.create(https_input).resource
 
     # Create an Encoding. This will run in AWS_EU_WEST_1. This is the base entity used to configure the encoding.
-    encoding = Encoding(name="Multiperiod Dash - Content",
+    encoding = Encoding(name="Multiperiod DASH - Content",
                         cloud_region=CloudRegion.AWS_EU_WEST_1)
     encoding = bitmovin.encodings.Encoding.create(encoding).resource
 
     # Generate keyframes
     keyframes = []
-    for point in ad_insertion_points:
+    for point in midroll_ad_insertion_points:
         keyframe = Keyframe(time=point, segment_cut=True)
         keyframe = bitmovin.encodings.Keyframe.create(object_=keyframe, encoding_id=encoding.id).resource
         keyframes.append(keyframe)

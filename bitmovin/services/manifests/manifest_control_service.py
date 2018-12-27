@@ -57,7 +57,7 @@ class ManifestControlService(BitmovinObject):
         status_response = None
         manifest_status = ManifestStatus()
 
-        start_time=time.time()
+        start_time = time.time()
 
         while manifest_status.status != 'FINISHED' and manifest_status.status != 'ERROR':
             TimeoutUtils.raise_error_if_timeout_reached(start_time_in_seconds=start_time, timeout_in_seconds=timeout)

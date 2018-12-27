@@ -41,7 +41,6 @@ class AESDRMTests(BitmovinTestCase):
         drm_resource = created_drm_response.resource  # type: AESDRM
         self._compare_drms(sample_drm, drm_resource)
 
-
     def test_create_drm_aes_128_without_name(self):
         ts_muxing = self._create_muxing()  # type: TSMuxing
         self.assertIsNotNone(ts_muxing.id)
@@ -56,6 +55,22 @@ class AESDRMTests(BitmovinTestCase):
         self.assertIsNotNone(created_drm_response.resource.id)
         drm_resource = created_drm_response.resource  # type: AESDRM
         self._compare_drms(sample_drm, drm_resource)
+
+    def test_create_drm_aes_128_no_keyfile(self):
+        ts_muxing = self._create_muxing()  # type: TSMuxing
+        self.assertIsNotNone(ts_muxing.id)
+        sample_drm = self._get_sample_drm_aes_128()
+        sample_drm.keyFileUri = None
+        sample_drm.outputs = ts_muxing.outputs
+        created_drm_response = self.bitmovin.encodings.Muxing.TS.DRM.AES.create(object_=sample_drm,
+                                                                                encoding_id=self.sampleEncoding.id,
+                                                                                muxing_id=ts_muxing.id)
+        self.assertIsNotNone(created_drm_response)
+        self.assertIsNotNone(created_drm_response.resource)
+        self.assertIsNotNone(created_drm_response.resource.id)
+        drm_resource = created_drm_response.resource  # type: AESDRM
+        self._compare_drms(sample_drm, drm_resource)
+        self.assertIsNone(created_drm_response.resource.keyFileUri)
 
     def test_create_drm_sample_aes(self):
         ts_muxing = self._create_muxing()
