@@ -2,12 +2,12 @@ import unittest
 import uuid
 import json
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, \
-    ProgressiveTSMuxing, MuxingStream, ACLPermission, SelectionMode
+    ProgressiveTSMuxing, MuxingStream, ACLPermission, SelectionMode, StreamConditionsMode
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
 
 
-class EncodingTSMuxingTests(BitmovinTestCase):
+class EncodingProgressiveTSMuxingTests(BitmovinTestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -138,6 +138,42 @@ class EncodingTSMuxingTests(BitmovinTestCase):
 
         custom_data = custom_data_response.resource
         self.assertEqual(sample_muxing.customData, json.loads(custom_data.customData))
+
+    def test_create_stream_conditions_mode_drop_muxing(self):
+        sample_muxing = self._get_sample_muxing()
+
+        sample_muxing.stream_conditions_mode = StreamConditionsMode.DROP_MUXING
+
+        muxing_resource_response = self.bitmovin.encodings.Muxing.ProgressiveTS.create(
+            object_=sample_muxing,
+            encoding_id=self.sampleEncoding.id
+        )
+
+        self.assertIsNotNone(muxing_resource_response)
+        self.assertIsNotNone(muxing_resource_response.resource)
+        self.assertIsNotNone(muxing_resource_response.resource.id)
+        self._compare_muxings(sample_muxing, muxing_resource_response.resource)
+
+        self.assertEqual(StreamConditionsMode.DROP_MUXING.value,
+                         muxing_resource_response.resource.stream_conditions_mode)
+
+    def test_create_stream_conditions_mode_drop_stream(self):
+        sample_muxing = self._get_sample_muxing()
+
+        sample_muxing.stream_conditions_mode = StreamConditionsMode.DROP_STREAM
+
+        muxing_resource_response = self.bitmovin.encodings.Muxing.ProgressiveTS.create(
+            object_=sample_muxing,
+            encoding_id=self.sampleEncoding.id
+        )
+
+        self.assertIsNotNone(muxing_resource_response)
+        self.assertIsNotNone(muxing_resource_response.resource)
+        self.assertIsNotNone(muxing_resource_response.resource.id)
+        self._compare_muxings(sample_muxing, muxing_resource_response.resource)
+
+        self.assertEqual(StreamConditionsMode.DROP_STREAM.value,
+                         muxing_resource_response.resource.stream_conditions_mode)
 
     def _compare_muxings(self, first: ProgressiveTSMuxing, second: ProgressiveTSMuxing):
         """

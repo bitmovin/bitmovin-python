@@ -145,6 +145,36 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
         custom_data = custom_data_response.resource
         self.assertEqual(sample_muxing.customData, json.loads(custom_data.customData))
 
+    def test_create_stream_conditions_mode_drop_muxing(self):
+        sample_muxing = self._get_sample_muxing()
+
+        sample_muxing.stream_conditions_mode = StreamConditionsMode.DROP_MUXING
+
+        muxing_resource_response = self.bitmovin.encodings.Muxing.MP4.create(object_=sample_muxing,
+                                                                             encoding_id=self.sampleEncoding.id)
+        self.assertIsNotNone(muxing_resource_response)
+        self.assertIsNotNone(muxing_resource_response.resource)
+        self.assertIsNotNone(muxing_resource_response.resource.id)
+        self._compare_muxings(sample_muxing, muxing_resource_response.resource)
+
+        self.assertEqual(StreamConditionsMode.DROP_MUXING.value,
+                         muxing_resource_response.resource.stream_conditions_mode)
+
+    def test_create_stream_conditions_mode_drop_stream(self):
+        sample_muxing = self._get_sample_muxing()
+
+        sample_muxing.stream_conditions_mode = StreamConditionsMode.DROP_STREAM
+
+        muxing_resource_response = self.bitmovin.encodings.Muxing.MP4.create(object_=sample_muxing,
+                                                                             encoding_id=self.sampleEncoding.id)
+        self.assertIsNotNone(muxing_resource_response)
+        self.assertIsNotNone(muxing_resource_response.resource)
+        self.assertIsNotNone(muxing_resource_response.resource.id)
+        self._compare_muxings(sample_muxing, muxing_resource_response.resource)
+
+        self.assertEqual(StreamConditionsMode.DROP_STREAM.value,
+                         muxing_resource_response.resource.stream_conditions_mode)
+
     def _compare_time_code(self, first: TimeCode, second: TimeCode):
         """
 
