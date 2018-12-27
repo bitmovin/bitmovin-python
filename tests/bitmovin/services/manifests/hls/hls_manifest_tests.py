@@ -1,7 +1,7 @@
 import unittest
 import uuid
 from bitmovin import Bitmovin, Response, ACLEntry, ACLPermission, EncodingOutput, HlsManifest, MuxingStream, FMP4Muxing, \
-    StreamInput, Stream, VariantStream
+    StreamInput, Stream, VariantStream, HlsVersion
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
 
@@ -38,6 +38,16 @@ class HlsManifestTests(BitmovinTestCase):
     def test_create_manifest_without_name(self):
         sample_manifest = self._get_sample_manifest()
         sample_manifest.name = None
+        manifest_resource_response = self.bitmovin.manifests.HLS.create(sample_manifest)
+        self.assertIsNotNone(manifest_resource_response)
+        self.assertIsNotNone(manifest_resource_response.resource)
+        self.assertIsNotNone(manifest_resource_response.resource.id)
+        self._compare_manifests(sample_manifest, manifest_resource_response.resource)
+
+    def test_create_manifest_custom_versions(self):
+        sample_manifest = self._get_sample_manifest()
+        sample_manifest.hlsMediaPlaylistVersion = HlsVersion.HLS_VERSION_7
+        sample_manifest.hlsMasterPlaylistVersion = HlsVersion.HLS_VERSION_7
         manifest_resource_response = self.bitmovin.manifests.HLS.create(sample_manifest)
         self.assertIsNotNone(manifest_resource_response)
         self.assertIsNotNone(manifest_resource_response.resource)
@@ -126,13 +136,15 @@ class HlsManifestTests(BitmovinTestCase):
         self.assertEqual(len(first.outputs), len(second.outputs))
         self.assertEqual(first.name, second.name)
         self.assertEqual(first.description, second.description)
+        self.assertEqual(first.hlsMediaPlaylistVersion, second.hlsMediaPlaylistVersion)
+        self.assertEqual(first.hlsMasterPlaylistVersion, second.hlsMasterPlaylistVersion)
         return True
 
     def _get_sample_manifest(self):
 
         encoding_output = self._get_sample_encoding_output()
         manifest = HlsManifest(manifest_name='bitmovin-python_Sample_HLS_Manifest.m3u8', outputs=[encoding_output],
-                                name='Sample HLS Manifest')
+                               name='Sample HLS Manifest')
 
         self.assertIsNotNone(manifest)
         self.assertIsNotNone(manifest.manifestName)

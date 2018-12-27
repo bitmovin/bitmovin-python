@@ -2,7 +2,7 @@ import unittest
 import uuid
 import json
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, ACLPermission, Encoding, \
-    EncodingStatus, WebMMuxing, MuxingStream, SelectionMode
+    WebMMuxing, MuxingStream, SelectionMode, StreamConditionsMode
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
 
@@ -111,7 +111,7 @@ class EncodingWebMMuxingTests(BitmovinTestCase):
         sample_muxing = self._get_sample_muxing()
         sample_muxing.customData = '<pre>my custom data</pre>'
         created_muxing_response = self.bitmovin.encodings.Muxing.WebM.create(object_=sample_muxing,
-                                                                        encoding_id=self.sampleEncoding.id)
+                                                                             encoding_id=self.sampleEncoding.id)
         self.assertIsNotNone(created_muxing_response)
         self.assertIsNotNone(created_muxing_response.resource)
         self.assertIsNotNone(created_muxing_response.resource.id)
@@ -123,6 +123,36 @@ class EncodingWebMMuxingTests(BitmovinTestCase):
 
         custom_data = custom_data_response.resource
         self.assertEqual(sample_muxing.customData, json.loads(custom_data.customData))
+
+    def test_create_stream_conditions_mode_drop_muxing(self):
+        sample_muxing = self._get_sample_muxing()
+
+        sample_muxing.stream_conditions_mode = StreamConditionsMode.DROP_MUXING
+
+        muxing_resource_response = self.bitmovin.encodings.Muxing.WebM.create(object_=sample_muxing,
+                                                                              encoding_id=self.sampleEncoding.id)
+        self.assertIsNotNone(muxing_resource_response)
+        self.assertIsNotNone(muxing_resource_response.resource)
+        self.assertIsNotNone(muxing_resource_response.resource.id)
+        self._compare_muxings(sample_muxing, muxing_resource_response.resource)
+
+        self.assertEqual(StreamConditionsMode.DROP_MUXING.value,
+                         muxing_resource_response.resource.stream_conditions_mode)
+
+    def test_create_stream_conditions_mode_drop_stream(self):
+        sample_muxing = self._get_sample_muxing()
+
+        sample_muxing.stream_conditions_mode = StreamConditionsMode.DROP_STREAM
+
+        muxing_resource_response = self.bitmovin.encodings.Muxing.WebM.create(object_=sample_muxing,
+                                                                              encoding_id=self.sampleEncoding.id)
+        self.assertIsNotNone(muxing_resource_response)
+        self.assertIsNotNone(muxing_resource_response.resource)
+        self.assertIsNotNone(muxing_resource_response.resource.id)
+        self._compare_muxings(sample_muxing, muxing_resource_response.resource)
+
+        self.assertEqual(StreamConditionsMode.DROP_STREAM.value,
+                         muxing_resource_response.resource.stream_conditions_mode)
 
     def _compare_muxings(self, first: WebMMuxing, second: WebMMuxing):
         """
