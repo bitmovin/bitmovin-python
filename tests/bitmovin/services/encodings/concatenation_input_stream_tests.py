@@ -27,17 +27,19 @@ class EncodingConcatenationInputStreamTests(BitmovinTestCase):
 
     def test_create_concatenation_input_stream(self):
         sample_concatenation_input_stream = self._get_sample_concatenation_input_stream()
+
         concatenation_input_stream_resource_response = self.bitmovin.encodings.ConcatenationInputStream.create(
             object_=sample_concatenation_input_stream,
             encoding_id=self.sampleEncoding.id
         )
+
         self.assertIsNotNone(concatenation_input_stream_resource_response)
         self.assertIsNotNone(concatenation_input_stream_resource_response.resource)
         self.assertIsNotNone(concatenation_input_stream_resource_response.resource.id)
 
         self._compare_concatenation_input_streams(
-            sample_concatenation_input_stream,
-            concatenation_input_stream_resource_response.resource
+            first=sample_concatenation_input_stream,
+            second=concatenation_input_stream_resource_response.resource
         )
 
     def test_retrieve_concatenation_input_stream(self):
@@ -53,21 +55,22 @@ class EncodingConcatenationInputStreamTests(BitmovinTestCase):
         self.assertIsNotNone(created_concatenation_input_stream_response.resource.id)
 
         self._compare_concatenation_input_streams(
-            sample_concatenation_input_stream,
-            created_concatenation_input_stream_response.resource
+            first=sample_concatenation_input_stream,
+            second=created_concatenation_input_stream_response.resource
         )
 
         retrieved_concatenation_input_stream_response = self.bitmovin.encodings.ConcatenationInputStream.retrieve(
-            stream_id=created_concatenation_input_stream_response.resource.id,
+            input_stream_id=created_concatenation_input_stream_response.resource.id,
             encoding_id=self.sampleEncoding.id
         )
 
         self.assertIsNotNone(retrieved_concatenation_input_stream_response)
         self.assertIsNotNone(retrieved_concatenation_input_stream_response.resource)
+        self.assertIsNotNone(retrieved_concatenation_input_stream_response.resource.id)
 
         self._compare_concatenation_input_streams(
-            created_concatenation_input_stream_response.resource,
-            retrieved_concatenation_input_stream_response.resource
+            first=created_concatenation_input_stream_response.resource,
+            second=retrieved_concatenation_input_stream_response.resource
         )
 
     def test_delete_concatenation_input_stream(self):
@@ -83,33 +86,26 @@ class EncodingConcatenationInputStreamTests(BitmovinTestCase):
         self.assertIsNotNone(created_concatenation_input_stream_response.resource.id)
 
         self._compare_concatenation_input_streams(
-            sample_concatenation_input_stream,
-            created_concatenation_input_stream_response.resource
+            first=sample_concatenation_input_stream,
+            second=created_concatenation_input_stream_response.resource
         )
 
         deleted_minimal_resource = self.bitmovin.encodings.ConcatenationInputStream.delete(
-            stream_id=created_concatenation_input_stream_response.resource.id,
+            input_stream_id=created_concatenation_input_stream_response.resource.id,
             encoding_id=self.sampleEncoding.id
         )
 
         self.assertIsNotNone(deleted_minimal_resource)
         self.assertIsNotNone(deleted_minimal_resource.resource)
         self.assertIsNotNone(deleted_minimal_resource.resource.id)
+        self.assertEqual(deleted_minimal_resource.resource.id, created_concatenation_input_stream_response.resource.id)
 
-        try:
+        with self.assertRaises(BitmovinApiError):
             self.bitmovin.encodings.ConcatenationInputStream.retrieve(
-                self.sampleEncoding.id,
-                created_concatenation_input_stream_response.resource.id
+                encoding_id=self.sampleEncoding.id,
+                input_stream_id=created_concatenation_input_stream_response.resource.id
             )
 
-            self.fail(
-                'Previous statement should have thrown an exception. ' +
-                'Retrieving stream after deleting it shouldn\'t be possible.'
-            )
-        except BitmovinApiError:
-            pass
-
-    @unittest.skip('Response currently missing RequestId')
     def test_list_streams(self):
         sample_concatenation_input_stream = self._get_sample_concatenation_input_stream()
 
@@ -123,8 +119,8 @@ class EncodingConcatenationInputStreamTests(BitmovinTestCase):
         self.assertIsNotNone(created_concatenation_input_stream_response.resource.id)
 
         self._compare_concatenation_input_streams(
-            sample_concatenation_input_stream,
-            created_concatenation_input_stream_response.resource
+            first=sample_concatenation_input_stream,
+            second=created_concatenation_input_stream_response.resource
         )
 
         concatenation_input_streams = self.bitmovin.encodings.ConcatenationInputStream.list(
@@ -138,6 +134,15 @@ class EncodingConcatenationInputStreamTests(BitmovinTestCase):
         self.assertIsInstance(concatenation_input_streams.response, Response)
         self.assertGreater(concatenation_input_streams.resource.__sizeof__(), 1)
 
+        retrieved_input_stream = concatenation_input_streams.resource[0]
+
+        self.assertIsNotNone(retrieved_input_stream)
+        self.assertIsInstance(retrieved_input_stream, ConcatenationInputStream)
+        self._compare_concatenation_input_streams(
+            first=retrieved_input_stream,
+            second=created_concatenation_input_stream_response.resource
+        )
+
     def _compare_concatenation_input_streams(self, first: ConcatenationInputStream, second: ConcatenationInputStream):
         """
 
@@ -145,10 +150,13 @@ class EncodingConcatenationInputStreamTests(BitmovinTestCase):
         :param second: ConcatenationInputStream
         :return: bool
         """
-        if first.concatenation:
-            self.assertEqual(len(first.concatenation), len(second.concatenation))
-            for i in range(len(first.concatenation)):
-                self._compare_concatenation_input_stream_configuration(first.concatenation[i], second.concatenation[i])
+
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
+        self.assertEqual(len(first.concatenation), len(second.concatenation))
+
+        for i in range(len(first.concatenation)):
+            self._compare_concatenation_input_stream_configuration(first.concatenation[i], second.concatenation[i])
 
         return True
 
@@ -164,6 +172,7 @@ class EncodingConcatenationInputStreamTests(BitmovinTestCase):
         self.assertEqual(first.inputStreamId, second.inputStreamId)
         self.assertEqual(first.isMain, second.isMain)
         self.assertEqual(first.position, second.position)
+
         return True
 
     def _get_sample_concatenation_input_stream(self):
@@ -190,7 +199,7 @@ class EncodingConcatenationInputStreamTests(BitmovinTestCase):
         )
 
         main_ingest_input_stream_resource_response = self.bitmovin.encodings.IngestInputStream.create(
-            object_=bumper_ingest_input_stream,
+            object_=main_ingest_input_stream,
             encoding_id=self.sampleEncoding.id
         )
 

@@ -131,6 +131,15 @@ class EncodingIngestInputStreamTests(BitmovinTestCase):
         self.assertIsInstance(ingest_input_streams.response, Response)
         self.assertGreater(ingest_input_streams.resource.__sizeof__(), 1)
 
+        retrieved_input_stream = ingest_input_streams.resource[0]
+
+        self.assertIsNotNone(retrieved_input_stream)
+        self.assertIsInstance(retrieved_input_stream, IngestInputStream)
+        self._compare_ingest_input_streams(
+            first=retrieved_input_stream,
+            second=created_ingest_input_stream_response.resource
+        )
+
     def _compare_ingest_input_streams(self, first: IngestInputStream, second: IngestInputStream):
         """
 
