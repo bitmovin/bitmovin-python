@@ -12,13 +12,13 @@ API_KEY = '<YOUR_API_KEY>'
 # https://<INSERT_YOUR_HTTP_HOST>/<INSERT_YOUR_HTTP_PATH>
 BUMPER_HTTPS_INPUT_HOST = '<INSERT_YOUR_HTTPS_HOST>'
 BUMPER_HTTPS_INPUT_PATH = '<INSERT_YOUR_HTTPS_PATH>'
-#Set your offset and duration value for the bumper here
+# Set your offset and duration value for the bumper here
 BUMPER_OFFSET = 10.0
 BUMPER_DURATION = 15.0
 
 MAIN_HTTPS_INPUT_HOST = '<INSERT_YOUR_HTTPS_HOST>'
 MAIN_HTTPS_INPUT_PATH = '<INSERT_YOUR_HTTPS_PATH>'
-#Set your offset and duration value for the main content here
+# Set your offset and duration value for the main content here
 MAIN_OFFSET = 10.0
 MAIN_DURATION = 15.0
 
@@ -77,38 +77,62 @@ def main():
                                                    selection_mode=SelectionMode.AUTO,
                                                    position=0)
 
-    bumper_ingest_input_stream = bitmovin.encodings.IngestInputStream.create(encoding_id=encoding.id,object_=bumper_ingest_input_stream).resource
+    bumper_ingest_input_stream = bitmovin.encodings.IngestInputStream.create(
+        encoding_id=encoding.id,
+        object_=bumper_ingest_input_stream
+    ).resource
 
-    bumper_time_based_trimming_input_stream = TimeBasedTrimmingInputStream(input_stream_id=bumper_ingest_input_stream.id, offset=BUMPER_OFFSET, duration=BUMPER_DURATION)
+    bumper_time_based_trimming_input_stream = TimeBasedTrimmingInputStream(
+        input_stream_id=bumper_ingest_input_stream.id,
+        offset=BUMPER_OFFSET,
+        duration=BUMPER_DURATION
+    )
 
-    bumper_time_based_trimming_input_stream = bitmovin.encodings.TimeBasedTrimmingInputStream.create(encoding_id=encoding.id, object_=bumper_time_based_trimming_input_stream).resource
+    bumper_time_based_trimming_input_stream = bitmovin.encodings.TimeBasedTrimmingInputStream.create(
+        encoding_id=encoding.id,
+        object_=bumper_time_based_trimming_input_stream
+    ).resource
 
     main_ingest_input_stream = IngestInputStream(input_id=main_https_input.id,
-                                                   input_path=MAIN_HTTPS_INPUT_PATH,
-                                                   selection_mode=SelectionMode.AUTO,
-                                                   position=0)                                                   
+                                                 input_path=MAIN_HTTPS_INPUT_PATH,
+                                                 selection_mode=SelectionMode.AUTO,
+                                                 position=0)
     
-    main_ingest_input_stream = bitmovin.encodings.IngestInputStream.create(encoding_id=encoding.id, object_=main_ingest_input_stream).resource
+    main_ingest_input_stream = bitmovin.encodings.IngestInputStream.create(encoding_id=encoding.id,
+                                                                           object_=main_ingest_input_stream).resource
 
-    main_time_based_trimming_input_stream = TimeBasedTrimmingInputStream(input_stream_id=main_ingest_input_stream.id, offset=MAIN_OFFSET, duration=BUMPER_DURATION)
+    main_time_based_trimming_input_stream = TimeBasedTrimmingInputStream(input_stream_id=main_ingest_input_stream.id,
+                                                                         offset=MAIN_OFFSET,
+                                                                         duration=BUMPER_DURATION)
 
-    main_time_based_trimming_input_stream = bitmovin.encodings.TimeBasedTrimmingInputStream.create(encoding_id=encoding.id, object_=main_time_based_trimming_input_stream).resource
+    main_time_based_trimming_input_stream = bitmovin.encodings.TimeBasedTrimmingInputStream.create(
+        encoding_id=encoding.id,
+        object_=main_time_based_trimming_input_stream
+    ).resource
 
 
-    bumper_concatenation_input_stream_config = ConcatenationInputStreamConfiguration(input_stream_id=bumper_time_based_trimming_input_stream.id,
-                                                                                     is_main=False,
-                                                                                     position=0)
+    bumper_concatenation_input_stream_config = ConcatenationInputStreamConfiguration(
+        input_stream_id=bumper_time_based_trimming_input_stream.id,
+        is_main=False,
+        position=0
+    )
 
-    main_concatenation_input_stream_config = ConcatenationInputStreamConfiguration(input_stream_id=main_time_based_trimming_input_stream.id,
-                                                                                     is_main=True,
-                                                                                     position=0)
+    main_concatenation_input_stream_config = ConcatenationInputStreamConfiguration(
+        input_stream_id=main_time_based_trimming_input_stream.id,
+        is_main=True,
+        position=0
+    )
 
-    concatenation_input_stream = ConcatenationInputStream(concatenation=[bumper_concatenation_input_stream_config, main_concatenation_input_stream_config])
+    concatenation_input_stream = ConcatenationInputStream(
+        concatenation=[bumper_concatenation_input_stream_config, main_concatenation_input_stream_config]
+    )
 
-    concatenation_input_stream = bitmovin.encodings.ConcatenationInputStream.create(encoding_id=encoding.id, object_=concatenation_input_stream).resource
+    concatenation_input_stream = bitmovin.encodings.ConcatenationInputStream.create(
+        encoding_id=encoding.id,
+        object_=concatenation_input_stream
+    ).resource
 
     input_stream = StreamInput(input_stream_id=concatenation_input_stream.id)
-  
  
     video_stream_1080p = Stream(codec_configuration_id=video_codec_configuration_1080p.id,
                                 input_streams=[input_stream], name='Sample Stream 1080p')
@@ -154,8 +178,8 @@ def main():
     video_muxing_720p = bitmovin.encodings.Muxing.FMP4.create(object_=video_muxing_720p,
                                                               encoding_id=encoding.id).resource
     audio_muxing_output = EncodingOutput(output_id=s3_output.id,
-                                              output_path=OUTPUT_BASE_PATH + 'audio/',
-                                              acl=[acl_entry])
+                                         output_path=OUTPUT_BASE_PATH + 'audio/',
+                                         acl=[acl_entry])
     audio_muxing = FMP4Muxing(segment_length=4,
                               segment_naming='seg_%number%.m4s',
                               init_segment_name='init.mp4',
