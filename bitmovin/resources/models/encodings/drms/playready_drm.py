@@ -6,8 +6,8 @@ from bitmovin.utils import Serializable
 
 class PlayReadyDRM(DRM, Serializable):
 
-    def __init__(self, key_seed, kid, method, la_url=None, outputs=None, id_=None, custom_data=None,
-                 name=None, description=None):
+    def __init__(self, key_seed=None, kid=None, method=None, la_url=None, outputs=None, id_=None, custom_data=None,
+                 name=None, description=None, key=None):
         super().__init__(id_=id_, custom_data=custom_data, outputs=outputs, name=name, description=description)
         self._method = None
 
@@ -15,6 +15,7 @@ class PlayReadyDRM(DRM, Serializable):
         self.keySeed = key_seed
         self.kid = kid
         self.laUrl = la_url
+        self.key = key
 
     @property
     def method(self):
@@ -45,10 +46,11 @@ class PlayReadyDRM(DRM, Serializable):
         key_seed = json_object.get('keySeed')
         kid = json_object.get('kid')
         la_url = json_object.get('laUrl')
+        key = json_object.get('key')
 
         playready_drm = PlayReadyDRM(key_seed=key_seed, kid=kid, method=method, la_url=la_url,
                                      outputs=outputs, id_=id_, custom_data=custom_data,
-                                     name=name, description=description)
+                                     name=name, description=description, key=key)
 
         return playready_drm
 
