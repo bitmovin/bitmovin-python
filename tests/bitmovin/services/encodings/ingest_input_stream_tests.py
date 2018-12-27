@@ -35,7 +35,11 @@ class EncodingIngestInputStreamTests(BitmovinTestCase):
         self.assertIsNotNone(ingest_input_stream_resource_response)
         self.assertIsNotNone(ingest_input_stream_resource_response.resource)
         self.assertIsNotNone(ingest_input_stream_resource_response.resource.id)
-        self._compare_ingest_input_streams(sample_ingest_input_stream, ingest_input_stream_resource_response.resource)
+
+        self._compare_ingest_input_streams(
+            first=sample_ingest_input_stream,
+            second=ingest_input_stream_resource_response.resource
+        )
 
     def test_retrieve_ingest_input_stream(self):
         sample_ingest_input_stream = self._get_sample_ingest_input_stream()
@@ -48,19 +52,24 @@ class EncodingIngestInputStreamTests(BitmovinTestCase):
         self.assertIsNotNone(created_ingest_input_stream_response)
         self.assertIsNotNone(created_ingest_input_stream_response.resource)
         self.assertIsNotNone(created_ingest_input_stream_response.resource.id)
-        self._compare_ingest_input_streams(sample_ingest_input_stream, created_ingest_input_stream_response.resource)
+
+        self._compare_ingest_input_streams(
+            first=sample_ingest_input_stream,
+            second=created_ingest_input_stream_response.resource
+        )
 
         retrieved_ingest_input_stream_response = self.bitmovin.encodings.IngestInputStream.retrieve(
-            stream_id=created_ingest_input_stream_response.resource.id,
-            encoding_id=self.sampleEncoding.id
+            encoding_id=self.sampleEncoding.id,
+            input_stream_id=created_ingest_input_stream_response.resource.id
         )
 
         self.assertIsNotNone(retrieved_ingest_input_stream_response)
         self.assertIsNotNone(retrieved_ingest_input_stream_response.resource)
+        self.assertIsNotNone(retrieved_ingest_input_stream_response.resource.id)
 
         self._compare_ingest_input_streams(
-            created_ingest_input_stream_response.resource,
-            retrieved_ingest_input_stream_response.resource
+            first=created_ingest_input_stream_response.resource,
+            second=retrieved_ingest_input_stream_response.resource
         )
 
     def test_delete_stream(self):
@@ -74,31 +83,28 @@ class EncodingIngestInputStreamTests(BitmovinTestCase):
         self.assertIsNotNone(created_ingest_input_stream_response)
         self.assertIsNotNone(created_ingest_input_stream_response.resource)
         self.assertIsNotNone(created_ingest_input_stream_response.resource.id)
-        self._compare_ingest_input_streams(sample_ingest_input_stream, created_ingest_input_stream_response.resource)
+
+        self._compare_ingest_input_streams(
+            first=sample_ingest_input_stream,
+            second=created_ingest_input_stream_response.resource
+        )
 
         deleted_minimal_resource = self.bitmovin.encodings.IngestInputStream.delete(
-            stream_id=created_ingest_input_stream_response.resource.id,
-            encoding_id=self.sampleEncoding.id
+            encoding_id=self.sampleEncoding.id,
+            input_stream_id=created_ingest_input_stream_response.resource.id
         )
 
         self.assertIsNotNone(deleted_minimal_resource)
         self.assertIsNotNone(deleted_minimal_resource.resource)
         self.assertIsNotNone(deleted_minimal_resource.resource.id)
+        self.assertEqual(deleted_minimal_resource.resource.id, created_ingest_input_stream_response.resource.id)
 
-        try:
+        with self.assertRaises(BitmovinApiError):
             self.bitmovin.encodings.IngestInputStream.retrieve(
-                self.sampleEncoding.id,
-                created_ingest_input_stream_response.resource.id
+                encoding_id=self.sampleEncoding.id,
+                input_stream_id=created_ingest_input_stream_response.resource.id
             )
 
-            self.fail(
-                'Previous statement should have thrown an exception. ' +
-                'Retrieving stream after deleting it shouldn\'t be possible.'
-            )
-        except BitmovinApiError:
-            pass
-
-    @unittest.skip('Response currently missing RequestId')
     def test_list_streams(self):
         sample_ingest_input_stream = self._get_sample_ingest_input_stream()
 
@@ -110,9 +116,14 @@ class EncodingIngestInputStreamTests(BitmovinTestCase):
         self.assertIsNotNone(created_ingest_input_stream_response)
         self.assertIsNotNone(created_ingest_input_stream_response.resource)
         self.assertIsNotNone(created_ingest_input_stream_response.resource.id)
-        self._compare_ingest_input_streams(sample_ingest_input_stream, created_ingest_input_stream_response.resource)
+
+        self._compare_ingest_input_streams(
+            first=sample_ingest_input_stream,
+            second=created_ingest_input_stream_response.resource
+        )
 
         ingest_input_streams = self.bitmovin.encodings.IngestInputStream.list(encoding_id=self.sampleEncoding.id)
+
         self.assertIsNotNone(ingest_input_streams)
         self.assertIsNotNone(ingest_input_streams.resource)
         self.assertIsNotNone(ingest_input_streams.response)
@@ -132,8 +143,10 @@ class EncodingIngestInputStreamTests(BitmovinTestCase):
         self.assertEqual(first.description, second.description)
         self.assertEqual(first.inputPath, second.inputPath)
         self.assertEqual(first.selectionMode, second.selectionMode)
+
         if first.position:
             self.assertEqual(first.position, second.position)
+
         return True
 
     def _get_sample_ingest_input_stream(self):
