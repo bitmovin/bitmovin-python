@@ -1,8 +1,11 @@
 import unittest
 import uuid
+
+from bitmovin.errors import BitmovinApiError
+
 from bitmovin import Bitmovin, ACLEntry, ACLPermission, EncodingOutput, VideoAdaptationSet, \
     AbstractAdaptationSet, Encoding, \
-    Stream, StreamInput, MuxingStream, FMP4Muxing, MarlinDRM, HlsManifest, VariantStream
+    Stream, StreamInput, MuxingStream, FMP4Muxing, MarlinDRM, HlsManifest, VariantStream, CustomTag, PositionMode
 from tests.bitmovin import BitmovinTestCase
 
 
@@ -116,6 +119,52 @@ class VariantStreamTests(BitmovinTestCase):
         self.assertEqual(variant_stream_resource_response.resource.id,
                          delete_sample_variant_stream_resource_response.resource.id)
 
+    def test_custom_tags(self):
+        sample_manifest = self._get_sample_manifest()
+        manifest_resource_response = self.bitmovin.manifests.HLS.create(sample_manifest)
+        self.assertIsNotNone(manifest_resource_response)
+        self.assertIsNotNone(manifest_resource_response.resource)
+        self.assertIsNotNone(manifest_resource_response.resource.id)
+        self._compare_manifests(sample_manifest, manifest_resource_response.resource)
+
+        sample_variant_stream = self._get_sample_variant_stream()
+        variant_stream_resource_response = self.bitmovin.manifests.HLS.VariantStream.create(
+            object_=sample_variant_stream, manifest_id=manifest_resource_response.resource.id)
+
+        custom_tag = self._create_sample_custom_tag()
+
+        custom_tag_resource_response = self.bitmovin.manifests.HLS.VariantStream.CustomTag.create(
+            object_=custom_tag, manifest_id=manifest_resource_response.resource.id,
+            stream_id=variant_stream_resource_response.resource.id)
+
+        tags = self.bitmovin.manifests.HLS.VariantStream.CustomTag.list(
+            manifest_id=manifest_resource_response.resource.id,
+            stream_id=variant_stream_resource_response.resource.id)
+
+        custom_tag_retrieve = self.bitmovin.manifests.HLS.VariantStream.CustomTag.retrieve(
+            manifest_id=manifest_resource_response.resource.id,
+            stream_id=variant_stream_resource_response.resource.id,
+            custom_tag_id=custom_tag_resource_response.resource.id)
+
+        self.assertIsNotNone(variant_stream_resource_response)
+        self.assertIsNotNone(variant_stream_resource_response.resource)
+        self.assertIsNotNone(variant_stream_resource_response.resource.id)
+        self._compare_variant_streams(sample_variant_stream, variant_stream_resource_response.resource)
+        self._compare_custom_tags(custom_tag, custom_tag_resource_response.resource)
+        self._compare_custom_tags(custom_tag_resource_response.resource, custom_tag_retrieve.resource)
+        self.assertTrue(len(tags.resource), 1)
+
+        self.bitmovin.manifests.HLS.VariantStream.CustomTag.delete(
+            manifest_id=manifest_resource_response.resource.id,
+            stream_id=variant_stream_resource_response.resource.id,
+            custom_tag_id=custom_tag_resource_response.resource.id)
+
+        with self.assertRaises(BitmovinApiError):
+            self.bitmovin.manifests.HLS.VariantStream.CustomTag.retrieve(
+                manifest_id=manifest_resource_response.resource.id,
+                stream_id=variant_stream_resource_response.resource.id,
+                custom_tag_id=custom_tag_resource_response.resource.id)
+
     def _compare_manifests(self, first: HlsManifest, second: HlsManifest):
         self.assertEqual(first.manifestName, second.manifestName)
         self.assertEqual(len(first.outputs), len(second.outputs))
@@ -167,6 +216,12 @@ class VariantStreamTests(BitmovinTestCase):
         self.assertEqual(first.startSegmentNumber, second.startSegmentNumber)
         self.assertEqual(first.endSegmentNumber, second.endSegmentNumber)
         self.assertEqual(first.uri, second.uri)
+
+    def _compare_custom_tags(self, first: CustomTag, second: CustomTag):
+        self.assertEqual(first.positionMode, second.positionMode)
+        self.assertEqual(first.time, second.time)
+        self.assertEqual(first.segment, second.segment)
+        self.assertEqual(first.data, second.data)
 
     def _get_sample_manifest(self):
         encoding_output = self._get_sample_encoding_output()
@@ -285,6 +340,11 @@ class VariantStreamTests(BitmovinTestCase):
                         outputs=[sample_output],
                         name='Sample Marlin DRM')
         return drm
+
+    def _create_sample_custom_tag(self):
+        custom_tag = CustomTag(position_mode=PositionMode.SEGMENT, segment=1, data="#X-CUSTOM-TAG")
+
+        return custom_tag
 
 
 if __name__ == '__main__':

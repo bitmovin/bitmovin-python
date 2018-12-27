@@ -1,5 +1,6 @@
 from bitmovin.resources import VariantStream
 from bitmovin.errors import MissingArgumentError, FunctionalityNotAvailableError
+from bitmovin.services.manifests.stream_custom_tag_service import StreamCustomTag
 from bitmovin.services.rest_service import RestService
 
 
@@ -9,6 +10,7 @@ class VariantStreamService(RestService):
     def __init__(self, http_client):
         self.resource_class = VariantStream
         super().__init__(http_client=http_client, relative_url=self.BASE_ENDPOINT_URL, class_=self.resource_class)
+        self.CustomTag = StreamCustomTag(http_client)
 
     def _get_endpoint_url(self, manifest_id):
         if not manifest_id:
