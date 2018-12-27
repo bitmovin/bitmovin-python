@@ -1,4 +1,5 @@
 from bitmovin.errors import MissingArgumentError, FunctionalityNotAvailableError
+from bitmovin.services.manifests.media_custom_tag_service import MediaCustomTag
 from bitmovin.services.rest_service import RestService
 
 
@@ -13,6 +14,7 @@ class GenericMediaService(RestService):
         self.media_type_url = media_type_url
         self.resource_class = resource_class
         super().__init__(http_client=http_client, relative_url=self.BASE_ENDPOINT_URL, class_=self.resource_class)
+        self.CustomTag = MediaCustomTag(http_client=http_client)
 
     def _get_endpoint_url(self, manifest_id):
         if not manifest_id:
