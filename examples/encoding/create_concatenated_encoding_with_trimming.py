@@ -110,7 +110,6 @@ def main():
         object_=main_time_based_trimming_input_stream
     ).resource
 
-
     bumper_concatenation_input_stream_config = ConcatenationInputStreamConfiguration(
         input_stream_id=bumper_time_based_trimming_input_stream.id,
         is_main=False,
