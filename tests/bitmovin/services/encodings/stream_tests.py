@@ -71,6 +71,7 @@ class EncodingStreamTests(BitmovinTestCase):
         self.assertIsNotNone(stream_resource_response.resource)
         self.assertIsNotNone(stream_resource_response.resource.id)
         self._compare_streams(sample_stream, stream_resource_response.resource)
+        self.assertEqual(StreamMode.PER_TITLE_TEMPLATE_FIXED_RESOLUTION.value, stream_resource_response.resource.mode)
 
     def test_retrieve_stream(self):
         sample_stream = self._get_sample_stream()
