@@ -157,7 +157,6 @@ class ProgressiveWebMMuxingTests(BitmovinTestCase):
         self.assertEqual(StreamConditionsMode.DROP_MUXING.value,
                          muxing_resource_response.resource.stream_conditions_mode)
 
-    # TODO DoM!
     def test_create_stream_conditions_mode_drop_stream(self):
         sample_muxing = self._get_sample_muxing()
 
