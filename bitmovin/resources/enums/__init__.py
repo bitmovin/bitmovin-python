@@ -71,3 +71,4 @@ from .iv_size import IvSize
 from .h264_adaptive_quantization_mode import H264AdaptiveQuantizationMode
 from .h265_adaptive_quantization_mode import H265AdaptiveQuantizationMode
 from .hls_version import HlsVersion
+from .stream_conditions_mode import StreamConditionsMode

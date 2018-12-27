@@ -7,9 +7,11 @@ from .muxing import Muxing
 class MP4Muxing(Muxing):
 
     def __init__(self, streams, filename=None, outputs=None, id_=None, custom_data=None, name=None, description=None,
-                 ignored_by=None, fragment_duration=None, time_code=None, fragmented_mp4_muxing_manifest_type=None):
+                 ignored_by=None, fragment_duration=None, time_code=None, fragmented_mp4_muxing_manifest_type=None,
+                 stream_conditions_mode=None):
         super().__init__(id_=id_, custom_data=custom_data, streams=streams, outputs=outputs,
-                         name=name, description=description, ignored_by=ignored_by)
+                         name=name, description=description, ignored_by=ignored_by,
+                         stream_conditions_mode=stream_conditions_mode)
         self.filename = filename
         self.fragmentDuration = fragment_duration
         self._timeCode = None
@@ -53,14 +55,6 @@ class MP4Muxing(Muxing):
     def parse_from_json_object(cls, json_object):
         muxing = super().parse_from_json_object(json_object=json_object)
 
-        id_ = muxing.id
-        custom_data = muxing.customData
-        streams = muxing.streams
-        outputs = muxing.outputs
-        name = muxing.name
-        description = muxing.description
-        ignored_by = muxing.ignored_by
-
         filename = json_object['filename']
         fragment_duration = json_object.get('fragmentDuration')
 
@@ -71,10 +65,19 @@ class MP4Muxing(Muxing):
         
         fragmented_mp4_muxing_manifest_type = json_object.get('fragmentedMP4MuxingManifestType')
         
-        mp4_muxing = MP4Muxing(streams=streams, filename=filename, outputs=outputs, id_=id_, custom_data=custom_data,
-                               name=name, description=description, ignored_by=ignored_by,
-                               fragment_duration=fragment_duration, time_code=time_code,
-                               fragmented_mp4_muxing_manifest_type=fragmented_mp4_muxing_manifest_type)
+        mp4_muxing = MP4Muxing(filename=filename,
+                               fragment_duration=fragment_duration,
+                               time_code=time_code,
+                               fragmented_mp4_muxing_manifest_type=fragmented_mp4_muxing_manifest_type,
+                               id_=muxing.id,
+                               streams=muxing.streams,
+                               outputs=muxing.outputs,
+                               custom_data=muxing.customData,
+                               name=muxing.name,
+                               description=muxing.description,
+                               ignored_by=muxing.ignored_by,
+                               stream_conditions_mode=muxing.stream_conditions_mode)
+
         return mp4_muxing
 
     def serialize(self):

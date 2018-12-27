@@ -1,4 +1,5 @@
 from bitmovin.errors import InvalidTypeError
+from bitmovin.resources.enums.stream_conditions_mode import StreamConditionsMode
 from bitmovin.resources.models import AbstractModel
 from bitmovin.resources import AbstractNameDescriptionResource
 from bitmovin.resources.models.encodings.encoding_output import EncodingOutput
@@ -10,24 +11,30 @@ from .muxing_stream import MuxingStream
 class Muxing(AbstractNameDescriptionResource, AbstractModel, Serializable):
 
     def __init__(self, streams, outputs=None, id_=None, custom_data=None, name=None, description=None,
-                 avg_bitrate=None, max_bitrate=None, min_bitrate=None, ignored_by=None):
+                 avg_bitrate=None, max_bitrate=None, min_bitrate=None, ignored_by=None, stream_conditions_mode=None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self._streams = []
-        self._outputs = None
-        self._ignoredBy = None
         if streams is None or not isinstance(streams, list):
             raise InvalidTypeError('streams must be a list')
         self.streams = streams
+
+        self._outputs = None
         if outputs is not None and not isinstance(outputs, list):
             raise InvalidTypeError('outputs must be a list')
         self.outputs = outputs
-        self.avgBitrate = avg_bitrate
-        self.minBitrate = min_bitrate
-        self.maxBitrate = max_bitrate
+
+        self._ignoredBy = None
         if ignored_by is not None and not isinstance(ignored_by, list):
             raise InvalidTypeError('ignoredBy must be a list')
         self.ignored_by = ignored_by
+
+        self._stream_conditions_mode = None
+        self.stream_conditions_mode = stream_conditions_mode
+
+        self.avgBitrate = avg_bitrate
+        self.minBitrate = min_bitrate
+        self.maxBitrate = max_bitrate
 
     @classmethod
     def parse_from_json_object(cls, json_object):
@@ -41,10 +48,11 @@ class Muxing(AbstractNameDescriptionResource, AbstractModel, Serializable):
         max_bitrate = json_object.get('maxBitrate')
         min_bitrate = json_object.get('minBitrate')
         ignored_by = json_object.get('ignoredBy')
+        stream_conditions_mode = json_object.get('streamConditionsMode')
 
         muxing = Muxing(id_=id_, custom_data=custom_data, streams=streams, outputs=outputs,
                         name=name, description=description, avg_bitrate=avg_bitrate, max_bitrate=max_bitrate,
-                        min_bitrate=min_bitrate, ignored_by=ignored_by)
+                        min_bitrate=min_bitrate, ignored_by=ignored_by, stream_conditions_mode=stream_conditions_mode)
         return muxing
 
     @property
@@ -110,6 +118,27 @@ class Muxing(AbstractNameDescriptionResource, AbstractModel, Serializable):
                 ignored_by_array.append(ignored_by_obj)
             self._ignoredBy = ignored_by_array
 
+    @property
+    def stream_conditions_mode(self):
+        return self._stream_conditions_mode
+
+    @stream_conditions_mode.setter
+    def stream_conditions_mode(self, new_stream_conditions_mode):
+        if new_stream_conditions_mode is None:
+            self._stream_conditions_mode = None
+            return
+
+        if isinstance(new_stream_conditions_mode, str):
+            self._stream_conditions_mode = new_stream_conditions_mode
+        elif isinstance(new_stream_conditions_mode, StreamConditionsMode):
+            self._stream_conditions_mode = new_stream_conditions_mode.value
+        else:
+            raise InvalidTypeError(
+                'Invalid type {} for stream_conditions_mode: must be either str or StreamConditionsMode!'.format(
+                    type(new_stream_conditions_mode)
+                )
+            )
+
     def add_stream(self, stream_id):
         muxing_stream = MuxingStream(stream_id=stream_id)
         self._streams.append(muxing_stream)
@@ -118,4 +147,5 @@ class Muxing(AbstractNameDescriptionResource, AbstractModel, Serializable):
         serialized = super().serialize()
         serialized['streams'] = self.streams
         serialized['outputs'] = self.outputs
+        serialized['streamConditionsMode'] = self.stream_conditions_mode
         return serialized
