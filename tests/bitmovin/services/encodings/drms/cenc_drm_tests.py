@@ -6,7 +6,6 @@ from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, AC
     IvSize, WebMMuxing
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
-from bitmovin.resources.enums import iv_size
 
 
 class CENCDRMTests(BitmovinTestCase):
@@ -123,7 +122,7 @@ class CENCDRMTests(BitmovinTestCase):
         drm_resource = created_drm_response.resource  # type: CENCDRM
         self._compare_drms(sample_drm, drm_resource)
 
-    def test_create_drm_webm(self):
+    def test_create_cenc_drm_webm(self):
         webm_muxing = self._create_webm_muxing()  # type: WebMMuxing
         self.assertIsNotNone(webm_muxing.id)
         sample_drm = self._get_sample_drm_cenc()
@@ -259,7 +258,7 @@ class CENCDRMTests(BitmovinTestCase):
         self.assertIsNotNone(created_muxing_response)
         self.assertIsNotNone(created_muxing_response.resource)
         self.assertIsNotNone(created_muxing_response.resource.id)
-        self._compare_muxings(sample_muxing, created_muxing_response.resource)
+        self._compare_webm_muxings(sample_muxing, created_muxing_response.resource)
         return created_muxing_response.resource
 
     def _compare_drms(self, first: CENCDRM, second: CENCDRM):
@@ -284,8 +283,23 @@ class CENCDRMTests(BitmovinTestCase):
     def _compare_muxings(self, first: FMP4Muxing, second: FMP4Muxing):
         """
 
-        :param first: Stream
-        :param second: Stream
+        :param first: FMP4Muxing
+        :param second: FMP4Muxing
+        :return: bool
+        """
+
+        self.assertEqual(first.segmentLength, second.segmentLength)
+        self.assertEqual(first.segmentNaming, second.segmentNaming)
+        self.assertEqual(len(first.outputs), len(second.outputs))
+        self.assertEqual(first.name, second.name)
+        self.assertEqual(first.description, second.description)
+        return True
+
+    def _compare_webm_muxings(self, first: WebMMuxing, second: WebMMuxing):
+        """
+
+        :param first: WebMMuxing
+        :param second: WebMMuxing
         :return: bool
         """
 
@@ -299,12 +313,12 @@ class CENCDRMTests(BitmovinTestCase):
     def _get_sample_drm_cenc(self):
         cenc_drm_settings = self.settings.get('sampleObjects').get('drmConfigurations').get('Cenc')
         widevine = CENCWidevineEntry(pssh=cenc_drm_settings[0].get('widevine').get('pssh'))
-        playReady = CENCPlayReadyEntry(la_url=cenc_drm_settings[0].get('playReady').get('laUrl'))
+        play_ready = CENCPlayReadyEntry(la_url=cenc_drm_settings[0].get('playReady').get('laUrl'))
 
         drm = CENCDRM(key=cenc_drm_settings[0].get('key'),
                       kid=cenc_drm_settings[0].get('kid'),
                       widevine=widevine,
-                      playReady=playReady,
+                      playReady=play_ready,
                       name='Sample CENC DRM')
 
         return drm
@@ -312,13 +326,13 @@ class CENCDRMTests(BitmovinTestCase):
     def _get_sample_drm_cenc_with_marlin(self):
         cenc_drm_settings = self.settings.get('sampleObjects').get('drmConfigurations').get('Cenc')
         widevine = CENCWidevineEntry(pssh=cenc_drm_settings[0].get('widevine').get('pssh'))
-        playReady = CENCPlayReadyEntry(la_url=cenc_drm_settings[0].get('playReady').get('laUrl'))
+        play_ready = CENCPlayReadyEntry(la_url=cenc_drm_settings[0].get('playReady').get('laUrl'))
         marlin = {}
 
         drm = CENCDRM(key=cenc_drm_settings[0].get('key'),
                       kid=cenc_drm_settings[0].get('kid'),
                       widevine=widevine,
-                      playReady=playReady,
+                      playReady=play_ready,
                       marlin=marlin,
                       name='Sample CENC DRM')
 
