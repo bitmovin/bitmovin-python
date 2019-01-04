@@ -7,6 +7,7 @@ from .progressive_ts_muxing_service import ProgressiveTSMuxing
 from .progressive_mov_muxing_service import ProgressiveMOVMuxing
 from .broadcast_ts_muxing_service import BroadcastTsMuxing
 from .progressive_webm_muxing_service import ProgressiveWebMMuxing
+from .segmented_raw_muxing_service import SegmentedRawMuxing
 
 
 class MuxingService(BitmovinObject):
@@ -21,3 +22,4 @@ class MuxingService(BitmovinObject):
         self.ProgressiveMOV = ProgressiveMOVMuxing(http_client=self.http_client)
         self.BroadcastTS = BroadcastTsMuxing(http_client=self.http_client)
         self.ProgressiveWebM = ProgressiveWebMMuxing(http_client=self.http_client)
+        self.SegmentedRaw = SegmentedRawMuxing(http_client=self.http_client)

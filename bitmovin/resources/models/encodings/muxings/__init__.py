@@ -13,3 +13,4 @@ from .broadcast_ts import BroadcastTsInputStreamConfiguration, BroadcastTsMuxing
     BroadcastTsAudioStreamConfiguration, BroadcastTsMuxing
 from .time_code import TimeCode
 from .progressive_webm_muxing import ProgressiveWebMMuxing
+from .raw_muxing import SegmentedRawMuxing
