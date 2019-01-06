@@ -223,6 +223,7 @@ class H265CodecConfigurationTests(BitmovinTestCase):
         self.assertEqual(first.adaptiveQuantizationMode, second.adaptiveQuantizationMode)
         self.assertEqual(first.psyRateDistortionOptimization, second.psyRateDistortionOptimization)
         self.assertEqual(first.psyRateDistortionOptimizedQuantization, second.psyRateDistortionOptimizedQuantization)
+        self.assertEqual(first.cutree, second.cutree)
         self.assertTrue(self._compare_color_configs(first.colorConfig, second.colorConfig))
 
         return True
@@ -291,6 +292,7 @@ class H265CodecConfigurationTests(BitmovinTestCase):
                                                           adaptive_quantization_mode=H265AdaptiveQuantizationMode.AUTO_VARIANCE,
                                                           psy_rate_distortion_optimization=0,
                                                           psy_rate_distortion_optimization_quantization=0,
+                                                          cutree=False,
                                                           color_config=ColorConfig(
                                                               copy_chroma_location_flag=True,
                                                               copy_color_space_flag=True,
@@ -340,6 +342,7 @@ class H265CodecConfigurationTests(BitmovinTestCase):
         self.assertIsNotNone(h265_codec_configuration.adaptiveQuantizationMode)
         self.assertIsNotNone(h265_codec_configuration.psyRateDistortionOptimization)
         self.assertIsNotNone(h265_codec_configuration.psyRateDistortionOptimizedQuantization)
+        self.assertIsNotNone(h265_codec_configuration.cutree)
 
         return h265_codec_configuration
 
