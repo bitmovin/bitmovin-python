@@ -31,11 +31,15 @@ class EncodingStartTests(BitmovinTestCase):
         scheduling = Scheduling(prewarmed_instance_pool_ids=prewarmed_instance_pool_ids)
 
         scheduling_serialized = json.dumps(obj=scheduling, cls=BitmovinJSONEncoder)
-        self.assertEqual(first=scheduling_serialized, second='{"prewarmedInstancePoolIds": ["4a67260e-2fd3-4e9e-9829-651280ea8f06", "4b67260e-2fd3-4e9e-9829-651280ea8f07"]}')
+        self.assertEqual(first=scheduling_serialized, second='{"prewarmedInstancePoolIds": '
+                                                             '["4a67260e-2fd3-4e9e-9829-651280ea8f06", '
+                                                             '"4b67260e-2fd3-4e9e-9829-651280ea8f07"]}')
 
         start_encoding_request = StartEncodingRequest(scheduling=scheduling)
         start_encoding_request_serialized = json.dumps(obj=start_encoding_request, cls=BitmovinJSONEncoder)
-        self.assertEqual(first=start_encoding_request_serialized, second='{"scheduling": {"prewarmedInstancePoolIds": ["4a67260e-2fd3-4e9e-9829-651280ea8f06", "4b67260e-2fd3-4e9e-9829-651280ea8f07"]}}')
+        self.assertEqual(first=start_encoding_request_serialized, second='{"scheduling": {"prewarmedInstancePoolIds": '
+                                                                         '["4a67260e-2fd3-4e9e-9829-651280ea8f06", '
+                                                                         '"4b67260e-2fd3-4e9e-9829-651280ea8f07"]}}')
 
     def test_encoding_start_request_serialization_with_tweaks(self):
         tweaks = Tweaks(audio_video_sync_mode=AudioVideoSyncMode.RESYNC_AT_START)
@@ -45,7 +49,10 @@ class EncodingStartTests(BitmovinTestCase):
 
         start_encoding_request = StartEncodingRequest(tweaks=tweaks)
         start_encoding_request_serialized = json.dumps(obj=start_encoding_request, cls=BitmovinJSONEncoder)
-        self.assertEqual(first=start_encoding_request_serialized, second='{"tweaks": {"audioVideoSyncMode": "RESYNC_AT_START"}}')
+        self.assertEqual(
+            first=start_encoding_request_serialized,
+            second='{"tweaks": {"audioVideoSyncMode": "RESYNC_AT_START"}}'
+        )
 
     def test_encoding_start_request_with_h264_per_title_configuration(self):
         auto_representation = AutoRepresentation(adopt_configuration_threshold=1.5)
@@ -54,24 +61,29 @@ class EncodingStartTests(BitmovinTestCase):
                                                        min_bitrate=500000, max_bitrate=8000000, target_quality_crf=0.5,
                                                        codec_min_bitrate_factor=1, codec_max_bitrate_factor=1,
                                                        codec_bufsize_factor=2, complexity_factor=1.7)
+
         per_title = PerTitle(h264_configuration=h264_configuration)
         per_title_serialized = json.dumps(per_title, cls=BitmovinJSONEncoder)
+
         self.assertEqual(first=per_title_serialized, second='{"h264Configuration": {"minBitrate": 500000, '
                                                             '"maxBitrate": 8000000, "minBitrateStepSize": 15000, '
                                                             '"maxBitrateStepSize": 20000, "complexityFactor": 1.7, '
                                                             '"targetQualityCrf": 0.5, "codecMinBitrateFactor": 1, '
                                                             '"codecMaxBitrateFactor": 1, "codecBufsizeFactor": 2, '
-                                                            '"autoRepresentations": {"adoptConfigurationThreshold": 1.5}}}')
+                                                            '"autoRepresentations": '
+                                                            '{"adoptConfigurationThreshold": 1.5}}}')
 
         start_encoding_request = StartEncodingRequest(per_title=per_title)
         start_encoding_request_serialized = json.dumps(obj=start_encoding_request, cls=BitmovinJSONEncoder)
-        pprint(start_encoding_request)
-        self.assertEqual(first=start_encoding_request_serialized, second='{"perTitle": {"h264Configuration": {"minBitrate": 500000, '
-                                                                         '"maxBitrate": 8000000, "minBitrateStepSize": 15000, '
-                                                                         '"maxBitrateStepSize": 20000, "complexityFactor": 1.7, '
-                                                                         '"targetQualityCrf": 0.5, "codecMinBitrateFactor": 1, '
-                                                                         '"codecMaxBitrateFactor": 1, "codecBufsizeFactor": 2, '
-                                                                         '"autoRepresentations": {"adoptConfigurationThreshold": 1.5}}}}')
+        self.assertEqual(
+            first=start_encoding_request_serialized,
+            second='{"perTitle": {"h264Configuration": {"minBitrate": 500000, '
+                   '"maxBitrate": 8000000, "minBitrateStepSize": 15000, '
+                   '"maxBitrateStepSize": 20000, "complexityFactor": 1.7, '
+                   '"targetQualityCrf": 0.5, "codecMinBitrateFactor": 1, '
+                   '"codecMaxBitrateFactor": 1, "codecBufsizeFactor": 2, '
+                   '"autoRepresentations": {"adoptConfigurationThreshold": 1.5}}}}'
+        )
 
     def test_encoding_start_request_with_h265_per_title_configuration(self):
         auto_representation = AutoRepresentation(adopt_configuration_threshold=1.5)
@@ -82,21 +94,27 @@ class EncodingStartTests(BitmovinTestCase):
                                                        codec_bufsize_factor=2, complexity_factor=1.7)
         per_title = PerTitle(h265_configuration=h265_configuration)
         per_title_serialized = json.dumps(per_title, cls=BitmovinJSONEncoder)
-        self.assertEqual(first=per_title_serialized, second='{"h265Configuration": {"minBitrate": 500000, '
-                                                            '"maxBitrate": 8000000, "minBitrateStepSize": 15000, '
-                                                            '"maxBitrateStepSize": 20000, "complexityFactor": 1.7, '
-                                                            '"targetQualityCrf": 0.5, "codecMinBitrateFactor": 1, '
-                                                            '"codecMaxBitrateFactor": 1, "codecBufsizeFactor": 2, '
-                                                            '"autoRepresentations": {"adoptConfigurationThreshold": 1.5}}}')
+        self.assertEqual(
+            first=per_title_serialized,
+            second='{"h265Configuration": {"minBitrate": 500000, '
+                   '"maxBitrate": 8000000, "minBitrateStepSize": 15000, '
+                   '"maxBitrateStepSize": 20000, "complexityFactor": 1.7, '
+                   '"targetQualityCrf": 0.5, "codecMinBitrateFactor": 1, '
+                   '"codecMaxBitrateFactor": 1, "codecBufsizeFactor": 2, '
+                   '"autoRepresentations": {"adoptConfigurationThreshold": 1.5}}}'
+        )
 
         start_encoding_request = StartEncodingRequest(per_title=per_title)
         start_encoding_request_serialized = json.dumps(obj=start_encoding_request, cls=BitmovinJSONEncoder)
-        self.assertEqual(first=start_encoding_request_serialized, second='{"perTitle": {"h265Configuration": {"minBitrate": 500000, '
-                                                                         '"maxBitrate": 8000000, "minBitrateStepSize": 15000, '
-                                                                         '"maxBitrateStepSize": 20000, "complexityFactor": 1.7, '
-                                                                         '"targetQualityCrf": 0.5, "codecMinBitrateFactor": 1, '
-                                                                         '"codecMaxBitrateFactor": 1, "codecBufsizeFactor": 2, '
-                                                                         '"autoRepresentations": {"adoptConfigurationThreshold": 1.5}}}}')
+        self.assertEqual(
+            first=start_encoding_request_serialized,
+            second='{"perTitle": {"h265Configuration": {"minBitrate": 500000, '
+                   '"maxBitrate": 8000000, "minBitrateStepSize": 15000, '
+                   '"maxBitrateStepSize": 20000, "complexityFactor": 1.7, '
+                   '"targetQualityCrf": 0.5, "codecMinBitrateFactor": 1, '
+                   '"codecMaxBitrateFactor": 1, "codecBufsizeFactor": 2, '
+                   '"autoRepresentations": {"adoptConfigurationThreshold": 1.5}}}}'
+        )
 
     def test_encoding_start_request_with_vp9_per_title_configuration(self):
         auto_representation = AutoRepresentation(adopt_configuration_threshold=1.5)
