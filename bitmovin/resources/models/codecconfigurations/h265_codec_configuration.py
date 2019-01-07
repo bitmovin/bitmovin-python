@@ -18,7 +18,7 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
                  scene_cut_threshold=None, enable_hlg_signaling=None, video_format=None, hdr=None, master_display=None,
                  max_content_light_level=None, max_picture_average_light_level=None, sample_aspect_ratio_numerator=None,
                  sample_aspect_ratio_denominator=None, adaptive_quantization_mode=None, psy_rate_distortion_optimization=None,
-                 psy_rate_distortion_optimization_quantization=None):
+                 psy_rate_distortion_optimization_quantization=None, cutree=None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description, bitrate=bitrate,
                          rate=rate, width=width, height=height, pixel_format=pixel_format)
@@ -71,6 +71,7 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         self.adaptiveQuantizationMode = adaptive_quantization_mode
         self.psyRateDistortionOptimization = psy_rate_distortion_optimization
         self.psyRateDistortionOptimizedQuantization = psy_rate_distortion_optimization_quantization
+        self.cutree = cutree
 
     @property
     def colorConfig(self):
@@ -312,6 +313,7 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         adaptive_quantization_mode = json_object.get('adaptiveQuantizationMode')
         psy_rate_distortion_optimization = json_object.get('psyRateDistortionOptimization')
         psy_rate_distortion_optimization_quantization = json_object.get('psyRateDistortionOptimizedQuantization')
+        cutree = json_object.get('cutree')
 
         color_config = None
         color_config_json = json_object.get('colorConfig')
@@ -365,7 +367,8 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
                                                           sample_aspect_ratio_denominator=aspect_ratio_denominator,
                                                           adaptive_quantization_mode=adaptive_quantization_mode,
                                                           psy_rate_distortion_optimization=psy_rate_distortion_optimization,
-                                                          psy_rate_distortion_optimization_quantization=psy_rate_distortion_optimization_quantization)
+                                                          psy_rate_distortion_optimization_quantization=psy_rate_distortion_optimization_quantization,
+                                                          cutree=cutree)
 
         return h265_codec_configuration
 

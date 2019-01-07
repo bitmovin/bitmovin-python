@@ -5,12 +5,13 @@ from .auto_representation import AutoRepresentation
 
 class PerTitleConfiguration(Serializable):
     def __init__(self, min_bitrate=None, max_bitrate=None, min_bitrate_step_size=None, max_bitrate_step_size=None,
-                 auto_representations=None):
+                 auto_representations=None, complexity_factor=None):
         super().__init__()
         self.minBitrate = min_bitrate
         self.maxBitrate = max_bitrate
         self.minBitrateStepSize = min_bitrate_step_size
         self.maxBitrateStepSize = max_bitrate_step_size
+        self.complexityFactor = complexity_factor
 
         self._auto_representations = None
         self.autoRepresentations = auto_representations
