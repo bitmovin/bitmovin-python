@@ -34,6 +34,20 @@ class VP9CodecConfigurationTests(BitmovinTestCase):
         self._compare_vp9_codec_configurations(sample_codec_configuration,
                                                codec_configuration_resource_response.resource)
 
+    def test_create_vp9_codec_configuration_keyframe_interval(self):
+        sample_codec_configuration = self._get_sample_vp9_codec_configuration()
+        sample_codec_configuration.minGop = None
+        sample_codec_configuration.maxGop = None
+        sample_codec_configuration.minKeyframeInterval = 10.12
+        sample_codec_configuration.maxKeyframeInterval = 20.34
+        codec_configuration_resource_response = self.bitmovin.codecConfigurations.VP9.create(
+            sample_codec_configuration)
+        self.assertIsNotNone(codec_configuration_resource_response)
+        self.assertIsNotNone(codec_configuration_resource_response.resource)
+        self.assertIsNotNone(codec_configuration_resource_response.resource.id)
+        self._compare_vp9_codec_configurations(sample_codec_configuration,
+                                               codec_configuration_resource_response.resource)
+
     def test_retrieve_vp9_codec_configuration(self):
         sample_codec_configuration = self._get_sample_vp9_codec_configuration()
         created_codec_configuration_response = self.bitmovin.codecConfigurations.VP9.create(sample_codec_configuration)
@@ -140,6 +154,8 @@ class VP9CodecConfigurationTests(BitmovinTestCase):
         self.assertEqual(first.arnrType, second.arnrType)
         self.assertEqual(first.minGop, second.minGop)
         self.assertEqual(first.maxGop, second.maxGop)
+        self.assertEqual(first.minKeyframeInterval, second.minKeyframeInterval)
+        self.assertEqual(first.maxKeyframeInterval, second.maxKeyframeInterval)
 
         return True
 
