@@ -174,6 +174,24 @@ class H265CodecConfigurationTests(BitmovinTestCase):
         self._compare_h265_codec_configurations(sample_codec_configuration,
                                                 codec_configuration_resource_response.resource)
 
+    def test_create_h265_codec_configuration_with_qpMin_qpMax(self):
+        sample_codec_configuration = self._get_sample_h265_codec_configuration()
+
+        sample_codec_configuration.qp = None
+        sample_codec_configuration.qpMin = 1
+        sample_codec_configuration.qpMax = 2
+
+        codec_configuration_resource_response = self.bitmovin.codecConfigurations.H265.create(
+            sample_codec_configuration)
+
+        self.assertIsNotNone(codec_configuration_resource_response)
+        self.assertIsNotNone(codec_configuration_resource_response.resource)
+        self.assertIsNotNone(codec_configuration_resource_response.resource.id)
+        self._compare_h265_codec_configurations(sample_codec_configuration,
+                                                codec_configuration_resource_response.resource)
+
+        pass
+
     def _compare_h265_codec_configurations(self, first: H265CodecConfiguration, second: H265CodecConfiguration):
         """
 
@@ -224,6 +242,8 @@ class H265CodecConfigurationTests(BitmovinTestCase):
         self.assertEqual(first.psyRateDistortionOptimization, second.psyRateDistortionOptimization)
         self.assertEqual(first.psyRateDistortionOptimizedQuantization, second.psyRateDistortionOptimizedQuantization)
         self.assertEqual(first.cutree, second.cutree)
+        self.assertEqual(first.qpMin, second.qpMin)
+        self.assertEqual(first.qpMax, second.qpMax)
         self.assertTrue(self._compare_color_configs(first.colorConfig, second.colorConfig))
 
         return True
