@@ -316,7 +316,7 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         psy_rate_distortion_optimization = json_object.get('psyRateDistortionOptimization')
         psy_rate_distortion_optimization_quantization = json_object.get('psyRateDistortionOptimizedQuantization')
         cutree = json_object.get('cutree')
-        qp_min = json_object.get('qpMin') 
+        qp_min = json_object.get('qpMin')
         qp_max = json_object.get('qpMax')
 
         color_config = None
