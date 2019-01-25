@@ -1,6 +1,7 @@
 from bitmovin.errors import InvalidTypeError
 from bitmovin.resources import AbstractNameDescriptionResource
 from bitmovin.resources.models import AbstractModel
+from bitmovin.resources.models.encodings.pertitle import StreamPerTitleSettings
 from bitmovin.utils import Serializable
 from bitmovin.resources.enums import StreamMode, StreamDecodingErrorMode
 from .encoding_output import EncodingOutput
@@ -11,10 +12,11 @@ from .ignored_by import IgnoredBy
 from .stream_metadata import StreamMetadata
 
 
+
 class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
     def __init__(self, codec_configuration_id, input_streams=None, outputs=None, id_=None, custom_data=None,
                  name=None, description=None, conditions=None, ignored_by=None, metadata=None, mode=None,
-                 decoding_error_mode=None):
+                 decoding_error_mode=None, per_title_settings=None):
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self._inputStreams = None
         self._outputs = None
@@ -37,6 +39,8 @@ class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
         self.mode = mode
         self._decodingErrorMode = None
         self.decodingErrorMode = decoding_error_mode
+        self._perTitleSettings = None
+        self.perTitleSettings = per_title_settings
 
     @classmethod
     def parse_from_json_object(cls, json_object):
@@ -52,11 +56,12 @@ class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
         metadata = json_object.get('metadata')
         mode = json_object.get('mode')
         decoding_error_mode = json_object.get('decoding_error_mode')
+        per_title_settings = json_object.get('perTitleSettings')
 
         stream = Stream(id_=id_, custom_data=custom_data,
                         codec_configuration_id=codec_configuration_id, input_streams=input_streams, outputs=outputs,
                         name=name, description=description, conditions=conditions, ignored_by=ignored_by,
-                        metadata=metadata, mode=mode, decoding_error_mode=decoding_error_mode)
+                        metadata=metadata, mode=mode, decoding_error_mode=decoding_error_mode, per_title_settings=per_title_settings)
         return stream
 
     @property
@@ -188,6 +193,21 @@ class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
                     type(new_decoding_error_mode))
             )
 
+    @property
+    def perTitleSettings(self):
+        return self._perTitleSettings
+
+    @perTitleSettings.setter
+    def perTitleSettings(self, new_per_title_settings):
+        if new_per_title_settings is None:
+            self._perTitleSettings = None
+            return
+        
+        if isinstance(new_per_title_settings, StreamPerTitleSettings):
+            self._perTitleSettings = new_per_title_settings
+        else:
+            self._perTitleSettings = StreamPerTitleSettings.parse_from_json_object(new_per_title_settings)
+
     def serialize(self):
         serialized = super().serialize()
         serialized['inputStreams'] = self.inputStreams
@@ -196,4 +216,5 @@ class Stream(AbstractNameDescriptionResource, AbstractModel, Serializable):
         serialized['mode'] = self.mode
         serialized['metadata'] = self.metadata
         serialized['decodingErrorMode'] = self.decodingErrorMode
+        serialized['perTitleSettings'] = self.perTitleSettings
         return serialized
