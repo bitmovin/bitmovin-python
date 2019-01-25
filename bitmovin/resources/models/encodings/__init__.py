@@ -27,7 +27,8 @@ from .start import StartEncodingRequest, StartEncodingTrimming, Scheduling, Twea
 from .conditions import ConditionType, Condition, AndConjunction, OrConjunction
 from .stream_metadata import StreamMetadata
 from .pertitle import PerTitle, PerTitleConfiguration, H264PerTitleConfiguration, H265PerTitleConfiguration, \
-    VP9PerTitleConfiguration, AutoRepresentation, StreamPerTitleSettings, StreamPerTitleFixedResolutionAndBitrateSettings
+    VP9PerTitleConfiguration, AutoRepresentation, StreamPerTitleSettings, StreamPerTitleFixedResolutionAndBitrateSettings, \
+    PerTitleFixedResolutionAndBitrateConfiguration
 from .captions import BurnInSrtSubtitle
 from .encoding_input import EncodingInput
 from .inputstreams import IngestInputStream, ConcatenationInputStreamConfiguration, ConcatenationInputStream, \
