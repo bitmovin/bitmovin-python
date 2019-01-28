@@ -3,6 +3,7 @@ from bitmovin.resources import ResourceResponse, Status, ProgressiveTSInformatio
 from bitmovin.resources.models import ProgressiveTSMuxing as ProgressiveTSMuxingResource
 from .generic_muxing_service import GenericMuxingService
 from .progressive_ts_id3_service import ProgressiveTSID3Service
+from .progressive_ts_drm_service import ProgressiveTSDRMService
 
 
 class ProgressiveTSMuxing(GenericMuxingService):
@@ -10,6 +11,7 @@ class ProgressiveTSMuxing(GenericMuxingService):
     def __init__(self, http_client):
         super().__init__(http_client=http_client, type_url='progressive-ts', resource_class=ProgressiveTSMuxingResource)
         self.ID3Tags = ProgressiveTSID3Service(http_client=http_client)
+        self.DRM = ProgressiveTSDRMService(http_client=http_client)
 
     def retrieve_information(self, encoding_id, muxing_id):
         self.parsing_utils.check_arg_valid_uuid(argument=muxing_id)
