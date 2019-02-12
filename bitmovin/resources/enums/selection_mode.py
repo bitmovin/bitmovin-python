@@ -1,8 +1,0 @@
-import enum
-
-
-class SelectionMode(enum.Enum):
-    AUTO = 'AUTO'
-    POSITION_ABSOLUTE = 'POSITION_ABSOLUTE'
-    VIDEO_RELATIVE = 'VIDEO_RELATIVE'
-    AUDIO_RELATIVE = 'AUDIO_RELATIVE'
