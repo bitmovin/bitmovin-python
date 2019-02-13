@@ -74,3 +74,4 @@ from .h265_adaptive_quantization_mode import H265AdaptiveQuantizationMode
 from .hls_version import HlsVersion
 from .stream_conditions_mode import StreamConditionsMode
 from .per_title_fixed_resolution_and_bitrate_calculation_mode import PerTitleFixedResolutionAndBitrateCalculationMode
+from .bitrate_selection_mode import BitrateSelectionMode
