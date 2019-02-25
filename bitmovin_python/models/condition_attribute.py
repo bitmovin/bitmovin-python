@@ -1,0 +1,21 @@
+# coding: utf-8
+from enum import Enum
+
+
+class ConditionAttribute(Enum):
+    """
+    allowed enum values
+    """
+    HEIGHT = "HEIGHT"
+    WIDTH = "WIDTH"
+    BITRATE = "BITRATE"
+    FPS = "FPS"
+    ASPECTRATIO = "ASPECTRATIO"
+    INPUTSTREAM = "INPUTSTREAM"
+    LANGUAGE = "LANGUAGE"
+    CHANNELFORMAT = "CHANNELFORMAT"
+    CHANNELLAYOUT = "CHANNELLAYOUT"
+    STREAMCOUNT = "STREAMCOUNT"
+    AUDIOSTREAMCOUNT = "AUDIOSTREAMCOUNT"
+    VIDEOSTREAMCOUNT = "VIDEOSTREAMCOUNT"
+    DURATION = "DURATION"

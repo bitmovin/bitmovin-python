@@ -1,0 +1,19 @@
+# coding: utf-8
+from enum import Enum
+
+
+class ScalingAlgorithm(Enum):
+    """
+    allowed enum values
+    """
+    FAST_BILINEAR = "FAST_BILINEAR"
+    BILINEAR = "BILINEAR"
+    BICUBIC = "BICUBIC"
+    EXPERIMENTAL = "EXPERIMENTAL"
+    NEAREST_NEIGHBOR = "NEAREST_NEIGHBOR"
+    AVERAGING_AREA = "AVERAGING_AREA"
+    BICUBIC_LUMA_BILINEAR_CHROMA = "BICUBIC_LUMA_BILINEAR_CHROMA"
+    GAUSS = "GAUSS"
+    SINC = "SINC"
+    LANCZOS = "LANCZOS"
+    SPLINE = "SPLINE"
