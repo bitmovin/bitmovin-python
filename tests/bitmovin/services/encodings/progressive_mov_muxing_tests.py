@@ -4,6 +4,7 @@ import json
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, \
     ProgressiveMOVMuxing, MuxingStream, ACLPermission, SelectionMode, StreamConditionsMode
 from bitmovin.errors import BitmovinApiError
+from bitmovin.resources.models.encodings.muxings import InternalChunkLength
 from tests.bitmovin import BitmovinTestCase
 
 
@@ -175,6 +176,20 @@ class ProgressiveMOVMuxingTests(BitmovinTestCase):
         self.assertEqual(StreamConditionsMode.DROP_STREAM.value,
                          muxing_resource_response.resource.stream_conditions_mode)
 
+    def _compare_internal_chunk_length(self, first: InternalChunkLength, second: InternalChunkLength):
+        """
+
+        :param first: TimeCode
+        :param second: TimeCode
+        :return: bool
+        """
+        if first is None and second is None:
+            return True
+
+        self.assertEqual(first.mode, second.mode)
+        self.assertEqual(first.customChunkLength, second.customChunkLength)
+        return True
+
     def _compare_muxings(self, first: ProgressiveMOVMuxing, second: ProgressiveMOVMuxing):
         """
 
@@ -187,6 +202,7 @@ class ProgressiveMOVMuxingTests(BitmovinTestCase):
         self.assertEqual(len(first.outputs), len(second.outputs))
         self.assertEqual(first.name, second.name)
         self.assertEqual(first.description, second.description)
+        self.assertTrue(self._compare_internal_chunk_length(first.internal_chunk_length, second.internal_chunk_length))
         return True
 
     def _get_sample_muxing(self):

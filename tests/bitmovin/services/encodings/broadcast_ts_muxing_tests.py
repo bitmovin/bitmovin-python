@@ -7,6 +7,7 @@ from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, AC
     BroadcastTsProgramConfiguration, BroadcastTsVideoStreamConfiguration, BroadcastTsAudioStreamConfiguration, \
     SetRaiOnAu
 from bitmovin.errors import BitmovinApiError
+from bitmovin.resources.models.encodings.muxings import InternalChunkLength
 from tests.bitmovin import BitmovinTestCase
 
 
@@ -128,6 +129,20 @@ class BroadcastTsMuxingTests(BitmovinTestCase):
         custom_data = custom_data_response.resource
         self.assertEqual(sample_muxing.customData, json.loads(custom_data.customData))
 
+    def _compare_internal_chunk_length(self, first: InternalChunkLength, second: InternalChunkLength):
+        """
+
+        :param first: TimeCode
+        :param second: TimeCode
+        :return: bool
+        """
+        if first is None and second is None:
+            return True
+
+        self.assertEqual(first.mode, second.mode)
+        self.assertEqual(first.customChunkLength, second.customChunkLength)
+        return True
+
     def _compare_muxings(self, first: BroadcastTsMuxing, second: BroadcastTsMuxing):
         """
 
@@ -143,7 +158,7 @@ class BroadcastTsMuxingTests(BitmovinTestCase):
         self.assertEqual(first.filename, second.filename)
         self.assertEqual(True,
                          self._compare_broadcast_ts_muxing_configuration(first.configuration, second.configuration))
-
+        self.assertTrue(self._compare_internal_chunk_length(first.internal_chunk_length, second.internal_chunk_length))
         return True
 
     def _compare_broadcast_ts_muxing_configuration(self, first: BroadcastTsMuxingConfiguration,
