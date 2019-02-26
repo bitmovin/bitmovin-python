@@ -13,12 +13,12 @@ The full API reference can be found [here](https://bitmovin.com/docs).
 
 #### Python 2.7
 ```sh
-pip install git+https://github.com/bitmovin/bitmovin-python.git
+pip install git+https://github.com/bitmovin/bitmovin-python.git@vnext
 ```
 
 #### Python 3.4+
 ```sh
-pip3 install git+https://github.com/bitmovin/bitmovin-python.git
+pip3 install git+https://github.com/bitmovin/bitmovin-python.git@vnext
 ```
 
 ### Setuptools
