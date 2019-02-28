@@ -2,9 +2,9 @@ import unittest
 import uuid
 import json
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, \
-    ProgressiveWebMMuxing, MuxingStream, ACLPermission, SelectionMode, StreamConditionsMode
+    ProgressiveWebMMuxing, MuxingStream, ACLPermission, SelectionMode, StreamConditionsMode, InternalChunkLengthMode, \
+    InternalChunkLength
 from bitmovin.errors import BitmovinApiError
-from bitmovin.resources.models.encodings.muxings import InternalChunkLength
 from tests.bitmovin import BitmovinTestCase
 
 
@@ -176,6 +176,25 @@ class ProgressiveWebMMuxingTests(BitmovinTestCase):
         self.assertEqual(StreamConditionsMode.DROP_STREAM.value,
                          muxing_resource_response.resource.stream_conditions_mode)
 
+    def test_create_muxing_with_internal_chunk_length(self):
+        sample_muxing = self._get_sample_muxing()
+
+        internal_chunk_length = InternalChunkLength(mode=InternalChunkLengthMode.QUALITY_OPTIMIZED,
+                                                    custom_chunk_length=12.345)
+
+        sample_muxing.internal_chunk_length = internal_chunk_length
+
+        muxing_resource_response = self.bitmovin.encodings.Muxing.ProgressiveWebM.create(
+            object_=sample_muxing,
+            encoding_id=self.sampleEncoding.id
+        )
+
+        self.assertIsNotNone(muxing_resource_response)
+        self.assertIsNotNone(muxing_resource_response.resource)
+        self.assertIsNotNone(muxing_resource_response.resource.id)
+        self.assertIsNotNone(muxing_resource_response.resource.internal_chunk_length)
+        self._compare_muxings(sample_muxing, muxing_resource_response.resource)
+
     def _compare_internal_chunk_length(self, first: InternalChunkLength, second: InternalChunkLength):
         """
 
@@ -188,6 +207,7 @@ class ProgressiveWebMMuxingTests(BitmovinTestCase):
 
         self.assertEqual(first.mode, second.mode)
         self.assertEqual(first.customChunkLength, second.customChunkLength)
+
         return True
 
     def _compare_muxings(self, first: ProgressiveWebMMuxing, second: ProgressiveWebMMuxing):
