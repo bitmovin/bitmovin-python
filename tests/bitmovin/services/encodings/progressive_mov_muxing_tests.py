@@ -179,8 +179,8 @@ class ProgressiveMOVMuxingTests(BitmovinTestCase):
     def _compare_internal_chunk_length(self, first: InternalChunkLength, second: InternalChunkLength):
         """
 
-        :param first: TimeCode
-        :param second: TimeCode
+        :param first: InternalChunkLength
+        :param second: InternalChunkLength
         :return: bool
         """
         if first is None and second is None:
