@@ -64,6 +64,7 @@ class Muxing(AbstractNameDescriptionResource, AbstractModel, Serializable):
                         name=name, description=description, avg_bitrate=avg_bitrate, max_bitrate=max_bitrate,
                         min_bitrate=min_bitrate, ignored_by=ignored_by, stream_conditions_mode=stream_conditions_mode,
                         internal_chunk_length=internal_chunk_length)
+
         return muxing
 
     @property

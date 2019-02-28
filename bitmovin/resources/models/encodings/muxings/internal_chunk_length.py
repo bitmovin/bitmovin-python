@@ -44,5 +44,4 @@ class InternalChunkLength(Serializable):
     def serialize(self):
         serialized = super().serialize()
         serialized['mode'] = self.mode
-        serialized['customChunkLength'] = self.customChunkLength
         return serialized
