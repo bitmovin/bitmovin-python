@@ -2,8 +2,10 @@ import unittest
 import uuid
 import json
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, \
-    MP4Muxing, MuxingStream, ACLPermission, SelectionMode, MP4MuxingManifestType, StreamConditionsMode
+    MP4Muxing, MuxingStream, ACLPermission, SelectionMode, MP4MuxingManifestType, StreamConditionsMode, \
+    InternalChunkLengthMode
 from bitmovin.errors import BitmovinApiError
+from bitmovin.resources.models.encodings.muxings import InternalChunkLength
 from bitmovin.resources.models.encodings.muxings.time_code import TimeCode
 from tests.bitmovin import BitmovinTestCase
 
@@ -175,6 +177,22 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
         self.assertEqual(StreamConditionsMode.DROP_STREAM.value,
                          muxing_resource_response.resource.stream_conditions_mode)
 
+    def test_create_internal_chunk_length_quality_optimized(self):
+        sample_muxing = self._get_sample_muxing()
+
+        sample_muxing.internal_chunk_length = InternalChunkLength(mode=InternalChunkLengthMode.QUALITY_OPTIMIZED,
+                                                                  custom_chunk_length=None)
+
+        muxing_resource_response = self.bitmovin.encodings.Muxing.MP4.create(object_=sample_muxing,
+                                                                             encoding_id=self.sampleEncoding.id)
+        self.assertIsNotNone(muxing_resource_response)
+        self.assertIsNotNone(muxing_resource_response.resource)
+        self.assertIsNotNone(muxing_resource_response.resource.id)
+        self._compare_muxings(sample_muxing, muxing_resource_response.resource)
+
+        self.assertEqual(InternalChunkLengthMode.QUALITY_OPTIMIZED.value,
+                         muxing_resource_response.resource.internal_chunk_length.mode)
+
     def _compare_time_code(self, first: TimeCode, second: TimeCode):
         """
 
@@ -186,6 +204,20 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
             return True
 
         self.assertEqual(first.timeCodeStart, second.timeCodeStart)
+        return True
+
+    def _compare_internal_chunk_length(self, first: InternalChunkLength, second: InternalChunkLength):
+        """
+
+        :param first: TimeCode
+        :param second: TimeCode
+        :return: bool
+        """
+        if first is None and second is None:
+            return True
+
+        self.assertEqual(first.mode, second.mode)
+        self.assertEqual(first.customChunkLength, second.customChunkLength)
         return True
 
     def _compare_muxings(self, first: MP4Muxing, second: MP4Muxing):
@@ -204,6 +236,7 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
         self.assertTrue(self._compare_time_code(first.timeCode, second.timeCode))
         self.assertEqual(first.fragmentedMP4MuxingManifestType, second.fragmentedMP4MuxingManifestType)
         self.assertEqual(first.stream_conditions_mode, second.stream_conditions_mode)
+        self.assertTrue(self._compare_internal_chunk_length(first.internal_chunk_length, second.internal_chunk_length))
         return True
 
     def _get_sample_muxing(self):
@@ -219,13 +252,16 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
 
         time_code = TimeCode(time_code_start='01:00:00:00')
 
+        internal_chunk_length = InternalChunkLength(mode=InternalChunkLengthMode.CUSTOM, custom_chunk_length=3.0)
+
         muxing = MP4Muxing(streams=[muxing_stream],
                            filename='myprogressive.mp4',
                            outputs=stream.outputs,
                            name='Sample MP4 Muxing',
                            fragment_duration=5,
                            time_code=time_code,
-                           stream_conditions_mode=StreamConditionsMode.DROP_MUXING)
+                           stream_conditions_mode=StreamConditionsMode.DROP_MUXING,
+                           internal_chunk_length=internal_chunk_length)
         return muxing
 
     def _get_sample_stream(self):

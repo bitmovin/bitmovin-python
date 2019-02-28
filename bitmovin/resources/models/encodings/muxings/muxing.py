@@ -6,12 +6,14 @@ from bitmovin.resources.models.encodings.encoding_output import EncodingOutput
 from bitmovin.resources.models.encodings.ignored_by import IgnoredBy
 from bitmovin.utils import Serializable
 from .muxing_stream import MuxingStream
+from .internal_chunk_length import InternalChunkLength
 
 
 class Muxing(AbstractNameDescriptionResource, AbstractModel, Serializable):
 
     def __init__(self, streams, outputs=None, id_=None, custom_data=None, name=None, description=None,
-                 avg_bitrate=None, max_bitrate=None, min_bitrate=None, ignored_by=None, stream_conditions_mode=None):
+                 avg_bitrate=None, max_bitrate=None, min_bitrate=None, ignored_by=None, stream_conditions_mode=None,
+                 internal_chunk_length=None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self._streams = []
@@ -32,6 +34,9 @@ class Muxing(AbstractNameDescriptionResource, AbstractModel, Serializable):
         self._stream_conditions_mode = None
         self.stream_conditions_mode = stream_conditions_mode
 
+        self._internal_chunk_length = None
+        self.internal_chunk_length = internal_chunk_length
+
         self.avgBitrate = avg_bitrate
         self.minBitrate = min_bitrate
         self.maxBitrate = max_bitrate
@@ -49,10 +54,16 @@ class Muxing(AbstractNameDescriptionResource, AbstractModel, Serializable):
         min_bitrate = json_object.get('minBitrate')
         ignored_by = json_object.get('ignoredBy')
         stream_conditions_mode = json_object.get('streamConditionsMode')
+        internal_chunk_length_json = json_object.get('internalChunkLength')
+        internal_chunk_length = None
+
+        if internal_chunk_length_json is not None:
+            internal_chunk_length = InternalChunkLength.parse_from_json_object(internal_chunk_length_json)
 
         muxing = Muxing(id_=id_, custom_data=custom_data, streams=streams, outputs=outputs,
                         name=name, description=description, avg_bitrate=avg_bitrate, max_bitrate=max_bitrate,
-                        min_bitrate=min_bitrate, ignored_by=ignored_by, stream_conditions_mode=stream_conditions_mode)
+                        min_bitrate=min_bitrate, ignored_by=ignored_by, stream_conditions_mode=stream_conditions_mode,
+                        internal_chunk_length=internal_chunk_length)
         return muxing
 
     @property
@@ -139,6 +150,25 @@ class Muxing(AbstractNameDescriptionResource, AbstractModel, Serializable):
                 )
             )
 
+    @property
+    def internal_chunk_length(self):
+        return self._internal_chunk_length
+
+    @internal_chunk_length.setter
+    def internal_chunk_length(self, new_internal_chunk_length):
+        if new_internal_chunk_length is None:
+            self._internal_chunk_length = None
+            return
+
+        if isinstance(new_internal_chunk_length, InternalChunkLength):
+            self._internal_chunk_length = new_internal_chunk_length
+        else:
+            raise InvalidTypeError(
+                'Invalid type {} for internal_chunk_length: must be InternalChunkLength!'.format(
+                    type(new_internal_chunk_length)
+                )
+            )
+
     def add_stream(self, stream_id):
         muxing_stream = MuxingStream(stream_id=stream_id)
         self._streams.append(muxing_stream)
@@ -148,4 +178,5 @@ class Muxing(AbstractNameDescriptionResource, AbstractModel, Serializable):
         serialized['streams'] = self.streams
         serialized['outputs'] = self.outputs
         serialized['streamConditionsMode'] = self.stream_conditions_mode
+        serialized['internalChunkLength'] = self.internal_chunk_length
         return serialized
