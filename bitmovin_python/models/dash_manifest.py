@@ -4,6 +4,7 @@ from bitmovin_python.models.dash_profile import DashProfile
 from bitmovin_python.models.encoding_output import EncodingOutput
 from bitmovin_python.models.manifest import Manifest
 from bitmovin_python.models.manifest_type import ManifestType
+from bitmovin_python.models.utc_timing import UtcTiming
 from bitmovin_python.models.xml_namespace import XmlNamespace
 import pprint
 import six
@@ -26,7 +27,8 @@ class DashManifest(Manifest):
         types.update({
             'profile': 'DashProfile',
             'manifest_name': 'str',
-            'namespaces': 'list[XmlNamespace]'
+            'namespaces': 'list[XmlNamespace]',
+            'utc_timings': 'list[UtcTiming]'
         })
         return types
 
@@ -36,16 +38,18 @@ class DashManifest(Manifest):
         attributes.update({
             'profile': 'profile',
             'manifest_name': 'manifestName',
-            'namespaces': 'namespaces'
+            'namespaces': 'namespaces',
+            'utc_timings': 'utcTimings'
         })
         return attributes
 
-    def __init__(self, profile=None, manifest_name=None, namespaces=None, *args, **kwargs):
+    def __init__(self, profile=None, manifest_name=None, namespaces=None, utc_timings=None, *args, **kwargs):
         super(DashManifest, self).__init__(*args, **kwargs)
 
         self._profile = None
         self._manifest_name = None
         self._namespaces = None
+        self._utc_timings = None
         self.discriminator = None
 
         if profile is not None:
@@ -54,6 +58,8 @@ class DashManifest(Manifest):
             self.manifest_name = manifest_name
         if namespaces is not None:
             self.namespaces = namespaces
+        if utc_timings is not None:
+            self.utc_timings = utc_timings
 
     @property
     def profile(self):
@@ -135,6 +141,34 @@ class DashManifest(Manifest):
                 raise TypeError("Invalid type for `namespaces`, type has to be `list[XmlNamespace]`")
 
             self._namespaces = namespaces
+
+
+    @property
+    def utc_timings(self):
+        """Gets the utc_timings of this DashManifest.
+
+        List of UTC Timings to use for live streaming
+
+        :return: The utc_timings of this DashManifest.
+        :rtype: list[UtcTiming]
+        """
+        return self._utc_timings
+
+    @utc_timings.setter
+    def utc_timings(self, utc_timings):
+        """Sets the utc_timings of this DashManifest.
+
+        List of UTC Timings to use for live streaming
+
+        :param utc_timings: The utc_timings of this DashManifest.
+        :type: list[UtcTiming]
+        """
+
+        if utc_timings is not None:
+            if not isinstance(utc_timings, list):
+                raise TypeError("Invalid type for `utc_timings`, type has to be `list[UtcTiming]`")
+
+            self._utc_timings = utc_timings
 
     def to_dict(self):
         """Returns the model properties as a dict"""

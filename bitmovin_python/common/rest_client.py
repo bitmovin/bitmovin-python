@@ -4,6 +4,7 @@ import sys
 
 import requests
 
+from bitmovin_python.common.bitmovin_api_logger_base import BitmovinApiLoggerBase
 from bitmovin_python.common.bitmovin_exception import RestException
 from bitmovin_python.common.bitmovin_exception import MissingArgumentException
 
@@ -12,7 +13,7 @@ class RestClient(object):
     HTTP_HEADERS = {
         'Content-Type': 'application/json',
         'X-Api-Client': 'bitmovin-python',
-        'X-Api-Client-Version': '3.1.1alpha0'
+        'X-Api-Client-Version': '3.1.2alpha0'
     }
 
     DELETE = 'DELETE'
@@ -24,14 +25,17 @@ class RestClient(object):
     API_KEY_HTTP_HEADER_NAME = 'X-Api-Key'
     TENANT_ORG_ID_HTTP_HEADER_NAME = 'X-Tenant-Org-Id'
 
-    def __init__(self, api_key: str, tenant_org_id: str = None, base_url: str = None, debug: bool = False, logger=None,
-                *args, **kwargs):
+    def __init__(self, api_key, tenant_org_id=None, base_url=None, logger=BitmovinApiLoggerBase()):
         super().__init__()
 
         self.api_key = api_key
         self.tenant_org_id = tenant_org_id
-        self.debug = debug
-        self.logger = logger
+        self.logger = BitmovinApiLoggerBase()
+
+        if logger is not None and isinstance(logger, BitmovinApiLoggerBase) is False:
+            raise TypeError("Logger must be subclass of BitmovinApiLoggerBase")
+        elif logger is not None and issubclass(type(logger), BitmovinApiLoggerBase) is True:
+            self.logger = logger
 
         if base_url is None or base_url == '':
             self.base_url = 'https://api.bitmovin.com/v1'
@@ -46,21 +50,24 @@ class RestClient(object):
         if self.tenant_org_id is not None and self.tenant_org_id != '':
             self.http_headers.update({self.TENANT_ORG_ID_HTTP_HEADER_NAME: self.tenant_org_id})
 
-        if logger is None:
-            self.logger = logging.getLogger(self.__class__.__module__ + "." + self.__class__.__name__)
-            self._attach_console_logging_handler_if_not_existing()
-
     def request(self, method: str, relative_url: str, payload=None):
         url = self.urljoin(self.base_url, relative_url)
+
+        if payload is not None and type(payload) != list:
+            # Remove none set values
+            payload = {k: v for k, v in payload.items() if v is not None}
+
         self._log_request(method, url, payload)
 
-        if payload is None:
+        if payload is None and type(payload) != list:
             response = requests.request(method, url, headers=self.http_headers)
         else:
             response = requests.request(method, url, headers=self.http_headers, data=self._serialize(payload))
 
         RestClient._check_response_and_throw_exception_if_not_successful(response)
         parsed_response = self._parse_response(response)
+        self._log_response(parsed_response)
+
         return parsed_response
 
     def delete(self, relative_url: str):
@@ -78,21 +85,6 @@ class RestClient(object):
     def put(self, relative_url: str, payload):
         return self.request(method=self.PUT, relative_url=relative_url, payload=payload)
 
-    def _attach_console_logging_handler_if_not_existing(self):
-        handlers = self.logger.handlers
-        handler_already_exists = any(handler.name == 'bitmovin_console_handler' for handler in handlers)
-
-        if handler_already_exists:
-            return
-
-        self.logger.setLevel(logging.DEBUG)
-        console_handler = logging.StreamHandler(sys.stdout)
-        console_handler.name = 'bitmovin_console_handler'
-        formatter = logging.Formatter('%(asctime)-15s %(name)-5s %(levelname)-8s %(message)s')
-        console_handler.setFormatter(formatter)
-
-        self.logger.addHandler(console_handler)
-
     def _parse_response(self, response):
         if not response.text:
             return dict()
@@ -106,15 +98,18 @@ class RestClient(object):
     def _serialize(self, object_):
         if object_ is None:
             return None
-        serialized = json.dumps(object_)
-        self.logger.info('Serialized request object: {}'.format(serialized))
+        serialized = json.dumps(object_, default=self._default_to_dict)
+        self.logger.log('Serialized request object: {}'.format(serialized))
         return serialized
+
+    def _log_response(self, response):
+        self.logger.log('RESPONSE: {}'.format(json.dumps(response)))
 
     def _log_request(self, method, url, payload=None):
         log_line = 'REQUEST: {} {}'.format(method, url)
         if payload:
-            log_line += '  --> {}'.format(json.dumps(payload))
-        self.logger.info(log_line)
+            log_line += '  --> {}'.format(json.dumps(payload, default=self._default_to_dict))
+        self.logger.log(log_line)
 
     @staticmethod
     def _check_response_and_throw_exception_if_not_successful(response):
@@ -139,3 +134,9 @@ class RestClient(object):
     @staticmethod
     def urljoin(*args):
         return '/'.join(map(lambda x: str(x).strip('/'), args))
+
+    def _default_to_dict(self, obj):
+        try:
+            return obj.to_dict()
+        except:
+            return obj.__dict__

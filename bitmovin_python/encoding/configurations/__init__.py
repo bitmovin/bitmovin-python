@@ -1,0 +1,4 @@
+from bitmovin_python.encoding.configurations.configurations_api import ConfigurationsApi
+from bitmovin_python.encoding.configurations.type.type_api import TypeApi
+from bitmovin_python.encoding.configurations.video.video_api import VideoApi
+from bitmovin_python.encoding.configurations.audio.audio_api import AudioApi

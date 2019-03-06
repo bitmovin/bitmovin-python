@@ -9,6 +9,7 @@ from bitmovin_python.models.bitmovin_response import BitmovinResponse
 from bitmovin_python.models.dash_fmp4_representation import DashFmp4Representation
 from bitmovin_python.models.dash_segmented_representation import DashSegmentedRepresentation
 from bitmovin_python.models.response_envelope import ResponseEnvelope
+from bitmovin_python.models.response_error import ResponseError
 from bitmovin_python.encoding.manifests.dash.periods.adaptationsets.representations.fmp4.drm.drm_api import DrmApi
 from bitmovin_python.encoding.manifests.dash.periods.adaptationsets.representations.fmp4.contentprotection.contentprotection_api import ContentprotectionApi
 from bitmovin_python.encoding.manifests.dash.periods.adaptationsets.representations.fmp4.dash_fmp4_representations_list_query_params import DashFmp4RepresentationsListQueryParams
@@ -16,36 +17,26 @@ from bitmovin_python.encoding.manifests.dash.periods.adaptationsets.representati
 
 class Fmp4Api(BaseApi):
     @poscheck_except(2)
-    def __init__(self, api_key: str, tenant_org_id: str = None, base_url: str = None, debug: bool = False, logger=None,
-                 *args, **kwargs):
+    def __init__(self, api_key: str, tenant_org_id: str = None, base_url: str = None, logger=None):
         super(Fmp4Api, self).__init__(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.drm = DrmApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.contentprotection = ContentprotectionApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
     def create(self, manifest_id, period_id, adaptationset_id, dash_fmp4_representation=None, **kwargs):

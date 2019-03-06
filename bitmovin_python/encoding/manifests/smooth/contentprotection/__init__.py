@@ -1,0 +1,1 @@
+from bitmovin_python.encoding.manifests.smooth.contentprotection.contentprotection_api import ContentprotectionApi

@@ -1,0 +1,13 @@
+# coding: utf-8
+from enum import Enum
+
+
+class InputStreamType(Enum):
+    """
+    allowed enum values
+    """
+    INGEST = "INGEST"
+    CONCATENATION = "CONCATENATION"
+    TRIMMING_TIME_BASED = "TRIMMING_TIME_BASED"
+    TRIMMING_TIME_CODE_TRACK = "TRIMMING_TIME_CODE_TRACK"
+    TRIMMING_H264_PICTURE_TIMING = "TRIMMING_H264_PICTURE_TIMING"

@@ -1,13 +1,14 @@
 # coding: utf-8
 
-from bitmovin_python.models.bitmovin_resource import BitmovinResource
+from bitmovin_python.models.basic_input_stream import BasicInputStream
+from bitmovin_python.models.input_stream_type import InputStreamType
 import pprint
 import six
 from datetime import datetime
 from enum import Enum
 
 
-class TimecodeTrackTrimmingInputStream(BitmovinResource):
+class TimecodeTrackTrimmingInputStream(BasicInputStream):
     """
     Attributes:
       openapi_types (dict): The key is attribute name

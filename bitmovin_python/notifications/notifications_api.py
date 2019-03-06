@@ -9,55 +9,43 @@ from bitmovin_python.models.bitmovin_response import BitmovinResponse
 from bitmovin_python.models.notification import Notification
 from bitmovin_python.models.notification_state_entry import NotificationStateEntry
 from bitmovin_python.models.response_envelope import ResponseEnvelope
+from bitmovin_python.models.response_error import ResponseError
 from bitmovin_python.notifications.webhooks.webhooks_api import WebhooksApi
 from bitmovin_python.notifications.state.state_api import StateApi
 from bitmovin_python.notifications.emails.emails_api import EmailsApi
-from bitmovin_python.notifications.notification_state_entrys_list_by_notification_id_query_params import NotificationStateEntrysListByNotificationIdQueryParams
 from bitmovin_python.notifications.notifications_list_query_params import NotificationsListQueryParams
+from bitmovin_python.notifications.notification_state_entrys_list_by_notification_id_query_params import NotificationStateEntrysListByNotificationIdQueryParams
 
 
 class NotificationsApi(BaseApi):
     @poscheck_except(2)
-    def __init__(self, api_key: str, tenant_org_id: str = None, base_url: str = None, debug: bool = False, logger=None,
-                 *args, **kwargs):
+    def __init__(self, api_key: str, tenant_org_id: str = None, base_url: str = None, logger=None):
         super(NotificationsApi, self).__init__(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.webhooks = WebhooksApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.state = StateApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.emails = EmailsApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
     def delete(self, notification_id, **kwargs):

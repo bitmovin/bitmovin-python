@@ -11,6 +11,7 @@ from bitmovin_python.models.encoding import Encoding
 from bitmovin_python.models.reprioritize_encoding_request import ReprioritizeEncodingRequest
 from bitmovin_python.models.reschedule_encoding_request import RescheduleEncodingRequest
 from bitmovin_python.models.response_envelope import ResponseEnvelope
+from bitmovin_python.models.response_error import ResponseError
 from bitmovin_python.models.start_encoding_request import StartEncodingRequest
 from bitmovin_python.models.task import Task
 from bitmovin_python.encoding.encodings.live.live_api import LiveApi
@@ -27,106 +28,75 @@ from bitmovin_python.encoding.encodings.encodings_list_query_params import Encod
 
 class EncodingsApi(BaseApi):
     @poscheck_except(2)
-    def __init__(self, api_key: str, tenant_org_id: str = None, base_url: str = None, debug: bool = False, logger=None,
-                 *args, **kwargs):
+    def __init__(self, api_key: str, tenant_org_id: str = None, base_url: str = None, logger=None):
         super(EncodingsApi, self).__init__(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.live = LiveApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.customdata = CustomdataApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.streams = StreamsApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.inputStreams = InputStreamsApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.muxings = MuxingsApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.subtitles = SubtitlesApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.captions = CaptionsApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.sidecars = SidecarsApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.keyframes = KeyframesApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
     def create(self, encoding=None, **kwargs):

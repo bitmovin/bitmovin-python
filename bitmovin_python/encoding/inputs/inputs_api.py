@@ -7,6 +7,7 @@ from bitmovin_python.common.poscheck import poscheck_except
 
 from bitmovin_python.models.input import Input
 from bitmovin_python.models.response_envelope import ResponseEnvelope
+from bitmovin_python.models.response_error import ResponseError
 from bitmovin_python.encoding.inputs.type.type_api import TypeApi
 from bitmovin_python.encoding.inputs.rtmp.rtmp_api import RtmpApi
 from bitmovin_python.encoding.inputs.redundantRtmp.redundant_rtmp_api import RedundantRtmpApi
@@ -31,206 +32,145 @@ from bitmovin_python.encoding.inputs.inputs_list_query_params import InputsListQ
 
 class InputsApi(BaseApi):
     @poscheck_except(2)
-    def __init__(self, api_key: str, tenant_org_id: str = None, base_url: str = None, debug: bool = False, logger=None,
-                 *args, **kwargs):
+    def __init__(self, api_key: str, tenant_org_id: str = None, base_url: str = None, logger=None):
         super(InputsApi, self).__init__(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.type = TypeApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.rtmp = RtmpApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.redundantRtmp = RedundantRtmpApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.s3 = S3Api(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.s3RoleBased = S3RoleBasedApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.genericS3 = GenericS3Api(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.local = LocalApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.gcs = GcsApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.azure = AzureApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.ftp = FtpApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.sftp = SftpApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.http = HttpApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.https = HttpsApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.aspera = AsperaApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.akamaiNetstorage = AkamaiNetstorageApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.tcp = TcpApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.udp = UdpApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.udpMulticast = UdpMulticastApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.zixi = ZixiApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
     def list(self, query_params: InputsListQueryParams = None, **kwargs):

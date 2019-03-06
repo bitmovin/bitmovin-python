@@ -9,6 +9,7 @@ from bitmovin_python.models.bitmovin_response import BitmovinResponse
 from bitmovin_python.models.custom_player_build_details import CustomPlayerBuildDetails
 from bitmovin_python.models.custom_player_build_status import CustomPlayerBuildStatus
 from bitmovin_python.models.response_envelope import ResponseEnvelope
+from bitmovin_python.models.response_error import ResponseError
 from bitmovin_python.player.customBuilds.web.domains.domains_api import DomainsApi
 from bitmovin_python.player.customBuilds.web.status.status_api import StatusApi
 from bitmovin_python.player.customBuilds.web.download.download_api import DownloadApi
@@ -16,46 +17,33 @@ from bitmovin_python.player.customBuilds.web.download.download_api import Downlo
 
 class WebApi(BaseApi):
     @poscheck_except(2)
-    def __init__(self, api_key: str, tenant_org_id: str = None, base_url: str = None, debug: bool = False, logger=None,
-                 *args, **kwargs):
+    def __init__(self, api_key: str, tenant_org_id: str = None, base_url: str = None, logger=None):
         super(WebApi, self).__init__(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.domains = DomainsApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.status = StatusApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.download = DownloadApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
     def create(self, custom_player_build_details=None, **kwargs):

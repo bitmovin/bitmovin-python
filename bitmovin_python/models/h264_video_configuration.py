@@ -67,7 +67,7 @@ class H264VideoConfiguration(VideoConfiguration):
             'scene_cut_threshold': 'int',
             'nal_hrd': 'H264NalHrd',
             'b_pyramid': 'H264BPyramid',
-            'cea608708_subtitle_configuration': 'Cea608708SubtitleConfiguration',
+            'cea608708_subtitle_config': 'Cea608708SubtitleConfiguration',
             'deblock_alpha': 'int',
             'deblock_beta': 'int',
             'adaptive_quantization_mode': 'AdaptiveQuantMode',
@@ -117,7 +117,7 @@ class H264VideoConfiguration(VideoConfiguration):
             'scene_cut_threshold': 'sceneCutThreshold',
             'nal_hrd': 'nalHrd',
             'b_pyramid': 'bPyramid',
-            'cea608708_subtitle_configuration': 'Cea608708SubtitleConfiguration',
+            'cea608708_subtitle_config': 'cea608708SubtitleConfig',
             'deblock_alpha': 'deblockAlpha',
             'deblock_beta': 'deblockBeta',
             'adaptive_quantization_mode': 'adaptiveQuantizationMode',
@@ -134,7 +134,7 @@ class H264VideoConfiguration(VideoConfiguration):
         })
         return attributes
 
-    def __init__(self, crf=None, profile=None, bframes=None, ref_frames=None, qp_min=None, qp_max=None, mv_prediction_mode=None, mv_search_range_max=None, cabac=None, max_bitrate=None, min_bitrate=None, bufsize=None, min_gop=None, max_gop=None, open_gop=None, min_keyframe_interval=None, max_keyframe_interval=None, level=None, b_adaptive_strategy=None, motion_estimation_method=None, rc_lookahead=None, sub_me=None, trellis=None, partitions=None, slices=None, interlace_mode=None, scene_cut_threshold=None, nal_hrd=None, b_pyramid=None, cea608708_subtitle_configuration=None, deblock_alpha=None, deblock_beta=None, adaptive_quantization_mode=None, adaptive_quantization_strength=None, mixed_references=None, adaptive_spatial_transform=None, fast_skip_detection_p_frames=None, weighted_prediction_b_frames=None, weighted_prediction_p_frames=None, macroblock_tree_ratecontrol=None, quantizer_curve_compression=None, psy_rate_distortion_optimization=None, psy_trellis=None, *args, **kwargs):
+    def __init__(self, crf=None, profile=None, bframes=None, ref_frames=None, qp_min=None, qp_max=None, mv_prediction_mode=None, mv_search_range_max=None, cabac=None, max_bitrate=None, min_bitrate=None, bufsize=None, min_gop=None, max_gop=None, open_gop=None, min_keyframe_interval=None, max_keyframe_interval=None, level=None, b_adaptive_strategy=None, motion_estimation_method=None, rc_lookahead=None, sub_me=None, trellis=None, partitions=None, slices=None, interlace_mode=None, scene_cut_threshold=None, nal_hrd=None, b_pyramid=None, cea608708_subtitle_config=None, deblock_alpha=None, deblock_beta=None, adaptive_quantization_mode=None, adaptive_quantization_strength=None, mixed_references=None, adaptive_spatial_transform=None, fast_skip_detection_p_frames=None, weighted_prediction_b_frames=None, weighted_prediction_p_frames=None, macroblock_tree_ratecontrol=None, quantizer_curve_compression=None, psy_rate_distortion_optimization=None, psy_trellis=None, *args, **kwargs):
         super(H264VideoConfiguration, self).__init__(*args, **kwargs)
 
         self._crf = None
@@ -166,7 +166,7 @@ class H264VideoConfiguration(VideoConfiguration):
         self._scene_cut_threshold = None
         self._nal_hrd = None
         self._b_pyramid = None
-        self._cea608708_subtitle_configuration = None
+        self._cea608708_subtitle_config = None
         self._deblock_alpha = None
         self._deblock_beta = None
         self._adaptive_quantization_mode = None
@@ -239,8 +239,8 @@ class H264VideoConfiguration(VideoConfiguration):
             self.nal_hrd = nal_hrd
         if b_pyramid is not None:
             self.b_pyramid = b_pyramid
-        if cea608708_subtitle_configuration is not None:
-            self.cea608708_subtitle_configuration = cea608708_subtitle_configuration
+        if cea608708_subtitle_config is not None:
+            self.cea608708_subtitle_config = cea608708_subtitle_config
         if deblock_alpha is not None:
             self.deblock_alpha = deblock_alpha
         if deblock_beta is not None:
@@ -1107,31 +1107,31 @@ class H264VideoConfiguration(VideoConfiguration):
 
 
     @property
-    def cea608708_subtitle_configuration(self):
-        """Gets the cea608708_subtitle_configuration of this H264VideoConfiguration.
+    def cea608708_subtitle_config(self):
+        """Gets the cea608708_subtitle_config of this H264VideoConfiguration.
 
         Defines whether CEA 608/708 subtitles are copied from the input video stream
 
-        :return: The cea608708_subtitle_configuration of this H264VideoConfiguration.
+        :return: The cea608708_subtitle_config of this H264VideoConfiguration.
         :rtype: Cea608708SubtitleConfiguration
         """
-        return self._cea608708_subtitle_configuration
+        return self._cea608708_subtitle_config
 
-    @cea608708_subtitle_configuration.setter
-    def cea608708_subtitle_configuration(self, cea608708_subtitle_configuration):
-        """Sets the cea608708_subtitle_configuration of this H264VideoConfiguration.
+    @cea608708_subtitle_config.setter
+    def cea608708_subtitle_config(self, cea608708_subtitle_config):
+        """Sets the cea608708_subtitle_config of this H264VideoConfiguration.
 
         Defines whether CEA 608/708 subtitles are copied from the input video stream
 
-        :param cea608708_subtitle_configuration: The cea608708_subtitle_configuration of this H264VideoConfiguration.
+        :param cea608708_subtitle_config: The cea608708_subtitle_config of this H264VideoConfiguration.
         :type: Cea608708SubtitleConfiguration
         """
 
-        if cea608708_subtitle_configuration is not None:
-            if not isinstance(cea608708_subtitle_configuration, Cea608708SubtitleConfiguration):
-                raise TypeError("Invalid type for `cea608708_subtitle_configuration`, type has to be `Cea608708SubtitleConfiguration`")
+        if cea608708_subtitle_config is not None:
+            if not isinstance(cea608708_subtitle_config, Cea608708SubtitleConfiguration):
+                raise TypeError("Invalid type for `cea608708_subtitle_config`, type has to be `Cea608708SubtitleConfiguration`")
 
-            self._cea608708_subtitle_configuration = cea608708_subtitle_configuration
+            self._cea608708_subtitle_config = cea608708_subtitle_config
 
 
     @property

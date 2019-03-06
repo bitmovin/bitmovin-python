@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import
 
-__version__ = "3.1.1alpha0"
+__version__ = "3.1.2alpha0"
 
 # import apis into sdk package
 from bitmovin_python.bitmovin_api import BitmovinApi
@@ -151,6 +151,7 @@ from bitmovin_python.encoding.encodings.streams.customdata.customdata_api import
 from bitmovin_python.encoding.encodings.streams.input.input_api import InputApi
 from bitmovin_python.encoding.encodings.streams.inputs.inputs_api import InputsApi
 from bitmovin_python.encoding.encodings.inputStreams.input_streams_api import InputStreamsApi
+from bitmovin_python.encoding.encodings.inputStreams.type.type_api import TypeApi
 from bitmovin_python.encoding.encodings.inputStreams.ingest.ingest_api import IngestApi
 from bitmovin_python.encoding.encodings.inputStreams.concatenation.concatenation_api import ConcatenationApi
 from bitmovin_python.encoding.encodings.inputStreams.trimming.trimming_api import TrimmingApi
@@ -360,6 +361,7 @@ from bitmovin_python.models.abstract_condition import AbstractCondition
 from bitmovin_python.models.abstract_conjunction import AbstractConjunction
 from bitmovin_python.models.ac3_audio_configuration import Ac3AudioConfiguration
 from bitmovin_python.models.ac3_channel_layout import Ac3ChannelLayout
+from bitmovin_python.models.accessibility import Accessibility
 from bitmovin_python.models.account_api_key import AccountApiKey
 from bitmovin_python.models.account_information import AccountInformation
 from bitmovin_python.models.acl import Acl
@@ -426,6 +428,7 @@ from bitmovin_python.models.aws_cloud_region import AwsCloudRegion
 from bitmovin_python.models.azure_input import AzureInput
 from bitmovin_python.models.azure_output import AzureOutput
 from bitmovin_python.models.b_adapt import BAdapt
+from bitmovin_python.models.basic_input_stream import BasicInputStream
 from bitmovin_python.models.basic_media_info import BasicMediaInfo
 from bitmovin_python.models.billable_encoding_feature_minutes import BillableEncodingFeatureMinutes
 from bitmovin_python.models.billable_encoding_minutes import BillableEncodingMinutes
@@ -574,6 +577,8 @@ from bitmovin_python.models.input_color_range import InputColorRange
 from bitmovin_python.models.input_color_space import InputColorSpace
 from bitmovin_python.models.input_path import InputPath
 from bitmovin_python.models.input_stream import InputStream
+from bitmovin_python.models.input_stream_type import InputStreamType
+from bitmovin_python.models.input_stream_type_response import InputStreamTypeResponse
 from bitmovin_python.models.input_type import InputType
 from bitmovin_python.models.input_type_response import InputTypeResponse
 from bitmovin_python.models.interlace_filter import InterlaceFilter
@@ -687,6 +692,7 @@ from bitmovin_python.models.redundant_rtmp_input import RedundantRtmpInput
 from bitmovin_python.models.reprioritize_encoding_request import ReprioritizeEncodingRequest
 from bitmovin_python.models.reschedule_encoding_request import RescheduleEncodingRequest
 from bitmovin_python.models.response_envelope import ResponseEnvelope
+from bitmovin_python.models.response_error import ResponseError
 from bitmovin_python.models.response_error_code import ResponseErrorCode
 from bitmovin_python.models.response_error_data import ResponseErrorData
 from bitmovin_python.models.response_status import ResponseStatus
@@ -774,6 +780,7 @@ from bitmovin_python.models.tweaks import Tweaks
 from bitmovin_python.models.udp_input import UdpInput
 from bitmovin_python.models.udp_multicast_input import UdpMulticastInput
 from bitmovin_python.models.unsharp_filter import UnsharpFilter
+from bitmovin_python.models.utc_timing import UtcTiming
 from bitmovin_python.models.variant_stream_dropping_mode import VariantStreamDroppingMode
 from bitmovin_python.models.vertical_low_pass_filtering_mode import VerticalLowPassFilteringMode
 from bitmovin_python.models.video_adaptation_set import VideoAdaptationSet

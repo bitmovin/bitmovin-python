@@ -8,32 +8,26 @@ from bitmovin_python.common.poscheck import poscheck_except
 from bitmovin_python.models.bitmovin_response import BitmovinResponse
 from bitmovin_python.models.denoise_hqdn3d_filter import DenoiseHqdn3dFilter
 from bitmovin_python.models.response_envelope import ResponseEnvelope
+from bitmovin_python.models.response_error import ResponseError
 from bitmovin_python.encoding.filters.denoiseHqdn3d.customdata.customdata_api import CustomdataApi
 from bitmovin_python.encoding.filters.denoiseHqdn3d.denoise_hqdn3d_filters_list_query_params import DenoiseHqdn3dFiltersListQueryParams
 
 
 class DenoiseHqdn3dApi(BaseApi):
     @poscheck_except(2)
-    def __init__(self, api_key: str, tenant_org_id: str = None, base_url: str = None, debug: bool = False, logger=None,
-                 *args, **kwargs):
+    def __init__(self, api_key: str, tenant_org_id: str = None, base_url: str = None, logger=None):
         super(DenoiseHqdn3dApi, self).__init__(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.customdata = CustomdataApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
     def create(self, denoise_hqdn3d_filter=None, **kwargs):

@@ -1,6 +1,7 @@
 # coding: utf-8
 
-from bitmovin_python.models.bitmovin_resource import BitmovinResource
+from bitmovin_python.models.basic_input_stream import BasicInputStream
+from bitmovin_python.models.input_stream_type import InputStreamType
 from bitmovin_python.models.stream_selection_mode import StreamSelectionMode
 import pprint
 import six
@@ -8,7 +9,7 @@ from datetime import datetime
 from enum import Enum
 
 
-class IngestInputStream(BitmovinResource):
+class IngestInputStream(BasicInputStream):
     """
     Attributes:
       openapi_types (dict): The key is attribute name

@@ -1,0 +1,2 @@
+from bitmovin_python.encoding.manifests.dash.periods.adaptationsets.representations.fmp4.drm.drm_api import DrmApi
+from bitmovin_python.encoding.manifests.dash.periods.adaptationsets.representations.fmp4.drm.contentprotection.contentprotection_api import ContentprotectionApi

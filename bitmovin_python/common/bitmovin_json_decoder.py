@@ -38,14 +38,22 @@ class BitmovinJsonDecoder(object):
 
     @staticmethod
     def map_dict_to_model(result, model):
+        if isinstance(model, EnumMeta):
+            return get_enum_value(result, model)
+
+        if issubclass(model, list):
+            # ToDo: Implement list deserialization
+            return result
+
         model_instance = model()
         all_attributes = model_instance.attribute_map
+
         for key in all_attributes:
             value = result.get(all_attributes.get(key))
             if value is not None:
                 type = model_instance.openapi_types.get(key)
-                try:
 
+                try:
                     if re.match('list', type, re.I):
                         matches = re.search(r'\[(.*)\]', type)
 
@@ -65,14 +73,9 @@ class BitmovinJsonDecoder(object):
                                 continue
 
                     model_class = getattr(BitmovinJsonDecoder.model_module, type)
-                    if isinstance(model_class, EnumMeta):
-                        # Search for the attribute in the Enum
-                        for attr in model_class:
-                            if attr.value == value:
-                                value = attr
-                                break
 
-                        # Set the value
+                    if isinstance(model_class, EnumMeta):
+                        value = get_enum_value(value, model_class)
                         model_instance.__setattr__(key, value)
                         continue
 
@@ -87,4 +90,12 @@ class BitmovinJsonDecoder(object):
                     else:
                         new_value = value
                         model_instance.__setattr__(key, new_value)
+
         return model_instance
+
+
+def get_enum_value(value, model_class):
+    # Search for the attribute in the Enum
+    for attr in model_class:
+        if attr.value == value:
+            return attr

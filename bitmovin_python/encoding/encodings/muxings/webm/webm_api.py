@@ -7,6 +7,7 @@ from bitmovin_python.common.poscheck import poscheck_except
 
 from bitmovin_python.models.bitmovin_response import BitmovinResponse
 from bitmovin_python.models.response_envelope import ResponseEnvelope
+from bitmovin_python.models.response_error import ResponseError
 from bitmovin_python.models.webm_muxing import WebmMuxing
 from bitmovin_python.encoding.encodings.muxings.webm.customdata.customdata_api import CustomdataApi
 from bitmovin_python.encoding.encodings.muxings.webm.drm.drm_api import DrmApi
@@ -15,36 +16,26 @@ from bitmovin_python.encoding.encodings.muxings.webm.webm_muxings_list_query_par
 
 class WebmApi(BaseApi):
     @poscheck_except(2)
-    def __init__(self, api_key: str, tenant_org_id: str = None, base_url: str = None, debug: bool = False, logger=None,
-                 *args, **kwargs):
+    def __init__(self, api_key: str, tenant_org_id: str = None, base_url: str = None, logger=None):
         super(WebmApi, self).__init__(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.customdata = CustomdataApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.drm = DrmApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
     def create(self, encoding_id, webm_muxing=None, **kwargs):

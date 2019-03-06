@@ -7,22 +7,19 @@ from bitmovin_python.common.poscheck import poscheck_except
 
 from bitmovin_python.models.bitmovin_response import BitmovinResponse
 from bitmovin_python.models.response_envelope import ResponseEnvelope
+from bitmovin_python.models.response_error import ResponseError
 from bitmovin_python.models.time_based_trimming_input_stream import TimeBasedTrimmingInputStream
 from bitmovin_python.encoding.encodings.inputStreams.trimming.timeBased.time_based_trimming_input_streams_list_query_params import TimeBasedTrimmingInputStreamsListQueryParams
 
 
 class TimeBasedApi(BaseApi):
     @poscheck_except(2)
-    def __init__(self, api_key: str, tenant_org_id: str = None, base_url: str = None, debug: bool = False, logger=None,
-                 *args, **kwargs):
+    def __init__(self, api_key: str, tenant_org_id: str = None, base_url: str = None, logger=None):
         super(TimeBasedApi, self).__init__(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
     def create(self, encoding_id, time_based_trimming_input_stream=None, **kwargs):

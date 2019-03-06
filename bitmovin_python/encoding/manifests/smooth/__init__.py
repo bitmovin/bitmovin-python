@@ -1,0 +1,4 @@
+from bitmovin_python.encoding.manifests.smooth.smooth_api import SmoothApi
+from bitmovin_python.encoding.manifests.smooth.customdata.customdata_api import CustomdataApi
+from bitmovin_python.encoding.manifests.smooth.representations.representations_api import RepresentationsApi
+from bitmovin_python.encoding.manifests.smooth.contentprotection.contentprotection_api import ContentprotectionApi

@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from bitmovin_python.models.accessibility import Accessibility
 from bitmovin_python.models.adaptation_set import AdaptationSet
 from bitmovin_python.models.adaptation_set_role import AdaptationSetRole
 from bitmovin_python.models.custom_attribute import CustomAttribute

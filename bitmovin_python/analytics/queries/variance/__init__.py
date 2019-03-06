@@ -1,0 +1,1 @@
+from bitmovin_python.analytics.queries.variance.variance_api import VarianceApi

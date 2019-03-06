@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from bitmovin_python.models.accessibility import Accessibility
 from bitmovin_python.models.adaptation_set_role import AdaptationSetRole
 from bitmovin_python.models.bitmovin_response import BitmovinResponse
 from bitmovin_python.models.custom_attribute import CustomAttribute
@@ -23,7 +24,8 @@ class AdaptationSet(BitmovinResponse):
         types = super(AdaptationSet, self).openapi_types
         types.update({
             'custom_attributes': 'list[CustomAttribute]',
-            'roles': 'list[AdaptationSetRole]'
+            'roles': 'list[AdaptationSetRole]',
+            'accessibilities': 'list[Accessibility]'
         })
         return types
 
@@ -32,21 +34,25 @@ class AdaptationSet(BitmovinResponse):
         attributes = super(AdaptationSet, self).attribute_map
         attributes.update({
             'custom_attributes': 'customAttributes',
-            'roles': 'roles'
+            'roles': 'roles',
+            'accessibilities': 'accessibilities'
         })
         return attributes
 
-    def __init__(self, custom_attributes=None, roles=None, *args, **kwargs):
+    def __init__(self, custom_attributes=None, roles=None, accessibilities=None, *args, **kwargs):
         super(AdaptationSet, self).__init__(*args, **kwargs)
 
         self._custom_attributes = None
         self._roles = None
+        self._accessibilities = None
         self.discriminator = None
 
         if custom_attributes is not None:
             self.custom_attributes = custom_attributes
         if roles is not None:
             self.roles = roles
+        if accessibilities is not None:
+            self.accessibilities = accessibilities
 
     @property
     def custom_attributes(self):
@@ -102,6 +108,34 @@ class AdaptationSet(BitmovinResponse):
                 raise TypeError("Invalid type for `roles`, type has to be `list[AdaptationSetRole]`")
 
             self._roles = roles
+
+
+    @property
+    def accessibilities(self):
+        """Gets the accessibilities of this AdaptationSet.
+
+        Provide signaling of CEA 607 and CEA 708
+
+        :return: The accessibilities of this AdaptationSet.
+        :rtype: list[Accessibility]
+        """
+        return self._accessibilities
+
+    @accessibilities.setter
+    def accessibilities(self, accessibilities):
+        """Sets the accessibilities of this AdaptationSet.
+
+        Provide signaling of CEA 607 and CEA 708
+
+        :param accessibilities: The accessibilities of this AdaptationSet.
+        :type: list[Accessibility]
+        """
+
+        if accessibilities is not None:
+            if not isinstance(accessibilities, list):
+                raise TypeError("Invalid type for `accessibilities`, type has to be `list[Accessibility]`")
+
+            self._accessibilities = accessibilities
 
     def to_dict(self):
         """Returns the model properties as a dict"""

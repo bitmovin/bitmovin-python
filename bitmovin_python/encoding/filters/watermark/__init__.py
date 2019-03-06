@@ -1,0 +1,2 @@
+from bitmovin_python.encoding.filters.watermark.watermark_api import WatermarkApi
+from bitmovin_python.encoding.filters.watermark.customdata.customdata_api import CustomdataApi

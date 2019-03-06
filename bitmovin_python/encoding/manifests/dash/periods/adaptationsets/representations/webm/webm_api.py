@@ -9,32 +9,26 @@ from bitmovin_python.models.bitmovin_response import BitmovinResponse
 from bitmovin_python.models.dash_segmented_representation import DashSegmentedRepresentation
 from bitmovin_python.models.dash_webm_representation import DashWebmRepresentation
 from bitmovin_python.models.response_envelope import ResponseEnvelope
+from bitmovin_python.models.response_error import ResponseError
 from bitmovin_python.encoding.manifests.dash.periods.adaptationsets.representations.webm.contentprotection.contentprotection_api import ContentprotectionApi
 from bitmovin_python.encoding.manifests.dash.periods.adaptationsets.representations.webm.dash_webm_representations_list_query_params import DashWebmRepresentationsListQueryParams
 
 
 class WebmApi(BaseApi):
     @poscheck_except(2)
-    def __init__(self, api_key: str, tenant_org_id: str = None, base_url: str = None, debug: bool = False, logger=None,
-                 *args, **kwargs):
+    def __init__(self, api_key: str, tenant_org_id: str = None, base_url: str = None, logger=None):
         super(WebmApi, self).__init__(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.contentprotection = ContentprotectionApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
     def create(self, manifest_id, period_id, adaptationset_id, dash_webm_representation=None, **kwargs):

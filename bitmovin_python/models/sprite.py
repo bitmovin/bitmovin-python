@@ -27,7 +27,7 @@ class Sprite(BitmovinResource):
             'unit': 'SpriteUnit',
             'distance': 'float',
             'sprite_name': 'str',
-            'file_name': 'str',
+            'filename': 'str',
             'vtt_name': 'str',
             'outputs': 'list[EncodingOutput]',
             'images_per_file': 'int'
@@ -43,14 +43,14 @@ class Sprite(BitmovinResource):
             'unit': 'unit',
             'distance': 'distance',
             'sprite_name': 'spriteName',
-            'file_name': 'fileName',
+            'filename': 'filename',
             'vtt_name': 'vttName',
             'outputs': 'outputs',
             'images_per_file': 'imagesPerFile'
         })
         return attributes
 
-    def __init__(self, height=None, width=None, unit=None, distance=None, sprite_name=None, file_name=None, vtt_name=None, outputs=None, images_per_file=None, *args, **kwargs):
+    def __init__(self, height=None, width=None, unit=None, distance=None, sprite_name=None, filename=None, vtt_name=None, outputs=None, images_per_file=None, *args, **kwargs):
         super(Sprite, self).__init__(*args, **kwargs)
 
         self._height = None
@@ -58,7 +58,7 @@ class Sprite(BitmovinResource):
         self._unit = None
         self._distance = None
         self._sprite_name = None
-        self._file_name = None
+        self._filename = None
         self._vtt_name = None
         self._outputs = None
         self._images_per_file = None
@@ -71,8 +71,8 @@ class Sprite(BitmovinResource):
         if distance is not None:
             self.distance = distance
         self.sprite_name = sprite_name
-        if file_name is not None:
-            self.file_name = file_name
+        if filename is not None:
+            self.filename = filename
         self.vtt_name = vtt_name
         if outputs is not None:
             self.outputs = outputs
@@ -218,31 +218,31 @@ class Sprite(BitmovinResource):
 
 
     @property
-    def file_name(self):
-        """Gets the file_name of this Sprite.
+    def filename(self):
+        """Gets the filename of this Sprite.
 
         Filename of the sprite image. If not set, spriteName will be used, but without an extension.
 
-        :return: The file_name of this Sprite.
+        :return: The filename of this Sprite.
         :rtype: str
         """
-        return self._file_name
+        return self._filename
 
-    @file_name.setter
-    def file_name(self, file_name):
-        """Sets the file_name of this Sprite.
+    @filename.setter
+    def filename(self, filename):
+        """Sets the filename of this Sprite.
 
         Filename of the sprite image. If not set, spriteName will be used, but without an extension.
 
-        :param file_name: The file_name of this Sprite.
+        :param filename: The filename of this Sprite.
         :type: str
         """
 
-        if file_name is not None:
-            if not isinstance(file_name, str):
-                raise TypeError("Invalid type for `file_name`, type has to be `str`")
+        if filename is not None:
+            if not isinstance(filename, str):
+                raise TypeError("Invalid type for `filename`, type has to be `str`")
 
-            self._file_name = file_name
+            self._filename = filename
 
 
     @property

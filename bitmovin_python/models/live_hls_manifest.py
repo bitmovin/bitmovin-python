@@ -18,7 +18,9 @@ class LiveHlsManifest(object):
     def openapi_types(self):
         types = {
             'manifest_id': 'str',
-            'timeshift': 'float'
+            'timeshift': 'float',
+            'live_edge_offset': 'float',
+            'insert_program_date_time': 'bool'
         }
         return types
 
@@ -26,19 +28,27 @@ class LiveHlsManifest(object):
     def attribute_map(self):
         attributes = {
             'manifest_id': 'manifestId',
-            'timeshift': 'timeshift'
+            'timeshift': 'timeshift',
+            'live_edge_offset': 'liveEdgeOffset',
+            'insert_program_date_time': 'insertProgramDateTime'
         }
         return attributes
 
-    def __init__(self, manifest_id=None, timeshift=None, *args, **kwargs):
+    def __init__(self, manifest_id=None, timeshift=None, live_edge_offset=None, insert_program_date_time=None, *args, **kwargs):
 
         self._manifest_id = None
         self._timeshift = None
+        self._live_edge_offset = None
+        self._insert_program_date_time = None
         self.discriminator = None
 
         self.manifest_id = manifest_id
         if timeshift is not None:
             self.timeshift = timeshift
+        if live_edge_offset is not None:
+            self.live_edge_offset = live_edge_offset
+        if insert_program_date_time is not None:
+            self.insert_program_date_time = insert_program_date_time
 
     @property
     def manifest_id(self):
@@ -94,6 +104,62 @@ class LiveHlsManifest(object):
                 raise TypeError("Invalid type for `timeshift`, type has to be `float`")
 
             self._timeshift = timeshift
+
+
+    @property
+    def live_edge_offset(self):
+        """Gets the live_edge_offset of this LiveHlsManifest.
+
+        Live edge offset in seconds
+
+        :return: The live_edge_offset of this LiveHlsManifest.
+        :rtype: float
+        """
+        return self._live_edge_offset
+
+    @live_edge_offset.setter
+    def live_edge_offset(self, live_edge_offset):
+        """Sets the live_edge_offset of this LiveHlsManifest.
+
+        Live edge offset in seconds
+
+        :param live_edge_offset: The live_edge_offset of this LiveHlsManifest.
+        :type: float
+        """
+
+        if live_edge_offset is not None:
+            if not isinstance(live_edge_offset, float):
+                raise TypeError("Invalid type for `live_edge_offset`, type has to be `float`")
+
+            self._live_edge_offset = live_edge_offset
+
+
+    @property
+    def insert_program_date_time(self):
+        """Gets the insert_program_date_time of this LiveHlsManifest.
+
+        Specifies if the EXT-X-PROGRAM-DATETIME tag will be included
+
+        :return: The insert_program_date_time of this LiveHlsManifest.
+        :rtype: bool
+        """
+        return self._insert_program_date_time
+
+    @insert_program_date_time.setter
+    def insert_program_date_time(self, insert_program_date_time):
+        """Sets the insert_program_date_time of this LiveHlsManifest.
+
+        Specifies if the EXT-X-PROGRAM-DATETIME tag will be included
+
+        :param insert_program_date_time: The insert_program_date_time of this LiveHlsManifest.
+        :type: bool
+        """
+
+        if insert_program_date_time is not None:
+            if not isinstance(insert_program_date_time, bool):
+                raise TypeError("Invalid type for `insert_program_date_time`, type has to be `bool`")
+
+            self._insert_program_date_time = insert_program_date_time
 
     def to_dict(self):
         """Returns the model properties as a dict"""

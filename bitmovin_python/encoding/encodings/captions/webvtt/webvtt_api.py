@@ -6,6 +6,7 @@ from bitmovin_python.common import BaseApi
 from bitmovin_python.common.poscheck import poscheck_except
 
 from bitmovin_python.models.response_envelope import ResponseEnvelope
+from bitmovin_python.models.response_error import ResponseError
 from bitmovin_python.models.web_vtt_extract import WebVttExtract
 from bitmovin_python.encoding.encodings.captions.webvtt.customdata.customdata_api import CustomdataApi
 from bitmovin_python.encoding.encodings.captions.webvtt.web_vtt_extracts_list_query_params import WebVttExtractsListQueryParams
@@ -13,26 +14,19 @@ from bitmovin_python.encoding.encodings.captions.webvtt.web_vtt_extracts_list_qu
 
 class WebvttApi(BaseApi):
     @poscheck_except(2)
-    def __init__(self, api_key: str, tenant_org_id: str = None, base_url: str = None, debug: bool = False, logger=None,
-                 *args, **kwargs):
+    def __init__(self, api_key: str, tenant_org_id: str = None, base_url: str = None, logger=None):
         super(WebvttApi, self).__init__(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
         self.customdata = CustomdataApi(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
     def create(self, encoding_id, web_vtt_extract=None, **kwargs):

@@ -12,16 +12,12 @@ from bitmovin_python.models import BitmovinResponse, ResponseErrorData
 
 class ApiClient(object):
     @poscheck_except(2)
-    def __init__(self, api_key: str, tenant_org_id: str = None, base_url: str = None, debug: bool = False, logger=None,
-        *args, **kwargs):
+    def __init__(self, api_key: str, tenant_org_id: str = None, base_url: str = None, logger=None):
         self.rest_client = RestClient(
             api_key=api_key,
             tenant_org_id=tenant_org_id,
             base_url=base_url,
-            debug=debug,
-            logger=logger,
-            *args,
-            **kwargs
+            logger=logger
         )
 
     @staticmethod
@@ -72,7 +68,7 @@ class ApiClient(object):
         if 'type' not in kwargs or kwargs['type'] is None:
             kwargs['type'] = BitmovinResponse
 
-        self.request('DELETE', relative_url=relative_url, **kwargs)
+        return self.request('DELETE', relative_url=relative_url, **kwargs)
 
     def get(self, relative_url, **kwargs):
         raw_response = False
@@ -85,7 +81,13 @@ class ApiClient(object):
         if 'type' not in kwargs or kwargs['type'] is None:
             raise MissingArgumentException('type must be given')
 
-        return self.request('POST', relative_url=relative_url, payload=payload.to_dict(), **kwargs)
+        if payload is not None:
+                if type(payload) != list:
+                    return self.request('POST', relative_url=relative_url, payload=payload.to_dict(), **kwargs)
+                else:
+                    return self.request('POST', relative_url=relative_url, payload=payload, **kwargs)
+        elif payload is None:
+            return self.request('POST', relative_url=relative_url, **kwargs)
 
     def put(self, relative_url, payload, **kwargs):
         if 'type' not in kwargs or kwargs['type'] is None:
