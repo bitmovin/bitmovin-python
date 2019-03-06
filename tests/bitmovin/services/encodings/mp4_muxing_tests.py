@@ -176,11 +176,11 @@ class EncodingMP4MuxingTests(BitmovinTestCase):
         self.assertEqual(StreamConditionsMode.DROP_STREAM.value,
                          muxing_resource_response.resource.stream_conditions_mode)
 
-    def test_create_internal_chunk_length_quality_optimized(self):
+    def test_create_internal_chunk_length_custom(self):
         sample_muxing = self._get_sample_muxing()
 
         sample_muxing.internal_chunk_length = InternalChunkLength(mode=InternalChunkLengthMode.CUSTOM,
-                                                                  custom_chunk_length=None)
+                                                                  custom_chunk_length=1.2)
 
         muxing_resource_response = self.bitmovin.encodings.Muxing.MP4.create(object_=sample_muxing,
                                                                              encoding_id=self.sampleEncoding.id)
