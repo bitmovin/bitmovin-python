@@ -131,7 +131,7 @@ class BroadcastTsMuxingTests(BitmovinTestCase):
     def test_create_muxing_with_internal_chunk_length(self):
         sample_muxing = self._get_sample_muxing()
 
-        internal_chunk_length = InternalChunkLength(mode=InternalChunkLengthMode.QUALITY_OPTIMIZED,
+        internal_chunk_length = InternalChunkLength(mode=InternalChunkLengthMode.CUSTOM,
                                                     custom_chunk_length=12.345)
 
         sample_muxing.internal_chunk_length = internal_chunk_length
