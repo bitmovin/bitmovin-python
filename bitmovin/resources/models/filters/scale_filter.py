@@ -9,12 +9,14 @@ from . import AbstractFilter
 class ScaleFilter(AbstractFilter, Serializable):
 
     def __init__(self, name=None, width=None, height=None, scaling_algorithm=None, id_=None, custom_data=None,
-                 description=None):
+                 description=None, sample_aspect_ratio_numerator=None, sample_aspect_ratio_denominator=None):
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description)
         self.width = width
         self.height = height
         self._scaling_algorithm = None
         self.scalingAlgorithm = scaling_algorithm
+        self.sampleAspectRatioNumerator = sample_aspect_ratio_numerator
+        self.sampleAspectRatioDenominator = sample_aspect_ratio_denominator
 
     @property
     def scalingAlgorithm(self):
@@ -47,12 +49,16 @@ class ScaleFilter(AbstractFilter, Serializable):
         height = json_object.get('height')
         name = json_object.get('name')
         description = json_object.get('description')
+        sample_aspect_ratio_numerator = json_object.get('sampleAspectRatioNumerator')
+        sample_aspect_ratio_denominator = json_object.get('sampleAspectRatioDenominator')
         scale_filter = ScaleFilter(
             name=name,
             width=width,
             height=height,
             scaling_algorithm=scaling_algorithm,
             id_=id_,
-            description=description
+            description=description,
+            sample_aspect_ratio_numerator=sample_aspect_ratio_numerator,
+            sample_aspect_ratio_denominator=sample_aspect_ratio_denominator
         )
         return scale_filter
