@@ -5,7 +5,7 @@ from bitmovin.resources.enums.vp9_quality import VP9Quality
 
 from bitmovin.utils import Serializable
 from .video_codec_configuration import VideoCodecConfiguration
-
+from .color_config import ColorConfig
 
 class VP9CodecConfiguration(VideoCodecConfiguration, Serializable):
 
@@ -15,7 +15,7 @@ class VP9CodecConfiguration(VideoCodecConfiguration, Serializable):
                  rate_overshoot_pct=None, cpu_used=None, noise_sensitivity=None, quality=None,
                  lossless=None, static_thresh=None, aq_mode=None, arnr_max_frames=None, 
                  arnr_strength=None, arnr_type=None, pixel_format=None, min_gop=None, max_gop=None,
-                 min_keyframe_interval=None, max_keyframe_interval=None):
+                 min_keyframe_interval=None, max_keyframe_interval=None, color_config=None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description, bitrate=bitrate,
                          rate=rate, width=width, height=height, pixel_format=pixel_format)
@@ -46,6 +46,8 @@ class VP9CodecConfiguration(VideoCodecConfiguration, Serializable):
         self.maxGop = max_gop
         self.minKeyframeInterval = min_keyframe_interval
         self.maxKeyframeInterval = max_keyframe_interval
+        self._colorConfig = None
+        self.colorConfig = color_config
 
     @property
     def quality(self):
@@ -95,6 +97,19 @@ class VP9CodecConfiguration(VideoCodecConfiguration, Serializable):
             raise InvalidTypeError(
                 'Invalid type {} for arnrType: must be either str or VP9ARNRType!'.format(type(new_arnrType)))
 
+    @property
+    def colorConfig(self):
+        return self._colorConfig
+
+    @colorConfig.setter
+    def colorConfig(self, new_color_config):
+        if new_color_config is None:
+            self._colorConfig = None
+        elif isinstance(new_color_config, ColorConfig):
+            self._colorConfig = new_color_config
+        else:
+            raise InvalidTypeError('colorConfig has to be of type ColorConfig')
+
     @classmethod
     def parse_from_json_object(cls, json_object):
         video_codec_configuration = VideoCodecConfiguration.parse_from_json_object(json_object=json_object)
@@ -132,7 +147,33 @@ class VP9CodecConfiguration(VideoCodecConfiguration, Serializable):
         max_gop = json_object.get('maxGop')
         min_keyframe_interval = json_object.get('minKeyframeInterval')
         max_keyframe_interval = json_object.get('maxKeyframeInterval')
+        
+        color_config = None
+        color_config_json = json_object.get('colorConfig')
+        if color_config_json is not None:
+            copy_chroma_location_flag = color_config_json.get('copyChromaLocationFlag')
+            copy_color_space_flag = color_config_json.get('copyColorSpaceFlag')
+            copy_color_primaries_flag = color_config_json.get('copyColorPrimariesFlag')
+            copy_color_range_flag = color_config_json.get('copyColorRangeFlag')
+            copy_color_transfer_flag = color_config_json.get('copyColorTransferFlag')
+            chroma_location = color_config_json.get('chromaLocation')
+            color_space = color_config_json.get('colorSpace')
+            color_primaries = color_config_json.get('colorPrimaries')
+            color_range = color_config_json.get('colorRange')
+            color_transfer = color_config_json.get('colorTransfer')
+            input_color_space = color_config_json.get('inputColorSpace')
+            input_color_range = color_config_json.get('inputColorRange')
 
+            color_config = ColorConfig(copy_chroma_location_flag=copy_chroma_location_flag,
+                                       copy_color_space_flag=copy_color_space_flag,
+                                       copy_color_primaries_flag=copy_color_primaries_flag,
+                                       copy_color_range_flag=copy_color_range_flag,
+                                       copy_color_transfer_flag=copy_color_transfer_flag,
+                                       chroma_location=chroma_location, color_space=color_space,
+                                       color_primaries=color_primaries, color_range=color_range,
+                                       color_transfer=color_transfer, input_color_space=input_color_space,
+                                       input_color_range=input_color_range)
+        
         vp9_codec_configuration = VP9CodecConfiguration(name=name, bitrate=bitrate, rate=rate, id_=id_, 
                                                         description=description, custom_data=custom_data, width=width, 
                                                         height=height, lag_in_frames=lag_in_frames, 
@@ -147,7 +188,8 @@ class VP9CodecConfiguration(VideoCodecConfiguration, Serializable):
                                                         arnr_strength=arnr_strength, arnr_type=arnr_type,
                                                         pixel_format=pixel_format, min_gop=min_gop, max_gop=max_gop,
                                                         min_keyframe_interval=min_keyframe_interval,
-                                                        max_keyframe_interval=max_keyframe_interval)
+                                                        max_keyframe_interval=max_keyframe_interval,
+                                                        color_config=color_config)
 
         return vp9_codec_configuration
 
@@ -156,4 +198,8 @@ class VP9CodecConfiguration(VideoCodecConfiguration, Serializable):
         serialized['quality'] = self.quality
         serialized['aqMode'] = self.aqMode
         serialized['arnrType'] = self.arnrType
+        
+        if isinstance(self.colorConfig, ColorConfig):
+            serialized['colorConfig'] = self.colorConfig.serialize()
+        
         return serialized
