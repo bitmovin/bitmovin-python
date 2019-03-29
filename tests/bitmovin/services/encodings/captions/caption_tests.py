@@ -1,6 +1,7 @@
-import unittest, uuid
+import uuid
+
 from bitmovin import Bitmovin, Response, Encoding, EncodingInput, Stream, StreamInput, SelectionMode, \
-    BurnInSrtSubtitle, ACLEntry, ACLPermission, EncodingOutput
+    BurnInSrtSubtitle, ACLEntry, ACLPermission, EncodingOutput, CaptionCharacterEncoding
 from tests.bitmovin import BitmovinTestCase
 
 
@@ -79,6 +80,7 @@ class EncodingCaptionTests(BitmovinTestCase):
         self.assertEqual(first.name, second.name)
         self.assertEqual(first.input.inputId, second.input.inputId)
         self.assertEqual(first.input.inputPath, second.input.inputPath)
+        self.assertEqual(first.characterEncoding, second.characterEncoding)
         return True
 
     def _get_sample_burn_in_subtitle(self):
@@ -92,7 +94,8 @@ class EncodingCaptionTests(BitmovinTestCase):
         self.assertEqual(encoding_input.inputPath, "path/to/srt/file")
 
         subtitle = BurnInSrtSubtitle(name="Sample Subtitle for Burn-in",
-                                     input=encoding_input)
+                                     input=encoding_input,
+                                     character_encoding=CaptionCharacterEncoding.UTF_8)
         self.assertIsNotNone(subtitle.input)
         self.assertIsNotNone(subtitle.name)
         return subtitle
