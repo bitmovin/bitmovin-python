@@ -3,10 +3,8 @@ import json
 import uuid
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, \
     FMP4Muxing, MuxingStream, CENCDRM, CENCPlayReadyEntry, CENCWidevineEntry, SelectionMode, ACLPermission, \
-    IvSize, WebMMuxing
+    IvSize, WebMMuxing, CENCMarlinEntry, CENCFairPlayEntry
 from bitmovin.errors import BitmovinApiError
-from bitmovin.resources.models.encodings.drms import CENCMarlinEntry
-from bitmovin.resources.models.encodings.drms.cenc_fairplay_entry import CENCFairPlayEntry
 from tests.bitmovin import BitmovinTestCase
 
 
@@ -400,7 +398,7 @@ class CENCDRMTests(BitmovinTestCase):
 
         drm = CENCDRM(key=cenc_drm_settings[0].get('key'),
                       kid=cenc_drm_settings[0].get('kid'),
-                      fairPlay=fairplay,
+                      fairplay=fairplay,
                       name='Sample CENC DRM with FairPlay')
 
         return drm

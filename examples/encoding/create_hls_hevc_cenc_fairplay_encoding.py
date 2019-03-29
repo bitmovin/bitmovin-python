@@ -3,9 +3,8 @@ import datetime
 from bitmovin import Bitmovin, Encoding, S3Output, AACCodecConfiguration, StreamInput, SelectionMode, Stream, \
     EncodingOutput, ACLEntry, ACLPermission, MuxingStream, \
     S3Input, HlsManifest, AudioMedia, VariantStream, H265CodecConfiguration, FMP4Muxing, CENCDRM, \
-    H265Profile
+    H265Profile, CENCFairPlayEntry
 from bitmovin.errors import BitmovinError
-from bitmovin.resources.models.encodings.drms import CENCFairPlayEntry
 
 API_KEY = 'API_KEY'
 
@@ -25,11 +24,12 @@ FAIRPLAY_URI = 'FAIRPLAY_URI'
 date_component = str(datetime.datetime.now()).replace(' ', '_').replace(':', '-').split('.')[0].replace('_', '__')
 OUTPUT_BASE_PATH = 'your/output/base/path/{}/'.format(date_component)
 
-VIDEO_PROFILES = [dict(height=240, bitrate=400000, fps=None),
-                  dict(height=360, bitrate=800000, fps=None),
-                  dict(height=480, bitrate=1200000, fps=None),
-                  dict(height=720, bitrate=2400000, fps=None)
-                  ]
+VIDEO_PROFILES = [
+    dict(height=240, bitrate=400000, fps=None),
+    dict(height=360, bitrate=800000, fps=None),
+    dict(height=480, bitrate=1200000, fps=None),
+    dict(height=720, bitrate=2400000, fps=None)
+]
 
 ACL_ENTRY = ACLEntry(permission=ACLPermission.PUBLIC_READ)
 
@@ -78,8 +78,10 @@ def main():
 
         muxing = create_fmp4_muxing(encoding, stream)
 
-        cenc = create_cenc_drm(encoding, muxing, s3_output,
-                               '{}fmp4/video_{}p'.format(OUTPUT_BASE_PATH, profile['height']))
+        cenc = create_cenc_drm(encoding=encoding,
+                               muxing=muxing,
+                               output=s3_output,
+                               path='{}fmp4/video_{}p'.format(OUTPUT_BASE_PATH, profile['height']))
 
         muxing_key = 'video_{}'.format(profile['bitrate'])
 
@@ -100,9 +102,14 @@ def main():
 
     acl_entry = ACLEntry(permission=ACLPermission.PUBLIC_READ)
 
-    audio_muxing = create_fmp4_muxing(encoding, audio_stream)
+    audio_muxing = create_fmp4_muxing(encoding=encoding, stream=audio_stream)
 
-    cenc_audio = create_cenc_drm(encoding, audio_muxing, s3_output, '{}fmp4/audio_{}'.format(OUTPUT_BASE_PATH, 128000))
+    cenc_audio = create_cenc_drm(
+        encoding=encoding,
+        muxing=audio_muxing,
+        output=s3_output,
+        path='{}fmp4/audio_{}'.format(OUTPUT_BASE_PATH, 128000)
+    )
 
     bitmovin.encodings.Encoding.start(encoding_id=encoding.id)
 
@@ -164,7 +171,7 @@ def create_cenc_drm(encoding, muxing, output, path):
     cenc = CENCDRM(
         key=FAIRPLAY_KEY,
         kid=FAIRPLAY_IV,
-        fairPlay=CENCFairPlayEntry(iv=FAIRPLAY_IV, uri=FAIRPLAY_URI),
+        fairplay=CENCFairPlayEntry(iv=FAIRPLAY_IV, uri=FAIRPLAY_URI),
         outputs=[encoding_output],
         name='FairPlay - ' + path
     )
