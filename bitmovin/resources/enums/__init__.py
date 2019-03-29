@@ -74,3 +74,4 @@ from .h265_adaptive_quantization_mode import H265AdaptiveQuantizationMode
 from .hls_version import HlsVersion
 from .stream_conditions_mode import StreamConditionsMode
 from .internal_chunk_length_mode import InternalChunkLengthMode
+from .caption_character_encoding import CaptionCharacterEncoding
