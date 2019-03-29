@@ -5,6 +5,8 @@ from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, AC
     FMP4Muxing, MuxingStream, CENCDRM, CENCPlayReadyEntry, CENCWidevineEntry, SelectionMode, ACLPermission, \
     IvSize, WebMMuxing
 from bitmovin.errors import BitmovinApiError
+from bitmovin.resources.models.encodings.drms import CENCMarlinEntry
+from bitmovin.resources.models.encodings.drms.cenc_fairplay_entry import CENCFairPlayEntry
 from tests.bitmovin import BitmovinTestCase
 
 
@@ -110,6 +112,22 @@ class CENCDRMTests(BitmovinTestCase):
         fmp4_muxing = self._create_muxing()  # type: FMP4Muxing
         self.assertIsNotNone(fmp4_muxing.id)
         sample_drm = self._get_sample_drm_cenc()
+        sample_drm.name = None
+        sample_drm.outputs = fmp4_muxing.outputs
+
+        created_drm_response = self.bitmovin.encodings.Muxing.FMP4.DRM.CENC.create(
+            object_=sample_drm, encoding_id=self.sampleEncoding.id, muxing_id=fmp4_muxing.id)
+
+        self.assertIsNotNone(created_drm_response)
+        self.assertIsNotNone(created_drm_response.resource)
+        self.assertIsNotNone(created_drm_response.resource.id)
+        drm_resource = created_drm_response.resource  # type: CENCDRM
+        self._compare_drms(sample_drm, drm_resource)
+
+    def test_create_cenc_drm_fairplay(self):
+        fmp4_muxing = self._create_muxing()  # type: FMP4Muxing
+        self.assertIsNotNone(fmp4_muxing.id)
+        sample_drm = self._get_sample_drm_cenc_with_fairplay()
         sample_drm.name = None
         sample_drm.outputs = fmp4_muxing.outputs
 
@@ -274,9 +292,44 @@ class CENCDRMTests(BitmovinTestCase):
         self.assertEqual(len(first.outputs), len(second.outputs))
         self.assertEqual(first.name, second.name)
         self.assertEqual(first.description, second.description)
-        self.assertEqual(first.marlin, second.marlin)
+        self.assertTrue(self._compare_widevine_drm(first.widevine, second.widevine))
+        self.assertTrue(self._compare_playready_drm(first.playReady, second.playReady))
+        self.assertTrue(self._compare_marlin_drm(first.marlin, second.marlin))
+        self.assertTrue(self._compare_fairplay_drm(first.fairPlay, second.fairPlay))
         self.assertEqual(first.enablePiffCompatibility, second.enablePiffCompatibility)
         self.assertEqual(first.ivSize, second.ivSize)
+
+        return True
+
+    def _compare_fairplay_drm(self, first: CENCFairPlayEntry, second: CENCFairPlayEntry):
+        if first is None and second is None:
+            return True
+
+        self.assertEqual(first.iv, second.iv)
+        self.assertEqual(first.uri, second.uri)
+
+        return True
+
+    def _compare_widevine_drm(self, first: CENCWidevineEntry, second: CENCWidevineEntry):
+        if first is None and second is None:
+            return True
+
+        self.assertEqual(first.pssh, second.pssh)
+
+        return True
+
+    def _compare_playready_drm(self, first: CENCPlayReadyEntry, second: CENCPlayReadyEntry):
+        if first is None and second is None:
+            return True
+
+        self.assertEqual(first.pssh, second.pssh)
+        self.assertEqual(first.laUrl, second.laUrl)
+
+        return True
+
+    def _compare_marlin_drm(self, first: CENCMarlinEntry, second: CENCMarlinEntry):
+        if first is None and second is None:
+            return True
 
         return True
 
@@ -335,6 +388,20 @@ class CENCDRMTests(BitmovinTestCase):
                       playReady=play_ready,
                       marlin=marlin,
                       name='Sample CENC DRM')
+
+        return drm
+
+    def _get_sample_drm_cenc_with_fairplay(self):
+        cenc_drm_settings = self.settings.get('sampleObjects').get('drmConfigurations').get('Cenc')
+        fairplay = CENCFairPlayEntry(
+            iv=cenc_drm_settings[0].get('fairPlay').get('iv'),
+            uri=cenc_drm_settings[0].get('fairPlay').get('uri')
+        )
+
+        drm = CENCDRM(key=cenc_drm_settings[0].get('key'),
+                      kid=cenc_drm_settings[0].get('kid'),
+                      fairPlay=fairplay,
+                      name='Sample CENC DRM with FairPlay')
 
         return drm
 
