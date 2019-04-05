@@ -1,7 +1,4 @@
-from bitmovin.errors import InvalidTypeError
-from bitmovin.resources.enums import ACLPermission
 from bitmovin.utils import Serializable
-from bitmovin.resources import AbstractIdResource
 
 
 class CENCMarlinEntry(Serializable):

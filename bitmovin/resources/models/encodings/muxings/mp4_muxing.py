@@ -8,10 +8,10 @@ class MP4Muxing(Muxing):
 
     def __init__(self, streams, filename=None, outputs=None, id_=None, custom_data=None, name=None, description=None,
                  ignored_by=None, fragment_duration=None, time_code=None, fragmented_mp4_muxing_manifest_type=None,
-                 stream_conditions_mode=None):
+                 stream_conditions_mode=None, internal_chunk_length=None):
         super().__init__(id_=id_, custom_data=custom_data, streams=streams, outputs=outputs,
                          name=name, description=description, ignored_by=ignored_by,
-                         stream_conditions_mode=stream_conditions_mode)
+                         stream_conditions_mode=stream_conditions_mode, internal_chunk_length=internal_chunk_length)
         self.filename = filename
         self.fragmentDuration = fragment_duration
         self._timeCode = None
@@ -76,7 +76,8 @@ class MP4Muxing(Muxing):
                                name=muxing.name,
                                description=muxing.description,
                                ignored_by=muxing.ignored_by,
-                               stream_conditions_mode=muxing.stream_conditions_mode)
+                               stream_conditions_mode=muxing.stream_conditions_mode,
+                               internal_chunk_length=muxing.internal_chunk_length)
 
         return mp4_muxing
 

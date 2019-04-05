@@ -7,11 +7,12 @@ class BroadcastTsMuxing(Muxing):
 
     def __init__(self, streams, segment_length, filename=None, configuration=None, outputs=None,
                  id_=None, custom_data=None, name=None, description=None, avg_bitrate=None, max_bitrate=None,
-                 min_bitrate=None, ignored_by=None, stream_conditions_mode=None):
+                 min_bitrate=None, ignored_by=None, stream_conditions_mode=None, internal_chunk_length=None):
 
         super().__init__(id_=id_, custom_data=custom_data, streams=streams, outputs=outputs,
                          name=name, description=description, avg_bitrate=avg_bitrate, max_bitrate=max_bitrate,
-                         min_bitrate=min_bitrate, ignored_by=ignored_by, stream_conditions_mode=stream_conditions_mode)
+                         min_bitrate=min_bitrate, ignored_by=ignored_by, stream_conditions_mode=stream_conditions_mode,
+                         internal_chunk_length=internal_chunk_length)
 
         self.segmentLength = segment_length
         self.filename = filename
@@ -56,6 +57,6 @@ class BroadcastTsMuxing(Muxing):
             id_=muxing.id, custom_data=muxing.customData, streams=muxing.streams, name=muxing.name,
             description=muxing.description, avg_bitrate=muxing.avgBitrate, max_bitrate=muxing.maxBitrate,
             min_bitrate=muxing.minBitrate, ignored_by=muxing.ignored_by,
-            stream_conditions_mode=muxing.stream_conditions_mode
+            stream_conditions_mode=muxing.stream_conditions_mode, internal_chunk_length=muxing.internal_chunk_length
         )
         return broadcast_ts_muxing
