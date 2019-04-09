@@ -84,7 +84,7 @@ class EncodingControlService(BitmovinObject):
             return ResourceResponse(response=response, resource=created_resource)
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
 
-    def wait_until_finished(self, encoding_id, check_interval=5, timeout=-1):
+    def wait_until_finished(self, encoding_id, check_interval=30, timeout=-1):
         status_response = None
         encoding_status = EncodingStatus(None)
 

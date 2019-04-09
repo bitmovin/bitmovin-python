@@ -8,6 +8,8 @@ from bitmovin.errors import MissingArgumentError, BitmovinApiError
 from bitmovin.resources import Response
 from bitmovin.utils import BitmovinJSONEncoder
 from .utils import check_response_success, check_response_header_json
+from requests.packages.urllib3.util.retry import Retry
+from requests.adapters import HTTPAdapter
 
 
 class BitmovinHttpClient(BitmovinObject):
@@ -57,7 +59,10 @@ class BitmovinHttpClient(BitmovinObject):
     def get(self, relative_url):
         self._log_request('GET', relative_url)
         url = urljoin(self.base_url, relative_url)
-        response = requests.get(url, headers=self.http_headers)
+        session = requests.Session()
+        retries = Retry(total=10, backoff_factor=1, status_forcelist=[ 502, 503, 504 ])
+        session.mount('https://', HTTPAdapter(max_retries=retries))
+        response = session.get(url, headers=self.http_headers)
         parsed_response = self._parse_response(response)
         return parsed_response
 
