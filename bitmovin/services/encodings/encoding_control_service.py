@@ -77,7 +77,8 @@ class EncodingControlService(BitmovinObject):
         response = self.http_client.get(url)
 
         if response.status == Status.ERROR.value:
-            raise BitmovinApiError('Response was not successful', response)
+            created_resource = EncodingStatus(None)
+            return ResourceResponse(response=None, resource=created_resource)
         if response.status == Status.SUCCESS.value:
             created_resource = self.parsing_utils.parse_bitmovin_resource_from_response(response=response,
                                                                                         class_=EncodingStatus)
