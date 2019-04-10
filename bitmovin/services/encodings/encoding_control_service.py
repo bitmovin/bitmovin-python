@@ -85,28 +85,37 @@ class EncodingControlService(BitmovinObject):
             return ResourceResponse(response=response, resource=created_resource)
         raise InvalidStatusError('Unknown status {} received'.format(response.status))
 
-    def wait_until_finished(self, encoding_id, check_interval=30, timeout=-1):
+    def wait_until_finished(self, encoding_id, check_interval=30, timeout=-1, max_empty_polls=10):
         status_response = None
         encoding_status = EncodingStatus(None)
 
         start_time = time.time()
+        empty_poll_count = 0
 
-        while encoding_status.status != 'FINISHED' and encoding_status.status != 'ERROR':
+        while encoding_status.status != 'FINISHED' and encoding_status.status != 'ERROR' and empty_poll_count < max_empty_polls:
             TimeoutUtils.raise_error_if_timeout_reached(start_time_in_seconds=start_time, timeout_in_seconds=timeout)
             status_response = self.status(encoding_id=encoding_id)
             encoding_status = status_response.resource  # type: EncodingStatus
+            if encoding_status.status == None:
+                empty_poll_count += 1
+                self.logger.info("Empty polls: {}".format(empty_poll_count))
+            else:
+                empty_poll_count = 0
             self.logger.info("Encoding status: {}".format(encoding_status.status))
             self.logger.info("Will check again in {} seconds...".format(check_interval))
             time.sleep(check_interval)
-
+    
         self.logger.info("Encoding Status: {}".format(json.dumps(obj=encoding_status, cls=BitmovinJSONEncoder)))
-
+    
         if encoding_status.status == 'FINISHED':
             return True
-
+    
+        if empty_poll_count == max_empty_polls:
+            raise BitmovinApiError("Unable to fetch encoding status after {} attempts".format(max_empty_polls), status_response)
+            
         raise BitmovinApiError("Encoding with ID '{}' was not successfull! Status: {}".format(
-            encoding_id, encoding_status.status), status_response)
-
+                encoding_id, encoding_status.status), status_response)
+                
     def wait_until_running(self, encoding_id, check_interval=5, timeout=-1):
         status_response = None
         encoding_status = EncodingStatus(None)
