@@ -54,7 +54,7 @@ class H264CodecConfigurationFactory():
         config.cabac = True
         config.rc_lookahead = 60
         config.refFrames = 16
-        config.sub_me = H264SubMe.FULL_RD
+        config.sub_me = H264SubMe.QPRD
         config.trellis = H264Trellis.ENABLED_ALL
         config.partitions = [H264Partition.ALL]
 

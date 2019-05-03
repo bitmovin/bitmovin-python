@@ -13,4 +13,3 @@ class H264SubMe(enum.Enum):
     RD_REF_IP = 'RD_REF_IP'
     RD_REF_ALL = 'RD_REF_ALL'
     QPRD = 'QPRD'
-    FULL_RD = 'FULL_RD'
