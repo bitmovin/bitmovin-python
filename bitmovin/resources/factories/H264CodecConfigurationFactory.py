@@ -50,11 +50,11 @@ class H264CodecConfigurationFactory():
         config.bframes = 16
         config.mvSearchRangeMax = 24
         config.mvPredictionMode = MVPredictionMode.AUTO
-        config.motion_estimation_method = H264MotionEstimationMethod.TESA
+        config.motion_estimation_method = H264MotionEstimationMethod.UMH
         config.cabac = True
         config.rc_lookahead = 60
         config.refFrames = 16
-        config.sub_me = H264SubMe.FULL_RD
+        config.sub_me = H264SubMe.RD_REF_ALL
         config.trellis = H264Trellis.ENABLED_ALL
         config.partitions = [H264Partition.ALL]
 
@@ -67,7 +67,7 @@ class H264CodecConfigurationFactory():
         config.cabac = True
         config.rc_lookahead = 60
         config.refFrames = 16
-        config.sub_me = H264SubMe.QPRD
+        config.sub_me = H264SubMe.RD_REF_ALL
         config.trellis = H264Trellis.ENABLED_ALL
         config.partitions = [H264Partition.ALL]
 
