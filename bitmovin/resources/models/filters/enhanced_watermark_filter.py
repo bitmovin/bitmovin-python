@@ -7,13 +7,14 @@ from .abstract_filter import AbstractFilter
 class EnhancedWatermarkFilter(AbstractFilter, Serializable):
 
     def __init__(self, image, id_=None, left=None, right=None, top=None, bottom=None, unit=None, name=None,
-                 custom_data=None, description=None):
+                 custom_data=None, description=None, opacity=None):
         super().__init__(id_=id_, name=name, custom_data=custom_data, description=description)
         self.image = image
         self.left = left
         self.right = right
         self.top = top
         self.bottom = bottom
+        self.opacity = opacity
 
         self._unit = None
         self.unit = unit
@@ -51,7 +52,8 @@ class EnhancedWatermarkFilter(AbstractFilter, Serializable):
         name = json_object.get('name')
         description = json_object.get('description')
         unit = json_object.get('unit')
+        opacity = json_object.get('opacity')
         watermark_filter = EnhancedWatermarkFilter(
             image=image, left=left, right=right, top=top, bottom=bottom, id_=id_, name=name, description=description,
-            unit=unit)
+            unit=unit, opacity=opacity)
         return watermark_filter

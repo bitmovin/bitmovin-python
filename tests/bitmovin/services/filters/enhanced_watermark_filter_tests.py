@@ -123,17 +123,20 @@ class EnhancedWatermarkFilterTests(BitmovinTestCase):
         self.assertEqual(first.name, second.name)
         self.assertEqual(first.description, second.description)
         self.assertEqual(first.unit, second.unit)
+        self.assertEqual(first.opacity, second.opacity)
         return True
 
     def _get_sample_enchanced_watermark_filter(self):
         enchanced_watermark_filter = EnhancedWatermarkFilter(image='http://www.bitmovin.com/favicon.ico', right=10,
                                                              top=10,
                                                              name='Sample Watermark Filter bitmovin icon',
-                                                             unit=WatermarkUnit.PERCENTS)
+                                                             unit=WatermarkUnit.PERCENTS,
+                                                             opacity=0.5)
         self.assertIsNotNone(enchanced_watermark_filter.image)
         self.assertIsNotNone(enchanced_watermark_filter.right)
         self.assertIsNotNone(enchanced_watermark_filter.top)
         self.assertIsNotNone(enchanced_watermark_filter.unit)
+        self.assertIsNotNone(enchanced_watermark_filter.opacity)
         return enchanced_watermark_filter
 
 
