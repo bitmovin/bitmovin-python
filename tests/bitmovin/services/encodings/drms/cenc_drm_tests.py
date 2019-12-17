@@ -3,7 +3,7 @@ import json
 import uuid
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, \
     FMP4Muxing, MuxingStream, CENCDRM, CENCPlayReadyEntry, CENCWidevineEntry, SelectionMode, ACLPermission, \
-    IvSize, WebMMuxing, CENCMarlinEntry, CENCFairPlayEntry
+    IvSize, WebMMuxing, CENCMarlinEntry, CENCFairPlayEntry, PlayReadyDRMAdditionalInformation
 from bitmovin.errors import BitmovinApiError
 from tests.bitmovin import BitmovinTestCase
 
@@ -41,6 +41,22 @@ class CENCDRMTests(BitmovinTestCase):
         self.assertIsNotNone(created_drm_response.resource)
         self.assertIsNotNone(created_drm_response.resource.id)
         drm_resource = created_drm_response.resource  # type: CENCDRM
+        self._compare_drms(sample_drm, drm_resource)
+
+    def test_create_drm_with_additional_playready_information(self):
+        fmp4_muxing = self._create_muxing()  # type: FMP4Muxing
+        self.assertIsNotNone(fmp4_muxing.id)
+        sample_drm = self._get_sample_drm_cenc_playready_with_additional_information()
+        sample_drm.outputs = fmp4_muxing.outputs
+
+        created_drm_response = self.bitmovin.encodings.Muxing.FMP4.DRM.CENC.create(
+            object_=sample_drm, encoding_id=self.sampleEncoding.id, muxing_id=fmp4_muxing.id)
+
+        self.assertIsNotNone(created_drm_response)
+        self.assertIsNotNone(created_drm_response.resource)
+        self.assertIsNotNone(created_drm_response.resource.id)
+        drm_resource = created_drm_response.resource  # type: CENCDRM
+        self.assertIsNotNone(drm_resource.playReady.additionalInformation)
         self._compare_drms(sample_drm, drm_resource)
 
     def test_create_drm_with_marlin(self):
@@ -323,6 +339,12 @@ class CENCDRMTests(BitmovinTestCase):
         self.assertEqual(first.pssh, second.pssh)
         self.assertEqual(first.laUrl, second.laUrl)
 
+        if first.additionalInformation is None and second.additionalInformation is None:
+            return True
+
+        self.assertEqual(first.additionalInformation.wrm_header_custom_attributes,
+                         second.additionalInformation.wrm_header_custom_attributes)
+
         return True
 
     def _compare_marlin_drm(self, first: CENCMarlinEntry, second: CENCMarlinEntry):
@@ -365,6 +387,22 @@ class CENCDRMTests(BitmovinTestCase):
         cenc_drm_settings = self.settings.get('sampleObjects').get('drmConfigurations').get('Cenc')
         widevine = CENCWidevineEntry(pssh=cenc_drm_settings[0].get('widevine').get('pssh'))
         play_ready = CENCPlayReadyEntry(la_url=cenc_drm_settings[0].get('playReady').get('laUrl'))
+
+        drm = CENCDRM(key=cenc_drm_settings[0].get('key'),
+                      kid=cenc_drm_settings[0].get('kid'),
+                      widevine=widevine,
+                      playReady=play_ready,
+                      name='Sample CENC DRM')
+
+        return drm
+
+    def _get_sample_drm_cenc_playready_with_additional_information(self):
+        cenc_drm_settings = self.settings.get('sampleObjects').get('drmConfigurations').get('Cenc')
+        widevine = CENCWidevineEntry(pssh=cenc_drm_settings[0].get('widevine').get('pssh'))
+        additional_information = PlayReadyDRMAdditionalInformation(
+            wrm_header_custom_attributes="<custom><tag1>text</tag1></custom>")
+        play_ready = CENCPlayReadyEntry(la_url=cenc_drm_settings[0].get('playReady').get('laUrl'),
+                                        additional_information=additional_information)
 
         drm = CENCDRM(key=cenc_drm_settings[0].get('key'),
                       kid=cenc_drm_settings[0].get('kid'),
@@ -449,7 +487,7 @@ class CENCDRMTests(BitmovinTestCase):
         sample_output = self.utils.get_sample_s3_output()
         s3_output = self.bitmovin.outputs.S3.create(sample_output)
         encoding_output = EncodingOutput(output_id=s3_output.resource.id,
-                                         output_path='/bitmovin-python/StreamTests/'+str(uuid.uuid4()),
+                                         output_path='/bitmovin-python/StreamTests/' + str(uuid.uuid4()),
                                          acl=[acl_entry])
 
         stream = Stream(codec_configuration_id=h264_codec_configuration.resource.id,

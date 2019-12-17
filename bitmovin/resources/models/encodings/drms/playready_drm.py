@@ -2,12 +2,13 @@ from .drm import DRM
 from bitmovin.errors import InvalidTypeError
 from bitmovin.resources.enums import PlayReadyMethod
 from bitmovin.utils import Serializable
+from .playready_drm_additional_information import PlayReadyDRMAdditionalInformation
 
 
 class PlayReadyDRM(DRM, Serializable):
 
     def __init__(self, key_seed=None, kid=None, method=None, la_url=None, outputs=None, id_=None, custom_data=None,
-                 name=None, description=None, key=None):
+                 name=None, description=None, key=None, additional_information=None):
         super().__init__(id_=id_, custom_data=custom_data, outputs=outputs, name=name, description=description)
         self._method = None
 
@@ -16,6 +17,10 @@ class PlayReadyDRM(DRM, Serializable):
         self.kid = kid
         self.laUrl = la_url
         self.key = key
+        self._additional_information = None
+
+        if additional_information is not None:
+            self.additionalInformation = additional_information
 
     @property
     def method(self):
@@ -34,6 +39,21 @@ class PlayReadyDRM(DRM, Serializable):
             raise InvalidTypeError(
                 'Invalid type {} for method: must be either str or PlayReadyMethod!'.format(type(value)))
 
+    @property
+    def additionalInformation(self):
+        return self._additional_information
+
+    @additionalInformation.setter
+    def additionalInformation(self, new_AdditionalInformation):
+        if new_AdditionalInformation is None:
+            self._additional_information = None
+        elif isinstance(new_AdditionalInformation, PlayReadyDRMAdditionalInformation):
+            self._additional_information = new_AdditionalInformation
+        else:
+            raise InvalidTypeError('Invalid type {} for playReady: must be a PlayReadyDRMAdditionalInformation!'.format(
+                type(new_AdditionalInformation))
+            )
+
     @classmethod
     def parse_from_json_object(cls, json_object):
         drm = super().parse_from_json_object(json_object=json_object)
@@ -47,15 +67,22 @@ class PlayReadyDRM(DRM, Serializable):
         kid = json_object.get('kid')
         la_url = json_object.get('laUrl')
         key = json_object.get('key')
+        additional_information = None
+
+        if json_object.get('additionalInformation') is not None:
+            additional_information = PlayReadyDRMAdditionalInformation.parse_from_json_object(
+                json_object.get('additionalInformation'))
 
         playready_drm = PlayReadyDRM(key_seed=key_seed, kid=kid, method=method, la_url=la_url,
                                      outputs=outputs, id_=id_, custom_data=custom_data,
-                                     name=name, description=description, key=key)
+                                     name=name, description=description, key=key,
+                                     additional_information=additional_information)
 
         return playready_drm
 
     def serialize(self):
         serialized = super().serialize()
         serialized['method'] = self._method
+        serialized['additionalInformation'] = self.additionalInformation
 
         return serialized
