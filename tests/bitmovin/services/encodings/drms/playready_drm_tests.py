@@ -2,7 +2,7 @@ import unittest
 import uuid
 import json
 from bitmovin import Bitmovin, Response, Stream, StreamInput, EncodingOutput, ACLEntry, Encoding, \
-    FMP4Muxing, MuxingStream, PlayReadyDRM, SelectionMode, ACLPermission
+    FMP4Muxing, MuxingStream, PlayReadyDRM, SelectionMode, ACLPermission, PlayReadyDRMAdditionalInformation
 from bitmovin.errors import BitmovinApiError, InvalidTypeError
 from tests.bitmovin import BitmovinTestCase
 from bitmovin.resources.enums import PlayReadyMethod
@@ -43,6 +43,22 @@ class PlayReadyDRMTests(BitmovinTestCase):
         drm_resource = created_drm_response.resource  # type: PlayReadyDRM
         self._compare_drms(sample_drm, drm_resource)
 
+    def test_create_drm_with_additional_information(self):
+        fmp4_muxing = self._create_muxing()  # type: FMP4Muxing
+        self.assertIsNotNone(fmp4_muxing.id)
+        sample_drm = self._get_sample_drm_playready_with_additional_information()
+        sample_drm.outputs = fmp4_muxing.outputs
+
+        created_drm_response = self.bitmovin.encodings.Muxing.FMP4.DRM.PlayReady.create(
+            object_=sample_drm, encoding_id=self.sampleEncoding.id, muxing_id=fmp4_muxing.id)
+
+        self.assertIsNotNone(created_drm_response)
+        self.assertIsNotNone(created_drm_response.resource)
+        self.assertIsNotNone(created_drm_response.resource.id)
+        drm_resource = created_drm_response.resource  # type: PlayReadyDRM
+        self.assertIsNotNone(drm_resource.additionalInformation)
+        self._compare_drms(sample_drm, drm_resource)
+
     def test_create_playready_piff(self):
         fmp4_muxing = self._create_muxing()  # type: FMP4Muxing
         self.assertIsNotNone(fmp4_muxing.id)
@@ -57,7 +73,7 @@ class PlayReadyDRMTests(BitmovinTestCase):
         self.assertIsNotNone(created_drm_response.resource.id)
         drm_resource = created_drm_response.resource  # type: PlayReadyDRM
         self._compare_drms(sample_drm, drm_resource)
-        
+
     def test_create_playready_key(self):
         fmp4_muxing = self._create_muxing()  # type: FMP4Muxing
         self.assertIsNotNone(fmp4_muxing.id)
@@ -223,6 +239,13 @@ class PlayReadyDRMTests(BitmovinTestCase):
         self.assertEqual(len(first.outputs), len(second.outputs))
         self.assertEqual(first.name, second.name)
         self.assertEqual(first.description, second.description)
+
+        if first.additionalInformation is None and second.additionalInformation is None:
+            return True
+
+        self.assertEqual(first.additionalInformation.wrm_header_custom_attributes,
+                         second.additionalInformation.wrm_header_custom_attributes)
+
         return True
 
     def _compare_muxings(self, first: FMP4Muxing, second: FMP4Muxing):
@@ -251,6 +274,19 @@ class PlayReadyDRMTests(BitmovinTestCase):
 
         return drm
 
+    def _get_sample_drm_playready_with_additional_information(self):
+        playready_drm_settings = self.settings.get('sampleObjects').get('drmConfigurations').get('PlayReady')
+
+        drm = PlayReadyDRM(key_seed=playready_drm_settings[0].get('keySeed'),
+                           kid=playready_drm_settings[0].get('kid'),
+                           method=playready_drm_settings[0].get('method'),
+                           la_url=playready_drm_settings[0].get('laUrl'),
+                           additional_information=PlayReadyDRMAdditionalInformation(
+                               wrm_header_custom_attributes="<custom><tag1>text</tag1></custom>"),
+                           name='Sample Playready DRM')
+
+        return drm
+
     def _get_sample_drm_playready_piff(self):
         playready_drm_settings = self.settings.get('sampleObjects').get('drmConfigurations').get('PlayReady')
 
@@ -261,7 +297,7 @@ class PlayReadyDRMTests(BitmovinTestCase):
                            name='Sample Playready PIFF DRM')
 
         return drm
-    
+
     def _get_sample_drm_playready_key(self):
         playready_drm_settings = self.settings.get('sampleObjects').get('drmConfigurations').get('PlayReady')
 
@@ -271,7 +307,7 @@ class PlayReadyDRMTests(BitmovinTestCase):
                            la_url=playready_drm_settings[0].get('laUrl'),
                            name='Sample Playready DRM')
 
-        return drm    
+        return drm
 
     def _get_sample_muxing(self):
         stream = self._get_sample_stream()
@@ -303,7 +339,7 @@ class PlayReadyDRMTests(BitmovinTestCase):
         sample_output = self.utils.get_sample_s3_output()
         s3_output = self.bitmovin.outputs.S3.create(sample_output)
         encoding_output = EncodingOutput(output_id=s3_output.resource.id,
-                                         output_path='/bitmovin-python/StreamTests/'+str(uuid.uuid4()),
+                                         output_path='/bitmovin-python/StreamTests/' + str(uuid.uuid4()),
                                          acl=[acl_entry])
 
         stream = Stream(codec_configuration_id=h264_codec_configuration.resource.id,
