@@ -19,14 +19,14 @@ class CENCPlayReadyEntry(Serializable):
         return self._additional_information
 
     @additionalInformation.setter
-    def additionalInformation(self, new_AdditionalInformation):
-        if new_AdditionalInformation is None:
+    def additionalInformation(self, new_additional_information):
+        if new_additional_information is None:
             self._additional_information = None
-        elif isinstance(new_AdditionalInformation, PlayReadyDRMAdditionalInformation):
-            self._additional_information = new_AdditionalInformation
+        elif isinstance(new_additional_information, PlayReadyDRMAdditionalInformation):
+            self._additional_information = new_additional_information
         else:
             raise InvalidTypeError('Invalid type {} for playReady: must be a PlayReadyDRMAdditionalInformation!'.format(
-                type(new_AdditionalInformation))
+                type(new_additional_information))
             )
 
     @classmethod
@@ -39,7 +39,8 @@ class CENCPlayReadyEntry(Serializable):
             additional_information = PlayReadyDRMAdditionalInformation.parse_from_json_object(
                 json_object.get('additionalInformation'))
 
-        cenc_playready_entry = CENCPlayReadyEntry(la_url, pssh, additional_information=additional_information)
+        cenc_playready_entry = CENCPlayReadyEntry(la_url=la_url, pssh=pssh,
+                                                  additional_information=additional_information)
         return cenc_playready_entry
 
     def serialize(self):

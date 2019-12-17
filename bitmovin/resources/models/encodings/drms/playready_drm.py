@@ -44,14 +44,14 @@ class PlayReadyDRM(DRM, Serializable):
         return self._additional_information
 
     @additionalInformation.setter
-    def additionalInformation(self, new_AdditionalInformation):
-        if new_AdditionalInformation is None:
+    def additionalInformation(self, new_additional_information):
+        if new_additional_information is None:
             self._additional_information = None
-        elif isinstance(new_AdditionalInformation, PlayReadyDRMAdditionalInformation):
-            self._additional_information = new_AdditionalInformation
+        elif isinstance(new_additional_information, PlayReadyDRMAdditionalInformation):
+            self._additional_information = new_additional_information
         else:
             raise InvalidTypeError('Invalid type {} for playReady: must be a PlayReadyDRMAdditionalInformation!'.format(
-                type(new_AdditionalInformation))
+                type(new_additional_information))
             )
 
     @classmethod
