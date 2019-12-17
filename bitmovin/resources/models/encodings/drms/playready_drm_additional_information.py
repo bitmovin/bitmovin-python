@@ -15,8 +15,3 @@ class PlayReadyDRMAdditionalInformation(Serializable):
             wrm_header_custom_attributes=wrm_header_custom_attributes)
 
         return playready_drm_additional_information
-
-    def serialize(self):
-        serialized = super().serialize()
-
-        return serialized
