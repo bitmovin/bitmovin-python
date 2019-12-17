@@ -5,7 +5,7 @@ class PlayReadyDRMAdditionalInformation(Serializable):
 
     def __init__(self, wrm_header_custom_attributes=None):
         super().__init__()
-        self.wrm_header_custom_attributes = wrm_header_custom_attributes
+        self.wrmHeaderCustomAttributes = wrm_header_custom_attributes
 
     @classmethod
     def parse_from_json_object(cls, json_object):
@@ -18,6 +18,5 @@ class PlayReadyDRMAdditionalInformation(Serializable):
 
     def serialize(self):
         serialized = super().serialize()
-        serialized['wrmHeaderCustomAttributes'] = self.wrm_header_custom_attributes
 
         return serialized
