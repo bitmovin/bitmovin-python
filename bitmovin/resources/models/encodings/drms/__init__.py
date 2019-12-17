@@ -1,5 +1,6 @@
 from .drm import DRM
 from .aes_drm import AESDRM
+from .playready_drm_additional_information import PlayReadyDRMAdditionalInformation
 from .clearkey_drm import ClearKeyDRM
 from .fairplay_drm import FairPlayDRM
 from .marlin_drm import MarlinDRM
