@@ -243,8 +243,8 @@ class PlayReadyDRMTests(BitmovinTestCase):
         if first.additionalInformation is None and second.additionalInformation is None:
             return True
 
-        self.assertEqual(first.additionalInformation.wrm_header_custom_attributes,
-                         second.additionalInformation.wrm_header_custom_attributes)
+        self.assertEqual(first.additionalInformation.wrmHeaderCustomAttributes,
+                         second.additionalInformation.wrmHeaderCustomAttributes)
 
         return True
 
