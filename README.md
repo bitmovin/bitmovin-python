@@ -1,4 +1,15 @@
 # [![bitmovin](http://bitmovin-a.akamaihd.net/webpages/bitmovin-logo-github.png)](http://www.bitmovin.com)
+
+# New API Client (Recommended)
+
+`bitmovin-python` is the legacy Bitmovin API client for Python. 
+
+We recommend using the new client, which you can find at [bitmovin-api-sdk-python](https://github.com/bitmovin/bitmovin-api-sdk-python). Using the new client guarantees 100% specification conformity at any given time and access to all features of the API as soon as they are released.
+
+---
+
+## bitmovin-python
+
 Python3-Client which enables you to seamlessly integrate the [Bitmovin API](https://bitmovin.com/video-infrastructure-service-bitmovin-api/) into your projects.
 Using this API client requires an active account. [Sign up for a Bitmovin API key](https://bitmovin.com/bitmovins-video-api/).
 
@@ -27,8 +38,7 @@ sudo apt-get install python3 python3-pip
 Depending on your distribution it could be that the pip tool uses the python2 interpreter so you maybe have one `pip3` executable instead.
 
 
-Exam
-ple
+Example
 -----
 
 The following example creates a simple encoding job with a DASH manifest and transfers it to a S3 output location ([create_simple_encoding.py](https://github.com/bitmovin/bitmovin-python/blob/master/examples/encoding/create_simple_encoding.py)):
