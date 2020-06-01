@@ -73,5 +73,7 @@ from .position_mode import PositionMode
 from .h265_adaptive_quantization_mode import H265AdaptiveQuantizationMode
 from .hls_version import HlsVersion
 from .stream_conditions_mode import StreamConditionsMode
+from .per_title_fixed_resolution_and_bitrate_calculation_mode import PerTitleFixedResolutionAndBitrateCalculationMode
+from .bitrate_selection_mode import BitrateSelectionMode
 from .internal_chunk_length_mode import InternalChunkLengthMode
 from .caption_character_encoding import CaptionCharacterEncoding

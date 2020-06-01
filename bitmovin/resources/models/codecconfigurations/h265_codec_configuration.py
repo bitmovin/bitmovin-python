@@ -18,7 +18,8 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
                  scene_cut_threshold=None, enable_hlg_signaling=None, video_format=None, hdr=None, master_display=None,
                  max_content_light_level=None, max_picture_average_light_level=None, sample_aspect_ratio_numerator=None,
                  sample_aspect_ratio_denominator=None, adaptive_quantization_mode=None, psy_rate_distortion_optimization=None,
-                 psy_rate_distortion_optimization_quantization=None, cutree=None, qp_min=None, qp_max=None):
+                 psy_rate_distortion_optimization_quantization=None, cutree=None, qp_min=None, qp_max=None,
+                 adaptive_quantization_strength=None):
 
         super().__init__(id_=id_, custom_data=custom_data, name=name, description=description, bitrate=bitrate,
                          rate=rate, width=width, height=height, pixel_format=pixel_format)
@@ -69,6 +70,7 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         self.sampleAspectRatioDenominator = sample_aspect_ratio_denominator
         self._adaptive_quantization_mode = None
         self.adaptiveQuantizationMode = adaptive_quantization_mode
+        self.adaptiveQuantizationStrength = adaptive_quantization_strength
         self.psyRateDistortionOptimization = psy_rate_distortion_optimization
         self.psyRateDistortionOptimizedQuantization = psy_rate_distortion_optimization_quantization
         self.cutree = cutree
@@ -313,6 +315,7 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
         aspect_ratio_numerator = json_object.get('sampleAspectRatioNumerator')
         aspect_ratio_denominator = json_object.get('sampleAspectRatioDenominator')
         adaptive_quantization_mode = json_object.get('adaptiveQuantizationMode')
+        adaptive_quantization_strength = json_object.get('adaptiveQuantizationStrength')
         psy_rate_distortion_optimization = json_object.get('psyRateDistortionOptimization')
         psy_rate_distortion_optimization_quantization = json_object.get('psyRateDistortionOptimizedQuantization')
         cutree = json_object.get('cutree')
@@ -370,6 +373,7 @@ class H265CodecConfiguration(VideoCodecConfiguration, Serializable):
                                                           sample_aspect_ratio_numerator=aspect_ratio_numerator,
                                                           sample_aspect_ratio_denominator=aspect_ratio_denominator,
                                                           adaptive_quantization_mode=adaptive_quantization_mode,
+                                                          adaptive_quantization_strength=adaptive_quantization_strength,
                                                           psy_rate_distortion_optimization=psy_rate_distortion_optimization,
                                                           psy_rate_distortion_optimization_quantization=psy_rate_distortion_optimization_quantization,
                                                           cutree=cutree,
